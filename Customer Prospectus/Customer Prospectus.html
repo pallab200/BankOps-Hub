@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Prospectus</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Local fonts and icons for offline use -->
+    <link rel="stylesheet" href="../css/poppins.css">
+    <link rel="stylesheet" href="../css/fontawesome.min.css">
+    <link rel="stylesheet" href="../css/fontawesome-fix.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-vault"></i>
+                <span>Customer Prospectus</span>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active" data-tab="fdr-double">
+                        FDR Double
+                    </li>
+                    <li data-tab="fdr">
+                        FDR Fixed
+                    </li>
+                    <li data-tab="dps">
+                        <span style="font-size: 1.2em;">🏦</span> DPS
+                    </li>
+                    <li data-tab="earning-plus">
+                        <span style="font-size: 1.2em;">📈</span> Earning Plus
+                    </li>
+                    <li data-tab="prospectus">
+                        <span style="font-size: 1.2em;">📄</span> Customer Prospectus
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <header>
+                <h1 id="page-title">FDR Double Scheme</h1>
+                <div class="user-profile">
+                    <span>Welcome, User</span>
+                    <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                </div>
+            </header>
+
+            <div id="calculator-container" class="calculator-container">
+                <!-- Content will be injected here by JS -->
+            </div>
+            <footer class="cp-footer no-print">Developed by Tanzil Ahmed — EID 7966.</footer>
+        </main>
+    </div>
+    <script src="script.js"></script>
+    <style>
+        /* Footer visible on-screen but hidden when printing */
+        .cp-footer{
+            display:block;
+            text-align:center;
+            padding:12px;
+            font-weight:700;
+            font-size:0.95rem;
+            color: #6b7280;
+            margin-top:24px;
+            /* gradient neon text matching Hub */
+            background: linear-gradient(90deg,
+                #6366f1 0%, /* indigo */
+                #ec4899 30%, /* magenta */
+                #f59e0b 60%, /* amber */
+                #6366f1 100%
+            );
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: cpRgbShift 6s linear infinite;
+        }
+
+        @keyframes cpRgbShift{
+            0%{ background-position:0% 50%; }
+            50%{ background-position:100% 50%; }
+            100%{ background-position:0% 50%; }
+        }
+
+        @media (prefers-reduced-motion: reduce){ .cp-footer{ animation: none; } }
+
+        @media print{
+            .cp-footer{ display:none !important; }
+        }
+    </style>
+</body>
+
+</html>

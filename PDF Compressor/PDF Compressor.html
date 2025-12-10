@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PDF Compressor</title>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" href="./assets/tailwind.min.css" onerror="console.warn('tailwind missing — using fallback styles')">
+  <link rel="stylesheet" href="../css/fontawesome.min.css">
+  <link rel="stylesheet" href="../css/fontawesome-fix.css">
+
+  <style>
+    @font-face { font-family: 'InterLocal'; src: url('./assets/fonts/Inter.woff2') format('woff2'); font-display: swap; }
+    
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --accent: #ec4899;
+      --success: #10b981;
+      --bg-primary: #f0f4f9;
+      --bg-secondary: #f8fafc;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+      --shadow-lg: 0 10px 25px rgba(99,102,241,0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Poppins', 'InterLocal', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px;
+      padding-top: 24px;
+      padding-bottom: 100px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 812px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.1);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      margin-top: 0;
+    }
+
+    .app-header {
+      padding: 24px 24px 20px;
+      border-bottom: 2px solid var(--border-color);
+      background: linear-gradient(to bottom, rgba(99, 102, 241, 0.03), rgba(99, 102, 241, 0.01));
+      position: relative;
+    }
+
+    .app-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary-light));
+      background-size: 200% 100%;
+      animation: shimmerGradient 3s ease infinite;
+    }
+
+    @keyframes shimmerGradient {
+      0%, 100% { background-position: 0% 0%; }
+      50% { background-position: 100% 0%; }
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .header-icon-box {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+      flex-shrink: 0;
+    }
+
+    .header-icon-box i {
+      font-size: 28px;
+      color: #fff;
+    }
+
+    .header-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .header-text h1 {
+      font-size: 1.782rem;
+      margin: 0 0 4px 0;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -0.495px;
+      line-height: 1.2;
+    }
+
+    .header-text .app-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.1);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .app-header .lead {
+      margin: 0;
+      color: var(--text-secondary);
+      font-weight: 500;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    .content {
+      padding: 31.68px;
+    }
+
+    .upload-section {
+      background: var(--bg-secondary);
+      padding: 24px;
+      border-radius: 12px;
+      border: 2px dashed var(--border-color);
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .upload-section:hover {
+      border-color: var(--primary-light);
+      background: rgba(99, 102, 241, 0.02);
+    }
+
+    .section-title {
+      font-size: 1.089rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 15.84px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title i {
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 1rem;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .file-input-wrapper input[type="file"]:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .quality-section {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quality-control {
+      margin-top: 16px;
+    }
+
+    .quality-control input[type="range"] {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: linear-gradient(to right, #ef4444, #f59e0b, #10b981);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .quality-control input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .quality-control input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.6);
+    }
+
+    .quality-control input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .quality-control input[type="range"]::-moz-range-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.6);
+    }
+
+    .quality-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .quality-value {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .action-section {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      border: 0;
+      padding: 13.86px 27.72px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.0395rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
+      transform: translateX(-120%);
+      transition: transform 0.6s ease;
+      pointer-events: none;
+    }
+
+    .btn:hover::after {
+      transform: translateX(120%);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(99, 102, 241, 0.35);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .progress-wrapper {
+      flex: 1;
+      background: #e6eefc;
+      border-radius: 999px;
+      height: 14px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+      transition: width 0.4s cubic-bezier(0.22, 0.9, 0.35, 1);
+      border-radius: 999px;
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+    }
+
+    .status-section {
+      background: var(--bg-secondary);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      min-height: 120px;
+      max-height: 300px;
+      overflow-y: auto;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Scrollbar styling for Chrome, Edge, Safari */
+    .status-section::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    .status-section::-webkit-scrollbar-track {
+      background: rgba(99, 102, 241, 0.05);
+      border-radius: 10px;
+    }
+
+    .status-section::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+      border-radius: 10px;
+      border: 2px solid rgba(99, 102, 241, 0.1);
+    }
+
+    .status-section::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(to bottom, var(--primary-dark), var(--primary));
+      box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Firefox scrollbar */
+    .status-section {
+      scrollbar-width: thick;
+      scrollbar-color: var(--primary) rgba(99, 102, 241, 0.05);
+    }
+
+    .status-header {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-header i {
+      color: var(--primary);
+    }
+
+    .log {
+      font-size: 0.95rem;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+      background: white;
+      border-left: 3px solid var(--primary);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.3s forwards;
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .log.error {
+      color: #dc2626;
+      border-left-color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .log.success {
+      color: #10b981;
+      border-left-color: #10b981;
+      background: #f0fdf4;
+    }
+
+    .log.info {
+      color: var(--text-primary);
+      border-left-color: var(--primary);
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        border-radius: 16px;
+      }
+
+      .app-header,
+      .content {
+        padding: 24px;
+      }
+
+      .app-header h1 {
+        font-size: 1.6rem;
+      }
+
+      .action-section {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="app-header">
+      <div class="header-top">
+        <div class="header-icon-box">
+          <i class="fas fa-file-pdf"></i>
+        </div>
+        <div class="header-text">
+          <h1>PDF Compressor</h1>
+          <div class="app-tag">Banking Utility</div>
+        </div>
+      </div>
+      <p class="lead">Convert PDF pages to images and reassemble at lower quality to reduce file size — fully offline once assets are local.</p>
+    </header>
+
+    <div class="content">
+      <div class="upload-section">
+        <h2 class="section-title">
+          <i class="fas fa-cloud-upload-alt"></i>
+          Upload PDF File
+        </h2>
+        <div class="file-input-wrapper">
+          <input id="file-upload" type="file" accept=".pdf" />
+        </div>
+      </div>
+
+      <div class="quality-section">
+        <h2 class="section-title">
+          <i class="fas fa-sliders-h"></i>
+          Compression Quality
+        </h2>
+        <div class="quality-control">
+          <input id="quality-slider" type="range" min="0.1" max="1.0" step="0.1" value="0.7" />
+          <div class="quality-labels">
+            <span><i class="fas fa-compress-alt"></i> Low</span>
+            <span><i class="fas fa-balance-scale"></i> Medium</span>
+            <span><i class="fas fa-expand-alt"></i> High</span>
+          </div>
+          <div class="quality-value" id="quality-value">0.7</div>
+        </div>
+      </div>
+
+      <div class="action-section">
+        <button id="compress-button" class="btn">
+          <span id="btn-icon">🗜️</span>
+          <span id="btn-text">Compress & Download</span>
+        </button>
+        <div class="progress-wrapper">
+          <div id="progress" class="progress-bar"></div>
+        </div>
+      </div>
+
+      <div class="status-section">
+        <div class="status-header">
+          <i class="fas fa-info-circle"></i>
+          Status
+        </div>
+        <div id="status-log">
+          <div class="log info">Waiting for file…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="neon-footer">
+    <div class="footer-rgb">
+      <span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span>
+    </div>
+    <style>
+      .neon-footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #ffffff;
+        padding: 12px 18px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        box-sizing: border-box;
+        z-index: 1000;
+        text-align: center;
+      }
+      .footer-rgb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .footer-rgb .rgb-text {
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-weight: 600;
+        background: linear-gradient(90deg,
+          #5b21b6 0%, #7c3aed 12%, #ec4899 24%, #fb7185 36%,
+          #f97316 48%, #f59e0b 60%, #06b6d4 72%, #0ea5a1 84%, #5b21b6 100%
+        );
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+        animation: rgbShift 6s linear infinite;
+        text-align: center;
+      }
+      @keyframes rgbShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      @media (max-width: 520px) {
+        .footer-rgb .rgb-text { font-size: 0.92rem; }
+      }
+    </style>
+  </footer>
+
+  <script src="./assets/pdf.min.js"></script>
+  <script src="./assets/jspdf.umd.min.js"></script>
+
+  <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW failed', e)));
+    }
+
+    // pdf.js worker
+    if (window.pdfjsLib) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = './assets/pdf.worker.min.js';
+    }
+
+    const fileUpload = document.getElementById('file-upload');
+    const qualitySlider = document.getElementById('quality-slider');
+    const qualityValue = document.getElementById('quality-value');
+    const compressButton = document.getElementById('compress-button');
+    const btnText = document.getElementById('btn-text');
+    const btnIcon = document.getElementById('btn-icon');
+    const statusLog = document.getElementById('status-log');
+    const progressBar = document.getElementById('progress');
+    const { jsPDF } = window.jspdf || {};
+
+    qualitySlider.addEventListener('input', e => {
+      const val = parseFloat(e.target.value).toFixed(1);
+      qualityValue.textContent = val;
+    });
+
+    function appendLog(msg, type = 'info') {
+      const el = document.createElement('div');
+      el.className = `log ${type}`;
+      el.textContent = msg;
+      statusLog.appendChild(el);
+      statusLog.parentElement.scrollTop = statusLog.parentElement.scrollHeight;
+    }
+
+    function setProgress(p) {
+      progressBar.style.width = Math.max(0, Math.min(100, p)) + '%';
+    }
+
+    compressButton.addEventListener('click', async () => {
+      const file = fileUpload.files[0];
+      const quality = parseFloat(qualitySlider.value);
+      
+      if (!file) {
+        appendLog('Please select a PDF file first.', 'error');
+        return;
+      }
+      
+      if (!window.pdfjsLib || !jsPDF) {
+        appendLog('Required libraries not loaded. Make sure assets are present in ./assets/.', 'error');
+        return;
+      }
+
+      compressButton.disabled = true;
+      btnIcon.innerHTML = '<span class="spinner"></span>';
+      btnText.textContent = 'Compressing...';
+      statusLog.innerHTML = '';
+      appendLog(`Starting compression: ${file.name}`, 'info');
+
+      try {
+        const pdfData = await readFileAsArrayBuffer(file);
+        const pdfDoc = await window.pdfjsLib.getDocument({ data: pdfData }).promise;
+        const numPages = pdfDoc.numPages;
+        appendLog(`Loaded PDF — ${numPages} page(s)`, 'info');
+
+        const firstPage = await pdfDoc.getPage(1);
+        const vp = firstPage.getViewport({ scale: 1 });
+        const orientation = vp.width > vp.height ? 'l' : 'p';
+        const format = [vp.width, vp.height];
+
+        const newPdf = new jsPDF({ orientation, unit: 'pt', format });
+
+        for (let i = 1; i <= numPages; i++) {
+          appendLog(`Processing page ${i} / ${numPages}`, 'info');
+          const page = await pdfDoc.getPage(i);
+          const viewport = page.getViewport({ scale: 2.0 });
+
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          await page.render({ canvasContext: ctx, viewport }).promise;
+
+          const imgData = canvas.toDataURL('image/jpeg', quality);
+          const pageW = viewport.width / 2.0;
+          const pageH = viewport.height / 2.0;
+          
+          if (i > 1) newPdf.addPage([pageW, pageH], orientation);
+          newPdf.addImage(imgData, 'JPEG', 0, 0, pageW, pageH);
+
+          setProgress(Math.round((i / numPages) * 100));
+        }
+
+        appendLog('Finalizing PDF...', 'info');
+        const baseName = file.name.replace(/\.pdf$/i, '');
+        const outName = `${baseName}_compressed_q${Math.round(quality * 100)}.pdf`;
+        newPdf.save(outName);
+        appendLog(`✓ Saved ${outName}`, 'success');
+      } catch (err) {
+        appendLog('Error: ' + (err.message || err), 'error');
+        console.error(err);
+      } finally {
+        compressButton.disabled = false;
+        btnIcon.textContent = '🗜️';
+        btnText.textContent = 'Compress & Download';
+        setProgress(0);
+      }
+    });
+
+    function readFileAsArrayBuffer(file) {
+      return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = () => res(r.result);
+        r.onerror = rej;
+        r.readAsArrayBuffer(file);
+      });
+    }
+  </script>
+</body>
+</html>

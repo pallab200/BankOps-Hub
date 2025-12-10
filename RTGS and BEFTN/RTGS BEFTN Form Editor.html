@@ -1,0 +1,2606 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RTGS/BEFTN Form Editor — Preview & Print</title>
+  <style>
+/* Modern Unified Design System */
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --accent: #ec4899;
+  --warning: #f59e0b;
+  --bg-primary: #f0f4f9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border-color: #e2e8f0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Poppins', 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
+  color: var(--text-primary);
+}
+
+header {
+  padding: 20px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-bottom: none;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+  color: white;
+  position: relative;
+}
+
+h1 {
+  margin: 0 0 6px 0;
+  font-weight: 800;
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 6px 0;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+}
+
+.header-left-controls {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 80;
+}
+
+.ie-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.ie-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.ie-btn svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+@media (max-width: 720px) {
+  .header-left-controls { left: 8px; top: 8px; gap: 6px; }
+  .header-left-controls .ie-btn { padding: 8px; font-size: 0; }
+  .header-left-controls .ie-btn span { display: none; }
+}
+
+main {
+  padding: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.form-panel {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.form-panel h2 {
+  margin-top: 0;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.form-panel label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.form-panel input, .form-panel select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-top: 4px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.form-panel input:focus, .form-panel select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  outline: none;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+button, .btn {
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 11px 20px;
+  border-radius: 10px;
+  border: 0;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
+  transition: all 0.3s ease;
+  animation: floatButton 3.6s ease-in-out infinite;
+  font-weight: 700;
+}
+
+button::after, .btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+
+button:hover::after, .btn:hover::after {
+  transform: translateX(120%);
+}
+
+button:hover, .btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(99, 102, 241, 0.35);
+}
+
+button:active, .btn:active {
+  transform: translateY(-2px);
+}
+
+@keyframes floatButton {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--primary);
+  box-shadow: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-color);
+  animation: none;
+}
+
+.btn-ghost:hover {
+  background: rgba(99, 102, 241, 0.08);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-small {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+
+.preview-panel {
+  background: transparent;
+}
+
+.preview-panel h2 {
+  margin: 0 0 12px 0;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.preview-wrap {
+  position: relative;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 10px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--border-color);
+}
+  /* Make preview headings and data-panel headings use accent color */
+  .preview-panel h2, .data-panel h3 { color: var(--accent); }
+  /* Slightly tint data-panel inputs to match accent */
+  .data-panel input { border:1px solid rgba(99, 102, 241, 0.2); }
+  /* Numeric-only invalid state */
+  .numeric-invalid{ border-color:#e11d48 !important; box-shadow:0 0 0 4px rgba(225,29,72,0.06); }
+.preview-wrap img{display:block;max-width:100%;height:auto}
+.page{display:block;position:relative;margin-bottom:16px}
+.page.hidden{display:none}
+.page img.form-image{width:100%;height:auto;display:block}
+.edit-controls{display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem;flex-wrap:wrap} /* Added flex-wrap */
+.edit-controls label{font-size:.95rem}
+.edit-controls button{margin-top: 4px;} /* Added margin for wrapped buttons */
+
+/* Toast popup for save confirmation */
+.toast-msg{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;background:rgba(0,0,0,0.85);color:#fff;padding:8px 12px;border-radius:6px;font-size:0.95rem;z-index:3000;opacity:0;transition:opacity .18s ease,transform .18s ease}
+.toast-msg.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
+
+/* Floating preview button in top-right of preview/form panels */
+.preview-panel{position:relative}
+.preview-top-right,.form-top-right{position:absolute;right:12px;top:8px;z-index:60}
+.preview-top-right .btn-float,.form-top-right .btn-float{padding:.4rem .6rem;border-radius:4px;background:var(--primary);color:#fff;border:0;cursor:pointer;transition:background 0.2s ease}
+.preview-top-right .btn-float:hover,.form-top-right .btn-float:hover{background:var(--primary-dark)}
+
+/* editing state: allow pointer events on overlays */
+.preview-wrap.editing .overlay{pointer-events:auto;cursor:move;background:rgba(255,243,205,0.9);border:1px dashed rgba(183,28,28,0.9);color:#000;text-transform:uppercase;font-weight:600}
+.overlay.dragging{opacity:.85;transform:scale(1.02)}
+
+/* make overlays default pointer-events none so clicks pass through when not editing */
+.overlay{pointer-events:none;color:#000;text-transform:uppercase;font-weight:600}
+.page-switch{display:none}
+/* Overlay label styles (absolute positioned) */
+.overlay{position:absolute;color:#000000;background:transparent;padding:.12rem .28rem;border-radius:3px;font-size:0.80rem;pointer-events:none}
+/* approximate positions - tweak as needed */
+.overlay[data-field="branchName"]{top:105px;left:70px}
+.overlay[data-field="accountNumber"]{top:84px;left:160px}
+.overlay[data-field="cifNumber"]{top:84px;left:420px}
+.overlay[data-field="senderName"]{top:140px;left:60px}
+.overlay[data-field="senderContact"]{top:166px;left:60px}
+.overlay[data-field="currencyAmount"]{top:210px;left:420px}
+.overlay[data-field="reason"]{top:250px;left:60px}
+.overlay[data-field="recvBank"]{top:320px;left:60px}
+.overlay[data-field="recvBranch"]{top:350px;left:60px}
+.overlay[data-field="recvName"]{top:380px;left:60px}
+.overlay[data-field="recvAccount"]{top:410px;left:60px}
+/* New overlays: in-words and date */
+.overlay[data-field="inWords"]{top:200px;left:60px}
+.overlay[data-field="date"]{top:20px;left:420px}
+.overlay[data-field="routingNumber"]{top:230px;left:420px}
+/* Make account number visually spaced for easier alignment */
+.overlay[data-field="accountNumber"]:not(.no-space){letter-spacing:1.52em;font-family:monospace}
+/* Lightbox */
+#lightbox{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.75);z-index:1000;visibility:hidden;opacity:0;transition:opacity .18s ease}
+#lightbox[aria-hidden="false"]{visibility:visible;opacity:1}
+.lb-content{max-width:95%;max-height:90%;display:flex;flex-direction:column;align-items:center}
+.lb-content img{max-width:100%;max-height:80vh;border-radius:4px;box-shadow:0 6px 24px rgba(0,0,0,.5)}
+.lb-btn{position:fixed;top:1rem;background:transparent;border:0;color:#fff;font-size:1.6rem;padding:.4rem .6rem;cursor:pointer}
+n#lb-close{right:1rem}
+n#lb-prev{left:1rem;top:50%;transform:translateY(-50%)}
+n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
+#lb-caption{margin-top:.5rem;color:#eee;font-size:.95rem;text-align:center}
+@media (max-width:520px){.lb-btn{font-size:1.1rem}}
+@media (max-width:920px){.two-col{grid-template-columns:1fr;}.preview-wrap{margin-top:1rem}}
+
+/* Position badge shown while dragging overlays */
+.pos-badge{position:fixed;z-index:2000;pointer-events:none;background:rgba(0,0,0,0.8);color:#fff;padding:6px 8px;border-radius:4px;font-size:12px;font-family:monospace}
+  /* preview-page mode: hide the entry panel and make preview full-width */
+  body.preview-page .two-col{grid-template-columns:1fr}
+  body.preview-page .two-col .form-panel{display:none}
+  body.preview-page .preview-top{display:block}
+  /* Hide the data-panel in preview-page mode so Sender & Receiver quick inputs are not shown while previewing */
+  body.preview-page .data-panel{display:none}
+
+  /* Hide the Form Preview button while in preview mode (it's not needed when already previewing) */
+  body.preview-page #preview-page-btn{display:none}
+  /* By default (when NOT in preview-page) hide the RTGS preview but keep data-panel visible */
+  body:not(.preview-page) .preview-wrap{display:none}
+  body:not(.preview-page) .data-panel{display:block}
+  /* Hide the large preview header and extra edit controls in the right-side entry panel when NOT previewing.
+     Keep the Form Preview button visible (it is a button, not a label) so users can still open the preview. */
+  body:not(.preview-page) .preview-panel h2,
+  body:not(.preview-page) .preview-panel .preview-tip,
+  body:not(.preview-page) .preview-panel .edit-controls label,
+  body:not(.preview-page) .preview-panel #save-pos{
+    display: none;
+  }
+  /* full-screen list panels for saved presets (compact + animated)
+    Use opacity/transform/visibility so we can animate open/close (avoid display:none)
+  */
+  .list-panel{position:fixed;inset:0;background:#fff;z-index:1500;display:flex;flex-direction:column;padding:12px;overflow:auto;opacity:0;transform:translateY(10px);visibility:hidden;pointer-events:none;transition:opacity .22s cubic-bezier(.2,.9,.2,1),transform .22s cubic-bezier(.2,.9,.2,1),visibility .22s}
+  .list-panel.active{opacity:1;transform:translateY(0);visibility:visible;pointer-events:auto}
+  .list-panel .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .list-panel .items{display:block;gap:6px}
+  /* list item: more compact and animated entrance */
+  @keyframes itemIn { from{ opacity:0; transform: translateY(6px) } to{ opacity:1; transform: translateY(0) } }
+  .preset-item{display:flex;align-items:center;justify-content:space-between;padding:6px;border:1px solid #f0f0f0;border-radius:6px;background:#fff;margin-bottom:6px;font-size:0.94rem;animation:itemIn .28s cubic-bezier(.2,.9,.2,1) both;animation-delay:calc(var(--i,0) * 60ms);transition:transform .16s ease,box-shadow .16s ease}
+  .preset-item:hover{ transform:translateY(-3px); box-shadow:0 10px 20px rgba(99, 102, 241, 0.12); }
+  .preset-meta{color:#666;font-size:0.85rem}
+  .preset-actions button{margin-left:6px;padding:.28rem .45rem;border-radius:6px;transition:transform .12s ease,background .12s}
+  .preset-actions button:hover{ transform:translateY(-2px); }
+  /* compact table styles for lists shown as table */
+  .preset-table{width:100%;border-collapse:collapse;font-size:0.94rem}
+  .preset-table th, .preset-table td{border:1px solid #e9e9e9;padding:6px 6px;text-align:left}
+  .preset-table th{background:#fbfbfb}
+  /* make action cells lay out buttons side-by-side and center them */
+  .preset-table td.preset-actions{display:flex;align-items:center;justify-content:flex-start;gap:8px}
+  .preset-table td.preset-actions button{margin:0;padding:.28rem .45rem;border-radius:6px}
+  /* animate table rows with a small stagger using the --i custom property set in JS */
+  .preset-table tbody tr{opacity:0;transform:translateY(6px);animation:itemIn .28s cubic-bezier(.2,.9,.2,1) both;animation-delay:calc(var(--i,0) * 70ms)}
+  /* subtle button pulse when saving presets */
+  .preset-actions .btn-saved{ animation: btnClick 420ms ease both; }
+  /* modal editor for presets */
+  .preset-editor{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1600;background:#fff;padding:16px;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.3);width:720px;max-width:95%;display:none}
+  .preset-editor.active{display:block}
+    /* simple save animation for Save buttons */
+    @keyframes pulseSaved { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
+    .btn-saved{ animation: pulseSaved 0.9s ease both; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+    /* Placeholder style: show the field name when overlay is empty */
+    .overlay-empty{ color:var(--muted); font-style:italic; opacity:0.85; font-weight:500 }
+  .preset-editor .row{display:flex;gap:8px;margin-bottom:8px}
+  .preset-editor label{flex:1;display:block}
+  .preset-editor .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+  /* Hide-only-in-entry helper: keeps inputs in DOM but hides them in the Entry panel */
+  .form-panel .hidden-entry{display:none !important}
+    /* Searchable preset dropdowns */
+    .search-select{position:relative}
+    .search-select input{width:100%;padding:.4rem;border:1px solid #d6d9dd;border-radius:4px}
+    .search-list{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid #e6e6e6;border-radius:6px;max-height:220px;overflow:auto;z-index:2200;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
+    .search-list .item{padding:8px;border-bottom:1px solid #f1f1f1;cursor:pointer}
+    .search-list .item:last-child{border-bottom:0}
+    .search-list .item:hover{background:#f7f7f7}
+    /* Template-specific account number spacing: keep RTGS default, more spacing for BEFTN */
+    .overlay.tpl-rtgs[data-field="accountNumber"]{
+      letter-spacing: normal;
+      font-family: monospace;
+    }
+    .overlay.tpl-beftn[data-field="accountNumber"]{
+      letter-spacing: 2.20em;
+      font-family: monospace;
+    }
+  /* Footer credit with RGB animation */
+  .site-footer{ text-align:center; padding:10px 0; font-size:0.9rem; color:var(--muted); margin-top:14px }
+  .site-footer .site-credit{ display:inline-block; padding:.25rem .5rem; border-radius:6px; background:transparent; animation: rgbCycle 5s linear infinite; }
+  @keyframes rgbCycle{ 
+    0%{ color:var(--primary); text-shadow:0 0 8px rgba(99, 102, 241, 0.8); }
+    33%{ color:var(--accent); text-shadow:0 0 8px rgba(236, 72, 153, 0.8); }
+    66%{ color:var(--warning); text-shadow:0 0 8px rgba(245, 158, 11, 0.8); }
+    100%{ color:var(--primary); text-shadow:0 0 8px rgba(99, 102, 241, 0.8); }
+  }
+  @media (prefers-reduced-motion: reduce){ .site-footer .site-credit{ animation: none; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>RTGS/BEFTN Form Editor</h1>
+    <p>Place and align overlays, save sender/receiver presets, and generate accurate print previews for RTGS and BEFTN forms.</p>
+    <div class="header-left-controls">
+      <button id="export-data-btn" class="ie-btn" title="Export Data">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M12 3v10" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7 8l5 5 5-5" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M21 21H3" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Export Data</span>
+      </button>
+      <button id="import-data-btn" class="ie-btn" title="Import Data">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M12 21V11" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17 14l-5-5-5 5" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M21 3H3" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Import Data</span>
+      </button>
+      <input id="import-file" type="file" accept="application/json" style="display:none">
+    </div>
+  </header>
+
+  <main>
+    <div class="two-col">
+      <section class="form-panel">
+        <h2>Entry</h2>
+  <div class="form-top-right"><button type="button" id="preview-page-btn" class="btn-float">Form Preview</button></div>
+        <form id="rtgs-form">
+          <label>Name of Branch
+            <input name="branchName" type="text" placeholder="Branch name">
+          </label>
+
+          <label class="hidden-entry">Account Number
+            <input name="accountNumber" type="text" placeholder="Account number">
+          </label>
+          
+
+          <label class="hidden-entry">CIF Number
+            <input name="cifNumber" type="text" placeholder="CIF number">
+          </label>
+
+          <label class="hidden-entry">Routing Number
+            <input name="routingNumber" type="text" placeholder="Routing number">
+          </label>
+
+          <label class="hidden-entry">Date & Time
+            <input name="dateTime" type="text" placeholder="DD-MM-YYYY & HH:MM AM/PM">
+          </label>
+
+          <label>Sender's Name
+            <div class="search-select" id="sender-preset">
+              <input id="sender-preset-input" type="text" placeholder="Search saved senders..." autocomplete="off" style="margin-bottom:.4rem">
+              <div class="search-list" id="sender-preset-list" style="display:none"></div>
+            </div>
+            <input name="senderName" class="hidden-entry" type="text" placeholder="Sender's name">
+          </label>
+
+          <!-- Receiver's Name moved here (search box visible; main input hidden) -->
+          <label>Receiver's Name
+            <div class="search-select" id="recv-preset">
+              <input id="recv-preset-input" type="text" placeholder="Search saved receivers..." autocomplete="off" style="margin-bottom:.4rem">
+              <div class="search-list" id="recv-preset-list" style="display:none"></div>
+            </div>
+            <input name="recvName" class="hidden-entry" type="text" placeholder="Receiver's name">
+          </label>
+
+          <label class="hidden-entry">Sender's Contact
+            <input name="senderContact" type="text" placeholder="Mobile or email">
+          </label>
+
+          <label>Amount
+            <input name="amount" type="text" placeholder="Amount">
+          </label>
+
+          <label>Reason for Payment
+            <input name="reason" type="text" placeholder="Reason">
+          </label>
+          <label class="hidden-entry">Receiving Bank
+            <input name="recvBank" type="text" placeholder="Bank name">
+          </label>
+          <label class="hidden-entry">Receiving Branch
+            <input name="recvBranch" type="text" placeholder="Branch name">
+          </label>
+          <label class="hidden-entry">Receiver's Account No.
+            <input name="recvAccount" type="text" placeholder="Account number">
+          </label>
+
+          <div class="form-actions">
+            <button type="button" id="print-btn">RTGS Print</button>
+            <button type="button" id="print-beftn-btn" style="margin-left:8px">BEFTN Print</button>
+            <!-- Save buttons removed from entry panel (use quick-save on right or presets) -->
+          </div>
+        </form>
+      </section>
+
+      <section class="preview-panel">
+    <h2>RTGS Form Preview</h2>
+    <div class="preview-tip" style="margin-top:6px;color:#555;font-size:0.92rem">Tip: Press Esc to return to the entry panel.</div>
+        <!-- Data panel: shown in the right column while editing the entry (preview hidden) -->
+        <div class="data-panel">
+          <div style="background:linear-gradient(180deg,#eaf6ff,#ffffff);border-radius:6px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+            <h3 style="margin-top:0">Sender & Receiver (quick inputs)</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <div>
+                <h4 style="margin:.25rem 0">Sender</h4>
+                <label style="display:block;margin-bottom:.5rem">CIF Number
+                  <input data-name="cifNumber" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
+                </label>
+                <label style="display:block;margin-bottom:.5rem">Account Number
+                  <input data-name="accountNumber" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
+                </label>
+                <label style="display:block;margin-bottom:.5rem">Sender's Name
+                  <input data-name="senderName" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
+                </label>
+                <label style="display:block;margin-bottom:.5rem">Sender's Contact
+                  <input data-name="senderContact" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
+                </label>
+              </div>
+              <div>
+                <h4 style="margin:.25rem 0">Receiver</h4>
+                <label style="display:block;margin-bottom:.5rem">Receiving Bank
+                  <input data-name="recvBank" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
+                </label>
+                <label style="display:block;margin-bottom:.5rem">Receiving Branch
+                  <input data-name="recvBranch" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
+                </label>
+                <label style="display:block;margin-bottom:.5rem">Receiver's Name
+                  <input data-name="recvName" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
+                </label>
+                <label style="display:block;margin-bottom:.5rem">Receiver's Account No.
+                  <input data-name="recvAccount" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
+                </label>
+                <label style="display:block;margin-bottom:.5rem">Routing Number
+                  <input data-name="routingNumber" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
+                </label>
+              </div>
+            </div>
+
+            <!-- Horizontal quick-save row: Save Sender and Save Receiver aligned horizontally -->
+            <div style="display:flex;gap:.5rem;margin-top:10px;align-items:center">
+              <div style="flex:1;display:flex;justify-content:flex-start">
+                <button id="save-sender-quick" type="button" style="padding:.45rem .6rem">Save Sender</button>
+              </div>
+              <div style="flex:1;display:flex;justify-content:flex-end">
+                <button id="save-recv-quick" type="button" style="padding:.45rem .6rem">Save Receiver</button>
+              </div>
+            </div>
+
+            <!-- Amount, In Words, Reason and quick preview buttons removed from data-panel as requested -->
+            <div style="display:flex;gap:.5rem;margin-top:10px">
+              <button id="view-senders-btn" style="flex:1;padding:.45rem .6rem">View Senders</button>
+              <button id="view-receivers-btn" style="flex:1;padding:.45rem .6rem">View Receivers</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="edit-controls">
+              <label><input type="checkbox" id="edit-pos"> Edit positions</label>
+              <label style="margin-left:8px">Form template
+                <select id="template-select" style="margin-left:6px;padding:.25rem">
+                  <option value="rtgs">RTGS</option>
+                  <option value="beftn">BEFTN</option>
+                </select>
+              </label>
+              <button type="button" id="save-pos">Save positions</button>
+            </div>
+
+        <div class="preview-top" style="padding:.5rem 0 0;"></div>
+
+        <div class="preview-wrap">
+          <div class="page" data-page="1">
+            <img class="form-image" src="images/rtgs-1.jpg" alt="RTGS form page 1">
+            <!-- overlays for page 1 -->
+            <div class="overlay" data-field="branchName"></div>
+            <div class="overlay" data-field="branchName"></div>
+            <!-- Additional display-only boxes on page 1 (show same values as main overlays) -->
+            <div class="overlay tpl-rtgs" data-field="branchName" style="top:60px;left:320px"></div>
+            <div class="overlay tpl-rtgs" data-field="branchName" style="top:60px;left:260px"></div>
+            <div class="overlay" data-field="senderName" style="top:140px;left:420px"></div>
+            <div class="overlay no-space" data-field="accountNumber" data-label="Account Number 1" data-hide-on="beftn" style="top:84px;left:520px"></div>
+            <div class="overlay" data-field="currencyAmount" style="top:210px;left:520px"></div>
+            <div class="overlay" data-field="inWords" style="top:240px;left:420px"></div>
+            <div class="overlay tpl-rtgs" data-field="reason" style="top:270px;left:420px"></div>
+            <div class="overlay no-space" data-field="recvAccount" style="top:410px;left:420px"></div>
+            <div class="overlay" data-field="recvName" style="top:380px;left:420px"></div>
+            <div class="overlay" data-field="recvBranch" style="top:350px;left:420px"></div>
+            <div class="overlay" data-field="recvBank" style="top:320px;left:420px"></div>
+            <div class="overlay" data-field="date" style="top:20px;left:480px"></div>
+            <div class="overlay" data-field="accountNumber" data-label="Account Number 2"></div>
+            <div class="overlay tpl-rtgs" data-field="cifNumber"></div>
+            <div class="overlay" data-field="routingNumber" data-label="Routing Number 1"></div>
+            <div class="overlay tpl-rtgs" data-field="senderName"></div>
+            <div class="overlay" data-field="senderContact"></div>
+            <div class="overlay" data-field="currencyAmount"></div>
+            <div class="overlay tpl-rtgs" data-field="reason"></div>
+            <div class="overlay" data-field="inWords"></div>
+            <div class="overlay" data-field="date"></div>
+            <div class="overlay tpl-rtgs" data-field="recvBank"></div>
+            <div class="overlay tpl-rtgs" data-field="recvBranch"></div>
+            <div class="overlay" data-field="recvName"></div>
+            <div class="overlay" data-field="recvAccount"></div>
+            <!-- BEFTN-only extra amount & in-words fields (hidden for RTGS) -->
+            <div class="overlay tpl-beftn" data-field="currencyAmount2" style="top:48px;left:380px"></div>
+            <div class="overlay tpl-beftn" data-field="inWords2" style="top:70px;left:60px"></div>
+            <!-- Additional BEFTN-only duplicates (page 1) -->
+            <div class="overlay tpl-beftn" data-field="currencyAmount2" style="top:48px;left:580px"></div>
+            <div class="overlay tpl-beftn" data-field="inWords2" style="top:320px;left:60px"></div>
+            <!-- Extra BEFTN-only duplicates requested: routing, amount, inWords, date -->
+            <!-- BEFTN-only spaced account number (appears only for BEFTN PDF/preview) -->
+            <div class="overlay tpl-beftn" data-field="accountNumberBeftn" data-label="Account Number (BEFTN)" style="top:84px;left:520px"></div>
+            <div class="overlay tpl-beftn" data-field="routingNumber" data-label="Routing Number 2" style="top:90px;left:520px"></div>
+            <div class="overlay tpl-beftn" data-field="currencyAmount2" style="top:260px;left:600px"></div>
+            <div class="overlay tpl-beftn" data-field="inWords2" style="top:290px;left:120px"></div>
+            <div class="overlay tpl-beftn" data-field="date" style="top:12px;left:620px"></div>
+            <div class="overlay tpl-beftn" data-field="dateTime" style="top:12px;left:640px"></div>
+            <!-- RTGS tick marks (7 ticks) -->
+            <div class="overlay tpl-rtgs" data-field="tick1" style="top:100px;left:100px"></div>
+            <div class="overlay tpl-rtgs" data-field="tick2" style="top:150px;left:100px"></div>
+            <div class="overlay tpl-rtgs" data-field="tick3" style="top:200px;left:100px"></div>
+            <div class="overlay tpl-rtgs" data-field="tick4" style="top:250px;left:100px"></div>
+            <div class="overlay tpl-rtgs" data-field="tick5" style="top:300px;left:100px"></div>
+            <div class="overlay tpl-rtgs" data-field="tick6" style="top:350px;left:100px"></div>
+            <div class="overlay tpl-rtgs" data-field="tick7" style="top:400px;left:100px"></div>
+            <!-- BEFTN tick marks (5 ticks) -->
+            <div class="overlay tpl-beftn" data-field="tick1" style="top:100px;left:100px"></div>
+            <div class="overlay tpl-beftn" data-field="tick2" style="top:150px;left:100px"></div>
+            <div class="overlay tpl-beftn" data-field="tick3" style="top:200px;left:100px"></div>
+            <div class="overlay tpl-beftn" data-field="tick4" style="top:250px;left:100px"></div>
+            <div class="overlay tpl-beftn" data-field="tick5" style="top:300px;left:100px"></div>
+          </div>
+
+          <div class="page active" data-page="2">
+            <img class="form-image" src="images/rtgs-2.jpg" alt="RTGS form page 2">
+            <!-- overlays for page 2 -->
+          <!-- page 2 intentionally left clean (no overlays) -->
+          </div>
+        </div>
+        
+        <!-- Full-screen list panels for saved presets -->
+        <div class="list-panel" id="senders-panel" aria-hidden="true">
+          <div class="panel-head">
+            <h3>Saved Senders</h3>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="senders-search" type="search" placeholder="Search senders..." style="padding:.36rem .5rem;border:1px solid #e6e6e6;border-radius:6px;min-width:220px" />
+              <button id="senders-close" style="padding:.4rem .6rem">Close</button>
+            </div>
+          </div>
+          <div class="items" id="senders-list"></div>
+          <div style="margin-top:12px;color:#666;font-size:.9rem">Tip: Use the Save Sender button to add the current entry to this list.</div>
+        </div>
+
+        <div class="list-panel" id="receivers-panel" aria-hidden="true">
+          <div class="panel-head">
+            <h3>Saved Receivers</h3>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="receivers-search" type="search" placeholder="Search receivers..." style="padding:.36rem .5rem;border:1px solid #e6e6e6;border-radius:6px;min-width:220px" />
+              <button id="receivers-close" style="padding:.4rem .6rem">Close</button>
+            </div>
+          </div>
+          <div class="items" id="receivers-list"></div>
+          <div style="margin-top:12px;color:#666;font-size:.9rem">Tip: Use the Save Receiver button to add the current entry to this list.</div>
+        </div>
+
+        <!-- Preset editor modal (shared for senders/receivers) -->
+        <div class="preset-editor" id="preset-editor" role="dialog" aria-hidden="true">
+          <h3 id="preset-editor-title">Edit Preset</h3>
+          <div style="font-size:0.95rem;color:#444;margin-bottom:8px">Edit the preset details and save.</div>
+          <!-- preset name is not editable in the editor (use Save to add with a name) -->
+          <div id="pe-fields">
+            <!-- dynamic fields inserted here -->
+          </div>
+          <div class="actions">
+            <button id="pe-cancel" type="button" style="padding:.4rem .6rem">Cancel</button>
+            <button id="pe-save" type="button" style="padding:.4rem .6rem;background:var(--accent);color:#fff;border:0;border-radius:4px">Save</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Lightbox overlay -->
+  <div id="lightbox" aria-hidden="true">
+    <button id="lb-close" class="lb-btn" aria-label="Close">✕</button>
+    <button id="lb-prev" class="lb-btn" aria-label="Previous">◀</button>
+    <div class="lb-content">
+      <img id="lb-img" src="" alt="" />
+      <div id="lb-caption"></div>
+    </div>
+    <button id="lb-next" class="lb-btn" aria-label="Next">▶</button>
+  </div>
+
+  <script>
+// Minimal lightbox with keyboard navigation
+(function(){
+  // Note: This lightbox logic is not wired up as there's no ".gallery" class.
+  // This is from the original file and left as-is.
+  const imgs = Array.from(document.querySelectorAll('.gallery img'));
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img');
+  const lbCaption = document.getElementById('lb-caption');
+  const btnClose = document.getElementById('lb-close');
+  const btnPrev = document.getElementById('lb-prev');
+  const btnNext = document.getElementById('lb-next');
+  let current = 0;
+
+  function open(idx){
+    const el = imgs[idx];
+    if(!el) return;
+    current = idx;
+    lbImg.src = el.src;
+    lbImg.alt = el.alt || '';
+    lbCaption.textContent = el.nextElementSibling ? el.nextElementSibling.textContent : '';
+    lightbox.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+    // focus for keyboard
+    btnClose.focus();
+  }
+  function close(){
+    lightbox.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+    lbImg.src = '';
+  }
+  function prev(){ open((current - 1 + imgs.length) % imgs.length); }
+  function next(){ open((current + 1) % imgs.length); }
+
+  imgs.forEach((img,i)=>{
+    img.addEventListener('click',()=>open(i));
+  });
+  btnClose.addEventListener('click', close);
+  btnPrev.addEventListener('click', prev);
+  btnNext.addEventListener('click', next);
+  // overlay click closes if clicked outside image
+  lightbox.addEventListener('click', e => {
+    if(e.target === lightbox) close();
+  });
+  // keyboard
+  document.addEventListener('keydown', e => {
+    if(lightbox.getAttribute('aria-hidden') === 'false'){
+      if(e.key === 'Escape') close();
+      if(e.key === 'ArrowLeft') prev();
+      if(e.key === 'ArrowRight') next();
+    }
+  });
+})();
+
+// --- Form binding for preview ---
+(function(){
+  const form = document.getElementById('rtgs-form');
+  if(!form) return; // nothing to do if form not present
+  const FORM_KEY = 'rtgs_form_v1';
+
+  // restore saved form values from localStorage (if any)
+  function restoreForm(){
+    try{
+      const raw = localStorage.getItem(FORM_KEY);
+      if(!raw) return;
+      const obj = JSON.parse(raw);
+      Object.keys(obj).forEach(k => {
+        const el = form.elements[k];
+        if(!el) return;
+        try{ 
+          if(el.type === 'radio' || el.type === 'checkbox') {
+            // This form doesn't have them, but good practice
+            el.checked = obj[k];
+          } else {
+            el.value = obj[k]; 
+          }
+        }catch(e){}
+      });
+    }catch(e){ console.warn('Failed to restore form', e); }
+
+    // Always set the date field to today in DDMMYYYY format (do not rely on saved value)
+    try{
+      const now = new Date();
+      const dd = String(now.getDate()).padStart(2,'0');
+      const mm = String(now.getMonth()+1).padStart(2,'0');
+      const yyyy = String(now.getFullYear());
+      const today = dd + mm + yyyy;
+      const dateEl = form.elements['date'];
+      // date input removed from form — overlays will be auto-set; but set element if present
+      if(dateEl) dateEl.value = today;
+    }catch(e){ /* ignore */ }
+  }
+
+  function saveFormValues(values){
+    // This function saves the *form field values*, not the overlay positions
+    try{ localStorage.setItem(FORM_KEY, JSON.stringify(values)); }catch(e){ console.warn('Failed to save form', e); }
+  }
+
+  const map = {
+    branchName: 'branchName',
+    accountNumber: 'accountNumber',
+    cifNumber: 'cifNumber',
+    senderName: 'senderName',
+    senderContact: 'senderContact',
+    currencyAmount: 'currencyAmount',
+    reason: 'reason',
+    recvBank: 'recvBank',
+    recvBranch: 'recvBranch',
+    recvName: 'recvName',
+    recvAccount: 'recvAccount'
+  };
+
+  const overlays = {};
+  // collect overlays across all pages (we'll update all of them)
+  document.querySelectorAll('.preview-wrap .overlay').forEach(el => {
+    const f = el.dataset.field;
+    overlays[f] = overlays[f] || [];
+    overlays[f].push(el);
+    el.textContent = '';
+  });
+
+  // number -> words helper (Indian numbering: Lakh, Crore)
+  function numberToWords(num){
+    if(num === 0) return 'Zero';
+    const a = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+    const b = ['','', 'Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+
+    function uptoThousand(n){
+      let str = '';
+      if(n>=100){ str += a[Math.floor(n/100)] + ' Hundred'; n = n % 100; if(n) str += ' '; }
+      if(n>=20){ str += b[Math.floor(n/10)]; n = n % 10; if(n) str += (n ? ' ' + a[n] : ''); }
+      else if(n>0){ str += a[n]; }
+      return str;
+    }
+
+    // Indian grouping: last 3 digits, then groups of 2 digits (thousand, lakh, crore...)
+    let n = Math.floor(num);
+    const groups = [];
+    groups.push(n % 1000); n = Math.floor(n / 1000);
+    while(n > 0){ groups.push(n % 100); n = Math.floor(n / 100); }
+
+    const scales = ['','Thousand','Lakh','Crore','Arab','Kharab'];
+    const parts = [];
+    for(let i = 0; i < groups.length; i++){
+      const g = groups[i];
+      if(g){
+        const words = uptoThousand(g);
+        const scale = scales[i] || '';
+        parts.unshift((words + (scale ? ' ' + scale : '')).trim());
+      }
+    }
+    return parts.join(' ').replace(/\s+/g,' ').trim();
+  }
+
+  function update(source){
+    const data = new FormData(form);
+  // compute today's date in DDMMYYYY format and keep date overlay in sync
+  const _now = new Date();
+  const _dd = String(_now.getDate()).padStart(2,'0');
+  const _mm = String(_now.getMonth()+1).padStart(2,'0');
+  const _yyyy = String(_now.getFullYear());
+  const _todayStr = _dd + _mm + _yyyy; // keep legacy date value (DDMMYYYY) for existing date overlay
+  // For the combined dateTime (BEFTN) produce "DD-MM-YYYY & HH:MM AM/PM"
+  const _displayDate = _dd + '-' + _mm + '-' + _yyyy; // dashed date for readability
+  const _hours24 = _now.getHours();
+  const _hours12 = (_hours24 % 12) === 0 ? 12 : (_hours24 % 12);
+  const _hh = String(_hours12).padStart(2, '0');
+  const _min = String(_now.getMinutes()).padStart(2,'0');
+  const _meridiem = _hours24 >= 12 ? 'PM' : 'AM';
+  const _timeStr = _hh + ':' + _min + ' ' + _meridiem;
+  const _dateTimeStr = _displayDate + ' & ' + _timeStr;
+  try{ if(form.elements['date']) form.elements['date'].value = _todayStr; }catch(e){}
+  try{ if(form.elements['dateTime']) form.elements['dateTime'].value = _dateTimeStr; }catch(e){}
+    // combine currency + amount
+    const cur = data.get('currency') || '';
+    const amt = data.get('amount') || '';
+    const currencyAmount = cur && amt ? `${cur} ${amt}` : (amt || '');
+
+    // Generate In Words automatically (Taka and Paisha)
+    let inWordsGenerated = '';
+    try{
+      const amtRaw = (data.get('amount') || '').toString().replace(/,/g,'').trim();
+      const amtNum = Math.abs(parseFloat(amtRaw)) || 0;
+      if(amtNum > 0){
+        const whole = Math.floor(amtNum);
+        // compute paisha (two decimal places)
+        const paisha = Math.round((amtNum - whole) * 100);
+        if(paisha > 0){
+          inWordsGenerated = numberToWords(whole) + ' Taka and ' + numberToWords(paisha) + ' Paisha only';
+        } else {
+          inWordsGenerated = numberToWords(whole) + ' Taka only';
+        }
+      }
+    }catch(e){ inWordsGenerated = ''; }
+
+    const values = {
+      branchName: data.get('branchName') || '',
+      accountNumber: data.get('accountNumber') || '',
+      accountNumberBeftn: data.get('accountNumber') || '',
+      inWords: inWordsGenerated,
+      cifNumber: data.get('cifNumber') || '',
+      routingNumber: data.get('routingNumber') || '',
+      senderName: data.get('senderName') || '',
+      senderContact: data.get('senderContact') || '',
+      currencyAmount: currencyAmount,
+      // duplicate amount/inWords for BEFTN-specific extra boxes
+      currencyAmount2: currencyAmount,
+      inWords2: inWordsGenerated,
+      reason: data.get('reason') || '',
+      recvBank: data.get('recvBank') || '',
+      recvBranch: data.get('recvBranch') || '',
+      recvName: data.get('recvName') || '',
+      recvAccount: data.get('recvAccount') || '',
+      date: _todayStr,
+      // combined date + time for BEFTN overlay (DDMMYYYY HH:MM)
+      dateTime: _dateTimeStr,
+      // RTGS tick marks (7 ticks) - default always checked
+      tick1: '✔',
+      tick2: '✔',
+      tick3: '✔',
+      tick4: '✔',
+      tick5: '✔',
+      tick6: '✔',
+      tick7: '✔'
+    };
+
+    function humanizeFieldName(key){ return key.replace(/([A-Z])/g,' $1').replace(/[_-]/g,' ').replace(/^./,s=>s.toUpperCase()); }
+    Object.keys(values).forEach(k => {
+      if(overlays[k]) overlays[k].forEach(el => {
+        try{
+          const v = values[k] || '';
+          if(v && String(v).trim() !== ''){
+            el.textContent = v;
+            el.classList.remove('overlay-empty');
+          }else{
+            // Show a readable placeholder (field name) when the overlay is empty
+            const label = el.dataset.label || humanizeFieldName(k);
+            el.textContent = label;
+            el.classList.add('overlay-empty');
+          }
+        }catch(e){}
+      });
+    });
+    // persist current form values to localStorage
+    saveFormValues(values);
+    // update right-side data panel inputs — pass the source of the change so
+    // we can avoid copying into quick-inputs for certain fields (e.g. amount)
+    try{ syncDataPanelFromForm(values, source); }catch(e){}
+  }
+
+  // wire inputs
+  Array.from(form.elements).forEach(el => {
+    if(el.tagName === 'BUTTON') return;
+    // Forward the element name as the source so update() can decide whether to
+    // mirror changes into the quick-input panel. This prevents typing an amount
+    // from unexpectedly overwriting sender/receiver quick fields.
+    el.addEventListener('input', (e)=> update(e.target && e.target.name));
+    el.addEventListener('change', (e)=> update(e.target && e.target.name));
+  });
+
+  // Sync right-side data-panel inputs (two-way)
+  const dataPanelInputs = Array.from(document.querySelectorAll('.data-panel [data-name]'));
+  // When true, updating the main form should NOT copy values into the quick-input panel
+  // Keep this true permanently so quick-inputs remain blank unless the user types there.
+  let suppressQuickSync = true;
+  function syncDataPanelFromForm(values, source){
+    // If suppressed, do nothing
+    if(suppressQuickSync) return;
+    // Do not sync quick-inputs when the change originated from the amount field
+    // — user requested quick inputs should not auto-fill when typing amounts.
+    if(source === 'amount') return;
+    dataPanelInputs.forEach(inp => {
+      const name = inp.dataset.name;
+      try{
+        // prefer values provided by update(); fallback to form elements
+        const v = (values && values[name] !== undefined) ? values[name] : (form.elements[name] ? form.elements[name].value : '');
+        inp.value = v || '';
+      }catch(e){}
+    });
+  }
+  // when user types in the right-side panel, copy to main form and update overlays
+  dataPanelInputs.forEach(inp => {
+    inp.addEventListener('input', ()=>{
+      const name = inp.dataset.name;
+      try{
+        if(form.elements[name]) form.elements[name].value = inp.value;
+        // If amount changed, trigger update to regenerate inWords
+        update();
+      }catch(e){}
+    });
+  });
+
+  // print button
+  // Print handlers (support RTGS and BEFTN explicit buttons)
+  function performPrint(template){
+    const previewEl = document.querySelector('.preview-wrap');
+    if(!previewEl) return;
+    // switch template selector so preview images and template-specific overlays update
+    try{ const tplSel = document.getElementById('template-select'); if(tplSel){ tplSel.value = template; tplSel.dispatchEvent(new Event('change')); } }catch(e){}
+
+    // gather visible pages
+    const pages = Array.from(previewEl.querySelectorAll('.page')).filter(p => !p.classList.contains('hidden'));
+    if(pages.length === 0){ console.warn('No pages visible to print'); return; }
+
+    (async ()=>{
+      try{
+        const dataUrl = await renderPagesToImage(pages);
+        const title = (template && template.toLowerCase() === 'beftn') ? 'BEFTN Print' : 'RTGS Print';
+        // Try printing via a hidden iframe for all templates (direct print, no new tab)
+        try{
+          console.info('Attempting iframe print for template:', template);
+          const iframe = document.createElement('iframe');
+          // Use a tiny off-screen but technically visible iframe so browsers allow printing from it.
+          iframe.style.position = 'fixed';
+          iframe.style.left = '-10000px';
+          iframe.style.top = '0';
+          iframe.style.width = '1px';
+          iframe.style.height = '1px';
+          iframe.style.border = '0';
+          iframe.style.opacity = '0.01';
+          iframe.style.pointerEvents = 'none';
+          iframe.id = '__print_frame';
+          document.body.appendChild(iframe);
+          const idoc = iframe.contentDocument || iframe.contentWindow.document;
+          const html = '<!doctype html><html><head><title>'+title+'</title>' +
+            '<style>body{margin:0;display:flex;justify-content:center;padding:10px;background:#fff;font-family:"Times New Roman", Times, serif}img{max-width:100%;height:auto;display:block}</style>' +
+            '</head><body>' +
+            `<img src="${dataUrl}" alt="${title} preview">` +
+            '<script>window.onload=function(){ setTimeout(function(){ try{ window.focus(); window.print(); }catch(e){} },300); };<\/script>' +
+            '</body></html>';
+          idoc.open(); idoc.write(html); idoc.close();
+          // Clear the specified fields in the form and quick-inputs after initiating the print
+          try{ clearPrintFields(); }catch(e){}
+          // cleanup after a short delay (allow print dialog to appear)
+          // Allow more time for the print dialog to appear before cleanup
+          setTimeout(()=>{ try{ const el = document.getElementById('__print_frame'); if(el) document.body.removeChild(el); }catch(e){} }, 6000);
+          return;
+        }catch(e){ console.error('Iframe print failed, falling back to new window', e); }
+        // Fallback: open a new tab/window if iframe printing fails
+        const w = window.open('', '_blank');
+        if(!w){ console.error('Popup blocked'); return; }
+        w.document.write('<!doctype html><html><head><title>'+title+'</title>');
+        w.document.write('<style>body{margin:0;display:flex;justify-content:center;padding:10px;background:#fff;font-family:"Times New Roman", Times, serif}img{max-width:100%;height:auto;display:block}</style>');
+        w.document.write('</head><body>');
+        w.document.write(`<img src="${dataUrl}" alt="${title} preview">`);
+        w.document.write('</body></html>');
+  w.document.close();
+  // Clear the specified fields in the form and quick-inputs after initiating the print
+  try{ clearPrintFields(); }catch(e){}
+        w.onload = ()=> setTimeout(()=> w.print(), 300);
+      }catch(err){
+        console.error('Print render failed', err);
+        const msg = (err && err.message) ? err.message : '';
+        if(/tainted canvas/i.test(msg) || /toDataURL/i.test(msg) || /Tainted canvases may not be exported/i.test(msg) || err.name === 'SecurityError'){
+          try{ fallbackPrintToIframe(pages, template); try{ clearPrintFields(); }catch(e){} }catch(e){ console.error('Fallback print failed', e); }
+          return;
+        }
+      }
+    })();
+  }
+
+  const printBtn = document.getElementById('print-btn'); if(printBtn) printBtn.addEventListener('click', ()=> performPrint('rtgs'));
+  const printBeftnBtn = document.getElementById('print-beftn-btn'); if(printBeftnBtn) printBeftnBtn.addEventListener('click', ()=> performPrint('beftn'));
+
+  // (Open Preview button removed from UI)
+
+  // Preview page in-place: hide the entry column and show the preview full-width
+  const previewPageBtn = document.getElementById('preview-page-btn');
+  const previewBackBtn = document.getElementById('preview-back');
+  if(previewPageBtn){
+    previewPageBtn.addEventListener('click', ()=>{
+      document.body.classList.add('preview-page');
+      // ensure the preview top/back becomes visible via CSS
+      // focus the preview area
+      const p = document.querySelector('.preview-wrap'); if(p) p.scrollIntoView({behavior:'smooth'});
+    });
+  }
+  if(previewBackBtn){
+    previewBackBtn.addEventListener('click', ()=>{
+      document.body.classList.remove('preview-page');
+      // return focus to first form input
+      const first = document.querySelector('.form-panel input'); if(first) first.focus();
+    });
+  }
+  // Allow Escape key to exit preview-page mode
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && document.body.classList.contains('preview-page')){
+      document.body.classList.remove('preview-page');
+    }
+  });
+
+  // restore saved values then initialize
+  restoreForm();
+  // Prevent the right-side quick-inputs from being auto-filled on page load/refresh
+  try{ suppressQuickSync = true; }catch(e){}
+  update();
+  // Clear the quick-input fields so they never auto-fill on refresh
+  try{
+    document.querySelectorAll('.data-panel [data-name]').forEach(inp => { try{ inp.value = ''; }catch(e){} });
+    const sp = document.getElementById('sender-preset-input'); if(sp) sp.value = '';
+    const rp = document.getElementById('recv-preset-input'); if(rp) rp.value = '';
+  }catch(e){}
+  // quick-sync remains disabled to keep quick-inputs always blank unless the user types there
+  // handle reset (ensure overlays cleared) and clear saved values
+  form.addEventListener('reset', ()=> setTimeout(()=>{
+    update();
+    try{ localStorage.removeItem(FORM_KEY); }catch(e){}
+  }, 0));
+  
+  // --- Sender/Receiver presets (multi-entry lists) ---
+  const SENDERS_LIST_KEY = 'rtgs_senders_v1';
+  const RECEIVERS_LIST_KEY = 'rtgs_receivers_v1';
+  const LAST_SENDER_KEY = 'rtgs_sender_v1'; // keep single-slot for quick indicator
+  const LAST_RECV_KEY = 'rtgs_receiver_v1';
+
+  function loadList(key){ try{ return JSON.parse(localStorage.getItem(key) || '[]'); }catch(e){ return []; } }
+  function saveList(key, arr){ try{ localStorage.setItem(key, JSON.stringify(arr || [])); }catch(e){ console.error('saveList failed', e); } }
+
+  function fmtDate(ts){ try{ return new Date(ts).toLocaleString(); }catch(e){ return ''; } }
+  function makeId(){ return 'p_' + Date.now() + '_' + Math.floor(Math.random()*1000); }
+
+  function refreshPresetIndicators(){
+    const senderInd = document.getElementById('sender-saved-indicator');
+    const recvInd = document.getElementById('recv-saved-indicator');
+    try{
+      const sList = loadList(SENDERS_LIST_KEY);
+      const rList = loadList(RECEIVERS_LIST_KEY);
+      if(senderInd) senderInd.textContent = sList.length ? `${sList.length} saved` : '—';
+      if(recvInd) recvInd.textContent = rList.length ? `${rList.length} saved` : '—';
+    }catch(e){ if(senderInd) senderInd.textContent = ''; if(recvInd) recvInd.textContent = ''; }
+  }
+
+  function saveSenderPreset(){
+    try{
+      const data = new FormData(form);
+      const payload = {
+        senderName: data.get('senderName') || '',
+        senderContact: data.get('senderContact') || '',
+        cifNumber: data.get('cifNumber') || '',
+        accountNumber: data.get('accountNumber') || ''
+      };
+      // Prevent duplicate account numbers (only by account number)
+      try{
+        const list = loadList(SENDERS_LIST_KEY) || [];
+        if(payload.accountNumber && list.some(i => i && i.data && (i.data.accountNumber || '') === payload.accountNumber)){
+          alert('A sender with this account number already exists. Duplicate not saved.');
+          return;
+        }
+      }catch(e){ /* ignore storage inspection errors and continue to save */ }
+      const defaultName = payload.senderName || '';
+      const name = window.prompt('Name for sender preset', defaultName) || (defaultName || ('Sender ' + new Date().toLocaleString()));
+      const list = loadList(SENDERS_LIST_KEY);
+      const item = { id: makeId(), name, created: Date.now(), data: payload };
+      list.push(item);
+      saveList(SENDERS_LIST_KEY, list);
+      // also keep last-saved quick slot for compatibility
+      localStorage.setItem(LAST_SENDER_KEY, JSON.stringify(payload));
+      refreshPresetIndicators();
+      const b = document.getElementById('save-sender-btn'); if(b){ b.textContent = 'Saved'; b.classList.add('btn-saved'); setTimeout(()=>{ b.textContent = 'Save Sender'; b.classList.remove('btn-saved'); }, 1200); }
+      // Clear quick-input sender fields after saving (reset to bank is interpreted as clearing quick inputs)
+      try{
+        const senderFields = ['senderName','cifNumber','senderContact','accountNumber'];
+        senderFields.forEach(k=>{ const inp = document.querySelector('.data-panel [data-name="'+k+'"]'); if(inp) inp.value = ''; });
+      }catch(e){}
+      // show toast popup
+      try{ showToast('Sender saved'); }catch(e){}
+      renderSendersList();
+      try{ populateEntryDropdowns(); }catch(e){}
+    }catch(e){ console.error('Failed to save sender preset', e); }
+  }
+
+  function saveReceiverPreset(){
+    try{
+      const data = new FormData(form);
+      const payload = {
+        recvName: data.get('recvName') || '',
+        recvAccount: data.get('recvAccount') || '',
+        routingNumber: data.get('routingNumber') || '',
+        recvBranch: data.get('recvBranch') || '',
+        recvBank: data.get('recvBank') || ''
+      };
+      // Prevent duplicate receiver account numbers (only by account number)
+      try{
+        const list = loadList(RECEIVERS_LIST_KEY) || [];
+        if(payload.recvAccount && list.some(i => i && i.data && (i.data.recvAccount || '') === payload.recvAccount)){
+          alert('A receiver with this account number already exists. Duplicate not saved.');
+          return;
+        }
+      }catch(e){ /* ignore */ }
+      const defaultName = payload.recvName || '';
+      const name = window.prompt('Name for receiver preset', defaultName) || (defaultName || ('Receiver ' + new Date().toLocaleString()));
+      const list = loadList(RECEIVERS_LIST_KEY);
+      const item = { id: makeId(), name, created: Date.now(), data: payload };
+      list.push(item);
+      saveList(RECEIVERS_LIST_KEY, list);
+      localStorage.setItem(LAST_RECV_KEY, JSON.stringify(payload));
+      refreshPresetIndicators();
+      const b = document.getElementById('save-recv-btn'); if(b){ b.textContent = 'Saved'; b.classList.add('btn-saved'); setTimeout(()=>{ b.textContent = 'Save Receiver'; b.classList.remove('btn-saved'); }, 1200); }
+      renderReceiversList();
+      try{ populateEntryDropdowns(); }catch(e){}
+        // After saving receiver, clear quick-input receiver fields (including Receiving Bank)
+        try{
+          const recvFields = ['recvName','recvAccount','routingNumber','recvBranch','recvBank'];
+          recvFields.forEach(k=>{ const inp = document.querySelector('.data-panel [data-name="'+k+'"]'); if(inp) inp.value = ''; });
+        }catch(e){}
+        try{ showToast('Receiver saved'); }catch(e){}
+    }catch(e){ console.error('Failed to save receiver preset', e); }
+  }
+
+  function loadPresetIntoForm(preset){
+    if(!preset || !preset.data) return;
+    try{
+      // load preset into the main form but do NOT enable quick-sync so quick inputs stay blank
+      suppressQuickSync = true;
+      Object.keys(preset.data).forEach(k => { if(form.elements[k]) form.elements[k].value = preset.data[k]; });
+      update();
+    }finally{
+      // Intentionally leave suppressQuickSync = true so quick-inputs are never auto-filled
+    }
+  }
+
+  // Small toast helper
+  function showToast(msg, timeout){
+    timeout = timeout || 1600;
+    try{
+      let el = document.getElementById('__toast_msg');
+      if(!el){ el = document.createElement('div'); el.id = '__toast_msg'; el.className = 'toast-msg'; document.body.appendChild(el); }
+      el.textContent = msg;
+      // force reflow then show
+      void el.offsetWidth;
+      el.classList.add('show');
+      setTimeout(()=>{ try{ el.classList.remove('show'); }catch(e){} }, timeout);
+    }catch(e){ console.warn('Toast failed', e); }
+  }
+
+  // Numeric-only enforcement for specific fields (form inputs and quick-inputs)
+  (function(){
+    const numericFields = ['routingNumber','recvAccount','senderContact','accountNumber','cifNumber'];
+    function labelFor(k){
+      const map = { routingNumber: "Routing Number", recvAccount: "Receiver's Account No.", senderContact: "Sender's Contact", accountNumber: "Account Number", cifNumber: "CIF Number" };
+      return map[k] || k;
+    }
+    function attach(el, name, isDataPanel){
+      if(!el) return;
+      el.addEventListener('input', (e)=>{
+        const v = String(el.value || '');
+        // valid if only digits (or empty)
+        const valid = /^\d*$/.test(v);
+        if(!valid){
+          // mark invalid but do NOT change the user's input (non-destructive)
+          if(!el.classList.contains('numeric-invalid')){
+            try{ el.classList.add('numeric-invalid'); el.setAttribute('aria-invalid','true'); }catch(e){}
+            try{ showToast(labelFor(name) + ' accepts digits only'); }catch(e){}
+          }
+          // do not sync while invalid
+          return;
+        }
+        // valid input: clear invalid marker, sync value to counterpart, and update overlays
+        try{ el.classList.remove('numeric-invalid'); el.removeAttribute('aria-invalid'); }catch(e){}
+        try{
+          if(isDataPanel){ const fe = document.querySelector('[name="'+name+'"]'); if(fe) fe.value = v; }
+          else { const dp = document.querySelector('.data-panel [data-name="'+name+'"]'); if(dp) dp.value = v; }
+          try{ update(); }catch(e){}
+        }catch(e){}
+      });
+    }
+    // Attach to form elements and quick-inputs
+    try{
+      numericFields.forEach(name => {
+        try{ const fe = document.querySelector('[name="'+name+'"]'); if(fe) attach(fe, name, false); }catch(e){}
+        try{ const dp = document.querySelector('.data-panel [data-name="'+name+'"]'); if(dp) attach(dp, name, true); }catch(e){}
+      });
+    }catch(e){ console.warn('Numeric enforcement init failed', e); }
+  })();
+
+  // Clear Sender's Name, Receiver's Name and Amount from both main form and quick-inputs after printing
+  function clearPrintFields(){
+    try{
+      const names = ['senderName','recvName','amount'];
+      names.forEach(k=>{ try{ if(form && form.elements && form.elements[k]) form.elements[k].value = ''; }catch(e){} });
+      // also clear right-side quick inputs if present
+      names.forEach(k=>{ try{ const inp = document.querySelector('.data-panel [data-name="'+k+'"]'); if(inp) inp.value = ''; }catch(e){} });
+      // clear preset search boxes as well (these show selected preset names)
+      try{ const sp = document.getElementById('sender-preset-input'); if(sp) sp.value = ''; }catch(e){}
+      try{ const rp = document.getElementById('recv-preset-input'); if(rp) rp.value = ''; }catch(e){}
+      // trigger an update so overlays reflect cleared values
+      try{ update(); }catch(e){}
+    }catch(e){ console.warn('clearPrintFields failed', e); }
+  }
+
+  function renderSendersList(){
+    const container = document.getElementById('senders-list');
+    if(!container) return;
+    const list = loadList(SENDERS_LIST_KEY);
+    container.innerHTML = '';
+    if(list.length === 0){ container.innerHTML = '<div style="color:#666">No saved senders</div>'; return; }
+    // Build a table showing Account Number | Name | Mobile | Customer ID | Actions
+    const table = document.createElement('table'); table.className = 'preset-table';
+    const thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th>Account Number</th><th>Name</th><th>Mobile</th><th>Customer ID</th><th style="width:120px">Actions</th></tr>';
+    table.appendChild(thead);
+    const tbody = document.createElement('tbody');
+    list.slice().reverse().forEach((item, idx) => {
+      const sd = item.data || {};
+      const tr = document.createElement('tr');
+      // set stagger index for animation (used by CSS --i variable)
+      tr.style.setProperty('--i', String(idx));
+      const tdAcc = document.createElement('td'); tdAcc.textContent = sd.accountNumber || '';
+      const tdName = document.createElement('td'); tdName.textContent = sd.senderName || '';
+      const tdMobile = document.createElement('td'); tdMobile.textContent = sd.senderContact || '';
+      const tdCif = document.createElement('td'); tdCif.textContent = sd.cifNumber || '';
+  const tdActions = document.createElement('td'); tdActions.className = 'preset-actions';
+  // Removed 'Load' button per request; keep Edit and Delete only
+  const editBtn = document.createElement('button'); editBtn.textContent = 'Edit'; editBtn.addEventListener('click', ()=>{ openPresetEditor('sender', item); });
+  const delBtn = document.createElement('button'); delBtn.textContent = 'Delete'; delBtn.addEventListener('click', ()=>{ if(confirm('Delete this sender preset?')){ const arr = loadList(SENDERS_LIST_KEY).filter(i=>i.id!==item.id); saveList(SENDERS_LIST_KEY, arr); renderSendersList(); refreshPresetIndicators(); } });
+  tdActions.appendChild(editBtn); tdActions.appendChild(delBtn);
+      tr.appendChild(tdAcc); tr.appendChild(tdName); tr.appendChild(tdMobile); tr.appendChild(tdCif); tr.appendChild(tdActions);
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    container.appendChild(table);
+    // wire up panel search (filter table rows)
+    try{
+      const searchEl = document.getElementById('senders-search');
+      if(searchEl){
+        // clear previous value
+        searchEl.value = '';
+        const onSearch = ()=>{
+          const q = (searchEl.value||'').trim().toLowerCase();
+          Array.from(tbody.rows).forEach(r=>{
+            const t = (r.textContent||'').toLowerCase();
+            r.style.display = (q === '' || t.indexOf(q) !== -1) ? '' : 'none';
+          });
+        };
+        searchEl.removeEventListener('input', onSearch);
+        searchEl.addEventListener('input', onSearch);
+      }
+    }catch(e){/* ignore */}
+  }
+
+  function renderReceiversList(){
+    const container = document.getElementById('receivers-list');
+    if(!container) return;
+    const list = loadList(RECEIVERS_LIST_KEY);
+    container.innerHTML = '';
+    if(list.length === 0){ container.innerHTML = '<div style="color:#666">No saved receivers</div>'; return; }
+    // Build a table showing Bank | Account Number | Name | Branch | Routing Number | Actions
+    const table = document.createElement('table'); table.className = 'preset-table';
+    const thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th>Bank</th><th>Account Number</th><th>Name</th><th>Branch</th><th>Routing Number</th><th style="width:140px">Actions</th></tr>';
+    table.appendChild(thead);
+    const tbody = document.createElement('tbody');
+    list.slice().reverse().forEach((item, idx) => {
+      const sd = item.data || {};
+      const tr = document.createElement('tr');
+      // set stagger index for animation (used by CSS --i variable)
+      tr.style.setProperty('--i', String(idx));
+      const tdBank = document.createElement('td'); tdBank.textContent = sd.recvBank || '';
+      const tdAcc = document.createElement('td'); tdAcc.textContent = sd.recvAccount || '';
+      const tdName = document.createElement('td'); tdName.textContent = sd.recvName || '';
+      const tdBranch = document.createElement('td'); tdBranch.textContent = sd.recvBranch || '';
+      const tdRouting = document.createElement('td'); tdRouting.textContent = sd.routingNumber || '';
+  const tdActions = document.createElement('td'); tdActions.className = 'preset-actions';
+  // Removed 'Load' button per request; keep Edit and Delete only
+  const editBtn = document.createElement('button'); editBtn.textContent = 'Edit'; editBtn.addEventListener('click', ()=>{ openPresetEditor('receiver', item); });
+  const delBtn = document.createElement('button'); delBtn.textContent = 'Delete'; delBtn.addEventListener('click', ()=>{ if(confirm('Delete this receiver preset?')){ const arr = loadList(RECEIVERS_LIST_KEY).filter(i=>i.id!==item.id); saveList(RECEIVERS_LIST_KEY, arr); renderReceiversList(); refreshPresetIndicators(); } });
+  tdActions.appendChild(editBtn); tdActions.appendChild(delBtn);
+      tr.appendChild(tdBank); tr.appendChild(tdAcc); tr.appendChild(tdName); tr.appendChild(tdBranch); tr.appendChild(tdRouting); tr.appendChild(tdActions);
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    container.appendChild(table);
+    // wire up panel search (filter table rows)
+    try{
+      const searchEl = document.getElementById('receivers-search');
+      if(searchEl){
+        searchEl.value = '';
+        const onSearch = ()=>{
+          const q = (searchEl.value||'').trim().toLowerCase();
+          Array.from(tbody.rows).forEach(r=>{
+            const t = (r.textContent||'').toLowerCase();
+            r.style.display = (q === '' || t.indexOf(q) !== -1) ? '' : 'none';
+          });
+        };
+        searchEl.removeEventListener('input', onSearch);
+        searchEl.addEventListener('input', onSearch);
+      }
+    }catch(e){/* ignore */}
+  }
+
+  // Populate the searchable entry dropdowns for senders and receivers
+  function populateEntryDropdowns(){
+    try{
+      const sInput = document.getElementById('sender-preset-input');
+      const sListEl = document.getElementById('sender-preset-list');
+      const rInput = document.getElementById('recv-preset-input');
+      const rListEl = document.getElementById('recv-preset-list');
+
+      function buildList(items, listEl, type){
+        listEl.innerHTML = '';
+        if(!items || items.length === 0){
+          const empty = document.createElement('div'); empty.className = 'item'; empty.textContent = 'No saved ' + (type==='sender' ? 'senders' : 'receivers');
+          listEl.appendChild(empty); return;
+        }
+        items.forEach((it, idx) => {
+          const div = document.createElement('div'); div.className = 'item'; div.tabIndex = 0;
+          // stagger this entry when the dropdown opens (CSS may use --i)
+          div.style.setProperty('--i', String(idx));
+          let text = '';
+          if(type === 'sender'){
+            text = (it.data && it.data.accountNumber ? it.data.accountNumber + ' — ' : '') + (it.data && it.data.senderName ? it.data.senderName : it.name || 'Unnamed');
+          } else {
+            text = (it.data && it.data.recvAccount ? it.data.recvAccount + ' — ' : '') + (it.data && it.data.recvName ? it.data.recvName : it.name || 'Unnamed');
+          }
+          div.textContent = text;
+          div.dataset.id = it.id;
+          div.dataset.type = type;
+          div.addEventListener('click', ()=>{
+            // load into form but DO NOT copy values into the quick-input panel
+            const found = (type==='sender' ? loadList(SENDERS_LIST_KEY) : loadList(RECEIVERS_LIST_KEY)).find(i=>i.id===it.id);
+            if(found && found.data){
+                try{
+                  // load values into main form but keep quick-sync disabled so quick-inputs remain blank
+                  suppressQuickSync = true;
+                  Object.keys(found.data).forEach(k=>{ if(form.elements[k]) form.elements[k].value = found.data[k]; });
+                  update();
+                }finally{
+                  // intentionally do NOT re-enable quick-sync
+                }
+            }
+            // set input display (keep the search box showing the selected text)
+            if(type==='sender') sInput.value = text; else rInput.value = text;
+            listEl.style.display = 'none';
+          });
+          div.addEventListener('keydown', (ev)=>{ if(ev.key==='Enter') div.click(); });
+          listEl.appendChild(div);
+        });
+      }
+
+      const sList = loadList(SENDERS_LIST_KEY).slice().reverse();
+      const rList = loadList(RECEIVERS_LIST_KEY).slice().reverse();
+      buildList(sList, sListEl, 'sender');
+      buildList(rList, rListEl, 'receiver');
+
+      // filter on input
+      function attachFilter(inputEl, listEl){
+        inputEl.addEventListener('input', ()=>{
+          const q = inputEl.value.trim().toLowerCase();
+          let any = false;
+          Array.from(listEl.children).forEach(item => {
+            const t = (item.textContent||'').toLowerCase();
+            const show = q === '' || t.indexOf(q) !== -1;
+            item.style.display = show ? '' : 'none';
+            if(show) any = true;
+          });
+          listEl.style.display = any ? 'block' : 'none';
+        });
+        inputEl.addEventListener('focus', ()=>{ listEl.style.display = listEl.children.length ? 'block' : 'none'; });
+        // hide on blur (with timeout to allow click)
+        inputEl.addEventListener('blur', ()=> setTimeout(()=>{ listEl.style.display = 'none'; }, 180));
+      }
+      attachFilter(sInput, sListEl);
+      attachFilter(rInput, rListEl);
+
+    }catch(e){ console.error('populateEntryDropdowns failed', e); }
+  }
+
+  // Wire buttons for panels
+  const viewSendersBtn = document.getElementById('view-senders-btn'); if(viewSendersBtn) viewSendersBtn.addEventListener('click', ()=>{ renderSendersList(); const panel = document.getElementById('senders-panel'); panel.classList.add('active'); setTimeout(()=>{ const s = document.getElementById('senders-search'); if(s){ s.focus(); s.dispatchEvent(new Event('input')); } }, 220); });
+  const viewReceiversBtn = document.getElementById('view-receivers-btn'); if(viewReceiversBtn) viewReceiversBtn.addEventListener('click', ()=>{ renderReceiversList(); const panel = document.getElementById('receivers-panel'); panel.classList.add('active'); setTimeout(()=>{ const r = document.getElementById('receivers-search'); if(r){ r.focus(); r.dispatchEvent(new Event('input')); } }, 220); });
+  const sendersClose = document.getElementById('senders-close'); if(sendersClose) sendersClose.addEventListener('click', ()=> document.getElementById('senders-panel').classList.remove('active'));
+  const receiversClose = document.getElementById('receivers-close'); if(receiversClose) receiversClose.addEventListener('click', ()=> document.getElementById('receivers-panel').classList.remove('active'));
+
+  // wire save/load quick buttons (legacy single-slot load remains available)
+  const saveSenderBtn = document.getElementById('save-sender-btn'); if(saveSenderBtn) saveSenderBtn.addEventListener('click', saveSenderPreset);
+  // Quick-save from right-side quick inputs
+  const saveSenderQuick = document.getElementById('save-sender-quick');
+  if(saveSenderQuick){
+    saveSenderQuick.addEventListener('click', ()=>{
+      try{
+        // copy quick inputs into main form
+        ['senderName','senderContact','cifNumber','accountNumber'].forEach(k=>{
+          const inp = document.querySelector('.data-panel [data-name="'+k+'"]');
+          if(inp && form.elements[k]) form.elements[k].value = inp.value || '';
+        });
+        update();
+        // reuse existing save logic (will prompt for name)
+        saveSenderPreset();
+        saveSenderQuick.textContent = 'Saved';
+        saveSenderQuick.classList.add('btn-saved');
+        setTimeout(()=>{ saveSenderQuick.textContent = 'Save Sender'; saveSenderQuick.classList.remove('btn-saved'); }, 1200);
+      }catch(e){ console.error('Quick save sender failed', e); }
+    });
+  }
+  const loadSenderBtn = document.getElementById('load-sender-btn'); if(loadSenderBtn) loadSenderBtn.addEventListener('click', ()=>{ const raw = localStorage.getItem(LAST_SENDER_KEY); if(!raw) return; try{ const obj=JSON.parse(raw); // load into main form but keep quick inputs blank
+    suppressQuickSync = true; Object.keys(obj).forEach(k=>{ if(form.elements[k]) form.elements[k].value = obj[k]; }); update(); }catch(e){} });
+  const delSenderBtn = document.getElementById('delete-sender-btn'); if(delSenderBtn) delSenderBtn.addEventListener('click', ()=>{ localStorage.removeItem(LAST_SENDER_KEY); refreshPresetIndicators(); });
+
+  const saveRecvBtn = document.getElementById('save-recv-btn'); if(saveRecvBtn) saveRecvBtn.addEventListener('click', saveReceiverPreset);
+  const saveRecvQuick = document.getElementById('save-recv-quick');
+  if(saveRecvQuick){
+    saveRecvQuick.addEventListener('click', ()=>{
+      try{
+        ['recvName','recvAccount','routingNumber','recvBranch','recvBank'].forEach(k=>{
+          const inp = document.querySelector('.data-panel [data-name="'+k+'"]');
+          if(inp && form.elements[k]) form.elements[k].value = inp.value || '';
+        });
+        update();
+        saveReceiverPreset();
+        saveRecvQuick.textContent = 'Saved';
+        saveRecvQuick.classList.add('btn-saved');
+        setTimeout(()=>{ saveRecvQuick.textContent = 'Save Receiver'; saveRecvQuick.classList.remove('btn-saved'); }, 1200);
+      }catch(e){ console.error('Quick save receiver failed', e); }
+    });
+  }
+  const loadRecvBtn = document.getElementById('load-recv-btn'); if(loadRecvBtn) loadRecvBtn.addEventListener('click', ()=>{ const raw = localStorage.getItem(LAST_RECV_KEY); if(!raw) return; try{ const obj=JSON.parse(raw); // load into main form but keep quick inputs blank
+    suppressQuickSync = true; Object.keys(obj).forEach(k=>{ if(form.elements[k]) form.elements[k].value = obj[k]; }); update(); }catch(e){} });
+  const delRecvBtn = document.getElementById('delete-recv-btn'); if(delRecvBtn) delRecvBtn.addEventListener('click', ()=>{ localStorage.removeItem(LAST_RECV_KEY); refreshPresetIndicators(); });
+
+  // show current state
+  refreshPresetIndicators();
+  renderSendersList(); renderReceiversList();
+  try{ populateEntryDropdowns(); }catch(e){}
+
+  // Template selector: switch preview images between RTGS and BEFTN
+  try{
+    const templateSelect = document.getElementById('template-select');
+    let currentTemplate = 'rtgs';
+    function applyTemplate(t){
+      currentTemplate = t || 'rtgs';
+      document.querySelectorAll('.preview-wrap .page').forEach(p=>{
+        const img = p.querySelector('img.form-image');
+        if(!img) return;
+        const pageNum = p.dataset.page || '1';
+        img.src = `images/${currentTemplate}-${pageNum}.jpg`;
+      });
+      // show/hide template-specific overlays
+      document.querySelectorAll('.tpl-beftn').forEach(el => {
+        el.style.display = (currentTemplate === 'beftn') ? '' : 'none';
+      });
+      // tpl-rtgs overlays should only show for RTGS template
+      document.querySelectorAll('.tpl-rtgs').forEach(el => {
+        el.style.display = (currentTemplate === 'rtgs') ? '' : 'none';
+      });
+      // update preview panel heading to reflect selected template
+      try{ const h = document.querySelector('.preview-panel h2'); if(h) h.textContent = (currentTemplate && currentTemplate.toLowerCase() === 'beftn') ? 'BEFTN Form Preview' : 'RTGS Form Preview'; }catch(e){}
+      // update overlays after images load. Existing image load handlers will call applySavedPositions.
+      setTimeout(()=>{ try{ update(); }catch(e){} }, 300);
+    }
+    if(templateSelect){
+      templateSelect.value = 'rtgs';
+      templateSelect.addEventListener('change', ()=> applyTemplate(templateSelect.value));
+      // apply initial template to set overlay visibility
+      applyTemplate(templateSelect.value);
+    }
+  }catch(e){ console.error('Template selector init failed', e); }
+
+  // --- Preset editor handlers ---
+  const pe = document.getElementById('preset-editor');
+  const peTitle = document.getElementById('preset-editor-title');
+  const peFields = document.getElementById('pe-fields');
+  const peSave = document.getElementById('pe-save');
+  const peCancel = document.getElementById('pe-cancel');
+  let _peContext = null; // {type:'sender'|'receiver', id, item}
+
+  function openPresetEditor(type, item){
+    _peContext = { type, id: item.id, item };
+    peTitle.textContent = (type === 'sender') ? 'Edit Sender' : 'Edit Receiver';
+  // preset name is not editable here; keep original name
+    // build fields
+    peFields.innerHTML = '';
+    if(type === 'sender'){
+      const fields = [ ['senderName','Sender\'s Name'], ['accountNumber','Account Number'], ['cifNumber','CIF Number'], ['senderContact','Mobile'] ];
+      fields.forEach(([k,label])=>{
+        const wrap = document.createElement('div'); wrap.className = 'row';
+        const lbl = document.createElement('label'); lbl.innerHTML = `${label}<input id="pe-${k}" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">`;
+        wrap.appendChild(lbl);
+        peFields.appendChild(wrap);
+        document.getElementById('pe-'+k).value = item.data[k] || '';
+      });
+    } else {
+      const fields = [ ['recvName','Receiver\'s Name'], ['recvAccount','Account No'], ['routingNumber','Routing Number'], ['recvBranch','Receiving Branch'], ['recvBank','Receiving Bank'] ];
+      fields.forEach(([k,label])=>{
+        const wrap = document.createElement('div'); wrap.className = 'row';
+        const lbl = document.createElement('label'); lbl.innerHTML = `${label}<input id="pe-${k}" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">`;
+        wrap.appendChild(lbl);
+        peFields.appendChild(wrap);
+        document.getElementById('pe-'+k).value = item.data[k] || '';
+      });
+    }
+    pe.classList.add('active'); pe.setAttribute('aria-hidden','false');
+    peSave.focus();
+  }
+
+  function closePresetEditor(){ _peContext = null; pe.classList.remove('active'); pe.setAttribute('aria-hidden','true'); }
+
+  peCancel.addEventListener('click', ()=> closePresetEditor());
+  peSave.addEventListener('click', ()=>{
+    if(!_peContext) return; const type=_peContext.type; const id=_peContext.id;
+  const name = _peContext.item.name || '';
+  const item = { id, name, created: _peContext.item.created, data: {} };
+    if(type === 'sender'){
+      ['senderName','accountNumber','cifNumber','senderContact'].forEach(k=> item.data[k] = document.getElementById('pe-'+k).value || '');
+      // update list
+      const list = loadList(SENDERS_LIST_KEY).map(i=> i.id===id ? item : i);
+      saveList(SENDERS_LIST_KEY, list);
+      renderSendersList();
+    } else {
+      ['recvName','recvAccount','routingNumber','recvBranch','recvBank'].forEach(k=> item.data[k] = document.getElementById('pe-'+k).value || '');
+      const list = loadList(RECEIVERS_LIST_KEY).map(i=> i.id===id ? item : i);
+      saveList(RECEIVERS_LIST_KEY, list);
+      renderReceiversList();
+    }
+    refreshPresetIndicators();
+    closePresetEditor();
+  });
+
+  // close modal with Escape
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && pe.classList.contains('active')) closePresetEditor(); });
+  // both pages are always visible (no page-switch buttons)
+})();
+
+/* Overlay position editor: drag to move overlays, save to localStorage, reset */
+(function(){
+  const STORAGE_KEY = 'rtgs_positions_v1';
+  const preview = document.querySelector('.preview-wrap');
+  if(!preview) return;
+
+  // collect all overlays per page
+  // assign a stable instance id to each overlay element so duplicate fields can be positioned independently
+  let _overlayCounter = 0;
+  const overlays = Array.from(document.querySelectorAll('.preview-wrap .page .overlay')).map(el => {
+    // create a numeric instance id if not present
+    if(!el.dataset.instance){
+      _overlayCounter += 1;
+      el.dataset.instance = String(_overlayCounter);
+    }
+    return { el, page: el.closest('.page').dataset.page, field: el.dataset.field, instance: el.dataset.instance };
+  });
+
+  // position badge shown while dragging
+  const posBadge = document.createElement('div');
+  posBadge.className = 'pos-badge';
+  posBadge.style.display = 'none';
+  document.body.appendChild(posBadge);
+
+  function showBadge(clientX, clientY, leftPct, topPct){
+    posBadge.style.display = 'block';
+    posBadge.textContent = `L:${leftPct.toFixed(1)}%  T:${topPct.toFixed(1)}%`;
+    // offset a bit so it doesn't sit under the pointer
+    posBadge.style.left = (clientX + 12) + 'px';
+    posBadge.style.top = (clientY + 12) + 'px';
+  }
+  function hideBadge(){ posBadge.style.display = 'none'; }
+
+  // load positions from storage (percent-based)
+  let positions = {};
+  try{ positions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }catch(e){ positions = {}; }
+
+  function applySavedPositions(){
+    console.log('Attempting to apply saved positions...'); // Added for debugging
+    overlays.forEach(o=>{
+      // Template-aware keys: prefer template-specific saved positions, but
+      // fall back to legacy keys (without template) for backward compatibility.
+      const tplEl = document.getElementById('template-select');
+      const tpl = (tplEl && tplEl.value) ? tplEl.value : 'rtgs';
+      const keyTplInst = `${tpl}::${o.page}::${o.field}::${o.instance}`;
+      const keyInst = `${o.page}::${o.field}::${o.instance}`;
+      const keyTplLegacy = `${tpl}::${o.page}::${o.field}`;
+      const keyLegacy = `${o.page}::${o.field}`;
+      const p = positions[keyTplInst] || positions[keyInst] || positions[keyTplLegacy] || positions[keyLegacy];
+      if(p && typeof p.left === 'number' && typeof p.top === 'number'){
+        console.log(`Applying to ${keyTplInst} (or fallback): left ${p.left}%, top ${p.top}%`);
+        o.el.style.left = p.left + '%';
+        o.el.style.top = p.top + '%';
+      }
+    });
+  }
+  // Apply saved positions after images/layout have loaded. Some browsers (notably Edge with file://)
+  // may finish layout after script runs, so attempt application on several hooks:
+  // - window load
+  // - individual image load events
+  // - DOM mutations inside the preview
+  // - a few delayed timeouts
+  window.addEventListener('load', applySavedPositions);
+  // bind to each form-image load in case images load later
+  document.querySelectorAll('.preview-wrap .form-image').forEach(img => {
+    // If image is already complete (cached), apply now.
+    if(img.complete) {
+      console.log('Image already complete, applying positions.');
+      applySavedPositions();
+    }
+    // Otherwise, add load listener
+    img.addEventListener('load', () => {
+      console.log('Image loaded, applying positions.');
+      applySavedPositions();
+    });
+  });
+
+  // Observe DOM changes under preview and re-apply positions if overlays are re-created
+  try{
+    const mo = new MutationObserver(() => {
+        console.log('DOM mutated, applying positions.');
+        applySavedPositions();
+    });
+    mo.observe(preview, { childList: true, subtree: true });
+  }catch(e){ /* ignore if MutationObserver not available */ }
+
+  // Also retry a few times with increasing delay to handle late layout adjustments
+  setTimeout(() => { console.log('Timeout 150ms, applying positions.'); applySavedPositions(); }, 150);
+  setTimeout(() => { console.log('Timeout 500ms, applying positions.'); applySavedPositions(); }, 500);
+  setTimeout(() => { console.log('Timeout 1200ms, applying positions.'); applySavedPositions(); }, 1200);
+
+
+  // Helpers for percent conversion
+  function toPercent(x, total){ return (x/total)*100; }
+  function clamp(v, min, max){ return Math.min(max, Math.max(min, v)); }
+
+  // Drag state
+  let dragging = null;
+  let start = {x:0,y:0};
+
+  function onPointerDown(e){
+    if(!preview.classList.contains('editing')) return;
+    const target = e.target.closest('.overlay');
+    if(!target) return;
+    e.preventDefault(); // Prevent text selection/scrolling
+    const page = target.closest('.page');
+    if (!page) return; // safety check
+    
+    dragging = { el: target, page };
+    dragging.el.classList.add('dragging');
+    start.x = (e.touches ? e.touches[0].clientX : e.clientX);
+    start.y = (e.touches ? e.touches[0].clientY : e.clientY);
+    
+    // initial position in pixels relative to page
+    const rect = page.getBoundingClientRect();
+    const computedStyle = getComputedStyle(target);
+    const leftPx = parseFloat(computedStyle.left) || 0;
+    const topPx = parseFloat(computedStyle.top) || 0;
+
+    // if left/top are percent strings, convert to px
+    if(String(target.style.left).includes('%')){
+      const pct = parseFloat(target.style.left) || 0;
+      dragging.offsetLeft = (pct/100)*rect.width;
+    } else {
+      dragging.offsetLeft = leftPx;
+    }
+      
+    if(String(target.style.top).includes('%')){
+      const pct = parseFloat(target.style.top) || 0;
+      dragging.offsetTop = (pct/100)*rect.height;
+    } else {
+      dragging.offsetTop = topPx;
+    }
+
+    // show initial badge
+    const initLeftPct = toPercent(dragging.offsetLeft, rect.width);
+    const initTopPct = toPercent(dragging.offsetTop, rect.height);
+    showBadge(start.x, start.y, initLeftPct, initTopPct);
+
+    window.addEventListener('pointermove', onPointerMove, { passive: false }); // passive: false for touch
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp); // Handle unexpected ends
+    window.addEventListener('touchmove', onPointerMove, { passive: false }); // Explicit touch support
+    window.addEventListener('touchend', onPointerUp);
+    window.addEventListener('touchcancel', onPointerUp);
+  }
+
+  function onPointerMove(e){
+    if(!dragging) return;
+    e.preventDefault(); // Prevent scrolling while dragging
+    
+    const curX = (e.touches ? e.touches[0].clientX : e.clientX);
+    const curY = (e.touches ? e.touches[0].clientY : e.clientY);
+    const dx = curX - start.x;
+    const dy = curY - start.y;
+    
+    const pageRect = dragging.page.getBoundingClientRect();
+    if (pageRect.width === 0 || pageRect.height === 0) return; // Avoid divide by zero if page is hidden
+    
+    const newLeftPx = clamp(dragging.offsetLeft + dx, 0, pageRect.width);
+    const newTopPx = clamp(dragging.offsetTop + dy, 0, pageRect.height);
+    
+    const leftPct = toPercent(newLeftPx, pageRect.width);
+    const topPct = toPercent(newTopPx, pageRect.height);
+    
+    dragging.el.style.left = leftPct + '%';
+    dragging.el.style.top = topPct + '%';
+    
+    // update badge near pointer
+    showBadge(curX, curY, leftPct, topPct);
+  }
+
+  function onPointerUp(e){
+    if(!dragging) return;
+    
+    // Get the final position from the element's style
+    const leftPct = parseFloat(dragging.el.style.left) || 0;
+    const topPct = parseFloat(dragging.el.style.top) || 0;
+
+      // save position
+      // include instance id so duplicates have independent saved positions
+      const inst = dragging.el.dataset.instance || dragging.el.dataset.instanceId || '';
+      const tplEl = document.getElementById('template-select');
+      const tpl = (tplEl && tplEl.value) ? tplEl.value : 'rtgs';
+      const baseKey = inst ? `${dragging.page.dataset.page}::${dragging.el.dataset.field}::${inst}` : `${dragging.page.dataset.page}::${dragging.el.dataset.field}`;
+      const key = `${tpl}::${baseKey}`; // template-scoped key
+      positions[key] = { left: leftPct, top: topPct };
+    
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
+      console.log(`Saved ${key}: left ${leftPct}%, top ${topPct}%`); // Debug save
+    } catch(err) {
+      console.error('Failed to save positions to localStorage', err);
+    }
+    
+    dragging.el.classList.remove('dragging');
+    dragging = null;
+    
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+    window.removeEventListener('touchmove', onPointerMove);
+    window.removeEventListener('touchend', onPointerUp);
+    window.removeEventListener('touchcancel', onPointerUp);
+    
+    hideBadge();
+  }
+
+  // wire pointerdown on preview (delegation)
+  preview.addEventListener('pointerdown', onPointerDown, { passive: true }); // passive: true for initial touch
+  preview.addEventListener('touchstart', onPointerDown, { passive: true }); // Explicit touch support
+
+
+  // Edit controls
+  const editCheckbox = document.getElementById('edit-pos');
+  const saveBtn = document.getElementById('save-pos');
+
+  if(editCheckbox){
+    editCheckbox.addEventListener('change', ()=>{
+      preview.classList.toggle('editing', editCheckbox.checked);
+      // enable pointerEvents via CSS when editing
+    });
+  }
+
+  if(saveBtn){
+    saveBtn.addEventListener('click', ()=>{
+      // positions already updated on pointerup; but re-save to be safe
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
+        // alert('Positions saved'); // Avoid alert()
+        console.log('Positions saved by button');
+        // Show a temporary message instead of alert
+        saveBtn.textContent = 'Saved!';
+        setTimeout(() => { saveBtn.textContent = 'Save positions'; }, 1500);
+      } catch (e) {
+        console.error('Failed to save positions', e);
+        saveBtn.textContent = 'Save Failed';
+         setTimeout(() => { saveBtn.textContent = 'Save positions'; }, 1500);
+      }
+    });
+  }
+
+  // Reset positions control removed from UI; keep function available if needed in future
+})();
+
+// Render visible pages and overlays to a single flattened image (data URL)
+async function renderPagesToImage(pages){
+  // detect current template so we can apply template-specific print tweaks
+  const currentTemplate = (document.getElementById('template-select') && document.getElementById('template-select').value) ? document.getElementById('template-select').value : 'rtgs';
+  // For each page, load image and measure, then draw overlays
+  const canvasList = [];
+
+  for(const page of pages){
+    const imgEl = page.querySelector('img.form-image');
+    if(!imgEl) continue;
+    // ensure image loaded
+    const img = await loadImage(imgEl.src);
+    // create canvas sized to image natural size
+    const cw = img.naturalWidth;
+    const ch = img.naturalHeight;
+    // Handle cases where naturalWidth is 0 (e.g., failed placeholder)
+    if (cw === 0 || ch === 0) continue; 
+
+    const canvas = document.createElement('canvas');
+    canvas.width = cw;
+    canvas.height = ch;
+    const ctx = canvas.getContext('2d');
+    // white background
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,cw,ch);
+    // draw base image
+    ctx.drawImage(img, 0, 0, cw, ch);
+
+  // draw overlays belonging to this page
+  const overlays = Array.from(page.querySelectorAll('.overlay'));
+  // Precompute date overlays order for per-instance spacing (first, second, third)
+  const dateOverlays = overlays.filter(x => x.dataset && x.dataset.field === 'date');
+    // helper: draw text with explicit letter-spacing (canvas does not support letter-spacing natively)
+    function drawTextWithLetterSpacing(ctx, text, x, y, letterSpacing){
+      let cx = x;
+      for(let i=0;i<text.length;i++){
+        const ch = text[i];
+        ctx.fillText(ch, cx, y);
+        const w = ctx.measureText(ch).width;
+        cx += w + letterSpacing;
+      }
+    }
+    overlays.forEach(o=>{
+      // skip overlays hidden for the current template (e.g. BEFTN-only when RTGS is active)
+      try{ if(getComputedStyle(o).display === 'none') return; }catch(e){}
+      // honor data-hide-on attribute to skip overlays for specific templates (comma-separated)
+      try{ if(o.dataset && o.dataset.hideOn && String(o.dataset.hideOn).split(',').map(s=>s.trim()).includes(currentTemplate)) return; }catch(e){}
+      // If overlay has the 'overlay-empty' marker (placeholder shown in-editor), treat it as empty for printing
+      try{ if(o.classList && o.classList.contains('overlay-empty')) return; }catch(e){}
+      const field = o.dataset.field;
+      const rawText = (o.textContent || '').toString().trim();
+      if(!rawText) return;
+      // compute position: overlay.style.left/top are percentages if saved, otherwise computed from CSS
+      const leftStr = o.style.left || getComputedStyle(o).left || '0px';
+      const topStr = o.style.top || getComputedStyle(o).top || '0px';
+      const left = parsePercentOrPx(leftStr, cw);
+      const top = parsePercentOrPx(topStr, ch);
+      // style for text
+      ctx.fillStyle = '#000000';
+      // choose base font size relative to image width
+      let fontSize = Math.round(cw * 0.028);
+      // increase font size for specific fields to improve readability in the printed PDF
+  if(field === 'accountNumber' || field === 'accountNumberBeftn' || field === 'recvAccount'){
+        // account numbers benefit from a larger monospace rendering
+        fontSize = Math.round(cw * 0.042);
+      } else if(field === 'cifNumber' || field === 'date'){
+        // CIF and date slightly larger than base
+        fontSize = Math.round(cw * 0.038);
+      }
+      // Reduce inWords font size by 2px as requested
+      if(field === 'inWords' || field === 'inWords2'){
+        fontSize = Math.max(8, fontSize - 2);
+      }
+      ctx.font = fontSize + 'px sans-serif';
+      ctx.textBaseline = 'top';
+      // ensure uppercase
+      let txt = rawText.toUpperCase();
+      // If this is the account number, add spacing between characters so digits align better
+  if((field === 'accountNumber' || field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
+          // For BEFTN: accountNumberBeftn should have stronger per-character spacing than the regular accountNumber
+          if(currentTemplate === 'beftn'){
+              // use a larger multiplier for the BEFTN-only account overlay so spacing is more pronounced
+              const multiplier = (field === 'accountNumberBeftn') ? 3.20 : 2.20;
+              const accLetterSpacing = Math.max(0, Math.round(fontSize * multiplier));
+              drawTextWithLetterSpacing(ctx, txt, left, top, accLetterSpacing);
+            return; // already drawn
+          } else {
+            // RTGS: Insert a single space between characters (preserve previous behavior)
+            txt = txt.split('').join(' ');
+          }
+        }
+      // If this is the routing number, prefix with 'Routing: ' for printed output
+      if(field === 'routingNumber'){
+        // RTGS: keep the 'Routing: ' prefix and draw normally.
+        if(currentTemplate === 'rtgs'){
+          txt = 'Routing: ' + txt;
+          ctx.font = fontSize + 'px "Times New Roman", Times, serif';
+          ctx.fillText(txt, left, top);
+          return;
+        }
+        // BEFTN: draw routing number with per-character spacing for printed PDF
+        if(currentTemplate === 'beftn'){
+          // increase per-character spacing for BEFTN routing numbers
+          // For Routing Number 1 we want reduced spacing (tighter) compared to the BEFTN default
+          const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
+          // Default BEFTN multiplier (kept larger for other routing overlays)
+          const defaultMultiplier = 2.20;
+          // Reduced multiplier for Routing Number 1
+          const reducedMultiplier = 1.40;
+          const multiplier = isRouting1 ? reducedMultiplier : defaultMultiplier;
+          const routeSpacing = Math.max(0, Math.round(fontSize * multiplier));
+          ctx.font = fontSize + 'px "Times New Roman", Times, serif';
+          drawTextWithLetterSpacing(ctx, txt, left, top, routeSpacing);
+          return;
+        }
+      }
+      // If this is the date, handle template-specific spacing for printed PDF only.
+      // Do NOT change the combined dateTime field (data-field="dateTime").
+      if(field === 'date'){
+        if(currentTemplate === 'beftn'){
+          // BEFTN: apply per-instance spacing: first date 1.60, second 1.40, third 1.20 (em equivalents)
+          const idx = dateOverlays.indexOf(o); // 0-based
+          const mapping = [1.60, 1.40, 1.20];
+          const multiplier = mapping[idx] || mapping[mapping.length - 1];
+          const letterSpacing = Math.max(0, Math.round(fontSize * multiplier));
+          drawTextWithLetterSpacing(ctx, txt, left, top, letterSpacing);
+          return; // already drawn
+        } else {
+          // RTGS: keep existing RTGS multiplier
+          const letterSpacingSmall = Math.max(0, Math.round(fontSize * 0.55));
+          drawTextWithLetterSpacing(ctx, txt, left, top, letterSpacingSmall);
+          return;
+        }
+      }
+      // If this is the receiver's account, only apply spacing to the first 15 characters
+      // NOTE: BEFTN should NOT add extra letter-spacing for receiver account numbers (render plain)
+      if(field === 'recvAccount' && !o.classList.contains('no-space')){
+        if(currentTemplate === 'beftn'){
+          // BEFTN: draw the receiver account normally without per-character spacing
+          ctx.fillText(txt, left, top);
+          return;
+        } else {
+          // RTGS: apply spacing only to the first 15 characters (existing behavior)
+          const first = txt.slice(0,15).split('').join(' ');
+          const rest = txt.slice(15);
+          txt = rest ? (first + ' ' + rest) : first;
+        }
+      }
+      // draw text (transparent background by request)
+      // optional small black shadow for contrast
+      ctx.shadowColor = 'rgba(255,255,255,0.6)';
+      ctx.shadowBlur = 0;
+      // Special-case: split long in-words into 2 lines for better fitting
+      if((field === 'inWords' || field === 'inWords2') && txt.length > 40){
+        // split on nearest space around the middle
+        const mid = Math.floor(txt.length/2);
+        let splitIdx = txt.lastIndexOf(' ', mid);
+        if(splitIdx === -1) splitIdx = txt.indexOf(' ', mid);
+        if(splitIdx === -1) splitIdx = Math.floor(txt.length/2);
+        const line1 = txt.slice(0, splitIdx).trim();
+        const line2 = txt.slice(splitIdx).trim();
+        const lineHeight = Math.round(fontSize * 1.15);
+        ctx.fillText(line1, left, top);
+        ctx.fillText(line2, left, top + lineHeight);
+      } else {
+        ctx.fillText(txt, left, top);
+      }
+      // reset shadow
+      ctx.shadowColor = 'transparent';
+    });
+
+    canvasList.push(canvas);
+  }
+
+  if(canvasList.length === 0) throw new Error('No page canvases created');
+
+  // stack canvases vertically into one big canvas
+  const totalWidth = Math.max(...canvasList.map(c=>c.width));
+  const totalHeight = canvasList.reduce((s,c)=>s+c.height, 0);
+  const out = document.createElement('canvas');
+  out.width = totalWidth;
+  out.height = totalHeight;
+  const outCtx = out.getContext('2d');
+  outCtx.fillStyle = '#ffffff'; outCtx.fillRect(0,0,out.width,out.height);
+  let y = 0;
+  canvasList.forEach(c=>{
+    outCtx.drawImage(c, 0, y, c.width, c.height);
+    y += c.height;
+  });
+
+  return out.toDataURL('image/png');
+}
+
+function loadImage(src){
+  return new Promise((resolve, reject) => {
+    const i = new Image();
+    // Only set crossOrigin for network images (http/https). Do NOT set for file:// or data: URLs
+    if (/^https?:\/\//i.test(src) || /^\/\//.test(src)) {
+      i.crossOrigin = 'anonymous';
+    }
+    i.onload = () => resolve(i);
+    i.onerror = () => {
+      // If we tried with crossOrigin and it failed, retry without it (some servers/local files fail with anonymous)
+      if (i.crossOrigin) {
+        console.warn('Image load failed with crossOrigin, retrying without...');
+        const j = new Image();
+        j.onload = () => resolve(j);
+        j.onerror = () => reject(new Error('Image failed to load: ' + src));
+        j.src = src;
+        return;
+      }
+      reject(new Error('Image failed to load: ' + src));
+    };
+    i.src = src;
+  });
+}
+
+function parsePercentOrPx(value, total){
+  if(typeof value !== 'string') return 0;
+  if(value.includes('%')){ return (parseFloat(value) / 100) * total; }
+  if(value.includes('px')){ return parseFloat(value); }
+  // fallback numeric
+  const n = parseFloat(value);
+  return isNaN(n) ? 0 : n;
+}
+
+// Fallback: build a printable HTML page that inlines overlays with percent positions
+function fallbackPrintHTML(pages){
+  // detect current template so we only tweak date spacing for BEFTN
+  const tpl = (document.getElementById('template-select') && document.getElementById('template-select').value) ? document.getElementById('template-select').value : 'rtgs';
+  // Build CSS for print
+  const css = `
+    body{margin:0;padding:12px;background:#fff;font-family:"Times New Roman", Times, serif}
+    .print-page{position:relative;display:block;margin-bottom:20px}
+    .print-page img{width:100%;height:auto;display:block}
+    .print-overlay{position:absolute;color:#000;text-transform:uppercase;font-weight:600;background:transparent;padding:4px;border-radius:3px;box-sizing:border-box;font-size:12px;font-family:"Times New Roman", Times, serif}
+  `;
+
+  // Helper to compute percent positions for overlays relative to image displayed size
+  function computePercent(oEl, imgEl){
+    const pageRect = imgEl.getBoundingClientRect();
+    if (pageRect.width === 0 || pageRect.height === 0) return { left: 0, top: 0}; // Avoid divide by zero
+    // overlay bounding rect relative to page
+    const oRect = oEl.getBoundingClientRect();
+    const left = ((oRect.left - pageRect.left) / pageRect.width) * 100;
+    const top = ((oRect.top - pageRect.top) / pageRect.height) * 100;
+    return {left: left, top: top};
+  }
+
+  let body = '';
+  pages.forEach(page => {
+    const imgEl = page.querySelector('img.form-image');
+    if(!imgEl) return;
+    // build overlays for this page
+  const overlays = Array.from(page.querySelectorAll('.overlay'));
+  // Precompute date overlays order for per-instance spacing in fallback HTML
+  const dateOverlays = overlays.filter(x => x.dataset && x.dataset.field === 'date');
+    // ensure image is loaded and sized; if not, we still include it and use stored percent positions
+    let pageHtml = `<div class="print-page">`;
+    pageHtml += `<img src="${imgEl.src}" alt="RTGS page">`;
+    overlays.forEach(o=>{
+      try{ if(getComputedStyle(o).display === 'none') return; }catch(e){}
+      // honor data-hide-on attribute for fallback HTML rendering as well
+      try{ const hide = o.dataset && o.dataset.hideOn ? String(o.dataset.hideOn).split(',').map(s=>s.trim()) : []; if(hide.includes(tpl)) return; }catch(e){}
+      // do not render placeholders marked as overlay-empty in printed/fallback HTML
+      try{ if(o.classList && o.classList.contains('overlay-empty')) return; }catch(e){}
+      const text = (o.textContent||'').toString().trim();
+      if(!text) return;
+      // prefer inline style percent if available
+      let left = '';
+      let top = '';
+      if(o.style.left && o.style.left.includes('%')) left = o.style.left;
+      if(o.style.top && o.style.top.includes('%')) top = o.style.top;
+      // if not, compute from current layout
+      if(!left || !top){
+        try{
+          const pct = computePercent(o, imgEl);
+          left = pct.left.toFixed(2) + '%';
+          top = pct.top.toFixed(2) + '%';
+        }catch(e){
+          // fallback to 0
+          left = '0%'; top = '0%';
+        }
+      }
+    // If this overlay is the account number, add spacing between characters and a large letter-spacing for print
+  let displayText = text.toUpperCase();
+  let extraStyle = '';
+  if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
+    displayText = displayText.split('').join(' ');
+    // For BEFTN: increase accountNumberBeftn letter-spacing more than regular accountNumber
+    if(tpl === 'beftn'){
+      if(o.dataset.field === 'accountNumberBeftn'){
+        extraStyle = 'letter-spacing:1.10em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+      } else {
+        extraStyle = 'letter-spacing:0.55em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+      }
+    } else {
+      extraStyle = 'letter-spacing:0.82em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+    }
+    pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+  } else if (o.dataset && o.dataset.field === 'recvAccount' && !o.classList.contains('no-space')){
+    // For receiver's account: RTGS keeps the first-15-char spacing, but BEFTN should show the account plainly
+    const up = displayText;
+    if(tpl === 'beftn'){
+      // BEFTN: render receiver account without added letter-spacing
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(up)}</div>`;
+    } else {
+      // RTGS: apply spacing only to the first 15 characters and increase font-size
+      const first = up.slice(0,15).split('').join(' ');
+      const rest = up.slice(15);
+      const span = rest ? `<span style="letter-spacing:0.82em;font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(first)}</span>${escapeHtml(rest)}` : `<span style="letter-spacing:0.82em;font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(first)}</span>`;
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${span}</div>`;
+    }
+  } else if (o.dataset && o.dataset.field === 'routingNumber'){
+    // Prefix routing number only for RTGS; BEFTN should show only the number but with letter-spacing in print
+    if(tpl === 'rtgs'){
+      const txt = 'Routing: ' + displayText;
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(txt)}</div>`;
+      } else {
+        // BEFTN: apply letter-spacing for print fallback
+        // Reduce spacing for Routing Number 1 specifically; keep larger spacing for other routing overlays
+        const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
+        const routeStyle = isRouting1 ? 'letter-spacing:1.10em;font-family:"Times New Roman", Times, serif;font-size:24px;' : 'letter-spacing:1.70em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${routeStyle}">${escapeHtml(displayText)}</div>`;
+      }
+  } else if (o.dataset && o.dataset.field === 'date'){
+    // Date: increase letter-spacing in print ONLY for BEFTN template. Do not touch dateTime.
+    if(tpl === 'beftn'){
+      // BEFTN: per-instance spacing for date overlays: 1.60em, 1.40em, 1.20em
+      const idx = dateOverlays.indexOf(o);
+  const mapping = ['1.60em', '1.40em', '1.20em'];
+      const em = mapping[idx] || mapping[mapping.length - 1];
+      extraStyle = `letter-spacing:${em};font-family:"Times New Roman", Times, serif;font-size:24px;`;
+    } else {
+      // RTGS: increase printed date spacing more as requested
+      extraStyle = 'letter-spacing:1.20em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+    }
+    pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+  } else if (o.dataset && o.dataset.field === 'cifNumber'){
+    // CIF number: apply moderate letter-spacing for print to help digit alignment and increase font-size
+    displayText = displayText.split('').join(' ');
+  extraStyle = 'letter-spacing:0.82em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+    pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+  } else {
+    // Special-case: split long inWords into two lines for printable HTML
+      if((o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')) && displayText.length > 60){
+      const mid = Math.floor(displayText.length/2);
+      let splitIdx = displayText.lastIndexOf(' ', mid);
+      if(splitIdx === -1) splitIdx = displayText.indexOf(' ', mid);
+      if(splitIdx === -1) splitIdx = Math.floor(displayText.length/2);
+      const first = escapeHtml(displayText.slice(0, splitIdx).trim());
+      const second = escapeHtml(displayText.slice(splitIdx).trim());
+      // reduce font-size by 2px for inWords in printable HTML
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${first}<br>${second}</div>`;
+    } else {
+      if(o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')){
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${escapeHtml(displayText)}</div>`;
+      } else {
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(displayText)}</div>`;
+      }
+    }
+  }
+    });
+    pageHtml += `</div>`;
+    body += pageHtml;
+  });
+
+  const title = (tpl && tpl.toLowerCase() === 'beftn') ? 'BEFTN Print' : 'RTGS Print';
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title><style>${css}</style></head><body>${body}</body></html>`;
+  const w = window.open('', '_blank');
+  if(!w){ 
+    // alert('Unable to open print window (popup blocked). Please allow popups for this site.'); 
+    console.error('Popup blocked');
+    return; 
+  }
+  w.document.write(html);
+  w.document.close();
+  w.onload = ()=> setTimeout(()=> w.print(), 300);
+}
+
+// Fallback: print into a hidden iframe (used when window.open is not desired)
+function fallbackPrintToIframe(pages, template){
+  const tpl = template || ((document.getElementById('template-select') && document.getElementById('template-select').value) ? document.getElementById('template-select').value : 'rtgs');
+  const css = `
+    body{margin:0;padding:12px;background:#fff;font-family:"Times New Roman", Times, serif}
+    .print-page{position:relative;display:block;margin-bottom:20px}
+    .print-page img{width:100%;height:auto;display:block}
+    .print-overlay{position:absolute;color:#000;text-transform:uppercase;font-weight:600;background:transparent;padding:4px;border-radius:3px;box-sizing:border-box;font-size:12px;font-family:"Times New Roman", Times, serif}
+  `;
+
+  function computePercent(oEl, imgEl){
+    const pageRect = imgEl.getBoundingClientRect();
+    if (pageRect.width === 0 || pageRect.height === 0) return { left: 0, top: 0};
+    const oRect = oEl.getBoundingClientRect();
+    const left = ((oRect.left - pageRect.left) / pageRect.width) * 100;
+    const top = ((oRect.top - pageRect.top) / pageRect.height) * 100;
+    return {left: left, top: top};
+  }
+
+  let body = '';
+  pages.forEach(page => {
+    const imgEl = page.querySelector('img.form-image');
+    if(!imgEl) return;
+    const overlays = Array.from(page.querySelectorAll('.overlay'));
+    const dateOverlays = overlays.filter(x => x.dataset && x.dataset.field === 'date');
+    let pageHtml = `<div class="print-page">`;
+    pageHtml += `<img src="${imgEl.src}" alt="page">`;
+    overlays.forEach(o=>{
+      try{ if(getComputedStyle(o).display === 'none') return; }catch(e){}
+      try{ const hide = o.dataset && o.dataset.hideOn ? String(o.dataset.hideOn).split(',').map(s=>s.trim()) : []; if(hide.includes(tpl)) return; }catch(e){}
+      // Skip overlays that are only placeholders (class 'overlay-empty') so they won't appear in printed fallback HTML
+      try{ if(o.classList && o.classList.contains('overlay-empty')) return; }catch(e){}
+      const text = (o.textContent||'').toString().trim();
+      if(!text) return;
+      let left = '';
+      let top = '';
+      if(o.style.left && o.style.left.includes('%')) left = o.style.left;
+      if(o.style.top && o.style.top.includes('%')) top = o.style.top;
+      if(!left || !top){ try{ const pct = computePercent(o, imgEl); left = pct.left.toFixed(2) + '%'; top = pct.top.toFixed(2) + '%'; }catch(e){ left='0%'; top='0%'; } }
+      let displayText = text.toUpperCase();
+      let extraStyle = '';
+      if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
+        displayText = displayText.split('').join(' ');
+        if(tpl === 'beftn'){
+          if(o.dataset.field === 'accountNumberBeftn') extraStyle = 'letter-spacing:1.10em;font-family:"Times New Roman", Times, serif;font-size:24px;'; else extraStyle = 'letter-spacing:0.55em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+        } else { extraStyle = 'letter-spacing:0.82em;font-family:"Times New Roman", Times, serif;font-size:24px;'; }
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+      } else if (o.dataset && o.dataset.field === 'recvAccount' && !o.classList.contains('no-space')){
+        const up = displayText;
+        if(tpl === 'beftn'){
+          // BEFTN: render receiver account without letter-spacing
+          pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(up)}</div>`;
+        } else {
+          // RTGS: keep existing spaced-first-15 behavior
+          const first = up.slice(0,15).split('').join(' ');
+          const rest = up.slice(15);
+          const span = rest ? `<span style="letter-spacing:0.82em;font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(first)}</span>${escapeHtml(rest)}` : `<span style="letter-spacing:0.82em;font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(first)}</span>`;
+          pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${span}</div>`;
+        }
+      } else if (o.dataset && o.dataset.field === 'routingNumber'){
+        if(tpl === 'rtgs'){
+          const txt = 'Routing: ' + displayText;
+          pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(txt)}</div>`;
+        } else {
+          const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
+          const routeStyle = isRouting1 ? 'letter-spacing:1.10em;font-family:\"Times New Roman\", Times, serif;font-size:24px;' : 'letter-spacing:1.70em;font-family:\"Times New Roman\", Times, serif;font-size:24px;';
+          pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${routeStyle}">${escapeHtml(displayText)}</div>`;
+        }
+      } else if (o.dataset && o.dataset.field === 'date'){
+        if(tpl === 'beftn'){
+          const idx = dateOverlays.indexOf(o);
+          const mapping = ['1.60em', '1.40em', '1.20em'];
+          const em = mapping[idx] || mapping[mapping.length - 1];
+          extraStyle = `letter-spacing:${em};font-family:"Times New Roman", Times, serif;font-size:24px;`;
+        } else { extraStyle = 'letter-spacing:1.20em;font-family:"Times New Roman", Times, serif;font-size:24px;'; }
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+      } else if (o.dataset && o.dataset.field === 'cifNumber'){
+        displayText = displayText.split('').join(' ');
+        extraStyle = 'letter-spacing:0.82em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+      } else {
+        if((o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')) && displayText.length > 60){
+          const mid = Math.floor(displayText.length/2);
+          let splitIdx = displayText.lastIndexOf(' ', mid);
+          if(splitIdx === -1) splitIdx = displayText.indexOf(' ', mid);
+          if(splitIdx === -1) splitIdx = Math.floor(displayText.length/2);
+          const first = escapeHtml(displayText.slice(0, splitIdx).trim());
+          const second = escapeHtml(displayText.slice(splitIdx).trim());
+          pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${first}<br>${second}</div>`;
+        } else {
+          if(o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')){
+            pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${escapeHtml(displayText)}</div>`;
+          } else {
+            pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(displayText)}</div>`;
+          }
+        }
+      }
+    });
+    pageHtml += `</div>`;
+    body += pageHtml;
+  });
+
+  const title = (tpl && tpl.toLowerCase() === 'beftn') ? 'BEFTN Print' : 'RTGS Print';
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title><style>${css}</style></head><body>${body}</body></html>`;
+
+  try{
+    console.info('fallbackPrintToIframe called for template:', tpl);
+  const iframe = document.createElement('iframe');
+  // Use same off-screen visible iframe technique for fallback path
+  iframe.style.position = 'fixed';
+  iframe.style.left = '-10000px';
+  iframe.style.top = '0';
+  iframe.style.width = '1px';
+  iframe.style.height = '1px';
+  iframe.style.border = '0';
+  iframe.style.opacity = '0.01';
+  iframe.style.pointerEvents = 'none';
+  iframe.id = '__print_fallback_iframe';
+    document.body.appendChild(iframe);
+    const idoc = iframe.contentDocument || iframe.contentWindow.document;
+    idoc.open(); idoc.write(html); idoc.close();
+  // trigger print when iframe content loads
+  iframe.onload = ()=> setTimeout(()=>{ try{ iframe.contentWindow.focus(); iframe.contentWindow.print(); }catch(e){} }, 400);
+  // cleanup after a longer delay to avoid removing before print dialog opens
+  setTimeout(()=>{ try{ const el = document.getElementById('__print_fallback_iframe'); if(el) document.body.removeChild(el); }catch(e){} }, 7000);
+  }catch(e){ console.error('fallbackPrintToIframe failed', e); }
+}
+
+function escapeHtml(s){
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Open a preview window (not flattened) that shows pages and overlays and includes a Print button
+function openPreviewWindow(pages){
+  const tpl = (document.getElementById('template-select') && document.getElementById('template-select').value) ? document.getElementById('template-select').value : 'rtgs';
+  const css = `
+    body{margin:0;padding:12px;background:#fff;font-family:"Times New Roman", Times, serif}
+    .print-page{position:relative;display:block;margin-bottom:20px}
+    .print-page img{width:100%;height:auto;display:block}
+    .print-overlay{position:absolute;color:#000;text-transform:uppercase;font-weight:600;background:transparent;padding:4px;border-radius:3px;box-sizing:border-box;font-size:12px;font-family:"Times New Roman", Times, serif}
+    .tools{position:fixed;right:12px;top:12px;z-index:999; background: rgba(255,255,255,0.8); border: 1px solid #ccc; border-radius: 4px; padding: 5px;}
+    .tools button{padding:.4rem .6rem;margin-left:.4rem; cursor: pointer;}
+    @media print {
+      .tools { display: none; }
+      body { padding: 0; }
+      .print-page { margin-bottom: 0; break-after: page; page-break-after: always; }
+    }
+  `;
+
+  let body = '<div class="tools"><button id="preview-print">Print</button></div>';
+  pages.forEach(page => {
+    const imgEl = page.querySelector('img.form-image');
+    if(!imgEl) return;
+  const overlays = Array.from(page.querySelectorAll('.overlay'));
+  // Precompute date overlays order for per-instance spacing in preview
+  const dateOverlays = overlays.filter(x => x.dataset && x.dataset.field === 'date');
+    let pageHtml = `<div class="print-page">`;
+    pageHtml += `<img src="${imgEl.src}" alt="RTGS page">`;
+    overlays.forEach(o=>{
+      try{ if(getComputedStyle(o).display === 'none') return; }catch(e){}
+      // honor data-hide-on attribute for preview rendering too
+      try{ const hide = o.dataset && o.dataset.hideOn ? String(o.dataset.hideOn).split(',').map(s=>s.trim()) : []; if(hide.includes(tpl)) return; }catch(e){}
+      // Skip placeholder overlays in preview window if they only contain the placeholder label
+      try{ if(o.classList && o.classList.contains('overlay-empty')) return; }catch(e){}
+      const text = (o.textContent||'').toString().trim();
+      if(!text) return;
+      let left = o.style.left || getComputedStyle(o).left || '0px';
+      let top = o.style.top || getComputedStyle(o).top || '0px';
+      // Ensure % units if they are missing from style
+      if (!left.includes('%') && !left.includes('px')) left += '%';
+      if (!top.includes('%') && !top.includes('px')) top += '%';
+      
+  // Format account number with spaced characters and add large letter-spacing for print preview
+  let displayText = text.toUpperCase();
+  let extraStyle = '';
+  if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
+    displayText = displayText.split('').join(' ');
+    // For BEFTN preview: make accountNumberBeftn spacing larger than regular accountNumber
+    if(tpl === 'beftn'){
+      if(o.dataset.field === 'accountNumberBeftn'){
+        extraStyle = 'letter-spacing:3.20em;font-family:"Times New Roman", Times, serif;font-size:16px;';
+      } else {
+        extraStyle = 'letter-spacing:2.20em;font-family:"Times New Roman", Times, serif;font-size:16px;';
+      }
+    } else {
+      extraStyle = 'letter-spacing:1.02em;font-family:"Times New Roman", Times, serif;font-size:16px;';
+    }
+    pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+  } else if (o.dataset && o.dataset.field === 'recvAccount' && !o.classList.contains('no-space')){
+    // For receiver's account: BEFTN preview should not add letter-spacing; RTGS keeps the spaced-first-15 behavior
+    const up = displayText;
+    if(tpl === 'beftn'){
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-family:\"Times New Roman\", Times, serif;font-size:16px">${escapeHtml(up)}</div>`;
+    } else {
+      const first = up.slice(0,15).split('').join(' ');
+      const rest = up.slice(15);
+      const span = rest ? `<span style="letter-spacing:0.35em;font-family:\"Times New Roman\", Times, serif;font-size:16px">${escapeHtml(first)}</span>${escapeHtml(rest)}` : `<span style="letter-spacing:0.35em;font-family:\"Times New Roman\", Times, serif;font-size:16px">${escapeHtml(first)}</span>`;
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${span}</div>`;
+    }
+  } else if (o.dataset && o.dataset.field === 'routingNumber'){
+    // Prefix routing number label only for RTGS preview; BEFTN should show raw number with letter-spacing
+    if(tpl === 'rtgs'){
+      displayText = 'Routing: ' + displayText;
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(displayText)}</div>`;
+      } else {
+      // BEFTN preview: apply letter-spacing; use reduced spacing for Routing Number 1
+  const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
+  const routeStyle = isRouting1 ? 'letter-spacing:1.50em;font-family:"Times New Roman", Times, serif;font-size:24px;' : 'letter-spacing:1.60em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${routeStyle}">${escapeHtml(displayText)}</div>`;
+    }
+  } else if (o.dataset && o.dataset.field === 'date'){
+    // Date in preview: increase letter-spacing only for BEFTN; keep dateTime unchanged
+    if(tpl === 'beftn'){
+      // BEFTN: per-instance spacing for preview: 1.60em, 1.40em, 1.20em
+      const idx = dateOverlays.indexOf(o);
+  const mapping = ['1.60em', '1.40em', '1.20em'];
+      const em = mapping[idx] || mapping[mapping.length - 1];
+      extraStyle = `letter-spacing:${em};font-family:"Times New Roman", Times, serif;font-size:16px;`;
+    } else {
+      // RTGS: increase preview date spacing as requested
+      extraStyle = 'letter-spacing:1.20em;font-family:"Times New Roman", Times, serif;font-size:16px;';
+    }
+    pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+  } else if (o.dataset && o.dataset.field === 'cifNumber'){
+    // CIF number: moderate spacing for preview/print
+    displayText = displayText.split('').join(' ');
+  extraStyle = 'letter-spacing:0.15em;font-family:"Times New Roman", Times, serif;font-size:16px;';
+    pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+  } else {
+    // Special-case: split long inWords into two lines for preview
+    if((o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')) && displayText.length > 60){
+      const mid = Math.floor(displayText.length/2);
+      let splitIdx = displayText.lastIndexOf(' ', mid);
+      if(splitIdx === -1) splitIdx = displayText.indexOf(' ', mid);
+      if(splitIdx === -1) splitIdx = Math.floor(displayText.length/2);
+      const first = escapeHtml(displayText.slice(0, splitIdx).trim());
+      const second = escapeHtml(displayText.slice(splitIdx).trim());
+  pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${first}<br>${second}</div>`;
+    } else {
+  pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${escapeHtml(displayText)}</div>`;
+    }
+  }
+    });
+    pageHtml += `</div>`;
+    body += pageHtml;
+  });
+
+  const title = (tpl && tpl.toLowerCase() === 'beftn') ? 'BEFTN Preview' : 'RTGS Preview';
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title><style>${css}</style></head><body>${body}</body></html>`;
+  const w = window.open('', '_blank');
+  if(!w){ 
+    // alert('Unable to open preview window (popup blocked). Please allow popups for this site.'); 
+    console.error('Popup blocked');
+    return; 
+  }
+  w.document.write(html);
+  w.document.close();
+  w.onload = ()=>{
+    const btn = w.document.getElementById('preview-print');
+    if(btn) btn.addEventListener('click', ()=> w.print());
+  };
+}
+
+// --- Import / Export data helpers ---
+(function(){
+  const importBtn = document.getElementById('import-data-btn');
+  const exportBtn = document.getElementById('export-data-btn');
+  const fileInput = document.getElementById('import-file');
+
+  function gatherFormValues(){
+    const form = document.getElementById('rtgs-form');
+    const obj = {};
+    if(!form) return obj;
+    Array.from(form.elements).forEach(el => {
+      if(!el.name) return;
+      if(el.type === 'button' || el.type === 'submit' || el.type === 'reset') return;
+      try{ obj[el.name] = el.value || ''; }catch(e){}
+    });
+    return obj;
+  }
+
+  function exportData(){
+    try{
+      const payload = {
+        meta: { exportedAt: new Date().toISOString(), app: 'RTGS/BEFTN Form Editor', version: 1 },
+        formValues: gatherFormValues(),
+        positions: JSON.parse(localStorage.getItem('rtgs_positions_v1') || '{}'),
+        senders: JSON.parse(localStorage.getItem('rtgs_senders_v1') || '[]'),
+        receivers: JSON.parse(localStorage.getItem('rtgs_receivers_v1') || '[]')
+      };
+      const text = JSON.stringify(payload, null, 2);
+      const blob = new Blob([text], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const ts = new Date().toISOString().replace(/[:.]/g,'-');
+      a.href = url; a.download = `rtgs_beftn_export_${ts}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=> URL.revokeObjectURL(url), 3000);
+    }catch(e){ console.error('Export failed', e); alert('Export failed: ' + (e && e.message)); }
+  }
+
+  function importFile(file){
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const obj = JSON.parse(String(reader.result || '{}'));
+        // basic validation
+        if(!obj || typeof obj !== 'object'){ throw new Error('Invalid file format'); }
+        if(obj.positions) localStorage.setItem('rtgs_positions_v1', JSON.stringify(obj.positions));
+        if(obj.senders) localStorage.setItem('rtgs_senders_v1', JSON.stringify(obj.senders));
+        if(obj.receivers) localStorage.setItem('rtgs_receivers_v1', JSON.stringify(obj.receivers));
+        if(obj.formValues){
+          const form = document.getElementById('rtgs-form');
+          if(form){ Object.keys(obj.formValues).forEach(k=>{ try{ if(form.elements[k]) form.elements[k].value = obj.formValues[k]; }catch(e){} }); }
+        }
+        alert('Import complete. The page will reload to apply overlay positions.');
+        setTimeout(()=> location.reload(), 700);
+      }catch(err){ console.error('Import failed', err); alert('Import failed: ' + (err && err.message)); }
+    };
+    reader.onerror = ()=>{ alert('Failed to read file'); };
+    reader.readAsText(file);
+  }
+
+  if(exportBtn) exportBtn.addEventListener('click', exportData);
+  if(importBtn && fileInput){
+    importBtn.addEventListener('click', ()=> fileInput.click());
+    fileInput.addEventListener('change', (e)=>{
+      const f = (e.target && e.target.files && e.target.files[0]) ? e.target.files[0] : null;
+      if(f) importFile(f);
+      // reset input so the same file can be re-imported if needed
+      try{ fileInput.value = ''; }catch(e){}
+    });
+  }
+})();
+  </script>
+  <footer class="neon-footer">
+    <div class="footer-rgb" style="display:flex;align-items:center;justify-content:center;gap:10px;">
+      <span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span>
+    </div>
+    <style>
+    .neon-footer{padding:12px 18px;text-align:center}
+    .footer-rgb .rgb-text{
+        padding:8px 14px;
+        border-radius:999px;
+        font-weight:600;
+        background: linear-gradient(90deg,
+            #5b21b6 0%,
+            #7c3aed 12%,
+            #ec4899 24%,
+            #fb7185 36%,
+            #f97316 48%,
+            #f59e0b 60%,
+            #06b6d4 72%,
+            #0ea5a1 84%,
+            #5b21b6 100%
+        );
+        background-size:300% 300%;
+        -webkit-background-clip:text;
+        background-clip:text;
+        color:transparent;
+        -webkit-text-fill-color:transparent;
+        animation: rgbShift 6s linear infinite;
+        text-align:center;
+    }
+    @keyframes rgbShift{
+        0%{background-position:0% 50%}
+        50%{background-position:100% 50%}
+        100%{background-position:0% 50%}
+    }
+    @media (max-width:520px){
+        .footer-rgb .rgb-text{font-size:0.92rem}
+    }
+    </style>
+  </footer>
+</body>
+</html>

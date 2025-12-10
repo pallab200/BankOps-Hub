@@ -1,0 +1,731 @@
+/* Modern Unified Design System */
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --accent: #ec4899;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --bg-primary: #f0f4f9;
+  --bg-secondary: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1);
+}
+
+body {
+  font-family: 'Poppins', 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
+  color: var(--text-primary);
+}
+
+/* Modern Header */
+header {
+  position: relative;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  padding: 24px 28px;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+  animation: slideDown 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  animation: heroIn 640ms cubic-bezier(.2, .9, .2, 1) both;
+}
+
+.lead {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.95);
+  opacity: 0;
+  animation: fadeInUp 760ms ease 120ms both;
+  font-weight: 500;
+}
+
+.accent-text {
+  display: inline-block;
+  padding: 4px 10px;
+  margin-left: 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 700;
+  transform: translateY(0);
+  animation: accentPulse 2.6s ease-in-out infinite;
+}
+
+@keyframes heroIn { from { transform: translateY(-8px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes accentPulse { 0% { transform: translateY(0) scale(1); box-shadow: 0 0 0 rgba(255, 255, 255, 0); } 50% { transform: translateY(-2px) scale(1.02); box-shadow: 0 10px 30px rgba(255, 255, 255, 0.08); } 100% { transform: translateY(0) scale(1); box-shadow: 0 0 0 rgba(255, 255, 255, 0); } }
+
+/* Animations */
+@keyframes popIn { from { opacity: 0; transform: scale(.96) translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes slideInUp { from { opacity: 0; transform: translateY(14px) scale(.99); } to { opacity: 1; transform: none; } }
+@keyframes floatSlow { 0% { transform: translateY(0); } 50% { transform: translateY(-4px); } 100% { transform: translateY(0); } }
+@keyframes shimmerMove { 0% { background-position: -120% 0; } 100% { background-position: 220% 0; } }
+
+/* Modern Buttons */
+.iss-btn {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  animation: floatSlow 3.6s ease-in-out infinite;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
+}
+
+.iss-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+
+.iss-btn:hover::after {
+  transform: translateX(120%);
+}
+
+.iss-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(99, 102, 241, 0.35);
+}
+
+.iss-btn:active {
+  transform: translateY(-2px);
+}
+
+.iss-btn.small {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+
+.iss-btn.primary {
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
+}
+
+/* Modern Modal Styles */
+#branchModal > div, #signModal > div {
+  animation: slideInUp 260ms cubic-bezier(.2, .9, .2, 1)
+}
+
+#branchModal, #signModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.55));
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(8px);
+}
+
+#branchModal > div, #signModal > div {
+  max-width: 900px;
+  width: 94%;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 30px 90px rgba(15, 23, 42, 0.3);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+#branchModal h3, #signModal h3 {
+  margin-top: 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 0;
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--text-primary);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.modal-grid .col-full {
+  grid-column: 1 / -1;
+}
+
+#branchModal input, #branchModal textarea, #signModal input, #signModal textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+  background: #fff;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+#branchModal input:focus, #branchModal textarea:focus, #signModal input:focus, #signModal textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  outline: none;
+}
+
+#branchModal label, #signModal label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-actions .iss-btn.small {
+  padding: 10px 14px;
+}
+
+.modal-actions .iss-btn {
+  padding: 10px 18px;
+}
+
+/* Make header logo controls look like inline controls inside modal */
+#headerLogoPreview img{max-height:48px; display:block}
+
+/* Decorative accent for modals */
+#branchModal > div::before, #signModal > div::before{content:''; position:absolute; left:0; top:0; height:6px; width:64px; border-radius:8px; background:linear-gradient(90deg,var(--accent-blue),#00b2ff); box-shadow:0 6px 18px rgba(3,102,214,0.08)}
+
+/* Editor list row animations */
+.editor-list tbody tr{transition:transform .16s ease, background-color .14s ease}
+.editor-list tbody tr:hover{transform:translateY(-2px)}
+.editor-list tbody tr.row-appear{animation:popIn .28s cubic-bezier(.2,.9,.2,1)}
+
+/* smaller float on top-action buttons */
+.top-actions button{animation:floatSlow 6s ease-in-out infinite}
+
+/* Add a gentle card pop for preview and editor cards */
+.controls, .preview .card, .editor-list.card{animation:popIn .32s ease both}
+main{display:flex; gap:20px; padding:20px; align-items:flex-start; position:relative}
+.controls{width:240px; background:var(--card); padding:14px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.controls label{display:block; margin-top:10px; font-weight:600; font-size:0.9rem}
+.controls input, .controls select{width:100%; padding:8px; margin-top:6px; box-sizing:border-box}
+.buttons{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+.buttons button{padding:8px 10px; border:1px solid #ddd; background:#fff; cursor:pointer; border-radius:4px}
+.preview{flex:1}
+.preview .card{background:var(--card); padding:16px; border-radius:8px; min-height:220px; white-space:pre-wrap; box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+
+.editor-list{flex:0 0 960px; background:var(--card); padding:10px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,0.08); position:static; align-self:flex-start; top:auto; z-index:2; max-height:none; overflow:visible; font-size:0.86rem; width:960px}
+.editor-list h3{margin-top:0; font-size:1rem}
+.editor-list table{width:100%; border-collapse:collapse}
+.editor-list th, .editor-list td{padding:6px; border-bottom:1px solid #eee; text-align:left}
+#editorListForm input{width:100%; padding:8px; margin-top:6px; box-sizing:border-box}
+#editorListForm .buttons{display:flex; gap:8px}
+#editorListForm .buttons button{padding:6px 8px}
+footer{padding:12px 20px; font-size:0.85rem; color:#333; text-align:left}
+
+.nav{margin-top:8px}
+.nav-btn{padding:6px 10px; margin-right:8px; border-radius:6px; border:0; background:rgba(255,255,255,0.08); color:#fff; cursor:pointer}
+.nav-btn.active{background:#fff;color:var(--accent)}
+
+/* Top-right action buttons (Edit branch / Edit officer) */
+.top-actions{position:absolute; top:14px; right:20px; display:flex; gap:8px; align-items:center}
+.top-actions button{padding:8px 10px; border-radius:6px; border:0; background:rgba(255,255,255,0.12); color:#fff; cursor:pointer}
+.top-actions button:hover{background:rgba(255,255,255,0.18)}
+
+/* Layout improvements: editor and customer pages look more organized */
+.controls{width:320px; padding:18px; border-radius:10px}
+.controls label{display:block; margin-top:10px; font-weight:600; font-size:0.95rem}
+.controls input, .controls select, .controls textarea{width:100%; padding:10px; margin-top:6px; box-sizing:border-box; border-radius:6px; border:1px solid rgba(15,30,66,0.06); background:var(--card)}
+.buttons{display:flex; gap:8px; margin-top:12px; justify-content:flex-end}
+.buttons button{padding:8px 12px}
+
+.editor-list{flex:0 0 900px; background:var(--card); padding:14px; border-radius:10px; box-shadow:0 6px 22px rgba(9,30,66,0.06); position:absolute; top:160px; right:12px; width:880px; max-height:calc(100vh - 220px); overflow:auto}
+.editor-list h3{margin-top:0; font-size:1.05rem}
+.editor-list table{width:100%; border-collapse:collapse}
+.editor-list th, .editor-list td{padding:8px; border-bottom:1px solid rgba(15,30,66,0.04); text-align:left}
+.editor-list thead th{background:#f7fbff; position:sticky; top:0; z-index:3; font-weight:700}
+.editor-list tbody tr:hover{background:#fbfdff}
+
+.customer-page{display:grid; grid-template-columns:360px 1fr; gap:20px; align-items:start}
+.customer-page .controls{flex:unset; max-width:100%; background:var(--card); padding:16px; border-radius:10px}
+.customer-list.card{padding:16px; border-radius:10px}
+
+/* Keep layout usable on small screens */
+@media (max-width:900px){
+  .controls{width:100%}
+  .editor-list{position:static; width:100%; max-height:none; top:auto; right:auto; box-shadow:0 1px 6px rgba(0,0,0,0.06)}
+  .preview{margin-right:0}
+  .customer-page{display:block}
+}
+
+/* Commitment list form: tidy inputs into compact grid */
+#editorListForm{display:grid; grid-template-columns:1fr 1fr 140px 140px; gap:8px; align-items:center}
+#editorListForm input[type="text"], #editorListForm input[type="number"]{padding:8px; border-radius:6px; border:1px solid rgba(15,30,66,0.06); background:var(--card)}
+#editorListForm #el_description{grid-column:1 / -1; padding:10px}
+#editorListForm .buttons{grid-column:3 / -1; justify-self:end; margin-top:0}
+
+/* Table compactness and column widths */
+.editor-list table th:nth-child(1), .editor-list table td:nth-child(1){width:56px}
+.editor-list table th:nth-child(2), .editor-list table td:nth-child(2){width:120px}
+.editor-list table th:nth-child(3), .editor-list table td:nth-child(3){width:140px}
+.editor-list table th:nth-child(4), .editor-list table td:nth-child(4){width:90px}
+.editor-list table th:nth-child(5), .editor-list table td:nth-child(5){width:160px}
+.editor-list table th:nth-child(6), .editor-list table td:nth-child(6){min-width:220px; max-width:420px}
+.editor-list table th:nth-child(7), .editor-list table td:nth-child(7){width:80px; text-align:center}
+
+/* Truncate long descriptions, show full text on hover via title (JS sets title) */
+.editor-list tbody td:nth-child(6){white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:420px}
+
+/* Action buttons (edit/delete) in list */
+.editor-list .action-btn{display:inline-flex; align-items:center; gap:6px; padding:6px 8px; border-radius:6px; border:1px solid rgba(3,102,214,0.12); background:rgba(3,102,214,0.06); color:var(--accent); cursor:pointer; font-size:0.86rem}
+.editor-list .action-btn.danger{border-color:rgba(220,38,38,0.12); background:rgba(220,38,38,0.04); color:#dc2626}
+.editor-list .action-btn small{font-size:0.75rem; opacity:0.9}
+
+/* Empty-state message for commitments */
+.editor-list .empty{padding:30px; text-align:center; color:rgba(15,30,66,0.6)}
+
+/* Slightly more visible table row separators on desktop */
+@media (min-width:1000px){
+  .editor-list th, .editor-list td{padding:10px}
+  .editor-list tbody tr{border-bottom:1px solid rgba(15,30,66,0.04)}
+}
+.customers .controls{max-width:720px}
+.controls table, #customerTable{width:100%; border-collapse:collapse}
+#customerTable th, #customerTable td{padding:8px; border-bottom:1px solid #eee}
+#customerTable td button{padding:4px 6px; font-size:0.85rem}
+
+/* Customer page two-column layout */
+.customer-page{display:flex; gap:20px; align-items:flex-start}
+.customer-page .controls{flex:0 0 420px}
+.customer-list{flex:1}
+@media (max-width:900px){
+  .customer-page{flex-direction:column}
+  .customer-page .controls{flex:unset; width:100%}
+}
+
+@media (max-width:760px){
+  main{flex-direction:column}
+  .controls{width:100%}
+  /* On small screens the editor list should flow below controls and above preview */
+  .editor-list{position:static; right:auto; left:auto; width:100%; max-height:none; top:auto; z-index:1}
+}
+
+/* On wide screens leave space on the preview to avoid overlap with the floating list */
+@media (min-width:1000px){
+  /* On wide screens position the editor list at the top-right of the editor area */
+  main{position:relative}
+  /* place the editor-list below the header to avoid overlap */
+  /* move the editor-list further down per user request */
+  /* keep the list at top-right and show full content (no internal scroll) */
+  .editor-list{position:absolute; top:160px; right:12px; width:900px; max-height:calc(100vh - 220px); height:auto; overflow:auto}
+  /* reserve space on preview so it doesn't get overlapped by the absolute list */
+  .preview{margin-right:1000px}
+}
+
+/* On narrow screens keep positioning but adjust width to full so it doesn't overflow */
+/* duplicate small-screen rule consolidated above */
+
+/* Footer: keep in normal document flow (non-fixed) so page scroll behaves normally */
+footer{
+  position:relative;
+  padding:12px 20px;
+  font-size:0.85rem;
+  color:inherit;
+  text-align:left;
+  background:transparent;
+  box-shadow:none;
+}
+
+/* RGB lighting strip for footer (subtle, animated) */
+footer{
+  /* keep base footer neutral so text remains readable */
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  color:inherit;
+  border-top: 1px solid rgba(0,0,0,0.04);
+}
+
+/* Match BankOps Command Center footer RGB text gradient exactly */
+/* Apply to any footer element that uses the .footer-rgb .rgb-text structure or fallback to footer small */
+.footer-rgb .rgb-text,
+footer small {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  /* Richer spectrum: indigo -> violet -> magenta -> pink -> orange -> amber -> cyan -> teal -> indigo */
+  background: linear-gradient(90deg,
+    #5b21b6 0%,  /* indigo */
+    #7c3aed 12%, /* violet */
+    #ec4899 24%, /* magenta */
+    #fb7185 36%, /* pink */
+    #f97316 48%, /* orange */
+    #f59e0b 60%, /* amber */
+    #06b6d4 72%, /* cyan */
+    #0ea5a1 84%, /* teal */
+    #5b21b6 100%  /* loop back */
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: rgbShift 6s linear infinite;
+  text-align: center;
+}
+
+@keyframes rgbShift{
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Fallback: when background-clip:text is not supported a body.no-bgclip class may be present; ensure readable fallback */
+body.no-bgclip .footer-rgb .rgb-text,
+body.no-bgclip footer small {
+  -webkit-text-fill-color: initial !important;
+  color: inherit !important;
+  background: none !important;
+  animation: none !important;
+}
+
+/* FINAL OVERRIDE: ensure light, readable text and backgrounds (highest precedence) */
+body, body * { color-scheme: light !important; }
+body { background: #f6f8fb !important; color: #111 !important; }
+header { background: linear-gradient(90deg,#0b6bd6,#0366d6) !important; color: #fff !important; }
+.controls, .preview .card, .editor-list, .customer-list, .customer-page .controls, #branchModal > div, #signModal > div {
+  background: #fff !important;
+  color: #111 !important;
+  border-color: rgba(0,0,0,0.06) !important;
+  box-shadow: 0 6px 18px rgba(11,17,32,0.04) !important;
+}
+.controls label, .customer-page .controls label, .editor-list h3, .editor-list td, .editor-list th, #customerTable td, #customerTable th {
+  color: #2b3440 !important;
+}
+.controls input, .controls select, .controls textarea, .customer-page .controls input, .customer-page .controls select, .customer-page .controls textarea {
+  background: #fff !important; color: #111 !important; border: 1px solid rgba(0,0,0,0.08) !important;
+}
+::placeholder { color: #8b949e !important; }
+#customerTable thead th { background: #f1f7ff !important; color: #0b2a55 !important; }
+.nav-btn, .buttons button { color: #0b2a55 !important; background: transparent !important; }
+.nav button, .primary-cta, .file-choose-btn { box-shadow: 0 8px 28px rgba(3,102,214,0.08) !important; }
+.editor-list tbody tr:nth-child(odd), .editor-list tbody tr:nth-child(even){ background: #fff !important; }
+
+
+/* FORCE: make text readable with a light/neutral theme override
+   This explicit block ensures panels, labels and inputs are dark-on-light.
+   It sits at the end of the file so it overrides earlier conflicting rules. */
+body, body * { color-scheme: light; }
+body { background: #f6f8fb !important; color: #111 !important; }
+header { background: linear-gradient(90deg,#0b6bd6,#0366d6) !important; color: #fff !important; }
+.controls, .preview .card, .editor-list, .customer-list, .customer-page .controls, #branchModal > div, #signModal > div {
+  background: #fff !important;
+  color: #111 !important;
+  border-color: rgba(0,0,0,0.06) !important;
+  box-shadow: 0 6px 18px rgba(11,17,32,0.04) !important;
+}
+.controls label, .customer-page .controls label, .editor-list h3, .editor-list td, .editor-list th, #customerTable td, #customerTable th {
+  color: #2b3440 !important;
+}
+.controls input, .controls select, .controls textarea, .customer-page .controls input, .customer-page .controls select, .customer-page .controls textarea {
+  background: #fff !important; color: #111 !important; border: 1px solid rgba(0,0,0,0.08) !important;
+}
+::placeholder { color: #8b949e !important; }
+#customerTable thead th { background: #f1f7ff !important; color: #0b2a55 !important; }
+.nav-btn, .buttons button { color: #0b2a55 !important; background: transparent !important; }
+.nav button, .primary-cta, .file-choose-btn { box-shadow: 0 8px 28px rgba(3,102,214,0.08) !important; }
+
+/* ensure editor list rows are visible */
+.editor-list tbody tr:nth-child(odd), .editor-list tbody tr:nth-child(even){ background: #fff !important; }
+
+input, textarea, select{outline:none}
+button:focus{outline:2px solid rgba(0,180,216,0.15)}
+
+/* Test theme: full black — apply by adding class `test-full-black` to <body>.
+  Use in browser console: document.body.classList.add('test-full-black')
+*/
+.test-full-black{ background: #000 !important; color: #fff !important }
+.test-full-black header{ background:#000 !important; color:#fff !important; box-shadow:none }
+.test-full-black .controls, .test-full-black .preview .card, .test-full-black .editor-list, .test-full-black #branchModal > div, .test-full-black #signModal > div{ background:#000 !important; border-color: rgba(255,255,255,0.05) !important; box-shadow:none }
+.test-full-black .controls label, .test-full-black .editor-list h3, .test-full-black .editor-list td, .test-full-black .editor-list th, .test-full-black .controls input, .test-full-black .controls textarea, .test-full-black .controls select{ color:#fff !important }
+.test-full-black .nav button, .test-full-black .primary-cta, .test-full-black .file-choose-btn{ background:#111 !important; box-shadow:none; color:#fff !important; border:1px solid rgba(255,255,255,0.04) }
+.test-full-black .editor-list tbody tr:nth-child(odd), .test-full-black .editor-list tbody tr:nth-child(even){ background: transparent !important }
+.test-full-black .chip, .test-full-black .result-card{ background: rgba(0,0,0,0) !important }
+.test-full-black input::placeholder, .test-full-black textarea::placeholder{ color: rgba(0,0,0,0) }
+
+/* Light theme override — place at end to ensure it takes precedence and gives a lighter look */
+:root.light-theme{
+  --bg: #f6f8fb;
+  --panel: linear-gradient(180deg,#ffffff,#f8fbff);
+  --card: #ffffff;
+  --muted: #6b7280;
+  --accent: #0366d6;
+  --accent-blue: #0078ff;
+  --glass: rgba(3,102,214,0.06);
+}
+
+/* Apply light-theme variables when body has .light-theme (or add class to body by default) */
+body.light-theme{
+  background: var(--bg);
+  color: #111;
+}
+body.light-theme header{ background: linear-gradient(90deg,#0b6bd6,#0366d6); color:#fff; box-shadow:none }
+body.light-theme .controls, body.light-theme .customer-page .controls{ background: var(--card); border: 1px solid rgba(2,6,23,0.04); color: #111 }
+body.light-theme .controls input, body.light-theme .controls textarea, body.light-theme .controls select{ background: #fff; color:#111; border:1px solid rgba(2,6,23,0.06) }
+body.light-theme .preview .card, body.light-theme .editor-list, body.light-theme .customer-list{ background: #fff; color:#111; border:1px solid rgba(2,6,23,0.04); box-shadow:0 6px 18px rgba(11,17,32,0.04) }
+body.light-theme .editor-list td, body.light-theme .editor-list th, body.light-theme #customerTable td, body.light-theme #customerTable th{ color:#111 }
+body.light-theme .editor-list thead th{ background: linear-gradient(90deg,#f0f6ff,#e8f2ff); color:var(--muted); }
+body.light-theme .nav button, body.light-theme .primary-cta, body.light-theme .file-choose-btn{ box-shadow:0 8px 28px rgba(3,102,214,0.08) }
+
+/* If user wants the light theme by default, add the class to body via HTML or JS. */
+
+/* Exact ISS button styles and animations (copied from ISS.html) */
+:root{ --accent-blue: #0078ff; --outline: rgba(0,120,255,0.12); }
+
+/* subtle light scanlines (decorative) */
+body::before{ content:''; position:fixed; inset:0; pointer-events:none; z-index:0; background-image: linear-gradient(0deg, rgba(11,17,32,0.02) 1px, transparent 1px); background-size: 1px 32px; opacity:0.04; animation: lightScan 30s linear infinite; }
+@keyframes lightScan{ from{background-position:0 0} to{background-position:0 400px} }
+
+/* nav / primary CTA buttons */
+.nav button{ background:linear-gradient(90deg, var(--accent-blue), #00b2ff); color:#fff; font-weight:800; border-radius:999px; padding:10px 18px; border:0; box-shadow:0 8px 28px rgba(0,120,255,0.12); transition: transform .12s ease, box-shadow .12s ease; cursor:pointer }
+.nav button:hover{ transform:translateY(-3px); box-shadow:0 18px 40px rgba(0,120,255,0.16) }
+
+/* Reusable ISS-style button for use across the app */
+.iss-btn{ background:linear-gradient(90deg, var(--accent-blue), #00b2ff); color:#fff; font-weight:800; border-radius:999px; padding:10px 14px; border:0; box-shadow:0 8px 28px rgba(0,120,255,0.12); transition: transform .12s ease, box-shadow .12s ease; cursor:pointer }
+.iss-btn:hover{ transform:translateY(-3px); box-shadow:0 18px 40px rgba(0,120,255,0.16) }
+
+/* smaller variant for compact areas */
+.iss-btn.small{ padding:6px 10px; font-weight:700; border-radius:8px }
+
+/* Force nav buttons to use ISS white text and gradient (override later light-theme rules) */
+.nav .iss-btn, .nav-btn.iss-btn{
+  color:#fff !important;
+  background:linear-gradient(90deg, var(--accent-blue), #00b2ff) !important;
+  border:0 !important;
+  box-shadow:0 8px 28px rgba(0,120,255,0.12) !important;
+}
+.nav button[disabled]{ opacity:0.9; filter:grayscale(0.04) }
+
+.primary-cta{ margin:0 auto; padding:10px 18px; border-radius:999px; border:0; background:linear-gradient(90deg, var(--accent-blue), #00b2ff); color:#fff; font-weight:800; cursor:pointer; box-shadow:0 8px 28px rgba(0,120,255,0.12); transition: transform .12s ease, box-shadow .12s ease }
+.primary-cta:hover{ transform:translateY(-3px); box-shadow:0 18px 40px rgba(0,120,255,0.16) }
+
+/* file chooser button style used in ISS */
+.file-choose-btn, .file-choose-btn:focus{ display:inline-flex; align-items:center; gap:10px; padding:12px 18px; background: linear-gradient(90deg,var(--accent-blue), #00b2ff); color:#fff; border-radius:999px; border:0; cursor:pointer; font-weight:800; box-shadow: 0 14px 40px rgba(0,120,255,0.12); transition: transform .12s ease, box-shadow .12s ease }
+.file-choose-btn:hover{ transform:translateY(-3px); box-shadow:0 28px 68px rgba(0,120,255,0.14) }
+
+/* chip hover style from ISS */
+.chip{ transition: box-shadow .12s ease, transform .12s ease }
+.chip:hover{ box-shadow:0 10px 30px rgba(0, 0, 0, 0); transform:translateY(-3px) }
+
+/* small numeric pulse used in ISS */
+@keyframes numPulse{ 0%{ transform:translateY(8px) scale(0.98); opacity:0.4 } 60%{ transform:translateY(-6px) scale(1.04); opacity:1 } 100%{ transform:none; opacity:1 } }
+.num.pulse{ animation: numPulse 0.9s cubic-bezier(.2,.9,.2,1); }
+
+/* ISS-like theme for Credit Commitment Editor */
+:root{
+  --bg: #000000; /* dark background */
+  --panel: linear-gradient(180deg,#000000,#000000);
+  --card: #000000;
+  --muted: #000000;
+  --accent: #00b4d8; /* cyan accent similar to ISS */
+  --glass: rgba(0, 0, 0, 0.03);
+  --card-contrast: rgba(255,255,255,0.02);
+}
+body{font-family:Inter, 'Segoe UI', Roboto, Arial, sans-serif; margin:0; background:var(--bg); color:#e6eef6}
+header{background:linear-gradient(90deg,#000000 0%, #000000 50%, #000000 100%); color:#fff; padding:20px 28px; box-shadow:0 6px 24px rgba(2,6,23,0.6)}
+header h1{margin:0;font-size:1.35rem;letter-spacing:0.2px}
+header p{margin:6px 0 0; color:var(--muted); font-size:0.95rem}
+main{display:flex; gap:20px; padding:22px; align-items:flex-start; position:relative}
+.controls{width:260px; background:linear-gradient(180deg, rgba(0, 0, 0, 0.02), var(--card)); padding:18px; border-radius:10px; box-shadow:0 8px 30px rgba(2,6,23,0.5); border:1px solid rgba(255,255,255,0.03)}
+.controls label{display:block; margin-top:12px; font-weight:600; font-size:0.92rem; color:#d8e6f2}
+.controls input, .controls select, .controls textarea{width:100%; padding:10px; margin-top:8px; box-sizing:border-box; background:transparent; color:#e6eef6; border:1px solid rgba(255,255,255,0.04); border-radius:6px}
+.controls input::placeholder, .controls textarea::placeholder{color:var(--muted)}
+.buttons{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+.buttons button{padding:10px 12px; border:0; background:var(--glass); color:#e6eef6; cursor:pointer; border-radius:8px; box-shadow:inset 0 -1px 0 rgba(255,255,255,0.02)}
+.buttons button.primary{background:linear-gradient(90deg,var(--accent),#00e5ff); color:#000000; font-weight:700}
+.preview{flex:1}
+.preview .card{background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0)); padding:18px; border-radius:10px; min-height:220px; white-space:pre-wrap; box-shadow:0 10px 30px rgba(2,6,23,0.6); border:1px solid rgba(255,255,255,0.03)}
+
+.editor-list{flex:0 0 920px; background:rgba(6,12,20,0.6); padding:12px; border-radius:10px; box-shadow:0 12px 40px rgba(2,6,23,0.6); position:static; align-self:flex-start; top:auto; z-index:2; max-height:none; overflow:visible; font-size:0.9rem; width:920px; border:1px solid rgba(255,255,255,0.03)}
+.editor-list h3{margin-top:0; font-size:1rem; color:#eaf6ff}
+.editor-list table{width:100%; border-collapse:collapse}
+.editor-list th, .editor-list td{padding:8px; border-bottom:1px solid rgba(255,255,255,0.03); text-align:left}
+.editor-list thead th{color:var(--muted); font-weight:600}
+.editor-list tbody tr:hover{background:rgba(255,255,255,0.01)}
+.editor-list td{color:#cfe9f5}
+
+#editorListForm input{width:100%; padding:10px; margin-top:6px; box-sizing:border-box}
+#editorListForm .buttons{display:flex; gap:8px}
+#editorListForm .buttons button{padding:8px 10px}
+footer{padding:14px 20px; font-size:0.85rem; color:var(--muted); text-align:center}
+
+.nav{margin-top:10px}
+.nav-btn{padding:8px 12px; margin-right:8px; border-radius:8px; border:0; background:transparent; color:var(--muted); cursor:pointer}
+.nav-btn.active{background:rgba(255,255,255,0.04); color:var(--accent)}
+.customers .controls{max-width:720px}
+.controls table, #customerTable{width:100%; border-collapse:collapse}
+#customerTable th, #customerTable td{padding:10px; border-bottom:1px solid rgba(255,255,255,0.03)}
+#customerTable td button{padding:6px 8px; font-size:0.9rem}
+
+/* Modal styling */
+#branchModal, #signModal{display:none; position:fixed; inset:0; background:linear-gradient(rgba(1,6,12,0.6), rgba(1,6,12,0.6)); align-items:center; justify-content:center; z-index:9999}
+#branchModal > div, #signModal > div{background:linear-gradient(180deg,#071428,#0b1630); padding:22px; max-width:820px; width:94%; box-shadow:0 18px 50px rgba(2,6,23,0.7); border-radius:10px; color:#e6eef6; border:1px solid rgba(255,255,255,0.03)}
+
+/* Customer page two-column layout */
+.customer-page{display:flex; gap:20px; align-items:flex-start}
+.customer-page .controls{flex:0 0 420px}
+.customer-list{flex:1}
+@media (max-width:900px){
+  .customer-page{flex-direction:column}
+  .customer-page .controls{flex:unset; width:100%}
+}
+
+@media (max-width:760px){
+  main{flex-direction:column}
+  .controls{width:100%}
+  /* On small screens the editor list should flow below controls and above preview */
+  .editor-list{position:static; right:auto; left:auto; width:100%; max-height:none; top:auto; z-index:1}
+}
+
+@media (min-width:1000px){
+  main{position:relative}
+  .editor-list{position:absolute; top:160px; right:12px; width:900px; max-height:calc(100vh - 220px); height:auto; overflow:auto}
+  .preview{margin-right:980px}
+}
+
+/* small tweaks */
+input, textarea, select{outline:none}
+button:focus{outline:2px solid rgba(0,180,216,0.15)}
+
+/* Editor and Customer page colour fixes: improve contrast and consistent panels */
+.controls, .customer-page .controls{
+  /* slightly lighter panel to separate from page background */
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.03);
+  color: #e6eef6;
+}
+.controls label, .customer-page .controls label{ color: var(--muted); }
+.controls input, .controls select, .controls textarea,
+.customer-page .controls input, .customer-page .controls select, .customer-page .controls textarea{
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  color: #e6eef6;
+}
+.customer-page .controls .label-small{ color: var(--muted); }
+
+/* Customer list card contrast and table header tweaks */
+.customer-list{ background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03) }
+#customerTable thead th{ background: rgba(255,255,255,0.03); color: var(--muted); font-weight:700 }
+#customerTable tbody td{ color: #cfe9f5 }
+
+/* Ensure editor list rows remain readable on dark background */
+.editor-list tbody tr:nth-child(odd), .editor-list tbody tr:nth-child(even){ background: transparent }
+
+/* When using the test full-black theme, ensure inputs are still readable */
+.test-full-black .controls input, .test-full-black .controls textarea, .test-full-black .controls select,
+.test-full-black .customer-page .controls input, .test-full-black .customer-page .controls textarea, .test-full-black .customer-page .controls select{
+  background: #111 !important; color:#fff !important; border-color: rgba(255,255,255,0.06) !important;
+}
+/* Basic styles for Credit Commitment Editor */
+:root{ --bg:#f6f8fb; --card:#fff; --accent:#0366d6 }
+body{font-family:Segoe UI, Roboto, Arial, sans-serif; margin:0; background:var(--bg); color:#111}
+header{background:var(--accent); color:#fff; padding:18px 20px}
+header h1{margin:0;font-size:1.25rem}
+main{display:flex; gap:20px; padding:20px; align-items:flex-start; position:relative}
+.controls{width:240px; background:var(--card); padding:14px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.controls label{display:block; margin-top:10px; font-weight:600; font-size:0.9rem}
+.controls input, .controls select{width:100%; padding:8px; margin-top:6px; box-sizing:border-box}
+.buttons{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+.buttons button{padding:8px 10px; border:1px solid #ddd; background:#fff; cursor:pointer; border-radius:4px}
+.preview{flex:1}
+.preview .card{background:var(--card); padding:16px; border-radius:8px; min-height:220px; white-space:pre-wrap; box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+
+.editor-list{flex:0 0 960px; background:var(--card); padding:10px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,0.08); position:static; align-self:flex-start; top:auto; z-index:2; max-height:none; overflow:visible; font-size:0.86rem; width:960px}
+.editor-list h3{margin-top:0; font-size:1rem}
+.editor-list table{width:100%; border-collapse:collapse}
+.editor-list th, .editor-list td{padding:6px; border-bottom:1px solid #eee; text-align:left}
+
+#editorListForm input{width:100%; padding:8px; margin-top:6px; box-sizing:border-box}
+#editorListForm .buttons{display:flex; gap:8px}
+#editorListForm .buttons button{padding:6px 8px}
+footer{padding:12px 20px; font-size:0.85rem; color:#333}
+
+.nav{margin-top:8px}
+.nav-btn{padding:6px 10px; margin-right:8px; border-radius:6px; border:0; background:rgba(255,255,255,0.08); color:#fff; cursor:pointer}
+.nav-btn.active{background:#fff;color:var(--accent)}
+.customers .controls{max-width:720px}
+.controls table, #customerTable{width:100%; border-collapse:collapse}
+#customerTable th, #customerTable td{padding:8px; border-bottom:1px solid #eee}
+#customerTable td button{padding:4px 6px; font-size:0.85rem}
+
+/* Customer page two-column layout */
+.customer-page{display:flex; gap:20px; align-items:flex-start}
+.customer-page .controls{flex:0 0 420px}
+.customer-list{flex:1}
+@media (max-width:900px){
+  .customer-page{flex-direction:column}
+  .customer-page .controls{flex:unset; width:100%}
+}
+
+@media (max-width:760px){
+  main{flex-direction:column}
+  .controls{width:100%}
+  /* On small screens the editor list should flow below controls and above preview */
+  .editor-list{position:static; right:auto; left:auto; width:100%; max-height:none; top:auto; z-index:1}
+}
+
+/* On wide screens leave space on the preview to avoid overlap with the floating list */
+@media (min-width:1000px){
+  /* On wide screens position the editor list at the top-right of the editor area */
+  main{position:relative}
+  /* place the editor-list below the header to avoid overlap */
+  /* move the editor-list further down per user request */
+  /* keep the list at top-right and show full content (no internal scroll) */
+  .editor-list{position:absolute; top:20px; right:12px; width:900px; max-height:calc(100vh - 180px); height:auto; overflow:auto}
+  /* reserve space on preview so it doesn't get overlapped by the absolute list */
+  .preview{margin-right:1000px}
+}
+
+/* On narrow screens keep positioning but adjust width to full so it doesn't overflow */
+/* duplicate small-screen rule consolidated above */

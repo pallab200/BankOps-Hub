@@ -1,0 +1,2840 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ISS Analyzer</title>
+  <link rel="stylesheet" href="../css/fontawesome.min.css">
+  <link rel="stylesheet" href="../css/fontawesome-fix.css">
+  <style>
+  :root{
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --accent: #ec4899;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --bg-primary: #f0f4f9;
+    --bg-secondary: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
+  }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
+    color: var(--text-primary);
+    font-family: 'Poppins', 'Inter', 'Segoe UI', system-ui, -apple-system, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow: auto;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: linear-gradient(0deg, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
+    background-size: 1px 32px;
+    opacity: 0.04;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Dashboard Header with Simple Design */
+  .app-header {
+    padding: 32px 0;
+    background: transparent;
+    border-bottom: none;
+    box-shadow: none;
+    color: #1f2937;
+    border-radius: 0;
+    position: relative;
+    overflow: visible;
+    margin-bottom: 24px;
+  }
+
+  .app-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .app-title {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #2563eb;
+    letter-spacing: -0.02em;
+    margin: 0;
+    animation: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .app-sub {
+    font-size: 0;
+    color: transparent;
+    margin-top: 0;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+    display: none;
+  }
+
+  /* Navigation - Modern Tabs Style */
+  .nav {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    z-index: 2;
+    margin-top: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav button {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    padding: 12px 28px;
+    border: none;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    animation: floatSlow 3.6s ease-in-out infinite;
+  }
+
+  .nav button.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border: none;
+    box-shadow: 0 15px 40px rgba(99, 102, 241, 0.35);
+  }
+
+  .nav button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: translateX(-120%);
+    transition: transform 0.6s ease;
+    pointer-events: none;
+  }
+
+  .nav button:hover::after { transform: translateX(120%); }
+  
+  .nav button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(99, 102, 241, 0.35);
+  }
+
+  .nav button[disabled] { opacity: 0.5; animation: none; }
+
+  /* Portfolio Cards Grid */
+  .box {
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+    overflow: auto;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+  }
+
+  .box:hover {
+    box-shadow: 0 20px 50px rgba(99, 102, 241, 0.12);
+    transform: translateY(-4px);
+  }
+
+  /* Results readout */
+  #results p{ margin:6px 0; color:#0b1220 }
+  #results b{ color:var(--accent-blue); font-weight:800; font-size:1.03em; display:inline-block; padding:2px 8px; border-radius:3px; background:linear-gradient(180deg, rgba(0,120,255,0.06), rgba(0,120,255,0.02)); transition: transform .26s ease }
+
+  /* numeric update wipe animation */
+  .num-updated{ animation: numWipe .45s cubic-bezier(.2,.9,.2,1); }
+  @keyframes numWipe{ 0%{ transform:translateY(8px); opacity:0 } 60%{ transform:translateY(-6px); opacity:1 } 100%{ transform:translateY(0); opacity:1 } }
+
+  /* Portfolio Dashboard - Clean Row Layout - 5 Columns */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    margin-top: 24px;
+    padding: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .result-card {
+    background: #ffffff;
+    border: none;
+    border-right: 1px solid #e5e7eb;
+    padding: 24px 20px;
+    border-radius: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transform: none;
+    opacity: 1;
+    animation: none;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: visible;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .result-card:last-child {
+    border-right: none;
+  }
+
+  .result-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    background: transparent;
+  }
+
+  .result-card:hover {
+    transform: none;
+    box-shadow: none;
+    background: #f9fafb;
+    border-color: #e5e7eb;
+  }
+
+  .result-card h5 {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #374151;
+    text-transform: none;
+    letter-spacing: 0.01em;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .result-card .num {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: #2563eb;
+    margin: 4px 0;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .result-card p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #9ca3af;
+  }
+
+  @keyframes cardIn {
+    0% {
+      transform: none;
+      opacity: 1;
+    }
+    100% {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  @keyframes numPulse {
+    0% { transform: translateY(8px) scale(0.98); opacity: 0.4; }
+    60% { transform: translateY(-6px) scale(1.04); opacity: 1; }
+    100% { transform: none; opacity: 1; }
+  }
+
+  /* Float animation for buttons */
+  @keyframes floatButton {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes floatSlow {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  /* Gradient shift for text */
+  @keyframes gradientShift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Title entrance animation */
+  @keyframes titleIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .num.pulse {
+    animation: numPulse 0.9s cubic-bezier(.2, .9, .2, 1);
+  }
+
+  /* No stagger for row layout */
+
+  /* Section Headers */
+  h2 {
+    margin: 0 0 16px 0;
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.01em;
+  }
+
+  label {
+    display: block;
+    margin-top: 12px;
+    color: var(--text-secondary);
+    font-size: 0.95em;
+    font-weight: 600;
+  }
+
+  select, input[type='number'], input[type='text'], textarea {
+    background: #fff;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 11px 12px;
+    outline: none;
+    border-radius: 10px;
+    font-family: inherit;
+    transition: all 0.2s ease;
+  }
+
+  select:focus, input:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+
+  .chip {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.08));
+    border: 1px solid var(--border-color);
+    padding: 9px 16px;
+    border-radius: 10px;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .chip:hover {
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(236, 72, 153, 0.12));
+  }
+
+  /* Tables - Modern Portfolio Style */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  thead th {
+    background: #f3f4f6;
+    color: #1f2937;
+    font-weight: 700;
+    padding: 16px 14px;
+    text-align: left;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  tbody td {
+    padding: 14px;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 0.95rem;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:nth-child(odd) { background: #ffffff; }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+
+  tbody tr:hover {
+    background: #f9fafb;
+  }
+
+  .right { text-align: right; font-weight: 600; }
+
+  /* Progress Bar */
+  #analyzingOverlay {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 4px;
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+  }
+
+  body.analyzing #analyzingOverlay { display: block; }
+
+  #analyzingBar {
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 50%, var(--success) 100%);
+    transform-origin: left center;
+    animation: barGrow 1.2s cubic-bezier(.2, .9, .2, 1) infinite;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  }
+
+  @keyframes barGrow {
+    0% { transform: scaleX(.02); }
+    60% { transform: scaleX(.85); }
+    100% { transform: scaleX(.02); }
+  }
+
+  @media (max-width: 1600px) {
+    .results-grid { grid-template-columns: repeat(5, 1fr); gap: 0; }
+  }
+
+  @media (max-width: 1400px) {
+    .results-grid { grid-template-columns: repeat(5, 1fr); gap: 0; }
+  }
+
+  @media (max-width: 1200px) {
+    .results-grid { grid-template-columns: repeat(5, 1fr); gap: 0; }
+  }
+
+  @media (max-width: 1024px) {
+    .results-grid { grid-template-columns: repeat(5, 1fr); gap: 0; }
+    .result-card { padding: 20px 16px; }
+    .result-card .num { font-size: 1.5rem; }
+  }
+
+  @media (max-width: 768px) {
+    .results-grid { grid-template-columns: repeat(3, 1fr); gap: 0; }
+    .result-card { padding: 18px 14px; }
+    .result-card h5 { font-size: 0.75rem; }
+    .result-card .num { font-size: 1.3rem; }
+  }
+
+  @media (max-width: 640px) {
+    .results-grid { grid-template-columns: repeat(2, 1fr); gap: 0; }
+    .result-card { padding: 16px 12px; }
+    .result-card h5 { font-size: 0.7rem; }
+    .result-card .num { font-size: 1.1rem; }
+  }
+
+  @media (max-width: 480px) {
+    .results-grid { grid-template-columns: 1fr; gap: 0; }
+    .result-card { padding: 14px 10px; }
+  }
+  /* Initial panel enhanced styles with unified design system */
+  #initialPanel {
+    display: block;
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .initial-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
+    border: 1px solid var(--border-color);
+    transform: translateY(8px);
+    animation: initialCardIn 0.6s cubic-bezier(.2, .9, .2, 1) both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .initial-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+  }
+
+  @keyframes initialCardIn {
+    from {
+      transform: translateY(18px) scale(.995);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  .file-choose-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    border-radius: 12px;
+    border: 0;
+    cursor: pointer;
+    font-weight: 800;
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
+    transition: all 0.3s ease;
+    animation: floatSlow 3.6s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+    font-size: 0.95rem;
+  }
+
+  .file-choose-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: translateX(-120%);
+    transition: transform 0.6s ease;
+    pointer-events: none;
+  }
+
+  .file-choose-btn:hover::after {
+    transform: translateX(120%);
+  }
+
+  .file-choose-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(99, 102, 241, 0.35);
+  }
+
+  /* Visually hide the native file input while keeping it accessible */
+  #file {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Animated subtle glow around the initial panel */
+  .initial-glow {
+    position: absolute;
+    inset: -8px;
+    border-radius: 16px;
+    background: radial-gradient(600px 120px at 50% 0%, rgba(99, 102, 241, 0.08), transparent 35%);
+    z-index: -1;
+    filter: blur(12px);
+    opacity: 0.9;
+    animation: glowPulse 3.6s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse {
+    0% {
+      transform: scale(0.98);
+      opacity: 0.85;
+    }
+    50% {
+      transform: scale(1.02);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(0.98);
+      opacity: 0.85;
+    }
+  }
+
+  .initial-sub {
+    color: var(--text-secondary);
+    margin-top: 10px;
+    font-weight: 500;
+  }
+
+  .mode-select {
+    min-width: 220px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: white;
+    color: var(--text-primary);
+    font-family: inherit;
+  }
+
+  .initial-credit {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    opacity: 0.9;
+  }
+
+  /* Transition between initial panel and main UI */
+  #initialPanel {
+    transition: opacity 0.36s ease, transform 0.36s ease;
+  }
+
+  #initialPanel.panel-exit {
+    animation: panelExit 0.44s cubic-bezier(.2, .9, .2, 1) both;
+  }
+
+  @keyframes panelExit {
+    0% {
+      opacity: 1;
+      transform: none;
+      filter: blur(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-14px) scale(.985);
+      filter: blur(2px);
+    }
+  }
+
+  #mainUI {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.48s cubic-bezier(.2, .9, .2, 1), transform 0.48s cubic-bezier(.2, .9, .2, 1);
+  }
+
+  /* Initial hidden state for animated entrance */
+  #mainUI.main-enter {
+    opacity: 0;
+    transform: translateY(18px) scale(.995);
+  }
+
+  /* Page transition helpers */
+  .page-wrap {
+    position: relative;
+    overflow: visible;
+  }
+
+  .page-anim {
+    opacity: 0;
+    transform: translateY(12px) scale(.998);
+    transition: opacity 0.42s cubic-bezier(.2, .9, .2, 1), transform 0.42s cubic-bezier(.2, .9, .2, 1);
+  }
+
+  .page-anim.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Quick slide-left/right for switching between pages */
+  .slide-in-left {
+    animation: slideInLeft 0.44s cubic-bezier(.2, .9, .2, 1) both;
+  }
+
+  .slide-out-right {
+    animation: slideOutRight 0.38s cubic-bezier(.2, .9, .2, 1) both;
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+    to {
+      opacity: 0;
+      transform: translateX(10px);
+    }
+  }
+
+  /* Transition animations for initial -> main UI */
+  .fadeOutZoom {
+    animation: fadeOutZoom 0.48s cubic-bezier(.2, .9, .2, 1) forwards;
+  }
+
+  @keyframes fadeOutZoom {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-12px) scale(.98);
+    }
+  }
+
+  .fadeInSlide {
+    animation: fadeInSlide 0.6s cubic-bezier(.2, .9, .2, 1) forwards;
+  }
+
+  @keyframes fadeInSlide {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  </style>
+</head>
+<style>
+/* Footer RGB gradient and animation copied from main BankOps Command Center to ensure exact match */
+.footer-rgb .rgb-text{
+  padding:8px 14px;
+  border-radius:999px;
+  font-weight:600;
+  background: linear-gradient(90deg,
+    #5b21b6 0%,
+    #7c3aed 12%,
+    #ec4899 24%,
+    #fb7185 36%,
+    #f97316 48%,
+    #f59e0b 60%,
+    #06b6d4 72%,
+    #0ea5a1 84%,
+    #5b21b6 100%
+  );
+  background-size:300% 300%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+  animation: rgbShift 6s linear infinite;
+  text-align:center;
+}
+@keyframes rgbShift{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@media (max-width:520px){
+  .footer-rgb .rgb-text{font-size:0.92rem}
+}
+/* Fallback: if background-clip:text isn't supported, show a readable solid color */
+body.no-bgclip .footer-rgb .rgb-text{
+  -webkit-text-fill-color: initial !important;
+  color: inherit !important;
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  animation: none !important;
+}
+</style>
+<script>
+// Feature-detect background-clip:text support and add a fallback class like the main page does.
+// This ensures the gradient-text shows when supported and falls back when not.
+ (function(){
+  function supportsBgClipText(){
+    try{
+      if(window.CSS && CSS.supports){
+        if(CSS.supports('background-clip','text') || CSS.supports('-webkit-background-clip','text')) return true;
+      }
+    }catch(e){}
+    try{
+      var t = document.createElement('span');
+      t.style.backgroundClip = 'text';
+      t.style.webkitBackgroundClip = 'text';
+      t.style.position = 'absolute';
+      t.style.left = '-9999px';
+      document.body.appendChild(t);
+      var v = getComputedStyle(t).backgroundClip || getComputedStyle(t).webkitBackgroundClip || '';
+      document.body.removeChild(t);
+      return (v && v.indexOf('text') !== -1);
+    }catch(e){ return false; }
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    if(!supportsBgClipText()) document.body.classList.add('no-bgclip');
+  });
+ })();
+</script>
+<body>
+  <header class="app-header" style="text-align:center; margin-bottom:24px; padding: 40px 20px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);">
+    <!-- removed -->
+    <div style="position: relative; display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(255, 255, 255, 0.15); border-radius: 20px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px); animation: shimmer 2.5s infinite;">
+      <i class="fas fa-chart-pie" style="font-size: 2.5rem; color: #ffffff;"></i>
+    </div>
+    <div class="app-title" style="font-size: 2.5rem; font-weight: 900; color: #ffffff; letter-spacing: -0.03em; margin: 0; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);">ISS Analyzer</div>
+    <div style="font-size: 1rem; font-weight: 500; color: rgba(255, 255, 255, 0.9); margin-top: 8px; letter-spacing: 0.3px;">Portfolio Insights & Analysis Dashboard</div>
+  </header>
+  
+  <style>
+  @keyframes shimmer {
+    0%, 100% {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(255, 255, 255, 0.4);
+      transform: scale(1);
+    }
+    50% {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 8px rgba(255, 255, 255, 0.1);
+      transform: scale(1.02);
+    }
+  }
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  </style>
+  
+  <!-- initial panel: show only the title and file chooser until a file is loaded -->
+  <div id="initialPanel" style="text-align:center; padding:40px 20px; max-width: 600px; margin: 0 auto;">
+    <div class="initial-card" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%); border: 2px solid rgba(99, 102, 241, 0.15); padding: 48px 32px; border-radius: 20px; box-shadow: 0 20px 60px rgba(99, 102, 241, 0.12); backdrop-filter: blur(10px); position: relative; overflow: hidden;">
+      <div class="initial-glow" aria-hidden="true" style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%); pointer-events: none; animation: rotate 20s linear infinite;"></div>
+      <div style="position: relative; z-index: 1;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 16px; margin-bottom: 24px; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);">
+          <i class="fas fa-file-excel" style="font-size: 2rem; color: #ffffff;"></i>
+        </div>
+        <div style="font-size:1.5rem; font-weight:800; background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom:12px">Welcome to ISS Analyzer</div>
+        <div class="initial-sub" style="font-size: 1rem; color: #64748b; font-weight: 500; margin-bottom: 32px;">Load your spreadsheet to resume or analyze a portfolio</div>
+        <label for="file" class="file-choose-btn" role="button" tabindex="0" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 32px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #ffffff; font-weight: 700; font-size: 1rem; border-radius: 12px; cursor: pointer; border: none; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3); transition: all 0.3s ease;"><i class="fas fa-folder-open" style="font-size: 1.2rem;"></i>Choose File</label>
+      <input id="file" type="file" accept=".xls,.xlsx,.csv" style="display: none;" />
+      <div id="notes" style="margin-top:16px;color:#64748b; font-size: 0.9rem;"></div>
+      <!-- expanded credit text -->
+      <div id="initialCredit" class="initial-credit" style="margin-top:24px; padding-top: 24px; border-top: 1px solid rgba(99, 102, 241, 0.1);">
+        <div class="footer-rgb" style="display:flex;align-items:center;justify-content:center;gap:10px;">
+          <span class="rgb-text" style="color: #94a3b8; font-size: 0.85rem; font-weight: 500;">Developed by Tanzil Ahmed — EID 7966.</span>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mainUI" style="display:none">
+    <div class="nav" style="margin-bottom:24px; display:flex; justify-content:center; gap:14px; padding: 0 20px;">
+      <button id="navResults" type="button" style="display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-chart-line" style="font-size: 1rem;"></i>Dashboard</button>
+      <button id="navSelections" type="button" style="display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-filter" style="font-size: 1rem;"></i>Filters</button>
+      <button id="navAll" type="button" style="display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-table" style="font-size: 1rem;"></i>Raw Data</button>
+    </div>
+
+    <!-- analyzing overlay (thin top progress bar) -->
+    <div id="analyzingOverlay" aria-hidden="true">
+      <div id="analyzingBar" aria-hidden="true"></div>
+    </div>
+
+    <div class="grid">
+    <div class="box" id="pageSelections" style="display:none">
+  <style>
+  /* local helper styles for selection grouping (light-mode) */
+  .selector-section{ border:1px solid rgba(11,17,32,0.04); padding:12px; margin-bottom:12px; background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,251,0.98)); border-radius:8px }
+  .selector-section h4{ margin:0 0 8px 0; color:var(--accent-blue); font-size:0.98em; letter-spacing:0.02em; font-weight:700 }
+  .selector-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:start }
+  .selector-grid .col{ display:flex; flex-direction:column; gap:8px }
+  .selector-grid .col .label-small{ font-size:0.88em; color:var(--muted); margin-bottom:4px }
+  /* make selects fluid inside columns */
+  .selector-grid .col select{ width:100%; min-width:0; box-sizing:border-box }
+  /* chip row styling */
+  .chip-row{ margin-top:8px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; min-height:34px }
+  .chip-row .chip{ background:linear-gradient(180deg, rgba(0,120,255,0.02), rgba(255,255,255,0.95)); border:1px solid rgba(0,120,255,0.08); color:#0b1220 }
+  /* entrance animation for selector sections */
+  .selector-section{ transform: translateY(8px); opacity:0; transition: transform .36s ease, opacity .36s ease }
+  #pageSelections.visible .selector-section{ transform:none; opacity:1 }
+  /* stagger children when page becomes visible */
+  #pageSelections.visible .selector-section:nth-child(1){ transition-delay: 40ms }
+  #pageSelections.visible .selector-section:nth-child(2){ transition-delay: 80ms }
+  #pageSelections.visible .selector-section:nth-child(3){ transition-delay: 120ms }
+  #pageSelections.visible .selector-section:nth-child(4){ transition-delay: 160ms }
+  #pageSelections.visible .selector-section:nth-child(5){ transition-delay: 200ms }
+  #pageSelections.visible .selector-section:nth-child(6){ transition-delay: 240ms }
+  #pageSelections.visible .selector-section:nth-child(7){ transition-delay: 280ms }
+  /* chip pop animation */
+  .chip{ transform: scale(.96); opacity:0.92; transition: transform .18s ease, opacity .18s ease }
+  .chip.pop{ transform: scale(1); opacity:1; box-shadow:0 8px 30px rgba(0,120,255,0.06) }
+  /* select focus glow */
+  select:focus{ box-shadow: 0 6px 30px rgba(0,120,255,0.08); border-color:var(--accent-blue) }
+  /* small helper for two-column single-col layouts on narrow screens */
+  @media (max-width:920px){ .selector-grid{ grid-template-columns: 1fr } }
+  </style>
+  <style>
+    /* make all visible text in selection page uppercase (visual only) */
+    #pageSelections { text-transform: none; }
+    #pageSelections h4, #pageSelections .label-small, #pageSelections label, #pageSelections .chip, #pageSelections .chip-row, #pageSelections .chip-row span { text-transform: uppercase; }
+    /* uppercase option text display in selects (visual) */
+    #pageSelections select { text-transform: uppercase; }
+    /* keep placeholder/disabled small note normal-case where present */
+    #pageSelections .label-small { font-variant: small-caps; }
+  </style>
+        
+        <div style="display:none">
+        <label>Amount column (detected, change to override):</label>
+        <select id="amountCol"></select>
+      </div>
+    
+  <div style="display:none"> 
+    <label>Identifier column (for export/display):</label>
+    <select id="idCol"></select>
+    <label>Customer Name column (detected, change to override):</label>
+    <select id="customerCol"></select>
+    <label>Product Description column (detected, change to override):</label>
+    <select id="productCol"></select>
+  </div>
+  <div style="display:none"><label style="display:inline-block;margin-top:6px"><input id="includeProduct" type="checkbox" checked /> Include Product Description in display/export</label></div>
+  <div id="serviceInline" style="display:none;margin-top:6px;font-size:0.95em;color:#222">Total Service Loan Outstanding: <b id="serviceTotalInline">—</b></div>
+    <div class="selector-section">
+      <h4>SERVICE LOAN OUTSTANDING</h4>
+      <div class="selector-grid">
+        <div class="col">
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+            <div class="label-small">Filter by</div>
+            <select id="serviceMode" class="mode-select">
+              <option value="product">Product Description</option>
+              <option value="customer">Customer Name</option>
+            </select>
+          </div>
+          <select id="serviceProducts" multiple size="6"></select>
+        </div>
+        <div class="col">
+          <div class="chip-row" id="serviceSelected">(No products selected)</div>
+        </div>
+      </div>
+    </div>
+    <div id="smeEarnestLimit" style="margin-top:6px; font-size:0.95em; color:#222">SME - Earnest Money Account Limit: <b id="smeEarnestLimitVal">—</b>
+      &nbsp; &nbsp;Pct: <input id="smeEarnestPct" type="number" step="0.01" min="0" max="100" style="width:80px;" /> %
+      &nbsp; Security Value: <b id="smeEarnestImpactVal">—</b>
+    </div>
+    <div style="height:8px"></div>
+    <div class="selector-section">
+      <h4>Security</h4>
+      <div class="selector-grid">
+        <div class="col">
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+            <div class="label-small">Filter by</div>
+            <select id="securityMode" class="mode-select">
+              <option value="product">Product Description</option>
+              <option value="customer">Customer Name</option>
+            </select>
+          </div>
+          <select id="securityProducts" multiple size="6"></select>
+        </div>
+        <div class="col"><div class="chip-row" id="securitySelected">(No products selected)</div></div>
+      </div>
+    </div>
+    <div style="height:8px"></div>
+    <div class="selector-section">
+      <h4>Unused Part of Commitment</h4>
+      <div class="selector-grid">
+        <div class="col">
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+            <div class="label-small">Filter by</div>
+            <select id="unusedMode" class="mode-select">
+              <option value="product">Product Description</option>
+              <option value="customer">Customer Name</option>
+            </select>
+          </div>
+          <select id="unusedProducts" multiple size="6"></select>
+        </div>
+        <div class="col"><div class="chip-row" id="unusedSelected">(No products selected)</div></div>
+      </div>
+    </div>
+    <div style="height:8px"></div>
+    <div class="selector-section">
+      <h4>Manufacturing &amp; Industrial</h4>
+      <div class="selector-grid">
+        <div class="col">
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+            <div class="label-small">Filter by</div>
+            <select id="miMode" class="mode-select">
+              <option value="product">Product Description</option>
+              <option value="customer">Customer Name</option>
+            </select>
+          </div>
+          <select id="miProducts" multiple size="6"></select>
+          <select id="miCustomers" multiple size="6" style="display:none"></select>
+        </div>
+        <div class="col">
+          <div class="chip-row" id="miCombinedSelected">(No items selected)</div>
+        </div>
+      </div>
+    </div>
+    
+    <div style="height:8px"></div>
+    <div class="selector-section">
+      <h4>Asset-backed</h4>
+      <div class="selector-grid">
+        <div class="col">
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+            <div class="label-small">Filter by</div>
+            <select id="abMode" class="mode-select">
+              <option value="product">Product Description</option>
+              <option value="customer">Customer Name</option>
+            </select>
+          </div>
+          <select id="abProducts" multiple size="6"></select>
+          <select id="abCustomers" multiple size="6" style="display:none"></select>
+        </div>
+        <div class="col">
+          <div class="chip-row" id="abCombinedSelected">(No items selected)</div>
+        </div>
+      </div>
+    </div>
+    <div style="height:8px"></div>
+    <div class="selector-section">
+      <h4>Women Entrepreneur</h4>
+      <div class="selector-grid">
+        <div class="col">
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+            <div class="label-small">Filter by</div>
+            <select id="weMode" class="mode-select">
+              <option value="customer">Customer Name</option>
+              <option value="product">Product Description</option>
+            </select>
+          </div>
+          <select id="weCustomers" multiple size="4"></select>
+          <div class="chip-row" id="weSelected">(No customers selected)</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:8px"></div>
+    <div class="selector-section">
+      <h4>AGRI (CROP)</h4>
+      <div class="selector-grid">
+        <div class="col">
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+            <div class="label-small">Filter by</div>
+            <select id="agriCropMode" class="mode-select">
+              <option value="product">Product Description</option>
+              <option value="customer">Customer Name</option>
+            </select>
+          </div>
+          <select id="agriCropProducts" multiple size="6"></select>
+          <select id="agriCropCustomers" multiple size="6" style="display:none"></select>
+        </div>
+        <div class="col">
+          <div class="chip-row" id="agriCropCombinedSelected">(No items selected)</div>
+        </div>
+
+        <div class="col">
+          <div style="font-size:0.95em; font-weight:700; color:var(--accent-blue); margin-bottom:6px">AGRI (INDUSTRIAL)
+
+</div>
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+            <div class="label-small">Filter by</div>
+            <select id="agriIndMode" class="mode-select">
+              <option value="product">Product Description</option>
+              <option value="customer">Customer Name</option>
+            </select>
+          </div>
+          <select id="agriIndProducts" multiple size="6"></select>
+          <select id="agriIndCustomers" multiple size="6" style="display:none"></select>
+        </div>
+        <div class="col">
+          <div class="chip-row" id="agriIndCombinedSelected">(No items selected)</div>
+        </div>
+      </div>
+    </div>
+      <div style="display:none">
+        <label>Term column (detected, change to override):</label>
+        <select id="termCol"></select>
+      </div>
+
+  
+
+  </div>
+
+  <div class="box" id="pageResults">
+  <div style="margin-bottom:8px">
+  <!-- Export/Import/Preview snapshot controls removed -->
+    </div>
+  <!-- Snapshot preview removed -->
+      <div class="results-header">
+        <div class="results-title">Portfolio Dashboard</div>
+      </div>
+      <div id="results" class="results-grid">
+        <div class="result-card"><h5>Total Loan Accounts</h5><div class="num" id="totalAccounts">—</div></div>
+        <div class="result-card"><h5>Total Loan Amount</h5><div class="num" id="bucketTotal">—</div></div>
+        <div class="result-card"><h5>Short (≤1y)</h5><div class="num" id="short">—</div></div>
+        <div class="result-card"><h5>Medium (&gt;1y - &lt;3y)</h5><div class="num" id="med">—</div></div>
+        <div class="result-card"><h5>Long (≥3y)</h5><div class="num" id="long">—</div></div>
+
+        <div class="result-card"><h5>Top-50 total Loan Outstanding</h5><div class="num" id="top50">—</div></div>
+        <div class="result-card"><h5>Total Service Loan Outstanding</h5><div class="num" id="serviceTotal">—</div></div>
+        <div class="result-card"><h5>Total Manufacturing &amp; Industrial</h5><div class="num" id="miTotal">—</div></div>
+        <div class="result-card"><h5>Total Non-Manufacturing &amp; Trade</h5><div class="num" id="nonMiTotal">—</div></div>
+        <div class="result-card"><h5>Total EOL</h5><div class="num" id="totalEOL">—</div></div>
+
+        <div class="result-card"><h5>Total Asset-backed Loan</h5><div class="num" id="abTotal">—</div></div>
+        <div class="result-card"><h5>Total Guarantee-backed Loan</h5><div class="num" id="gbTotal">—</div></div>
+        <div class="result-card"><h5>Total Security Value</h5><div class="num" id="securityAdjusted">—</div></div>
+        <div class="result-card"><h5>Total Unused Part of Commitment</h5><div class="num" id="unusedTotal">—</div></div>
+        <div class="result-card"><h5>New Loan Disbursed</h5><div class="num" id="newDisbLastMonth">—</div></div>
+
+        <div class="result-card"><h5>Total Agri Industrial Loan</h5><div class="num" id="agriIndTotal">—</div></div>
+        <div class="result-card"><h5>Total Agri (crop) loan</h5><div class="num" id="agriCropTotal">—</div></div>
+        <div class="result-card"><h5>Total Women Entrepreneur Loan</h5><div class="num" id="weTotal">—</div></div>
+        <!-- duplicates removed -->
+      </div>
+    </div>
+  <div class="box" id="pageAll" style="display:none">
+      <h4 style="margin-top:12px">Customer Name &amp; Asset Value</h4>
+      <div id="custAssetSection" style="max-height:360px; overflow:auto; border-top:1px dashed #ccc; padding-top:8px">
+  <div style="margin-bottom:8px"><button id="addCustAsset" type="button">Add Customer Asset</button> <span id="custAssetTotal" style="margin-left:16px; font-weight:700">Total: —</span></div>
+  <table id="custAssetTable"><thead><tr><th>#</th><th>Customer Name</th><th>Asset Value</th><th>%</th><th>Impact</th><th>Actions</th></tr></thead><tbody></tbody></table>
+      </div>
+
+      <h3>EOL</h3>
+      <div id="eolSection" style="margin-top:10px; border-top:1px dashed #ccc; padding-top:8px">
+        <div id="eolTableWrap" style="display:block; max-height:220px; overflow:auto; margin-top:8px">
+          <table id="eolTable"><thead><tr><th>#</th><th>Customer</th><th>Product</th><th>Remarks</th><th>Account Limit</th><th>Total Due</th><th>Excess</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+
+      
+
+      <h3 style="margin-top:12px">Unused Part of Commitment (Selected rows)</h3>
+      <div id="unusedTableWrap" style="margin-top:8px; border-top:1px dashed #ccc; padding-top:8px; display:block; max-height:220px; overflow:auto">
+        <table id="unusedTableAll"><thead><tr><th>#</th><th>Customer</th><th>Product</th><th>Limit Amount</th><th>Total Due</th><th>Unused</th></tr></thead><tbody></tbody></table>
+      </div>
+
+      <h4>All sample</h4>
+      <div style="max-height:520px; overflow:auto"><table id="topTable"><thead><tr><th>#</th><th>Customer Name</th><th>Amount</th><th>Expiry</th><th>Disbursement</th></tr></thead><tbody></tbody></table></div>
+
+      <div style="margin-top:8px; margin-bottom:8px">
+        <label style="margin-right:8px">Bucket selection:</label>
+        <select id="bucketSelect">
+          <option value="all">All (no filter)</option>
+          <option value="short">Short (<=1y)</option>
+          <option value="medium">Medium (>1y - <3y)</option>
+          <option value="long">Long (>=3y)</option>
+        </select>
+      </div>
+    </div>
+    
+    
+  </div>
+
+  <script src="xlsx.full.min.js"></script>
+  <script>
+    // Persistent saves: use native localStorage to keep selections and snapshot data between sessions.
+    // (Removed the previous no-op shim so that save/load functions below actually persist.)
+
+    // Minimal client-side analyzer
+  const fileInput = document.getElementById('file');
+  const initialPanel = document.getElementById('initialPanel');
+  const mainUI = document.getElementById('mainUI');
+  function showMainUI(){ try{
+      if(!initialPanel || !mainUI){ if(initialPanel) initialPanel.style.display='none'; if(mainUI) mainUI.style.display=''; return; }
+      // start animated exit of initial panel
+      initialPanel.classList.add('panel-exit');
+      // prepare mainUI for entrance animation
+      mainUI.classList.add('main-enter');
+      mainUI.style.display = '';
+      // after the initialPanel exit animation, hide it and trigger mainUI entrance
+      setTimeout(()=>{
+        try{ initialPanel.style.display='none'; initialPanel.classList.remove('panel-exit'); }catch(e){}
+        // animate mainUI into place
+        setTimeout(()=>{ try{ mainUI.classList.remove('main-enter'); }catch(e){} }, 30);
+      }, 420);
+    }catch(e){} }
+    const amountColSel = document.getElementById('amountCol');
+    const idColSel = document.getElementById('idCol');
+    const termColSel = document.getElementById('termCol');
+  // analyze button removed — analysis is triggered automatically where needed
+    const notes = document.getElementById('notes');
+    // If the library isn't present locally, disable file operations and show a message.
+    if(typeof XLSX === 'undefined'){
+      notes.textContent = 'SheetJS (xlsx) library not found locally. Please download xlsx.full.min.js and place it next to this file (no external URLs). File input is disabled until the file is added.';
+      try{ fileInput.disabled = true; }catch(e){}
+    }
+  const navResults = document.getElementById('navResults');
+  const navSelections = document.getElementById('navSelections');
+  const navAll = document.getElementById('navAll');
+  const pageResults = document.getElementById('pageResults');
+  const pageSelections = document.getElementById('pageSelections');
+  const pageAll = document.getElementById('pageAll');
+  
+
+    let lastData = null; // array of objects
+    let lastCols = [];
+
+    function normalize(s){ if(s==null) return ''; return String(s).trim(); }
+    function normalizeKey(s){ return normalize(s).toLowerCase().replace(/\s+/g,' ').replace(/[^a-z0-9 ]/g,''); }
+
+  // Helper to read saved selection arrays/values from the persisted selections blob
+  function getSavedSelection(id){ try{ const raw = localStorage.getItem(PERSIST_KEY); if(!raw) return null; const obj = JSON.parse(raw); if(!obj) return null; const val = obj[id]; if(val===undefined||val===null) return null; if(Array.isArray(val)) return val.map(v=>String(v).toLowerCase()); return String(val).toLowerCase(); }catch(e){ return null; } }
+
+  // Gather all tokens for a given selector id: DOM selected options + generic saved + per-mode saved
+  function gatherSelectionTokens(baseId){ try{
+      const tokens = new Set();
+      // DOM selected options (if present)
+      const el = document.getElementById(baseId);
+      if(el){ try{ const dom = Array.from(el.selectedOptions).map(o=>String(o.value).toLowerCase()); for(const d of dom) if(d) tokens.add(d); }catch(_){} }
+      // If there's a paired Customers select (e.g. agriCropProducts -> agriCropCustomers), include its DOM-selected options too
+      try{
+        const partnerId = baseId.replace(/Products$/,'Customers');
+        const partnerEl = document.getElementById(partnerId);
+        if(partnerEl){ const dom2 = Array.from(partnerEl.selectedOptions).map(o=>String(o.value).toLowerCase()); for(const d of dom2) if(d) tokens.add(d); }
+      }catch(_){}
+      // generic saved
+      try{ const gen = getSavedSelection(baseId); if(gen){ if(Array.isArray(gen)){ for(const g of gen) if(g) tokens.add(g); } else tokens.add(gen); } }catch(_){}
+      // per-mode saved (product & customer)
+      try{ const sp = getSavedSelection(baseId + '__product'); if(sp){ if(Array.isArray(sp)){ for(const g of sp) if(g) tokens.add(g); } else tokens.add(sp); } }catch(_){}
+      try{ const sc = getSavedSelection(baseId + '__customer'); if(sc){ if(Array.isArray(sc)){ for(const g of sc) if(g) tokens.add(g); } else tokens.add(sc); } }catch(_){}
+      return Array.from(tokens);
+    }catch(e){ return []; } }
+
+  // Remove a value from a mode-specific saved selection (e.g. 'serviceProducts__customer')
+  function removeSavedSelectionFor(baseId, mode, value){ try{
+      const raw = localStorage.getItem(PERSIST_KEY); if(!raw) return;
+      const obj = JSON.parse(raw) || {};
+      const key = baseId + '__' + mode;
+      let arr = obj[key] || [];
+      if(!Array.isArray(arr)) arr = [arr];
+      const lowered = String(value).toLowerCase();
+      arr = arr.filter(x=> String(x).toLowerCase() !== lowered);
+      obj[key] = arr;
+      localStorage.setItem(PERSIST_KEY, JSON.stringify(obj));
+    }catch(e){}
+  }
+
+  // Toggle visibility of product/customer selects for MI and AB based on their mode selectors
+  function setModeVisibilityAll(){ try{
+      // MI
+      const miModeEl = document.getElementById('miMode');
+      if(miModeEl){ const m = miModeEl.value || 'product'; const miProd = document.getElementById('miProducts'); const miCust = document.getElementById('miCustomers'); const miProdRow = document.getElementById('miProductSelected'); const miCustRow = document.getElementById('miSelected'); if(miProd) miProd.style.display = (m==='product' ? '' : 'none'); if(miProdRow) miProdRow.style.display = (m==='product' ? '' : 'none'); if(miCust) miCust.style.display = (m==='customer' ? '' : 'none'); if(miCustRow) miCustRow.style.display = (m==='customer' ? '' : 'none'); }
+      // Asset-backed
+      const abModeEl = document.getElementById('abMode');
+      if(abModeEl){ const m2 = abModeEl.value || 'product'; const abProd = document.getElementById('abProducts'); const abCust = document.getElementById('abCustomers'); const abProdRow = document.getElementById('abProductSelected'); const abCustRow = document.getElementById('abSelected'); if(abProd) abProd.style.display = (m2==='product' ? '' : 'none'); if(abProdRow) abProdRow.style.display = (m2==='product' ? '' : 'none'); if(abCust) abCust.style.display = (m2==='customer' ? '' : 'none'); if(abCustRow) abCustRow.style.display = (m2==='customer' ? '' : 'none'); }
+  // Agri (crop)
+  const agCropModeEl = document.getElementById('agriCropMode');
+  if(agCropModeEl){ const m3 = agCropModeEl.value || 'product'; const acProd = document.getElementById('agriCropProducts'); const acCust = document.getElementById('agriCropCustomers'); if(acProd) acProd.style.display = (m3==='product' ? '' : 'none'); if(acCust) acCust.style.display = (m3==='customer' ? '' : 'none'); }
+  // Agri (industrial)
+  const agIndModeEl = document.getElementById('agriIndMode');
+  if(agIndModeEl){ const m4 = agIndModeEl.value || 'product'; const aiProd = document.getElementById('agriIndProducts'); const aiCust = document.getElementById('agriIndCustomers'); if(aiProd) aiProd.style.display = (m4==='product' ? '' : 'none'); if(aiCust) aiCust.style.display = (m4==='customer' ? '' : 'none'); }
+    }catch(e){}
+  }
+
+    function populateServiceProducts(records){
+      const prodSel = document.getElementById('serviceProducts'); if(!prodSel) return;
+      // preserve previous selections (prefer current DOM selection, then per-mode saved snapshot, then generic saved snapshot)
+  let prevSelected = Array.from(prodSel.selectedOptions).map(o=>String(o.value).toLowerCase());
+      const mode = (document.getElementById('serviceMode') && document.getElementById('serviceMode').value) ? document.getElementById('serviceMode').value : 'product';
+      if(prevSelected.length===0){ const savedMode = getSavedSelection('serviceProducts__'+mode); if(savedMode){ prevSelected = Array.isArray(savedMode)? savedMode : [savedMode]; } }
+      if(prevSelected.length===0){ const saved = getSavedSelection('serviceProducts'); if(saved){ prevSelected = Array.isArray(saved)? saved : [saved]; } }
+      prodSel.innerHTML='';
+  // decide whether to populate from product description or customer name based on mode
+  const colName = (mode==='customer') ? document.getElementById('customerCol').value : document.getElementById('productCol').value;
+  const productValues = new Set();
+  if(colName && records){ for(const r of records){ const p = normalize(r[colName]||''); if(p) productValues.add(p.toLowerCase()); } }
+      const prodArr = Array.from(productValues).sort();
+      if(prodArr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no product values found)'; prodSel.appendChild(o); return; }
+      for(const v of prodArr){ const o = document.createElement('option'); o.value = v; o.textContent = v; // restore previous selection if present
+        if(prevSelected.includes(v)) o.selected = true;
+        prodSel.appendChild(o); }
+      const defaults = ['sme - earnest money finance','retail - doctors loan','earnest money finance','doctors loan'];
+      let anySel=false;
+      for(const opt of prodSel.options){ if(opt.selected) { anySel = true; break; } }
+      // Do not auto-select any options on initial load — leave selections to the user
+
+      // clicking an option should toggle it (single click), not clear others — implement via mousedown
+      if(!prodSel._toggleHandlerAdded){
+        prodSel.addEventListener('mousedown', function(e){
+          // ignore clicks on the scrollbar area etc.
+          const target = e.target;
+          if(!target) return;
+          if(target.tagName && target.tagName.toLowerCase() === 'option'){
+            e.preventDefault(); // stop default single-select behaviour
+            const val = target.value;
+            // toggle selection
+            for(const o of prodSel.options){ if(o.value===val){ o.selected = !o.selected; break; } }
+            renderSelectedServiceChips(); try{ analyzeNow(); }catch(err){}
+          }
+        });
+        prodSel._toggleHandlerAdded = true;
+      }
+      // update chips after repopulate
+      try{ renderSelectedServiceChips(); }catch(e){}
+    }
+
+    // Unused Part of Commitment selectors (products)
+    function populateUnusedProducts(records){
+      const sel = document.getElementById('unusedProducts'); if(!sel) return;
+  let prev = Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase());
+      const mode = (document.getElementById('unusedMode') && document.getElementById('unusedMode').value) ? document.getElementById('unusedMode').value : 'product';
+      if(prev.length===0){ const savedMode = getSavedSelection('unusedProducts__'+mode); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } }
+      if(prev.length===0){ const saved = getSavedSelection('unusedProducts'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } }
+      sel.innerHTML = '';
+  const col = (mode==='customer') ? document.getElementById('customerCol').value : document.getElementById('productCol').value;
+  const values = new Set();
+  if(col && records){ for(const r of records){ const v = normalize(r[col]||''); if(v) values.add(v.toLowerCase()); } }
+      const arr = Array.from(values).sort();
+      if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no product values found)'; sel.appendChild(o); return; }
+      for(const v of arr){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(prev.includes(v)) o.selected=true; sel.appendChild(o); }
+      if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedUnusedChips(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; }
+      try{ renderSelectedUnusedChips(); }catch(e){}
+    }
+
+    // Security selectors (products)
+    function populateSecurityProducts(records){
+      const sel = document.getElementById('securityProducts'); if(!sel) return;
+  let prev = Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase());
+      const mode = (document.getElementById('securityMode') && document.getElementById('securityMode').value) ? document.getElementById('securityMode').value : 'product';
+      if(prev.length===0){ const savedMode = getSavedSelection('securityProducts__'+mode); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } }
+      if(prev.length===0){ const saved = getSavedSelection('securityProducts'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } }
+      sel.innerHTML = '';
+  const col = (mode==='customer') ? document.getElementById('customerCol').value : document.getElementById('productCol').value;
+  const values = new Set();
+  if(col && records){ for(const r of records){ const v = normalize(r[col]||''); if(v) values.add(v.toLowerCase()); } }
+      const arr = Array.from(values).sort();
+      if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no product values found)'; sel.appendChild(o); return; }
+      for(const v of arr){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(prev.includes(v)) o.selected=true; sel.appendChild(o); }
+      if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedSecurityChips(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; }
+      try{ renderSelectedSecurityChips(); }catch(e){}
+    }
+
+    function renderSelectedSecurityChips(){
+      const container=document.getElementById('securitySelected');
+      const sel=document.getElementById('securityProducts');
+      if(!container||!sel) return;
+      container.innerHTML='';
+      const mode = (document.getElementById('securityMode') && document.getElementById('securityMode').value) ? document.getElementById('securityMode').value : 'product';
+      const otherMode = (mode==='product') ? 'customer' : 'product';
+      const selected = Array.from(sel.selectedOptions).map(o=>o.value);
+      // render current-mode selected
+      if(selected.length===0){ /* no current selections - but still show other-mode saved below if present */ }
+      for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of sel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedSecurityChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+      // render saved selections for the other mode (label them)
+      try{
+        const otherSaved = getSavedSelection('securityProducts__'+otherMode) || [];
+        const otherArr = Array.isArray(otherSaved) ? otherSaved : (otherSaved ? [otherSaved] : []);
+        for(const ov of otherArr){ if(!ov) continue; if(selected.includes(ov)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = ov + ' ('+otherMode+')'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('securityProducts', otherMode, ov); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedSecurityChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+      }catch(e){}
+      addPopEffect(container);
+    }
+    // helper to apply .pop animation to chips after they're inserted
+    function addPopEffect(container){ try{ if(!container) return; const chips = Array.from(container.querySelectorAll('.chip')); if(chips.length===0) return; // remove any existing pop classes
+        chips.forEach(c=> c.classList.remove('pop'));
+        // add pop slightly delayed so transition runs
+        setTimeout(()=>{ chips.forEach(c=> c.classList.add('pop')); }, 20);
+      }catch(e){}
+    }
+  // Render service selected chips showing both current-mode selections and saved selections from the other mode
+  function renderSelectedServiceChips(){
+    const container = document.getElementById('serviceSelected');
+    const prodSel = document.getElementById('serviceProducts');
+    if(!container || !prodSel) return;
+    container.innerHTML = '';
+    const mode = (document.getElementById('serviceMode') && document.getElementById('serviceMode').value) ? document.getElementById('serviceMode').value : 'product';
+    const otherMode = (mode === 'product') ? 'customer' : 'product';
+    const selected = Array.from(prodSel.selectedOptions).map(o=>o.value);
+    // current-mode selected chips
+    for(const val of selected){
+      const chip = document.createElement('span'); chip.className='chip';
+      const text = document.createElement('span'); text.textContent = val;
+      const btn = document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×';
+      btn.addEventListener('click', ()=>{
+        for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } }
+        try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){}
+        renderSelectedServiceChips(); try{ analyzeNow(); }catch(e){}
+      });
+      chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip);
+    }
+    // saved selections for the other mode
+    try{
+      const otherSaved = getSavedSelection('serviceProducts__'+otherMode) || [];
+      const otherArr = Array.isArray(otherSaved) ? otherSaved : (otherSaved ? [otherSaved] : []);
+      for(const ov of otherArr){ if(!ov) continue; if(selected.includes(ov)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = ov + ' ('+otherMode+')'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('serviceProducts', otherMode, ov); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedServiceChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    }catch(e){}
+    try{ addPopEffect(container); }catch(e){}
+  }
+    function renderSelectedUnusedChips(){
+      const container=document.getElementById('unusedSelected');
+      const sel=document.getElementById('unusedProducts');
+      if(!container||!sel) return;
+      container.innerHTML='';
+      const mode = (document.getElementById('unusedMode') && document.getElementById('unusedMode').value) ? document.getElementById('unusedMode').value : 'product';
+      const otherMode = (mode==='product') ? 'customer' : 'product';
+      const selected = Array.from(sel.selectedOptions).map(o=>o.value);
+      for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of sel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedUnusedChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+      try{
+        const otherSaved = getSavedSelection('unusedProducts__'+otherMode) || [];
+        const otherArr = Array.isArray(otherSaved) ? otherSaved : (otherSaved ? [otherSaved] : []);
+        for(const ov of otherArr){ if(!ov) continue; if(selected.includes(ov)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = ov + ' ('+otherMode+')'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('unusedProducts', otherMode, ov); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedUnusedChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+      }catch(e){}
+      addPopEffect(container);
+    }
+  // Simple page switcher
+  function showPageResults(){
+    try{ pageSelections.classList.remove('visible'); pageSelections.classList.add('slide-out-right'); pageAll.classList.add('slide-out-right'); }catch(e){}
+    setTimeout(()=>{
+      try{ pageResults.style.display=''; pageResults.classList.add('visible'); pageResults.classList.add('page-anim'); }catch(e){}
+      try{ pageSelections.style.display='none'; pageAll.style.display='none'; }catch(e){}
+      try{ pageSelections.classList.remove('slide-out-right'); pageAll.classList.remove('slide-out-right'); }catch(e){}
+    }, 60);
+    navResults.disabled=true; navSelections.disabled=false; navAll.disabled=false;
+  }
+  function showPageSelections(){
+    try{ pageResults.classList.add('slide-out-right'); pageAll.classList.add('slide-out-right'); }catch(e){}
+    setTimeout(()=>{
+      try{ pageResults.style.display='none'; pageSelections.style.display=''; pageSelections.classList.add('visible'); pageSelections.classList.add('page-anim'); pageAll.style.display='none'; }catch(e){}
+      try{ pageResults.classList.remove('slide-out-right'); pageAll.classList.remove('slide-out-right'); }catch(e){}
+    }, 60);
+    navResults.disabled=false; navSelections.disabled=true; navAll.disabled=false;
+  }
+  function showPageAll(){
+    try{ pageSelections.classList.remove('visible'); pageResults.classList.add('slide-out-right'); }catch(e){}
+    setTimeout(()=>{
+      try{ pageResults.style.display='none'; pageSelections.style.display='none'; pageAll.style.display=''; pageAll.classList.add('visible'); pageAll.classList.add('page-anim'); }catch(e){}
+      try{ pageResults.classList.remove('slide-out-right'); }catch(e){}
+    }, 60);
+    navResults.disabled=false; navSelections.disabled=false; navAll.disabled=true;
+  }
+  navResults.addEventListener('click', showPageResults);
+  navSelections.addEventListener('click', showPageSelections);
+  navAll.addEventListener('click', showPageAll);
+  
+  // default to results
+    // Persisted page handling
+  const PERSIST_KEY = 'iss_local_selections_v1';
+    function saveSelections(){ try{
+  const keys = ['amountCol','idCol','productCol','customerCol','termCol','includeProduct','serviceMode','securityMode','unusedMode','weMode','miMode','abMode','agriCropMode','agriIndMode','serviceProducts','miProducts','miCustomers','abProducts','abCustomers','weCustomers','agriCropProducts','agriCropCustomers','agriIndProducts','agriIndCustomers','unusedProducts','securityProducts','bucketSelect'];
+        const out = {};
+        for(const k of keys){ const el = document.getElementById(k); if(!el) continue; if(el.multiple){ out[k] = Array.from(el.selectedOptions).map(o=>o.value); } else if(el.type==='checkbox'){ out[k] = el.checked; } else { out[k] = el.value; } }
+        // persist mode-specific selections so switching modes doesn't lose prior selections
+        try{
+          const modeMap = { serviceProducts: 'serviceMode', securityProducts: 'securityMode', unusedProducts: 'unusedMode', weCustomers: 'weMode', miProducts: 'miMode', miCustomers: 'miMode', abProducts: 'abMode', abCustomers: 'abMode', agriCropProducts: 'agriCropMode', agriCropCustomers: 'agriCropMode', agriIndProducts: 'agriIndMode', agriIndCustomers: 'agriIndMode' };
+          for(const selId of Object.keys(modeMap)){
+            if(!(selId in out)) continue;
+            const modeId = modeMap[selId];
+            const modeEl = document.getElementById(modeId);
+            const modeVal = (modeEl && modeEl.value) ? String(modeEl.value) : 'product';
+            // store under a mode-specific key as well
+            out[selId + '__' + modeVal] = out[selId];
+          }
+        }catch(e){}
+        // Merge any existing per-mode saved keys from previous blob so we don't accidentally drop them
+        try{
+          const rawExisting = localStorage.getItem(PERSIST_KEY);
+          if(rawExisting){
+            const existing = JSON.parse(rawExisting) || {};
+            Object.keys(existing).forEach(k=>{
+              if(k.includes('__') && !(k in out)) out[k] = existing[k];
+            });
+          }
+        }catch(e){}
+    // persist active page
+  if(pageResults && pageSelections && pageAll){ if(pageResults.style.display!== 'none') out._page='results'; else if(pageSelections.style.display!== 'none') out._page='selections'; else if(pageAll.style.display!== 'none') out._page='all'; }
+        localStorage.setItem(PERSIST_KEY, JSON.stringify(out));
+        // also perform a full save snapshot for other computed data
+        try{ if(typeof saveFullState==='function') saveFullState(); }catch(e){}
+      }catch(e){ console.warn('saveSelections failed', e); }}
+    // Full state persistence (selections + computed lists + SME pct + customer assets)
+    const FULL_STATE_KEY = 'iss_full_state_v1';
+    function saveFullState(){ try{
+      const state = {};
+      // include persisted selections
+      try{ const sel = localStorage.getItem(PERSIST_KEY); state.selections = sel? JSON.parse(sel): null; }catch(e){ state.selections = null; }
+      // SME pct
+      try{ state.smePct = localStorage.getItem(SME_PCT_KEY); }catch(e){ state.smePct = null; }
+      // customer assets (store as string)
+      try{ state.custAssets = localStorage.getItem('iss_cust_assets_v1'); }catch(e){ state.custAssets = null; }
+      // computed filtered lists if available
+      try{ state._eolFiltered = window._eolFiltered || null; }catch(e){ state._eolFiltered = null; }
+      try{ state._unusedFiltered = window._unusedFiltered || null; }catch(e){ state._unusedFiltered = null; }
+      try{ state._lastDisplayed = window._lastDisplayed || null; }catch(e){ state._lastDisplayed = null; }
+      // persist loaded spreadsheet data and detected columns so we can fully restore without re-upload
+      try{ state.lastData = lastData || null; }catch(e){ state.lastData = null; }
+      try{ state.lastCols = lastCols || null; }catch(e){ state.lastCols = null; }
+      // store timestamp
+      state._savedAt = (new Date()).toISOString();
+      localStorage.setItem(FULL_STATE_KEY, JSON.stringify(state));
+    }catch(e){ console.warn('saveFullState failed', e); }}
+    function loadFullState(){ try{
+      const raw = localStorage.getItem(FULL_STATE_KEY); if(!raw) return null; const obj = JSON.parse(raw); if(!obj) return null;
+      // restore selections blob into localStorage for the normal selection loader
+      try{ if(obj.selections) localStorage.setItem(PERSIST_KEY, JSON.stringify(obj.selections)); }catch(e){}
+      // restore SME pct
+      try{ if(obj.smePct!==undefined && obj.smePct!==null) localStorage.setItem(SME_PCT_KEY, obj.smePct); }catch(e){}
+      // restore customer assets
+      try{ if(obj.custAssets!==undefined && obj.custAssets!==null) localStorage.setItem('iss_cust_assets_v1', obj.custAssets); }catch(e){}
+      // restore computed lists into window for UI use
+      try{ window._eolFiltered = obj._eolFiltered || null; }catch(e){ window._eolFiltered = null; }
+      try{ window._unusedFiltered = obj._unusedFiltered || null; }catch(e){ window._unusedFiltered = null; }
+      try{ window._lastDisplayed = obj._lastDisplayed || null; }catch(e){ window._lastDisplayed = null; }
+      // restore lastData and lastCols so we can operate without re-uploading the file
+      try{ if(obj.lastCols) lastCols = obj.lastCols.slice(); }catch(e){ lastCols = []; }
+      try{ lastData = obj.lastData || null; }catch(e){ lastData = null; }
+      // if we have column metadata, repopulate the column selectors so UI is usable
+      try{
+        if(obj.lastCols && Array.isArray(obj.lastCols) && obj.lastCols.length>0){
+          const cols = obj.lastCols;
+          function _setOpts(sel, cols){ if(!sel) return; sel.innerHTML=''; const empty = document.createElement('option'); empty.value=''; empty.textContent='-- none --'; sel.appendChild(empty); cols.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); }); }
+          _setOpts(document.getElementById('amountCol'), cols);
+          _setOpts(document.getElementById('idCol'), cols);
+          _setOpts(document.getElementById('termCol'), cols);
+          _setOpts(document.getElementById('customerCol'), cols);
+          _setOpts(document.getElementById('productCol'), cols);
+        }
+      }catch(e){}
+      // apply saved selections into DOM controls first so column selectors (productCol/customerCol)
+      // are set before we repopulate multi-select lists that depend on those columns.
+      try{ if(typeof loadSelections==='function') loadSelections(); }catch(e){}
+      // restore customer assets in-memory
+      try{ if(obj.custAssets){ window._custAssets = JSON.parse(obj.custAssets); } }catch(e){ window._custAssets = window._custAssets || []; }
+      // re-populate multi-select lists from lastData so previous selections map to real options
+      try{
+        if(lastData){
+          populateServiceProducts(lastData);
+          populateMiProducts(lastData);
+          populateMiCustomers(lastData);
+          populateAbProducts(lastData);
+          populateAbCustomers(lastData);
+          populateWeCustomers(lastData);
+          populateAgriProducts(lastData);
+          populateUnusedProducts(lastData);
+          populateSecurityProducts(lastData);
+        }
+      }catch(e){}
+      // re-run analysis to refresh UI (if we have data to analyze)
+      try{ if(lastData) { analyzeNow(); } }catch(e){}
+      return obj;
+    }catch(e){ console.warn('loadFullState failed', e); return null; }}
+    function loadSelections(){ try{ const raw = localStorage.getItem(PERSIST_KEY); if(!raw) return; const obj = JSON.parse(raw);
+        if(!obj) return;
+        const keys = Object.keys(obj);
+        for(const k of keys){
+          if(k==='_page') continue;
+          const el = document.getElementById(k); if(!el) continue;
+          const val = obj[k];
+          try{
+            if(el.multiple){
+              const vals = Array.isArray(val) ? val.map(v=>String(v).toLowerCase()) : [String(val).toLowerCase()];
+              for(const o of el.options){ o.selected = vals.indexOf(String(o.value).toLowerCase()) !== -1; }
+            } else if(el.type==='checkbox'){
+              el.checked = !!val;
+            } else {
+              // single select or input - try to match case-insensitively to an existing option value
+              const sval = (val===null||val===undefined)? '': String(val);
+              if(el.tagName && el.tagName.toLowerCase()==='select'){
+                const found = Array.from(el.options).find(op=>op.value===sval) || Array.from(el.options).find(op=>String(op.value).toLowerCase()===sval.toLowerCase());
+                if(found) el.value = found.value; else el.value = sval;
+              } else {
+                el.value = sval;
+              }
+            }
+          }catch(e){ /* ignore per-control errors */ }
+        }
+        // render chips for multi-selects after applying selections
+  try{ renderSelectedServiceChips(); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedWeChips(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); renderSelectedUnusedChips(); try{ setModeVisibilityAll(); }catch(e){} }catch(e){}
+    // restore page
+  if(obj._page){ if(obj._page==='results') showPageResults(); else if(obj._page==='selections') showPageSelections(); else if(obj._page==='all') showPageAll(); }
+      }catch(e){ console.warn('loadSelections failed', e); }}
+    // call loadSelections after DOM ready
+    showPageResults();
+
+    // Robust startup: ensure loadState runs after DOM is ready. If DOMContentLoaded already fired, run immediately.
+    function _startupRestore(){ try{
+        // Prefer restoring the full snapshot (data + selections) so reopening the page resumes where the user left off.
+        let obj = null;
+        try{ obj = (typeof loadFullState === 'function') ? loadFullState() : null; }catch(e){ obj = null; }
+        if(obj){
+          // full restore performed inside loadFullState (which also calls analyzeNow)
+          try{ renderSelectedServiceChips(); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedWeChips(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); renderSelectedUnusedChips(); renderSelectedSecurityChips(); try{ setModeVisibilityAll(); }catch(e){} }catch(e){}
+        } else {
+          // fall back to legacy single-key state restore
+            try{ const ok = (typeof loadState==='function') ? loadState() : false; if(ok){ try{ renderSelectedServiceChips(); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedWeChips(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); renderSelectedUnusedChips(); renderSelectedSecurityChips(); try{ setModeVisibilityAll(); }catch(e){} }catch(e){} } else { try{ if(typeof loadSelections==='function') loadSelections(); }catch(e){} } }catch(e){}
+        }
+      }catch(e){ console.warn('restore failed', e); }}
+
+    if(document.readyState === 'loading'){
+      window.addEventListener('DOMContentLoaded', _startupRestore);
+    } else { // already ready
+      try{ const obj = _startupRestore(); // startup restore will repopulate UI if a full snapshot exists
+        // if a full snapshot was loaded and lastData is present, show main UI
+        try{ if(lastData) showMainUI(); }catch(e){}
+      }catch(e){}
+    }
+
+
+  // --- Global single-key state autosave/restore (iss_state_v5) ---
+  const STATE_KEY = 'iss_state_v5';
+    let _applyingState = false;
+
+    // Helper: detect active page id among pageResults/pageSelections/pageAll
+    function getActivePageId(){ try{ if(pageResults && pageResults.style.display !== 'none') return 'pageResults'; if(pageSelections && pageSelections.style.display !== 'none') return 'pageSelections'; if(pageAll && pageAll.style.display !== 'none') return 'pageAll'; return 'pageResults'; }catch(e){ return 'pageResults'; } }
+
+    // showPage helper switches page and saves active page to state
+    function showPage(pageId){ try{ if(pageId==='pageResults') showPageResults(); else if(pageId==='pageSelections') showPageSelections(); else if(pageId==='pageAll') showPageAll(); }catch(e){} try{ saveState(); }catch(e){}
+    }
+
+    // Collect current values from inputs/selects/checkboxes and save to localStorage
+    function saveState(){ if(_applyingState) return; try{
+      const obj = { controls: {}, activePage: getActivePageId(), _savedAt: (new Date()).toISOString() };
+      // handle selects
+      document.querySelectorAll('select').forEach(sel=>{
+        if(!sel.id) return; if(sel.multiple){ obj.controls[sel.id] = Array.from(sel.selectedOptions).map(o=>o.value); } else { obj.controls[sel.id] = sel.value; }
+      });
+      // handle inputs and textareas
+      // For radio groups save by name -> selected value
+      const radioGroups = new Set();
+      document.querySelectorAll('input, textarea').forEach(el=>{
+        if(el.type==='file') return; // skip files
+        if(el.type==='radio'){ if(!el.name) return; if(radioGroups.has(el.name)) return; radioGroups.add(el.name); const sel = document.querySelector('input[name="'+el.name+'"]:checked'); obj.controls['__radio__'+el.name] = sel? sel.value : null; return; }
+        if(el.type==='checkbox'){ if(el.id) obj.controls[el.id] = el.checked; return; }
+        if(el.tagName.toLowerCase()==='textarea'){ if(el.id) obj.controls[el.id] = el.value; return; }
+        // other input types (text, number, email, etc.)
+        if(el.id) obj.controls[el.id] = el.value;
+      });
+      localStorage.setItem(STATE_KEY, JSON.stringify(obj));
+    }catch(e){ console.warn('saveState failed', e); }}
+
+    // Load and apply saved state (returns true if applied)
+    function loadState(){ try{ const raw = localStorage.getItem(STATE_KEY); if(!raw) return false; const obj = JSON.parse(raw); if(!obj || !obj.controls) return false; _applyingState = true;
+      // apply selects
+      Object.keys(obj.controls).forEach(k=>{
+        try{
+          if(k.startsWith('__radio__')) return; // handle radios later
+          const val = obj.controls[k];
+          const el = document.getElementById(k);
+          if(!el) return;
+          if(el.tagName.toLowerCase()==='select'){
+            if(el.multiple && Array.isArray(val)){
+              for(const o of el.options) o.selected = val.indexOf(o.value)!==-1;
+            } else { el.value = val; }
+          } else if(el.tagName.toLowerCase()==='input' || el.tagName.toLowerCase()==='textarea'){
+            if(el.type==='checkbox'){ el.checked = !!val; }
+            else { el.value = (val===null||val===undefined)? '': String(val); }
+          }
+        }catch(e){ /* ignore per-control errors */ }
+      });
+      // apply radio groups
+      Object.keys(obj.controls).forEach(k=>{
+        if(!k.startsWith('__radio__')) return; const name = k.replace('__radio__',''); const v = obj.controls[k]; if(v===null) return; const r = document.querySelector('input[name="'+name+'"][value="'+String(v).replace(/"/g,'\\"')+'"]'); if(r) r.checked = true;
+      });
+      // after restoring values, re-render multi-select chips if present
+      try{
+        if(typeof renderSelectedServiceChips==='function') renderSelectedServiceChips();
+  if(typeof renderSelectedMiCombined==='function') renderSelectedMiCombined();
+  if(typeof renderSelectedAbCombined==='function') renderSelectedAbCombined();
+        if(typeof renderSelectedWeChips==='function') renderSelectedWeChips();
+        if(typeof renderSelectedAgriCropChips==='function') renderSelectedAgriCropChips();
+        if(typeof renderSelectedAgriIndChips==='function') renderSelectedAgriIndChips();
+        if(typeof renderSelectedUnusedChips==='function') renderSelectedUnusedChips();
+        if(typeof renderSelectedSecurityChips==='function') renderSelectedSecurityChips();
+      }catch(e){}
+      // restore active page using showPage helper (which will persist state if needed)
+      try{ if(obj.activePage) { if(typeof showPage==='function') showPage(obj.activePage); else { if(obj.activePage==='pageResults') showPageResults(); else if(obj.activePage==='pageSelections') showPageSelections(); else if(obj.activePage==='pageAll') showPageAll(); } } }catch(e){}
+      _applyingState = false; return true; }catch(e){ console.warn('loadState failed', e); _applyingState=false; return false; }}
+
+    // Attach global listeners to save on any change/input
+    document.addEventListener('change', (ev)=>{ try{ if(_applyingState) return; const t = ev.target; if(!t) return; if(t.tagName && (t.tagName.toLowerCase()==='select' || t.tagName.toLowerCase()==='input' || t.tagName.toLowerCase()==='textarea')){ if(t.type==='file') return; saveState(); } }catch(e){} });
+    document.addEventListener('input', (ev)=>{ try{ if(_applyingState) return; const t = ev.target; if(!t) return; if(t.tagName && (t.tagName.toLowerCase()==='input' || t.tagName.toLowerCase()==='textarea')){ if(t.type==='file') return; saveState(); } }catch(e){} });
+
+    // Wrap nav clicks so we persist page selection as well
+    try{ navResults.removeEventListener('click', showPageResults); navSelections.removeEventListener('click', showPageSelections); navAll.removeEventListener('click', showPageAll); }catch(e){}
+    try{ navResults.addEventListener('click', ()=>{ showPageResults(); try{ saveState(); }catch(e){} }); navSelections.addEventListener('click', ()=>{ showPageSelections(); try{ saveState(); }catch(e){} }); navAll.addEventListener('click', ()=>{ showPageAll(); try{ saveState(); }catch(e){} }); }catch(e){}
+
+    // Restore state on DOMContentLoaded (or immediately if already loaded)
+    try{ window.addEventListener('DOMContentLoaded', ()=>{ try{ const ok = loadState(); if(ok) notes.textContent = 'State restored from last session.'; }catch(e){} }); }catch(e){}
+
+    // End of autosave/restore section
+
+  // SME Earnest percent persistence
+  const SME_PCT_KEY = 'iss_sme_earnest_pct_v1';
+  function loadSmePct(){ try{ const v = localStorage.getItem(SME_PCT_KEY); if(v===null) return null; const n = Number(v); return isNaN(n)? null: n; }catch(e){ return null } }
+  function saveSmePct(v){ try{ if(v===null) localStorage.removeItem(SME_PCT_KEY); else localStorage.setItem(SME_PCT_KEY, String(v)); }catch(e){} }
+  // initialize input from saved value if present
+  try{ const smeInput = document.getElementById('smeEarnestPct'); if(smeInput){ const saved = loadSmePct(); if(saved!==null) smeInput.value = saved; smeInput.addEventListener('change', ()=>{ const val = smeInput.value; const n = val===''? null: Number(val); saveSmePct(n); try{ analyzeNow(); }catch(e){} }); } }catch(e){}
+
+    // Populate Manufacturing & Industrial customers select (similar behavior to serviceProducts)
+    function populateMiCustomers(records){
+      const sel = document.getElementById('miCustomers'); if(!sel) return;
+  let prev = Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase());
+      if(prev.length===0){ const saved = getSavedSelection('miCustomers'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } }
+      // also restore any per-mode saved values (if present)
+      if(prev.length===0){ const sp = getSavedSelection('miCustomers__product') || []; const sc = getSavedSelection('miCustomers__customer') || []; const both = [].concat(Array.isArray(sp)?sp:[sp]).concat(Array.isArray(sc)?sc:[sc]).filter(Boolean); if(both.length>0) prev = both; }
+      sel.innerHTML = '';
+      const custCol = document.getElementById('customerCol').value;
+      const values = new Set();
+      if(custCol && records){ for(const r of records){ const v = normalize(r[custCol]||''); if(v) values.add(v.toLowerCase()); } }
+      const arr = Array.from(values).sort();
+      if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; sel.appendChild(o); return; }
+      for(const v of arr){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(prev.includes(v)) o.selected = true; sel.appendChild(o); }
+      // defaults: none — prefer preserving previous selection
+  // Do not auto-select any options on initial load — leave selections to the user
+      if(!sel._toggleHandlerAdded){
+  sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected = !o.selected; break; } } renderSelectedMiCombined(); try{ analyzeNow(); }catch(err){} } });
+        sel._toggleHandlerAdded = true;
+      }
+  try{ renderSelectedMiCombined(); }catch(e){}
+    }
+
+    // Populate MI products from productCol
+    function populateMiProducts(records){
+      const sel = document.getElementById('miProducts'); if(!sel) return;
+  let prev = Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase());
+      if(prev.length===0){ const saved = getSavedSelection('miProducts'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } }
+      if(prev.length===0){ const sp = getSavedSelection('miProducts__product') || []; const sc = getSavedSelection('miProducts__customer') || []; const both = [].concat(Array.isArray(sp)?sp:[sp]).concat(Array.isArray(sc)?sc:[sc]).filter(Boolean); if(both.length>0) prev = both; }
+      sel.innerHTML = '';
+      const prodCol = document.getElementById('productCol').value;
+      const values = new Set();
+      if(prodCol && records){ for(const r of records){ const v = normalize(r[prodCol]||''); if(v) values.add(v.toLowerCase()); } }
+      const arr = Array.from(values).sort();
+      if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no product values found)'; sel.appendChild(o); return; }
+      for(const v of arr){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(prev.includes(v)) o.selected=true; sel.appendChild(o); }
+      // Do not auto-select any options on initial load — leave selections to the user
+  if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedMiCombined(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; }
+  try{ renderSelectedMiCombined(); }catch(e){}
+    }
+
+function renderSelectedMiProductChips(){
+  // Backwards-compatible wrapper: route to combined MI renderer so both product and customer selections show
+  try{ if(typeof renderSelectedMiCombined==='function'){ renderSelectedMiCombined(); return; } }catch(e){}
+}
+
+// Combined render for MI: show active-mode selected items and other-mode saved items in the combined right-side area
+function renderSelectedMiCombined(){
+  const container = document.getElementById('miCombinedSelected'); if(!container) return; container.innerHTML='';
+  const prodSel = document.getElementById('miProducts'); const custSel = document.getElementById('miCustomers');
+  const prodSelected = prodSel ? Array.from(prodSel.selectedOptions).map(o=>o.value) : [];
+  const custSelected = custSel ? Array.from(custSel.selectedOptions).map(o=>o.value) : [];
+
+  // render product-selected chips
+  for(const val of prodSelected){
+    const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×';
+    btn.addEventListener('click', ()=>{ try{ if(prodSel){ for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedMiCombined(); try{ analyzeNow(); }catch(e){} });
+    chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip);
+  }
+
+  // render customer-selected chips (labelled)
+  for(const val of custSelected){ if(!val) continue; if(prodSelected.includes(val)) continue; const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(custSel){ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedMiCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+
+  // include any per-mode saved tokens from the other-mode keys (preserve removals)
+  try{
+    const otherProdSaved = getSavedSelection('miProducts__product') || [];
+    const otherCustSaved = getSavedSelection('miProducts__customer') || [];
+    const savedProdArr = Array.isArray(otherProdSaved)? otherProdSaved : (otherProdSaved? [otherProdSaved] : []);
+    const savedCustArr = Array.isArray(otherCustSaved)? otherCustSaved : (otherCustSaved? [otherCustSaved] : []);
+    for(const sv of savedCustArr){ if(!sv) continue; if(custSelected.includes(sv) || prodSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('miProducts','customer', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedMiCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    for(const sv of savedProdArr){ if(!sv) continue; if(prodSelected.includes(sv) || custSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (product)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('miProducts','product', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedMiCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+  }catch(e){}
+
+  addPopEffect(container);
+}
+
+    // clear handler for MI products
+    
+
+    // Asset-backed selectors (products + customers)
+    function populateAbProducts(records){
+      const sel = document.getElementById('abProducts'); if(!sel) return;
+  let prev = Array.from(sel.selectedOptions).map(o=>o.value);
+  if(prev.length===0){ const saved = getSavedSelection('abProducts'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } }
+  if(prev.length===0){ const sp = getSavedSelection('abProducts__product')|| []; const sc = getSavedSelection('abProducts__customer')|| []; const both = [].concat(Array.isArray(sp)?sp:[sp]).concat(Array.isArray(sc)?sc:[sc]).filter(Boolean); if(both.length>0) prev = both; }
+      sel.innerHTML = '';
+      const prodCol = document.getElementById('productCol').value;
+      const values = new Set();
+      if(prodCol && records){ for(const r of records){ const v = normalize(r[prodCol]||''); if(v) values.add(v.toLowerCase()); } }
+      const arr = Array.from(values).sort();
+      if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no product values found)'; sel.appendChild(o); return; }
+      for(const v of arr){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(prev.includes(v)) o.selected=true; sel.appendChild(o); }
+  if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedAbCombined(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; }
+  try{ renderSelectedAbCombined(); }catch(e){}
+    }
+
+// Combined render for AB: show active-mode selected items and other-mode saved items in the combined right-side area
+function renderSelectedAbCombined(){
+  const container = document.getElementById('abCombinedSelected'); if(!container) return; container.innerHTML='';
+  const prodSel = document.getElementById('abProducts'); const custSel = document.getElementById('abCustomers');
+  const prodSelected = prodSel ? Array.from(prodSel.selectedOptions).map(o=>o.value) : [];
+  const custSelected = custSel ? Array.from(custSel.selectedOptions).map(o=>o.value) : [];
+
+  // render product-selected chips
+  for(const val of prodSelected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(prodSel){ for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAbCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+
+  // render customer-selected chips (labelled)
+  for(const val of custSelected){ if(!val) continue; if(prodSelected.includes(val)) continue; const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(custSel){ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAbCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+
+  // include saved per-mode tokens not currently selected
+  try{
+    const savedProd = getSavedSelection('abProducts__product') || [];
+    const savedCust = getSavedSelection('abProducts__customer') || [];
+    const savedProdArr = Array.isArray(savedProd)? savedProd : (savedProd? [savedProd] : []);
+    const savedCustArr = Array.isArray(savedCust)? savedCust : (savedCust? [savedCust] : []);
+    for(const sv of savedCustArr){ if(!sv) continue; if(custSelected.includes(sv) || prodSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('abProducts','customer', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAbCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    for(const sv of savedProdArr){ if(!sv) continue; if(prodSelected.includes(sv) || custSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (product)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('abProducts','product', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAbCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+  }catch(e){}
+
+  addPopEffect(container);
+}
+
+  function populateAbCustomers(records){ const sel=document.getElementById('abCustomers'); if(!sel) return; let prev=Array.from(sel.selectedOptions).map(o=>o.value); if(prev.length===0){ const saved = getSavedSelection('abCustomers'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } } if(prev.length===0){ const sp = getSavedSelection('abCustomers__product')|| []; const sc = getSavedSelection('abCustomers__customer')|| []; const both = [].concat(Array.isArray(sp)?sp:[sp]).concat(Array.isArray(sc)?sc:[sc]).filter(Boolean); if(both.length>0) prev = both; } sel.innerHTML=''; const custCol=document.getElementById('customerCol').value; const values=new Set(); if(custCol && records){ for(const r of records){ const v=normalize(r[custCol]||''); if(v) values.add(v.toLowerCase()); } } const arr=Array.from(values).sort(); if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; sel.appendChild(o); return; } for(const v of arr){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(prev.includes(v)) o.selected=true; sel.appendChild(o); } if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedAbChips(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; } try{ renderSelectedAbChips(); }catch(e){}
+    }
+
+function renderSelectedAbProductChips(){
+  // Backwards-compatible wrapper: route to combined AB renderer so both product and customer selections show
+  try{ if(typeof renderSelectedAbCombined==='function'){ renderSelectedAbCombined(); return; } }catch(e){}
+}
+
+function renderSelectedAbChips(){
+  // Backwards-compatible wrapper: route to combined AB renderer so both product and customer selections show
+  try{ if(typeof renderSelectedAbCombined==='function'){ renderSelectedAbCombined(); return; } }catch(e){}
+}
+
+    
+
+    // Women Entrepreneur (customer selection)
+  function populateWeCustomers(records){ const sel=document.getElementById('weCustomers'); if(!sel) return; let prev=Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase()); sel.innerHTML=''; const mode = (document.getElementById('weMode') && document.getElementById('weMode').value) ? document.getElementById('weMode').value : 'customer'; if(prev.length===0){ const savedMode = getSavedSelection('weCustomers__'+mode); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } } if(prev.length===0){ const saved = getSavedSelection('weCustomers'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } } const col = (mode==='product') ? document.getElementById('productCol').value : document.getElementById('customerCol').value; const values=new Set(); if(col && records){ for(const r of records){ const v=normalize(r[col]||''); if(v) values.add(v.toLowerCase()); } } const arr=Array.from(values).sort(); if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no values found)'; sel.appendChild(o); return; } for(const v of arr){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(prev.includes(v)) o.selected=true; sel.appendChild(o); } if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedWeChips(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; } try{ renderSelectedWeChips(); }catch(e){} }
+  function renderSelectedWeChips(){ const container=document.getElementById('weSelected'); const sel=document.getElementById('weCustomers'); const selected=Array.from(sel.selectedOptions).map(o=>o.value); container.innerHTML=''; if(selected.length===0){ container.textContent='(No customers selected)'; return; } for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of sel.options){ if(o.value===val){ o.selected=false; break; } } renderSelectedWeChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); } addPopEffect(container); }
+  function renderSelectedWeChips(){
+    const container=document.getElementById('weSelected');
+    const sel=document.getElementById('weCustomers');
+    if(!container||!sel) return;
+    container.innerHTML='';
+    const mode = (document.getElementById('weMode') && document.getElementById('weMode').value) ? document.getElementById('weMode').value : 'customer';
+    const otherMode = (mode==='product') ? 'customer' : 'product';
+    const selected = Array.from(sel.selectedOptions).map(o=>o.value);
+    for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of sel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedWeChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    try{
+      const otherSaved = getSavedSelection('weCustomers__'+otherMode) || [];
+      const otherArr = Array.isArray(otherSaved) ? otherSaved : (otherSaved ? [otherSaved] : []);
+      for(const ov of otherArr){ if(!ov) continue; if(selected.includes(ov)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = ov + ' ('+otherMode+')'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('weCustomers', otherMode, ov); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedWeChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    }catch(e){}
+    addPopEffect(container);
+  }
+    
+
+  // Agri product selects (crop and industrial)
+  function populateAgriProducts(records){ const cropSel=document.getElementById('agriCropProducts'); const indSel=document.getElementById('agriIndProducts'); const cropCust=document.getElementById('agriCropCustomers'); const indCust=document.getElementById('agriIndCustomers'); if(!cropSel||!indSel) return;
+  let prevCrop=Array.from(cropSel.selectedOptions).map(o=>o.value);
+  let prevInd=Array.from(indSel.selectedOptions).map(o=>o.value);
+  let prevCropCust = cropCust ? Array.from(cropCust.selectedOptions).map(o=>o.value) : [];
+  let prevIndCust = indCust ? Array.from(indCust.selectedOptions).map(o=>o.value) : [];
+  // restore generic saved if no DOM selection
+  if(prevCrop.length===0){ const saved = getSavedSelection('agriCropProducts'); if(saved) prevCrop = Array.isArray(saved)? saved : [saved]; }
+  if(prevInd.length===0){ const saved2 = getSavedSelection('agriIndProducts'); if(saved2) prevInd = Array.isArray(saved2)? saved2 : [saved2]; }
+  // also check per-mode saved variants (product/customer) and merge if still empty
+  if(prevCrop.length===0){ const sp = getSavedSelection('agriCropProducts__product')|| []; const sc = getSavedSelection('agriCropProducts__customer')|| []; prevCrop = [].concat(Array.isArray(sp)?sp:[sp]).concat(Array.isArray(sc)?sc:[sc]).filter(Boolean); }
+  if(prevInd.length===0){ const sp2 = getSavedSelection('agriIndProducts__product')|| []; const sc2 = getSavedSelection('agriIndProducts__customer')|| []; prevInd = [].concat(Array.isArray(sp2)?sp2:[sp2]).concat(Array.isArray(sc2)?sc2:[sc2]).filter(Boolean); }
+  cropSel.innerHTML=''; indSel.innerHTML=''; const prodCol=document.getElementById('productCol').value; const values=new Set(); if(prodCol && records){ for(const r of records){ const v=normalize(r[prodCol]||''); if(v) values.add(v.toLowerCase()); } } const arr=Array.from(values).sort(); if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no product values found)'; cropSel.appendChild(o); indSel.appendChild(o.cloneNode(true)); return; } for(const v of arr){ const oc=document.createElement('option'); oc.value=v; oc.textContent=v; if(prevCrop.includes(v)) oc.selected=true; cropSel.appendChild(oc); const oi=document.createElement('option'); oi.value=v; oi.textContent=v; if(prevInd.includes(v)) oi.selected=true; indSel.appendChild(oi); }
+  if(!cropSel._toggleHandlerAdded){ cropSel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of cropSel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(err){} } }); cropSel._toggleHandlerAdded=true; }
+  if(!indSel._toggleHandlerAdded){ indSel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of indSel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(err){} } }); indSel._toggleHandlerAdded=true; }
+
+  // populate customer selects (use customerCol)
+  if(cropCust){ cropCust.innerHTML=''; }
+  if(indCust){ indCust.innerHTML=''; }
+  const custCol = document.getElementById('customerCol').value;
+  const custValues = new Set();
+  if(custCol && records){ for(const r of records){ const v=normalize(r[custCol]||''); if(v) custValues.add(v.toLowerCase()); } }
+  const custArr = Array.from(custValues).sort();
+  if(custArr.length===0){ if(cropCust){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; cropCust.appendChild(o); } if(indCust){ const o2=document.createElement('option'); o2.value=''; o2.textContent='(no customer values found)'; indCust.appendChild(o2); } }
+  else { for(const v of custArr){ if(cropCust){ const oc=document.createElement('option'); oc.value=v; oc.textContent=v; if(prevCropCust.includes(v)) oc.selected=true; cropCust.appendChild(oc); } if(indCust){ const oi=document.createElement('option'); oi.value=v; oi.textContent=v; if(prevIndCust.includes(v)) oi.selected=true; indCust.appendChild(oi); } } }
+
+  // customer toggle handlers
+  if(cropCust && !cropCust._toggleHandlerAdded){ cropCust.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of cropCust.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(err){} } }); cropCust._toggleHandlerAdded=true; }
+  if(indCust && !indCust._toggleHandlerAdded){ indCust.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of indCust.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(err){} } }); indCust._toggleHandlerAdded=true; }
+
+      try{ renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); }catch(e){}
+    }
+  function renderSelectedAgriCropChips(){
+    // Backwards-compatible wrapper: route to combined renderer
+    try{ if(typeof renderSelectedAgriCropCombined === 'function'){ renderSelectedAgriCropCombined(); return; } }catch(e){}
+  }
+
+  function renderSelectedAgriCropCombined(){
+    const container = document.getElementById('agriCropCombinedSelected'); if(!container) return; container.innerHTML='';
+    const prodSel = document.getElementById('agriCropProducts'); const custSel = document.getElementById('agriCropCustomers');
+    const prodSelected = prodSel ? Array.from(prodSel.selectedOptions).map(o=>o.value) : [];
+    const custSelected = custSel ? Array.from(custSel.selectedOptions).map(o=>o.value) : [];
+
+    // render product-selected chips
+    for(const val of prodSelected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(prodSel){ for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+
+    // render customer-selected chips (labelled)
+    for(const val of custSelected){ if(!val) continue; if(prodSelected.includes(val)) continue; const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(custSel){ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+
+    // include any per-mode saved tokens
+    try{
+      const savedProd = getSavedSelection('agriCropProducts__product') || [];
+      const savedCust = getSavedSelection('agriCropProducts__customer') || [];
+      const savedProdArr = Array.isArray(savedProd)? savedProd : (savedProd? [savedProd] : []);
+      const savedCustArr = Array.isArray(savedCust)? savedCust : (savedCust? [savedCust] : []);
+      for(const sv of savedCustArr){ if(!sv) continue; if(custSelected.includes(sv) || prodSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('agriCropProducts','customer', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+      for(const sv of savedProdArr){ if(!sv) continue; if(prodSelected.includes(sv) || custSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (product)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('agriCropProducts','product', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    }catch(e){}
+    addPopEffect(container);
+  }
+
+  function renderSelectedAgriIndChips(){
+    // Backwards-compatible wrapper: route to combined renderer
+    try{ if(typeof renderSelectedAgriIndCombined === 'function'){ renderSelectedAgriIndCombined(); return; } }catch(e){}
+  }
+
+  function renderSelectedAgriIndCombined(){
+    const container = document.getElementById('agriIndCombinedSelected'); if(!container) return; container.innerHTML='';
+    const prodSel = document.getElementById('agriIndProducts'); const custSel = document.getElementById('agriIndCustomers');
+    const prodSelected = prodSel ? Array.from(prodSel.selectedOptions).map(o=>o.value) : [];
+    const custSelected = custSel ? Array.from(custSel.selectedOptions).map(o=>o.value) : [];
+
+    for(const val of prodSelected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(prodSel){ for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+
+    for(const val of custSelected){ if(!val) continue; if(prodSelected.includes(val)) continue; const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(custSel){ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+
+    try{
+      const savedProd = getSavedSelection('agriIndProducts__product') || [];
+      const savedCust = getSavedSelection('agriIndProducts__customer') || [];
+      const savedProdArr = Array.isArray(savedProd)? savedProd : (savedProd? [savedProd] : []);
+      const savedCustArr = Array.isArray(savedCust)? savedCust : (savedCust? [savedCust] : []);
+      for(const sv of savedCustArr){ if(!sv) continue; if(custSelected.includes(sv) || prodSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('agriIndProducts','customer', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+      for(const sv of savedProdArr){ if(!sv) continue; if(prodSelected.includes(sv) || custSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (product)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('agriIndProducts','product', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    }catch(e){}
+    addPopEffect(container);
+  }
+    
+
+    
+
+  
+
+// Enhanced MI customer chips: also show saved product-mode selections as other-mode chips
+function renderSelectedMiChips(){
+  // Backwards-compatible wrapper: route to combined MI renderer so both product and customer selections show
+  try{ if(typeof renderSelectedMiCombined==='function'){ renderSelectedMiCombined(); return; } }catch(e){}
+}
+
+    // clear handler for MI select
+    
+
+    fileInput.addEventListener('change', async (ev)=>{
+      const f = ev.target.files[0];
+      if(!f) return;
+      notes.textContent = 'Reading file...';
+      const data = await f.arrayBuffer();
+      let wb;
+      try{ wb = XLSX.read(data, {type:'array'}); }catch(e){ notes.textContent = 'Error reading file: '+e; return; }
+      const first = wb.SheetNames[0];
+      const aoa = XLSX.utils.sheet_to_json(wb.Sheets[first], {header:1, raw:false, defval:null});
+      // find header row: search first 12 rows for tokens
+      const headerTokens = ['outstand','amount','balance','principal','tenor','term','maturity','loan'];
+      let headerRow = 0;
+      let best= -1;
+      for(let i=0;i<Math.min(12, aoa.length); i++){
+        const row = aoa[i].map(c=>normalize(c).toLowerCase());
+        let score = 0;
+        for(const cell of row){ for(const t of headerTokens) if(cell.includes(t)) { score++; break; } }
+        if(score>best){ best=score; headerRow=i; }
+      }
+      // build records
+      const headers = aoa[headerRow].map(h=>normalize(h));
+      lastCols = headers.slice();
+      const records = [];
+      for(let r=headerRow+1;r<aoa.length;r++){
+        const row = aoa[r];
+        if(!row) continue;
+        const obj = {};
+        let allEmpty=true;
+        for(let c=0;c<headers.length;c++){
+          const k=headers[c]||('col'+c);
+          const v = (row[c]===undefined? null: row[c]);
+          if(v!==null && String(v).trim()!=='') allEmpty=false;
+          obj[k]=v;
+        }
+        // skip fully empty rows
+        if(allEmpty) continue;
+        records.push(obj);
+      }
+
+      // populate selectors
+      function setOptions(sel, cols){ sel.innerHTML=''; const opt=document.createElement('option'); opt.value=''; opt.textContent='-- none --'; sel.appendChild(opt); cols.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); }); }
+  setOptions(amountColSel, headers);
+  setOptions(idColSel, headers);
+  setOptions(termColSel, headers);
+  setOptions(document.getElementById('customerCol'), headers);
+  setOptions(document.getElementById('productCol'), headers);
+
+      // heuristic defaults
+      const normMap = {}; headers.forEach(h=>normMap[normalizeKey(h)]=h);
+      const preferred = ['total due','principal outstanding','principal','total','amount','outstanding'];
+      let picked=null;
+      for(const p of preferred){ if(p in normMap){ picked=normMap[p]; break; } }
+      if(picked) amountColSel.value = picked; else amountColSel.selectedIndex = 1;
+  // id column
+      const idpref = ['contract ref','account no','account','liability number','loan id','loanid'];
+      for(const p of idpref){ if(p in normMap){ idColSel.value = normMap[p]; break; } }
+  // customer name column
+  const custpref = ['customer name','name','borrower','beneficiary','customer'];
+  for(const p of custpref){ if(p in normMap){ document.getElementById('customerCol').value = normMap[p]; break; } }
+    // product description column
+  const prodpref = ['product description','product','product name','productdesc','product description'];
+  for(const p of prodpref){ if(p in normMap){ document.getElementById('productCol').value = normMap[p]; break; } }
+      // term column
+      const termpref = ['expiry date','maturity','expiry date / maturity date','disbursement date','sanction date'];
+      for(const p of termpref){ if(p in normMap){ termColSel.value = normMap[p]; break; } }
+
+    lastData = records;
+  // Clear previous persisted selections when a new file is loaded so selectors reflect the new dataset
+    try{ localStorage.removeItem(PERSIST_KEY); notes.textContent = 'Loaded file — previous selections cleared to match this file.'; }catch(e){}
+    // auto-run analysis and switch to results after file load
+  try{ populateServiceProducts(records); populateMiProducts(records); populateMiCustomers(records); populateAbProducts(records); populateAbCustomers(records); populateWeCustomers(records); populateAgriProducts(records); populateUnusedProducts(records); populateSecurityProducts(records); renderSelectedUnusedChips(); renderSelectedSecurityChips(); analyzeNow(); showPageResults(); if(typeof saveSelections==='function') saveSelections(); }catch(e){ console.warn('post-load init failed', e); }
+    try{ showMainUI(); }catch(e){}
+      // populate service product and MI selectors after selectors are set (already done above)
+    });
+
+    function parseAmount(v){ if(v===null || v===undefined) return NaN; let s = String(v).replace(/\u00a0/g,'').replace(/,/g,'').replace(/\(/g,'-').replace(/\)/g,'').replace(/bdt/ig,'').trim(); if(s==='') return NaN; // remove stray letters
+      // drop non numeric trailing text
+      s = s.replace(/[^0-9.\-]/g,''); if(s==='') return NaN; const n = Number(s); return isFinite(n)?n:NaN; }
+
+    function parseDateGuess(s){ if(!s) return null; const t=String(s).trim(); // try common formats dd-mm-yyyy or yyyy-mm-dd
+      // dd-mm-yyyy
+      let m = t.match(/(\d{1,2})[\-/](\d{1,2})[\-/](\d{4})/);
+      if(m){ const dd=Number(m[1]), mm=Number(m[2]), yy=Number(m[3]); return new Date(yy, mm-1, dd); }
+      m = t.match(/(\d{4})[\-/](\d{1,2})[\-/](\d{1,2})/);
+      if(m){ const yy=Number(m[1]), mm=Number(m[2]), dd=Number(m[3]); return new Date(yy, mm-1, dd); }
+      // try Date.parse fallback
+      const d = new Date(t); if(!isNaN(d)) return d; return null; }
+
+    function monthsBetween(d1, d0){ if(!d1||!d0) return null; const y = d1.getFullYear()-d0.getFullYear(); const m = d1.getMonth()-d0.getMonth(); return y*12 + m + (d1.getDate()>=d0.getDate()?0: -1); }
+
+    // Compute and update the 'Total Security Value Against Loan (Adjusted)'
+    function computeSecurityAdjusted(){
+      try{
+        // As requested: Adjusted = Security (uplifted) + SME impact + Customer asset impact
+        const upliftSec = Number(window._securityUpliftNumeric || 0);
+        const smeImpact = Number(window._smeEarnestImpactNumeric || 0);
+        const custImpact = Number(window._custAssetImpactNumeric || 0);
+        const adjusted = upliftSec + smeImpact + custImpact;
+        const el = document.getElementById('securityAdjusted');
+        if(el) el.textContent = (isNaN(adjusted) || adjusted===0 ? '—' : adjusted.toLocaleString('en-US',{maximumFractionDigits:2}));
+        window._securityAdjustedNumeric = (isNaN(adjusted)? 0 : adjusted);
+  // debug UI removed: no per-field debug updates
+      }catch(e){ console.warn('computeSecurityAdjusted failed', e); }
+    }
+
+    function dropSummary(records){ const tokens = ['total','subtotal','grand total','grandtotal']; return records.filter(r=>{ for(const k in r){ const v = r[k]; if(v===null) continue; const s = String(v).toLowerCase().replace(/\s+/g,''); for(const t of tokens) if(s.includes(t.replace(/\s+/g,''))) return false; } return true; }); }
+
+    function analyzeNow(){ if(!lastData) { notes.textContent='No data loaded'; return; }
+      const records = dropSummary(lastData);
+      const amountKey = amountColSel.value || ''; const idKey = idColSel.value || ''; const termKey = termColSel.value || '';
+  // notes.textContent = `Analyzing ${records.length} rows using amount='${amountKey||"(auto)"}' term='${termKey||"(auto)"}'`;
+
+      // if amount not chosen try detection
+      let amtKey = amountKey;
+      if(!amtKey){ // detect by content
+        // pick preferred present header
+        const pref = ['total due','principal outstanding','principal','total','amount','outstanding'];
+        const hmap = {}; lastCols.forEach(h=>hmap[normalizeKey(h)]=h);
+        for(const p of pref) if(p in hmap){ amtKey=hmap[p]; break; }
+        if(!amtKey) amtKey=lastCols[0];
+      }
+
+      // build numeric amounts
+      const amounts = records.map(r=>parseAmount(r[amtKey]));
+      const indices = amounts.map((v,i)=>({v:i,idx:i,val:v}));
+      // sort by value desc
+      const sorted = indices.filter(x=>!isNaN(x.val)).sort((a,b)=>b.val - a.val);
+      const top50 = sorted.slice(0,50);
+      const top50sum = top50.reduce((s,t)=>s + (isNaN(t.val)?0:t.val), 0);
+
+      // fill results
+      document.getElementById('top50').textContent = top50sum.toLocaleString('en-US',{maximumFractionDigits:2});
+
+      // term buckets across all rows
+      // Total number of loan accounts (after dropping summary rows)
+      const totalAccounts = records.length;
+      document.getElementById('totalAccounts').textContent = totalAccounts;
+
+      // Compute Total EOL (Excess Over Limit)
+      // Priority: (A) If Remarks column contains tokens 'EOL' or 'EXPIRED' (e.g. 'EOL N EXPIRED'),
+      //           then filter to those rows and compute Account Limit - Total Due across that subset.
+      //           (B) Otherwise, fall back to explicit EOL column or Account Limit - Total Due across all rows.
+      const normHeaders = lastCols.map(h=>normalizeKey(h));
+      const remarksCol = lastCols.find(c=> normalizeKey(c).includes('remark') || normalizeKey(c).includes('remarks'));
+      const eolCandidates = lastCols.filter(c=>{ const k=normalizeKey(c); return k.includes('excess')||k.includes('eol')||k.includes('excessover')||k.includes('excess over')||k.includes('overlimit')||k.includes('over limit')||k.includes('expired'); });
+      // totalDue refers to the loan amount owed (Total Due / Outstanding / Total)
+      // prefer explicit 'total due' and 'totaldue' headers ahead of 'principal outstanding' to avoid swapping
+      const totalDueCandidates = lastCols.filter(c=>{ const k=normalizeKey(c); return k.includes('total due')||k.includes('totaldue')||k.includes('total')||k.includes('due')||k.includes('outstand')||k.includes('amount')||k.includes('principal')||k.includes('balance'); }).sort((a,b)=>{
+        const ka=normalizeKey(a), kb=normalizeKey(b);
+        const pa = (ka.includes('total due')||ka.includes('totaldue'))? -1: (ka.includes('principal')? 1:0);
+        const pb = (kb.includes('total due')||kb.includes('totaldue'))? -1: (kb.includes('principal')? 1:0);
+        return pa - pb;
+      });
+  const limitCandidates = lastCols.filter(c=>{ const k=normalizeKey(c); return k.includes('limit')||k.includes('sanction')||k.includes('sanctioned')||k.includes('approved limit')||k.includes('account limit'); }).sort((a,b)=>{ const ka=normalizeKey(a), kb=normalizeKey(b); const pa = ka.includes('account limit')? -1:0; const pb = kb.includes('account limit')? -1:0; return pa-pb; });
+      let totalEOL = 0;
+
+      // helper: find numeric value in a record using candidate column names (prefer parsed cols)
+      const parse = parseAmount;
+      function findNumeric(rec, candidates){
+        // prefer exact parsed helper fields if present
+        const prefer = ['limit_num','td_num','amount_num','principal_num'];
+        for(const p of prefer){ if(p in rec){ const v = parse(rec[p]); if(!isNaN(v)) return v; } }
+        // then try the provided candidates (column names)
+        for(const c of candidates){ if(c && (c in rec)){ const v = parse(rec[c]); if(!isNaN(v)) return v; } }
+        // lastly try any column whose normalized name matches the normalized candidate tokens
+        const candTokens = candidates.map(x=>normalizeKey(x));
+        for(const col of lastCols){ const k = normalizeKey(col); for(const t of candTokens){ if(t && k.includes(t)) { const v = parse(rec[col]); if(!isNaN(v)) return v; } } }
+        return NaN;
+      }
+
+      // (A) Remarks-based filter: compute positive excess = max(0, TotalDue - AccountLimit)
+      let computed = 0;
+      if(remarksCol){
+        // Include only remarks that explicitly mention 'EOL' (covers 'EOL' and 'EOL N EXPIRED')
+        const filteredRows = records.filter(r=>{
+          const v = normalize(r[remarksCol]).toLowerCase(); if(!v) return false;
+          return v.includes('eol');
+        });
+        if(filteredRows.length>0){
+          // pass actual header names (not normalized keys) so findNumeric can directly access record fields
+          // but prefer headers that look like 'total due' first
+          const tdCandidatesForFind = totalDueCandidates.slice().sort((a,b)=>{ const ka=normalizeKey(a), kb=normalizeKey(b); const pa = ka.includes('total due')||ka.includes('totaldue')? -1:0; const pb = kb.includes('total due')||kb.includes('totaldue')? -1:0; return pa - pb; });
+          const limCandidatesForFind = limitCandidates.slice();
+          computed = filteredRows.reduce((s,r)=>{
+            const lim = findNumeric(r, limCandidatesForFind);
+            const td = findNumeric(r, tdCandidatesForFind);
+            if(isNaN(td) && isNaN(lim)) return s;
+            const diff = (isNaN(td)?0:td) - (isNaN(lim)?0:lim);
+            return s + (diff>0? diff: 0);
+          }, 0);
+          // compute Total Due sum for these filtered rows and display
+          const totalDueSum = filteredRows.reduce((s,r)=>{ const td = findNumeric(r, tdCandidatesForFind); return s + (isNaN(td)?0:td); }, 0);
+          // do not show the EOL summary counts in the UI (user requested); store values on window for debugging
+          window._eol_totalDue = totalDueSum;
+          window._eol_count = filteredRows.length;
+          window._eol_excess = computed;
+          // render per-row in eolTable (always visible on All page)
+          const eolTbody = document.querySelector('#eolTable tbody'); eolTbody.innerHTML = '';
+          const showProduct = document.getElementById('includeProduct')? document.getElementById('includeProduct').checked : false;
+          filteredRows.forEach((r,i)=>{
+            const lim = findNumeric(r, limCandidatesForFind);
+            const td = findNumeric(r, tdCandidatesForFind);
+            const diff = (isNaN(td)?0:td) - (isNaN(lim)?0:lim);
+            const custCol = document.getElementById('customerCol').value;
+            const cust = custCol? (r[custCol]||'') : '';
+            const prodCol = document.getElementById('productCol').value;
+            const prod = prodCol? (r[prodCol]||'') : '';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${i+1}</td><td>${cust}</td><td>${(prod)}</td><td>${(r[remarksCol]||'')}</td><td class="right">${isNaN(lim)?'':lim.toLocaleString('en-US',{maximumFractionDigits:2})}</td><td class="right">${isNaN(td)?'':td.toLocaleString('en-US',{maximumFractionDigits:2})}</td><td class="right">${(diff>0? diff.toLocaleString('en-US',{maximumFractionDigits:2}): '')}</td>`;
+            eolTbody.appendChild(tr);
+          });
+          // expose the filtered rows for export
+          window._eolFiltered = filteredRows.map((r,i)=>{ const lim = findNumeric(r, limCandidatesForFind); const td = findNumeric(r, tdCandidatesForFind); return Object.assign({}, r, {__limit: lim, __totalDue: td, __excess: (isNaN(td)?0:td) - (isNaN(lim)?0:lim)}); });
+          // compute Service Loan Outstanding: include products or customers that match selected labels (include saved selections from both modes)
+          const prodColName = document.getElementById('productCol').value;
+          const custColLocal = document.getElementById('customerCol').value;
+          const combinedService = gatherSelectionTokens('serviceProducts');
+          const serviceTotal = records.reduce((s,r)=>{ if(!prodColName && !custColLocal) return s; const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColLocal]||'').toLowerCase(); if(combinedService.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); } return s; }, 0);
+          document.getElementById('serviceTotal').textContent = serviceTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+          // update inline under product selector too
+          document.getElementById('serviceTotalInline').textContent = serviceTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+          // Compute Manufacturing & Industrial total based on selected customer tokens
+          const miSelected = Array.from(document.getElementById('miCustomers').selectedOptions).map(o=>o.value.toLowerCase());
+          const custColName = document.getElementById('customerCol').value;
+          const miTotal = records.reduce((s,r)=>{ if(!custColName) return s; const v = String(r[custColName]||'').toLowerCase(); if(miSelected.some(t=> t && v.includes(t) )){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); } return s; }, 0);
+          document.getElementById('miTotal').textContent = miTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+        }
+      }
+
+      // (B) Fallback: if no remarks-based rows produced value, compute positive excess across all rows
+      if(computed===0){
+        // if explicit EOL numeric column exists, prefer its positive values
+        if(eolCandidates.length>0){
+          const col = eolCandidates[0];
+          const extracted = records.map(r=>parse(r[col]));
+          const anyNumeric = extracted.some(v=>!isNaN(v));
+          if(anyNumeric){
+            computed = extracted.reduce((s,v)=> s + (isNaN(v)?0:(v>0? v:0)), 0);
+          }
+        }
+        // final fallback: compute max(0, TotalDue - AccountLimit) across all records
+        if(computed===0){
+          const limCol = limitCandidates[0];
+          const tdCol = totalDueCandidates[0];
+          if(limCol && tdCol){
+            computed = records.reduce((s,r)=>{ const lim=parse(r[limCol]); const td=parse(r[tdCol]); if(isNaN(td) && isNaN(lim)) return s; const diff = (isNaN(td)?0:td) - (isNaN(lim)?0:lim); return s + (diff>0? diff: 0); }, 0);
+          } else {
+            // attempt per-row search
+            computed = records.reduce((s,r)=>{ let lim=null; let td=null; for(const c of lastCols){ const k=normalizeKey(c); if(lim===null && (k.includes('limit')||k.includes('sanction')||k.includes('approved')||k.includes('account limit'))) lim = parse(r[c]); if(td===null && (k.includes('total due')||k.includes('total')||k.includes('due')||k.includes('outstand')||k.includes('amount'))) td = parse(r[c]); }
+              if(isNaN(td) && isNaN(lim)) return s; const diff = (isNaN(td)?0:td) - (isNaN(lim)?0:lim); return s + (diff>0? diff: 0); }, 0);
+          }
+        }
+      }
+      totalEOL = computed;
+      document.getElementById('totalEOL').textContent = totalEOL.toLocaleString('en-US',{maximumFractionDigits:2});
+
+      // Compute Unused Part of Commitment and render per-row table
+      try {
+        const unusedCandidates = lastCols.filter(c => {
+          const k = normalizeKey(c);
+          return k.includes('unused') || k.includes('unused part') || k.includes('unusedpart') || k.includes('undrawn') || k.includes('undisbursed');
+        });
+
+        let unusedTotal = 0;
+  const prodColName = document.getElementById('productCol').value;
+  const unusedMode = (document.getElementById('unusedMode') && document.getElementById('unusedMode').value) ? document.getElementById('unusedMode').value : 'product';
+  const unusedCompareCol = (unusedMode === 'customer') ? document.getElementById('customerCol').value : prodColName;
+  // include DOM + saved (both modes) selections for Unused filter
+  const selectedUnused = gatherSelectionTokens('unusedProducts');
+
+        const tdCandidatesForFind = totalDueCandidates.slice();
+        // For Unused computation only: prefer explicit 'limit amount' header if present (do not change global EOL detection)
+        const limitAmountHeaders = lastCols.filter(c => normalizeKey(c).includes('limit amount') || normalizeKey(c).includes('limitamount'));
+        const limCandidatesForFind = limitAmountHeaders.concat(limitCandidates.slice());
+
+        // Build window._unusedFiltered
+        if (unusedCandidates.length > 0) {
+          const col = unusedCandidates[0];
+          const vals = records.map(r => parse(r[col]));
+          if (vals.some(v => !isNaN(v))) {
+            unusedTotal = vals.reduce((s, v) => s + (isNaN(v) ? 0 : v), 0);
+          }
+          // allow filtering by selectedUnused when any selections exist (check both product & customer columns)
+          let recordsForUnused = records;
+          if (selectedUnused.length > 0) {
+            const custColKey = document.getElementById('customerCol').value || '';
+            const prodColKey = prodColName || '';
+            recordsForUnused = records.filter(r => {
+              const prodTxt = prodColKey ? String(r[prodColKey] || '').toLowerCase() : '';
+              const custTxt = custColKey ? String(r[custColKey] || '').toLowerCase() : '';
+              return selectedUnused.some(t => t && (prodTxt.includes(t) || custTxt.includes(t)));
+            });
+          }
+          window._unusedFiltered = recordsForUnused.map((r) => {
+            const custCol = document.getElementById('customerCol').value;
+            const cust = custCol ? (r[custCol] || '') : '';
+            const prod = prodColName ? (r[prodColName] || '') : '';
+            const td = parse(r[totalDueCandidates[0]]);
+            const lim = parse(r[limCandidatesForFind[0]]);
+            const u = parse(r[col]);
+            return Object.assign({}, r, { __limit: lim, __totalDue: td, __unused: isNaN(u) ? ((isNaN(lim) || isNaN(td)) ? 0 : (lim - td)) : u });
+          });
+          // Deduplicate by customer+product, keep the row with the lowest __unused
+          try {
+            const dedupeMap = new Map();
+            const custColKey = document.getElementById('customerCol').value || '';
+            const prodColKey = prodColName || '';
+            for (const r of window._unusedFiltered) {
+              const custVal = (custColKey ? (r[custColKey] || '') : '').toString().trim().toLowerCase();
+              const prodVal = (prodColKey ? (r[prodColKey] || '') : '').toString().trim().toLowerCase();
+              const key = custVal + '||' + prodVal;
+              const val = isNaN(r.__unused) ? Infinity : r.__unused;
+              if (!dedupeMap.has(key) || val < (isNaN(dedupeMap.get(key).__unused) ? Infinity : dedupeMap.get(key).__unused)) {
+                dedupeMap.set(key, r);
+              }
+            }
+            window._unusedFiltered = Array.from(dedupeMap.values());
+            // recompute unusedTotal based on deduped rows
+            unusedTotal = window._unusedFiltered.reduce((s, rr) => { const v = isNaN(rr.__unused)?0:rr.__unused; return s + v; }, 0);
+          } catch (ex) {
+            console.warn('Dedupe failed', ex);
+          }
+        } else {
+          const rows = [];
+          for (const r of records) {
+            if (selectedUnused.length > 0) {
+              const prodTxt = prodColName ? String(r[prodColName] || '').toLowerCase() : '';
+              const custTxt = document.getElementById('customerCol').value ? String(r[document.getElementById('customerCol').value] || '').toLowerCase() : '';
+              if (!selectedUnused.some(t => t && (prodTxt.includes(t) || custTxt.includes(t)))) continue;
+            }
+            const lim = findNumeric(r, limCandidatesForFind);
+            const td = findNumeric(r, tdCandidatesForFind);
+            if (isNaN(lim) && isNaN(td)) continue;
+            const diff = (isNaN(lim) ? 0 : lim) - (isNaN(td) ? 0 : td);
+            const u = diff > 0 ? diff : 0;
+            rows.push(Object.assign({}, r, { __limit: lim, __totalDue: td, __unused: u }));
+            unusedTotal += u;
+          }
+          // Deduplicate rows by customer+product (lowest __unused)
+          try {
+            const dedupeMap = new Map();
+            const custColKey = document.getElementById('customerCol').value || '';
+            const prodColKey = prodColName || '';
+            for (const r of rows) {
+              const custVal = (custColKey ? (r[custColKey] || '') : '').toString().trim().toLowerCase();
+              const prodVal = (prodColKey ? (r[prodColKey] || '') : '').toString().trim().toLowerCase();
+              const key = custVal + '||' + prodVal;
+              const val = isNaN(r.__unused) ? Infinity : r.__unused;
+              if (!dedupeMap.has(key) || val < (isNaN(dedupeMap.get(key).__unused) ? Infinity : dedupeMap.get(key).__unused)) {
+                dedupeMap.set(key, r);
+              }
+            }
+            window._unusedFiltered = Array.from(dedupeMap.values());
+            // recompute unusedTotal based on deduped rows
+            unusedTotal = window._unusedFiltered.reduce((s, rr) => { const v = isNaN(rr.__unused)?0:rr.__unused; return s + v; }, 0);
+          } catch (ex) {
+            console.warn('Dedupe failed', ex);
+            window._unusedFiltered = rows;
+          }
+        }
+
+        document.getElementById('unusedTotal').textContent = unusedTotal.toLocaleString('en-US', { maximumFractionDigits: 2 });
+
+        // render the unused table (respect unusedBucketSelect)
+        function renderUnusedTable() {
+          const tbody = document.querySelector('#unusedTable tbody');
+          if (tbody) tbody.innerHTML = '';
+          const bucketEl = document.getElementById('unusedBucketSelect');
+          const bucket = bucketEl ? bucketEl.value : 'all';
+
+          const rows = (window._unusedFiltered || []).filter((r) => {
+            const disbCandidates = lastCols.filter(c => normalizeKey(c).includes('disbursement') || normalizeKey(c).includes('sanction') || normalizeKey(c).includes('disbursement date'));
+            const expCandidates = lastCols.filter(c => normalizeKey(c).includes('expiry') || normalizeKey(c).includes('maturity'));
+            const disb = disbCandidates.length > 0 ? parseDateGuess(r[disbCandidates[0]]) : null;
+            let expiry = null;
+            if (expCandidates.length > 0) expiry = parseDateGuess(r[expCandidates[0]]);
+            let m = null;
+            if (expiry && disb) m = monthsBetween(expiry, disb);
+            if (bucket === 'short') return (m !== null && m <= 12);
+            if (bucket === 'medium') return (m !== null && m > 12 && m < 36);
+            if (bucket === 'long') return (m !== null && m >= 36);
+            return true;
+          });
+
+          // render into pageUnused table
+          if (tbody) {
+            rows.forEach((r, i) => {
+              const tr = document.createElement('tr');
+              const custCol = document.getElementById('customerCol').value;
+              const cust = custCol ? (r[custCol] || '') : '';
+              const prod = prodColName ? (r[prodColName] || '') : '';
+              const lim = isNaN(r.__limit) ? '' : r.__limit;
+              const td = isNaN(r.__totalDue) ? '' : r.__totalDue;
+              const u = isNaN(r.__unused) ? '' : r.__unused;
+              tr.innerHTML = `<td>${i + 1}</td><td>${cust}</td><td>${prod}</td><td class="right">${(lim !== '' ? Number(lim).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '')}</td><td class="right">${(td !== '' ? Number(td).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '')}</td><td class="right">${(u !== '' ? Number(u).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '')}</td>`;
+              tbody.appendChild(tr);
+            });
+          }
+
+          // Also render into All page's Unused table if present
+          const allTbody = document.querySelector('#unusedTableAll tbody');
+          if (allTbody) {
+            allTbody.innerHTML = '';
+            rows.forEach((r, i) => {
+              const tr = document.createElement('tr');
+              const custCol = document.getElementById('customerCol').value;
+              const cust = custCol ? (r[custCol] || '') : '';
+              const prod = prodColName ? (r[prodColName] || '') : '';
+              const lim = isNaN(r.__limit) ? '' : r.__limit;
+              const td = isNaN(r.__totalDue) ? '' : r.__totalDue;
+              const u = isNaN(r.__unused) ? '' : r.__unused;
+              tr.innerHTML = `<td>${i + 1}</td><td>${cust}</td><td>${prod}</td><td class="right">${(lim !== '' ? Number(lim).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '')}</td><td class="right">${(td !== '' ? Number(td).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '')}</td><td class="right">${(u !== '' ? Number(u).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '')}</td>`;
+              allTbody.appendChild(tr);
+            });
+          }
+        }
+
+        // attach listener once
+        const bucketSel = document.getElementById('unusedBucketSelect');
+        if (bucketSel) {
+          if (!bucketSel._handlerAdded) {
+            bucketSel.addEventListener('change', renderUnusedTable);
+            bucketSel._handlerAdded = true;
+          }
+        }
+        renderUnusedTable();
+      } catch (e) {
+        console.warn('Failed to compute unusedTotal', e);
+        try { document.getElementById('unusedTotal').textContent = '—'; } catch(_){}
+      }
+
+      // Compute Service total and MI total unconditionally (use selections)
+      try{
+        const prodColName = document.getElementById('productCol').value;
+        const custColName = document.getElementById('customerCol').value;
+  // Include both DOM and saved selections (any mode) when computing service totals
+  const combinedService = gatherSelectionTokens('serviceProducts');
+  const serviceTotalAlways = records.reduce((s,r)=>{ if(!prodColName && !custColName) return s; const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColName]||'').toLowerCase(); if(combinedService.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); } return s; }, 0);
+  document.getElementById('serviceTotal').textContent = serviceTotalAlways.toLocaleString('en-US',{maximumFractionDigits:2});
+  document.getElementById('serviceTotalInline').textContent = serviceTotalAlways.toLocaleString('en-US',{maximumFractionDigits:2});
+
+        // Include DOM + saved selections for MI (products and customers)
+        const combinedMi = [].concat(gatherSelectionTokens('miProducts') || []).concat(gatherSelectionTokens('miCustomers') || []);
+        const uniqMi = Array.from(new Set(combinedMi));
+        const miTotalAlways = records.reduce((s,r)=>{
+          if(!prodColName && !custColName) return s;
+          const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColName]||'').toLowerCase();
+          if(uniqMi.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); }
+          return s;
+        }, 0);
+        document.getElementById('miTotal').textContent = miTotalAlways.toLocaleString('en-US',{maximumFractionDigits:2});
+        // Compute Asset-backed total similar to MI (product OR customer)
+        // Include DOM + saved selections for Asset-backed
+        const combinedAb = [].concat(gatherSelectionTokens('abProducts') || []).concat(gatherSelectionTokens('abCustomers') || []);
+        const uniqAb = Array.from(new Set(combinedAb));
+        const abTotalAlways = records.reduce((s,r)=>{
+          if(!prodColName && !custColName) return s;
+          const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColName]||'').toLowerCase();
+          if(uniqAb.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); }
+          return s;
+        }, 0);
+        document.getElementById('abTotal').textContent = abTotalAlways.toLocaleString('en-US',{maximumFractionDigits:2});
+        // Compute Security total (Account Limit) for selected security products
+        try{
+          const prodColName = document.getElementById('productCol').value;
+          const custColName = document.getElementById('customerCol').value;
+          const securityMode = (document.getElementById('securityMode') && document.getElementById('securityMode').value) ? document.getElementById('securityMode').value : 'product';
+          const combinedSecurity = gatherSelectionTokens('securityProducts');
+          let securityTotal = 0;
+          // if user selected specific security products (or saved ones), use them; otherwise default to common security keywords
+          const useSelected = combinedSecurity.length>0;
+          const securityTokens = ['security','collateral','guarantee','guaranteed','lien','mortgage','pledge','charge','securities'];
+          if(limitCandidates.length>0){
+            for(const r of records){ const pvProd = String(r[prodColName]||'').toLowerCase(); const pvCust = String(r[custColName]||'').toLowerCase();
+              let matched = false;
+              if(useSelected){ if(combinedSecurity.some(t=> t && (pvProd.includes(t) || pvCust.includes(t)))) matched = true; }
+              else { if(securityTokens.some(tok=> pvProd.includes(tok) || pvCust.includes(tok))) matched = true; }
+              if(matched){ const lim = findNumeric(r, limitCandidates); if(!isNaN(lim)) securityTotal += lim; }
+            }
+          }
+          // apply 115% uplift for display (user requested 115% instead of raw 100%)
+          try{
+            const uplift = 1.15;
+            const displaySecurity = (isNaN(securityTotal) ? NaN : (securityTotal * uplift));
+            const secEl = document.getElementById('securityTotal');
+            if(secEl) secEl.textContent = (isNaN(displaySecurity) || displaySecurity===0 ? '—' : displaySecurity.toLocaleString('en-US',{maximumFractionDigits:2}));
+            // expose numeric (raw and uplifted) for adjusted calculation and debug
+            try{ window._securityRawNumeric = (isNaN(securityTotal) ? 0 : securityTotal); window._securityUpliftNumeric = (isNaN(displaySecurity) ? 0 : displaySecurity); window._securityTotalNumeric = (isNaN(displaySecurity) ? 0 : displaySecurity); }catch(e){}
+          }catch(e){ const secEl = document.getElementById('securityTotal'); if(secEl) secEl.textContent='—'; }
+          try{ computeSecurityAdjusted(); }catch(e){}
+        }catch(e){ try{ const secEl=document.getElementById('securityTotal'); if(secEl) secEl.textContent='—'; }catch(_){ } }
+        // SME - Earnest Money Finance Account Limit total (independent of selections)
+        try{
+          const prodColNameLocal = prodColName;
+          const limColForSme = limitCandidates[0] || null;
+          let smeTotal = 0;
+          if(prodColNameLocal && limColForSme){
+            for(const r of records){ const prodText = String(r[prodColNameLocal]||'').toLowerCase(); if(!prodText) continue; const matches = prodText.includes('sme') && prodText.includes('earnest'); if(!matches){ // also accept explicit full phrase
+                  if(!prodText.includes('sme - earnest money finance') && !prodText.includes('sme earnest money finance')) continue; }
+                const limVal = parseAmount(r[limColForSme]); if(!isNaN(limVal)) smeTotal += limVal; }
+          }
+          const smeEl = document.getElementById('smeEarnestLimitVal'); if(smeEl) smeEl.textContent = (isNaN(smeTotal)? '—' : smeTotal.toLocaleString('en-US',{maximumFractionDigits:2}));
+          // compute impact using stored percent (if any)
+          try{
+            const pct = loadSmePct();
+            const impactEl = document.getElementById('smeEarnestImpactVal');
+            const impact = (isNaN(smeTotal) || pct===null) ? NaN : (smeTotal * (pct/100));
+            if(impactEl) impactEl.textContent = (isNaN(impact)? '—' : impact.toLocaleString('en-US',{maximumFractionDigits:2}));
+          }catch(e){ try{ const impactEl = document.getElementById('smeEarnestImpactVal'); if(impactEl) impactEl.textContent='—'; }catch(_){ } }
+          // expose numeric SME totals and calculated impact
+          try{ window._smeEarnestTotalNumeric = (isNaN(smeTotal)? 0 : smeTotal); window._smeEarnestImpactNumeric = (isNaN(smeTotal) || loadSmePct()===null) ? 0 : (smeTotal * (loadSmePct()/100)); }catch(e){}
+          try{ computeSecurityAdjusted(); }catch(e){}
+        }catch(e){ try{ const smeEl = document.getElementById('smeEarnestLimitVal'); if(smeEl) smeEl.textContent='—'; }catch(_){ } }
+  // Women Entrepreneur total (product- or customer-based depending on mode)
+  try{
+  const weMode = (document.getElementById('weMode') && document.getElementById('weMode').value) ? document.getElementById('weMode').value : 'customer';
+  // include DOM + saved (product/customer) selections for WE
+  const weSelected = gatherSelectionTokens('weCustomers');
+  const weTotal = records.reduce((s,r)=>{ const pv = String(r[document.getElementById('productCol').value]||'').toLowerCase(); const cv = String(r[document.getElementById('customerCol').value]||'').toLowerCase(); if(weSelected.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a=parseAmount(r[amtKey]); return s + (isNaN(a)?0:a);} return s; }, 0);
+    const weEl = document.getElementById('weTotal'); if(weEl) weEl.textContent = weTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+  }catch(e){ try{ const weEl = document.getElementById('weTotal'); if(weEl) weEl.textContent='—'; }catch(_){ } }
+  // Agri crop and agri industrial totals (product-based)
+  // include DOM + saved selections for Agri crop and industrial
+  const agriCropSelected = gatherSelectionTokens('agriCropProducts');
+  const agriIndSelected = gatherSelectionTokens('agriIndProducts');
+  // Match agri selections against BOTH product and customer columns (same behavior as Service/MI/AB/WE)
+  const agriCropTotal = records.reduce((s,r)=>{ const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColName]||'').toLowerCase(); if(agriCropSelected.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a=parseAmount(r[amtKey]); return s + (isNaN(a)?0:a);} return s; }, 0);
+  const agriIndTotal = records.reduce((s,r)=>{ const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColName]||'').toLowerCase(); if(agriIndSelected.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a=parseAmount(r[amtKey]); return s + (isNaN(a)?0:a);} return s; }, 0);
+  document.getElementById('agriCropTotal').textContent = agriCropTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+  document.getElementById('agriIndTotal').textContent = agriIndTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+        // Compute Non-Manufacturing & Trade total = sum(TotalDue) - MI - Service
+        // Determine a reasonable TotalDue column
+        const tdCol = totalDueCandidates[0] || amtKey;
+        let sumTotalDueAll = 0;
+        if(tdCol){ sumTotalDueAll = records.reduce((s,r)=>{ const v = parseAmount(r[tdCol]); return s + (isNaN(v)?0:v); }, 0); }
+        const nonMi = sumTotalDueAll - miTotalAlways - serviceTotalAlways;
+        document.getElementById('nonMiTotal').textContent = (isNaN(nonMi)? '': nonMi.toLocaleString('en-US',{maximumFractionDigits:2}));
+        // Guarantee-backed (and unsecured) = TotalDueAll - Asset-backed
+        const gbTotal = sumTotalDueAll - abTotalAlways;
+        document.getElementById('gbTotal').textContent = (isNaN(gbTotal)? '': gbTotal.toLocaleString('en-US',{maximumFractionDigits:2}));
+      }catch(e){ console.warn('Failed to compute service/mi totals', e); }
+
+      // no separate Total Due (EOL rows) display; totalDue is available on window._eol_totalDue if needed for debugging
+
+      let monthsArr = records.map(r=>{
+        // try termKey first (expiry), else look for expiry and disbursement heuristic
+        let expiry = termKey? parseDateGuess(r[termKey]) : null;
+        // many sheets have 'Disbursement Date / Sanction Date'
+        const disbCandidates = lastCols.filter(c=>normalizeKey(c).includes('disbursement')||normalizeKey(c).includes('sanction')||normalizeKey(c).includes('disbursement date'));
+        let disb = null;
+        if(disbCandidates.length>0) disb = parseDateGuess(r[disbCandidates[0]]);
+        if(!expiry){ // try to find a column with 'expiry' or 'maturity' in name
+          const expCandidates = lastCols.filter(c=>normalizeKey(c).includes('expiry')||normalizeKey(c).includes('maturity'));
+          if(expCandidates.length>0) expiry = parseDateGuess(r[expCandidates[0]]);
+        }
+        if(expiry && disb) return monthsBetween(expiry, disb);
+        // fallback: try to parse a numeric tenor field
+        const tenorCandidates = lastCols.filter(c=>normalizeKey(c).includes('tenor')||normalizeKey(c).includes('term')||normalizeKey(c).includes('tenor'));
+        for(const tc of tenorCandidates){ const t=String(r[tc]||''); const m = t.match(/(\d+\.?\d*)\s*(yr|year|y)/i); if(m) return Number(m[1])*12; const mm=t.match(/(\d+\.?\d*)\s*(mo|month|m)/i); if(mm) return Number(mm[1]); const justnum = t.match(/(\d+)/); if(justnum) { return Number(justnum[1]); } }
+        return null;
+      });
+
+  // Use year-based buckets (user requested): Short <=1y, Medium >1y and <3y, Long >=3y
+  const longTotal = records.reduce((s,r,i)=>{ const m=monthsArr[i]; const a=parseAmount(r[amtKey]); return (m>=36 && !isNaN(a))? s+a: s; }, 0);
+  const medTotal = records.reduce((s,r,i)=>{ const m=monthsArr[i]; const a=parseAmount(r[amtKey]); return (m>12 && m<36 && !isNaN(a))? s+a: s; }, 0);
+  const shortTotal = records.reduce((s,r,i)=>{ const m=monthsArr[i]; const a=parseAmount(r[amtKey]); return ((m<=12 && m!==null) && !isNaN(a))? s+a: s; }, 0);
+
+      document.getElementById('long').textContent = longTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+      document.getElementById('med').textContent = medTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+      document.getElementById('short').textContent = shortTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+
+          // Compute Total New Loan Disbursed in the previous calendar month
+          try{
+            // determine disbursement column candidate
+            const disbCandidates2 = lastCols.filter(c=>normalizeKey(c).includes('disbursement')||normalizeKey(c).includes('sanction')||normalizeKey(c).includes('drawdown')||normalizeKey(c).includes('disbursed'));
+            let disbCol = disbCandidates2.length>0? disbCandidates2[0] : null;
+            // determine previous calendar month range
+            const now = new Date();
+            const firstOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const lastMonthEnd = new Date(firstOfThisMonth.getTime() - 1); // last day of previous month
+            const lastMonthStart = new Date(lastMonthEnd.getFullYear(), lastMonthEnd.getMonth(), 1);
+            let newDisbTotal = 0;
+            if(disbCol){ for(const r of records){ const d = parseDateGuess(r[disbCol]); if(d && d >= lastMonthStart && d <= lastMonthEnd){ const a = parseAmount(r[amtKey]); if(!isNaN(a)) newDisbTotal += a; } } }
+            document.getElementById('newDisbLastMonth').textContent = newDisbTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+          }catch(e){ console.warn('Failed to compute newDisbLastMonth', e); document.getElementById('newDisbLastMonth').textContent = '—'; }
+
+      // populate bucket select labels with totals
+      const bucketSelect = document.getElementById('bucketSelect');
+      const bucketTotalDisplay = document.getElementById('bucketTotal');
+      // update option texts
+      for(const opt of bucketSelect.options){
+        if(opt.value==='all') opt.text = `All (no filter)`;
+        if(opt.value==='short') opt.text = `Short (<=1y) — ${shortTotal.toLocaleString('en-US',{maximumFractionDigits:2})}`;
+        if(opt.value==='medium') opt.text = `Medium (>1y - <3y) — ${medTotal.toLocaleString('en-US',{maximumFractionDigits:2})}`;
+        if(opt.value==='long') opt.text = `Long (>=3y) — ${longTotal.toLocaleString('en-US',{maximumFractionDigits:2})}`;
+      }
+  // Total Loan should always show grand total across all records (not affected by bucket selection)
+  const grandTotal = records.reduce((s,r)=>{ const v = parseAmount(r[amtKey]); return s + (isNaN(v)?0:v); }, 0);
+  bucketTotalDisplay.textContent = grandTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+
+      // show ALL sample rows (respect bucket selection)
+      function renderTopTableForBucket(){
+        const sel = document.getElementById('bucketSelect').value;
+        const tbody = document.querySelector('#topTable tbody'); tbody.innerHTML='';
+        // filter all records by bucket
+        const allIdx = records.map((rec,i)=>({idx:i, val: parseAmount(rec[amtKey])})).filter(x=>!isNaN(x.val));
+        const filtered = allIdx.filter(item=>{
+          const m = monthsArr[item.idx];
+          if(sel==='short') return (m!==null && m<=12);
+          if(sel==='medium') return (m!==null && m>12 && m<36);
+          if(sel==='long') return (m!==null && m>=36);
+          return true;
+        });
+        // render all filtered rows (limit to a reasonable display cap to avoid huge DOM)
+        const display = filtered.slice(0,1000);
+        display.forEach((t,i)=>{
+          const rec = records[t.idx];
+          const tr = document.createElement('tr');
+          const expiry = (termColSel.value? rec[termColSel.value] : (rec[lastCols.find(c=>normalizeKey(c).includes('expiry')||normalizeKey(c).includes('maturity'))]|| ''));
+          const disb = (rec[lastCols.find(c=>normalizeKey(c).includes('disbursement')||normalizeKey(c).includes('sanction'))]|| '');
+          const custCol = document.getElementById('customerCol').value;
+          const custName = custCol ? (rec[custCol]||'') : '';
+          tr.innerHTML = `<td>${i+1}</td><td>${custName}</td><td class="right">${(t.val||0).toLocaleString('en-US',{maximumFractionDigits:2})}</td><td>${expiry}</td><td>${disb}</td>`;
+          tbody.appendChild(tr);
+        });
+  // compute selected bucket total (used for display/debug only, but do NOT overwrite the global Total Loan)
+  const bucketSum = filtered.reduce((s,x)=>s + (isNaN(x.val)?0:x.val), 0);
+        // store filtered displayed rows for export
+        window._lastDisplayed = filtered.map(t=>{ const rec = records[t.idx]; return Object.assign({}, rec, {__amount: t.val}); });
+      }
+        renderTopTableForBucket();
+      document.getElementById('bucketSelect').addEventListener('change', renderTopTableForBucket);
+  // ensure EOL wrap is visible
+  const wrap = document.getElementById('eolTableWrap'); if(wrap) wrap.style.display='block';
+  // refresh customer asset table if available
+  try{ if(window._renderCustomerAssetTable) window._renderCustomerAssetTable(); }catch(e){ console.warn('Failed to refresh customer asset table', e); }
+        // Customer Asset list persisted separately from the Excel data
+        const CUST_ASSET_KEY = 'iss_cust_assets_v1';
+        function loadCustAssets(){ try{ const raw = localStorage.getItem(CUST_ASSET_KEY); if(!raw) return []; return JSON.parse(raw)||[]; }catch(e){ return []; } }
+  function saveCustAssets(list){ try{ localStorage.setItem(CUST_ASSET_KEY, JSON.stringify(list)); try{ if(typeof saveFullState==='function') saveFullState(); }catch(e){} }catch(e){} }
+        // initialize in-memory list
+        window._custAssets = loadCustAssets();
+
+        function renderCustomerAssetTable(){
+          const tbody = document.querySelector('#custAssetTable tbody'); if(!tbody) return; tbody.innerHTML='';
+          const list = window._custAssets || [];
+          // compute total asset numeric sum
+          const total = list.reduce((s,it)=>{ const v=parseAmount(it.asset); return s + (isNaN(v)?0:v); }, 0);
+          // update total display (also show total impact)
+          const totalEl = document.getElementById('custAssetTotal'); if(totalEl) totalEl.textContent = 'Total: ' + (isNaN(total)? '—' : total.toLocaleString('en-US',{maximumFractionDigits:2}));
+          // compute total impact
+          const totalImpact = list.reduce((s,it)=>{ const a = parseAmount(it.asset); const pct = (it && it.hasOwnProperty('pct') && it.pct!==null && it.pct!==undefined && it.pct!=='') ? Number(it.pct) : (isNaN(a) || total===0 ? 0 : (a/total*100)); const imp = (isNaN(a) || isNaN(pct)) ? 0 : (a * (pct/100)); return s + imp; }, 0);
+          if(totalEl) totalEl.textContent += ' — Impact: ' + (isNaN(totalImpact)? '—' : totalImpact.toLocaleString('en-US',{maximumFractionDigits:2}));
+          // expose numeric totals for customer-asset impact
+          try{ window._custAssetTotalNumeric = (isNaN(total)? 0 : total); window._custAssetImpactNumeric = (isNaN(totalImpact)? 0 : totalImpact); }catch(e){}
+          try{ computeSecurityAdjusted(); }catch(e){}
+          list.forEach((item,i)=>{
+            const tr = document.createElement('tr');
+            const custText = item.customer || '';
+            const parsed = parseAmount(item.asset);
+            const assetVal = !isNaN(parsed) ? parsed.toLocaleString('en-US',{maximumFractionDigits:2}) : String(item.asset||'');
+            // compute percent to display: stored pct (item.pct) takes precedence; otherwise compute from total
+            let pctDisplay = '';
+            if(item.hasOwnProperty('pct') && item.pct!==null && item.pct!==undefined && item.pct!== ''){
+              const p = Number(item.pct);
+              pctDisplay = isFinite(p)? p.toFixed(2) + '%' : '';
+            } else {
+              const computed = (isNaN(parsed) || total===0) ? 0 : (parsed / total * 100);
+              pctDisplay = (isNaN(computed)? '' : computed.toFixed(2) + '%');
+            }
+            // compute impact value for this row (asset * pct/100)
+            const pctNum = (item && item.hasOwnProperty('pct') && item.pct!==null && item.pct!==undefined && item.pct!=='') ? Number(item.pct) : (isNaN(parsed) || total===0 ? 0 : (parsed/total*100));
+            const impactValNum = (isNaN(parsed) || isNaN(pctNum)) ? 0 : (parsed * (pctNum/100));
+            const impactVal = isNaN(impactValNum)? '' : impactValNum.toLocaleString('en-US',{maximumFractionDigits:2});
+            tr.innerHTML = `<td>${i+1}</td><td>${custText}</td><td class="right">${assetVal}</td><td class="right">${pctDisplay}</td><td class="right">${impactVal}</td><td><button type="button" data-i="${i}" class="cust-edit">Edit</button> <button type="button" data-i="${i}" class="cust-delete">Delete</button></td>`;
+            tbody.appendChild(tr);
+          });
+          // handlers
+          tbody.querySelectorAll('button.cust-edit').forEach(btn=>{
+            btn.addEventListener('click', ()=>{
+              const i = Number(btn.getAttribute('data-i'));
+              const list = window._custAssets || [];
+              if(i<0 || i>=list.length) return;
+              const item = list[i];
+              const newCust = prompt('Customer Name', item.customer||''); if(newCust===null) return;
+              const newAsset = prompt('Asset Value', item.asset||''); if(newAsset===null) return;
+              // prompt for percentage (allow blank to clear stored pct)
+              const curPct = (item.hasOwnProperty('pct') && item.pct!==null && item.pct!==undefined) ? String(item.pct) : '';
+              const newPctRaw = prompt('Percentage (percent of total) — enter number only, e.g. 12.5', curPct);
+              if(newPctRaw===null) return;
+              const cleaned = String(newPctRaw).replace('%','').trim();
+              const parsedPct = cleaned===''? null : Number(cleaned);
+              item.customer = newCust; item.asset = newAsset; item.pct = (parsedPct===null || isNaN(parsedPct))? null: parsedPct;
+              saveCustAssets(list);
+              try{ renderCustomerAssetTable(); }catch(e){ console.warn('Failed to re-render cust assets', e); }
+            });
+          });
+          tbody.querySelectorAll('button.cust-delete').forEach(btn=>{
+            btn.addEventListener('click', ()=>{
+              const i = Number(btn.getAttribute('data-i'));
+              const list = window._custAssets || [];
+              if(i<0 || i>=list.length) return;
+              if(!confirm('Delete this customer asset?')) return;
+              list.splice(i,1);
+              saveCustAssets(list);
+              try{ renderCustomerAssetTable(); }catch(e){ console.warn('Failed to re-render cust assets', e); }
+            });
+          });
+        }
+
+        // wire Add button
+        try{
+          const addBtn = document.getElementById('addCustAsset'); if(addBtn){ addBtn.addEventListener('click', ()=>{
+            const cust = prompt('Customer Name',''); if(cust===null) return;
+            const asset = prompt('Asset Value',''); if(asset===null) return;
+            const pctRaw = prompt('Percentage (percent of total) — enter number only, e.g. 12.5',''); if(pctRaw===null) return;
+            const cleaned = String(pctRaw).replace('%','').trim(); const parsedPct = cleaned===''? null : Number(cleaned);
+            window._custAssets = window._custAssets || [];
+            window._custAssets.push({customer:cust, asset: asset, pct: (parsedPct===null || isNaN(parsedPct))? null: parsedPct});
+            saveCustAssets(window._custAssets);
+            try{ renderCustomerAssetTable(); }catch(e){ console.warn('Failed to render after add', e); }
+          }); }
+        }catch(e){ console.warn('Failed to wire add cust asset', e); }
+
+    // initial render
+    try{ renderCustomerAssetTable(); window._renderCustomerAssetTable = renderCustomerAssetTable; }catch(e){ console.warn('Failed to render customer asset table', e); }
+    // after rendering customer assets, expose numeric totals and compute adjusted security value
+    try{ computeSecurityAdjusted(); }catch(e){ console.warn('Failed to compute initial securityAdjusted', e); }
+    // persist full state after analysis so computed lists and UI snapshots are saved
+    try{ if(typeof saveFullState==='function') saveFullState(); }catch(e){}
+  }
+
+  // Lightweight helpers: show/hide analyzing overlay and animate numeric updates
+  function _showAnalyzing(){ try{ document.body.classList.add('analyzing'); }catch(e){} }
+  function _hideAnalyzing(){ try{ document.body.classList.remove('analyzing'); }catch(e){} }
+  // toggle live dot state
+  // live indicator removed
+  function _flashNum(id){ try{ const el=document.getElementById(id); if(!el) return; el.classList.remove('num-updated'); void el.offsetWidth; el.classList.add('num-updated'); setTimeout(()=>el.classList.remove('num-updated'), 800); }catch(e){} }
+
+  // Smooth count-up animation for numeric dashboard fields
+  function animateNumber(id, value, opts){ try{
+      const el = document.getElementById(id); if(!el) return; const duration = (opts && opts.duration) ? opts.duration : 700; const startText = (el.textContent||'').toString();
+  // parse start value (handle '—' or empty)
+  const parse = s => { if(!s) return 0; const cleaned = String(s).replace(/,/g,'').replace(/[^0-9.\-]/g,'').trim(); if(cleaned==='') return 0; const n = Number(cleaned); return isFinite(n)? n : 0; };
+      const from = parse(startText);
+      const to = (value===null||value===undefined||value==='—') ? 0 : Number(value);
+      if(isNaN(to)){ el.textContent = String(value); _flashNum(id); return; }
+      if(Math.abs(to - from) < 0.5){ // small change: just set and pulse
+        el.textContent = to.toLocaleString('en-US',{maximumFractionDigits:2}); _flashNum(id); return;
+      }
+      const start = performance.now(); const step = (ts)=>{ const t = Math.min(1, (ts - start)/duration); const eased = 1 - Math.pow(1 - t, 3); const cur = from + (to - from) * eased; el.textContent = (Math.abs(to) >= 1) ? Math.round(cur).toLocaleString('en-US') : cur.toLocaleString('en-US',{maximumFractionDigits:2}); if(t<1) requestAnimationFrame(step); else { el.textContent = to.toLocaleString('en-US',{maximumFractionDigits:2}); try{ _flashNum(id); }catch(e){} } }; requestAnimationFrame(step);
+    }catch(e){}
+  }
+
+  // Wrap analyzeNow so UI shows a small overlay during long operations and pulses numbers
+  const _origAnalyze = typeof analyzeNow === 'function' ? analyzeNow : null;
+  function analyzeNowWrapper(){ try{ _showAnalyzing(); setTimeout(()=>{ try{ if(_origAnalyze) _origAnalyze(); // after compute, pulse some key number ids
+        ['top50','totalAccounts','totalEOL','unusedTotal','serviceTotal','miTotal'].forEach(id=>{ _flashNum(id); }); }catch(e){ console.warn(e);} finally{ _hideAnalyzing(); } }, 90); }catch(e){ console.warn('analyze wrapper failed', e); _hideAnalyzing(); } }
+  // replace analyzeNow references with wrapper for future calls
+  try{ analyzeNow = analyzeNowWrapper; }catch(e){}
+
+  // Wire the header Analyze Now button if present
+  // analyzeBtn removed per user request; no CTA wiring needed
+
+  // analyze/save/restore snapshot UI removed per user request
+  // Export/Import/Preview snapshot functionality removed per user request
+    // attach clear handler (once) and render selected chips
+    // update service inline when product selection changes
+    document.getElementById('productCol').addEventListener('change', ()=>{
+      if(!lastData) return; // no data to compute
+  try{ populateServiceProducts(lastData); populateMiProducts(lastData); populateAbProducts(lastData); populateAgriProducts(lastData); populateUnusedProducts(lastData); populateSecurityProducts(lastData); renderSelectedServiceChips(); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); renderSelectedUnusedChips(); renderSelectedSecurityChips(); analyzeNow(); if(typeof saveSelections==='function') saveSelections(); }catch(e){ console.warn('analyzeNow failed on product change', e); }
+    });
+    // when mode selectors change, persist the selections for the previous mode first
+    // so changing modes does NOT lose the selections made in the mode being left.
+    (function(){
+  const mapping = { serviceMode: 'serviceProducts', securityMode: 'securityProducts', unusedMode: 'unusedProducts', weMode: 'weCustomers', miMode: null, abMode: null, agriCropMode: null, agriIndMode: null };
+      function saveSelectionUnderMode(baseId, mode){ try{
+          const el = document.getElementById(baseId); if(!el) return;
+          const vals = Array.from(el.selectedOptions).map(o=>o.value);
+          const raw = localStorage.getItem(PERSIST_KEY); const obj = raw? JSON.parse(raw): {};
+          // store generic and mode-specific
+          obj[baseId] = vals;
+          obj[baseId + '__' + mode] = vals;
+          localStorage.setItem(PERSIST_KEY, JSON.stringify(obj));
+        }catch(e){}
+      }
+      Object.keys(mapping).forEach(modeId=>{
+        const el = document.getElementById(modeId); if(!el) return; // remember previous mode
+        el.dataset.prevMode = el.value || 'product';
+        el.addEventListener('change', ()=>{
+          if(!lastData) return;
+          try{
+            const prev = el.dataset.prevMode || 'product';
+            let baseId = mapping[modeId];
+            // some modes control different base selectors depending on product/customer
+            if(modeId === 'miMode'){
+              baseId = (prev === 'product') ? 'miProducts' : 'miCustomers';
+            } else if(modeId === 'abMode'){
+              baseId = (prev === 'product') ? 'abProducts' : 'abCustomers';
+            } else if(modeId === 'agriCropMode'){
+              baseId = (prev === 'product') ? 'agriCropProducts' : 'agriCropCustomers';
+            } else if(modeId === 'agriIndMode'){
+              baseId = (prev === 'product') ? 'agriIndProducts' : 'agriIndCustomers';
+            }
+            // persist current selection under the previous mode before we repopulate
+            if(baseId) saveSelectionUnderMode(baseId, prev);
+            // update prevMode to new selection
+            el.dataset.prevMode = el.value || 'product';
+            // apply visibility for MI/AB selects immediately
+            try{ setModeVisibilityAll(); }catch(e){}
+            // now repopulate lists for new modes
+            populateServiceProducts(lastData); populateUnusedProducts(lastData); populateSecurityProducts(lastData); populateWeCustomers(lastData);
+            try{ populateMiProducts(lastData); populateMiCustomers(lastData); populateAbProducts(lastData); populateAbCustomers(lastData); populateAgriProducts(lastData); }catch(e){}
+            if(typeof saveSelections==='function') saveSelections();
+            try{ renderSelectedServiceChips(); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedWeChips(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); renderSelectedUnusedChips(); renderSelectedSecurityChips(); analyzeNow(); }catch(e){}
+          }catch(e){ console.warn('mode change handler failed', e); }
+        });
+      });
+    })();
+  document.getElementById('abProducts').addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedAbCombined(); analyzeNow(); }catch(e){} });
+  document.getElementById('miProducts').addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedMiCombined(); analyzeNow(); }catch(e){} });
+    document.getElementById('customerCol').addEventListener('change', ()=>{
+        if(!lastData) return;
+    try{ populateMiCustomers(lastData); populateAbCustomers(lastData); populateWeCustomers(lastData); populateAgriProducts(lastData); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedWeChips(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); analyzeNow(); }catch(e){ console.warn('analyzeNow failed on customer change', e); }
+      });
+    document.getElementById('weCustomers').addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedWeChips(); analyzeNow(); }catch(e){} });
+  document.getElementById('agriCropProducts').addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedAgriCropCombined(); analyzeNow(); }catch(e){} });
+  document.getElementById('agriIndProducts').addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedAgriIndCombined(); analyzeNow(); }catch(e){} });
+  // customer selects for Agri
+  const _agCropCust = document.getElementById('agriCropCustomers'); if(_agCropCust) _agCropCust.addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedAgriCropCombined(); analyzeNow(); }catch(e){} });
+  const _agIndCust = document.getElementById('agriIndCustomers'); if(_agIndCust) _agIndCust.addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedAgriIndCombined(); analyzeNow(); }catch(e){} });
+  document.getElementById('abCustomers').addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedAbCombined(); analyzeNow(); }catch(e){} });
+  document.getElementById('miCustomers').addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedMiCombined(); analyzeNow(); }catch(e){} });
+    document.getElementById('serviceProducts').addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedServiceChips(); analyzeNow(); }catch(e){} });
+
+  // (mode selector removed) no-op
+
+    // persist selections when user changes them
+  ['serviceProducts','miProducts','miCustomers','abProducts','abCustomers','weCustomers','agriCropProducts','agriCropCustomers','agriIndProducts','agriIndCustomers','unusedProducts','securityProducts','serviceMode','securityMode','unusedMode','weMode','miMode','abMode','agriCropMode','agriIndMode','customerCol','productCol','amountCol','idCol','termCol','bucketSelect'].forEach(id=>{
+      const el=document.getElementById(id); if(!el) return; el.addEventListener('change', ()=>{ try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} });
+    });
+
+    // export functionality removed
+
+  </script>
+  <footer class="neon-footer">
+    <div class="footer-rgb" style="display:flex;align-items:center;justify-content:center;gap:10px;">
+      <span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span>
+    </div>
+    <style>
+    .neon-footer{padding:12px 18px;text-align:center;margin-top:40px}
+    .footer-rgb .rgb-text{
+        padding:8px 14px;
+        border-radius:999px;
+        font-weight:600;
+        background: linear-gradient(90deg,
+            #5b21b6 0%,
+            #7c3aed 12%,
+            #ec4899 24%,
+            #fb7185 36%,
+            #f97316 48%,
+            #f59e0b 60%,
+            #06b6d4 72%,
+            #0ea5a1 84%,
+            #5b21b6 100%
+        );
+        background-size:300% 300%;
+        -webkit-background-clip:text;
+        background-clip:text;
+        color:transparent;
+        -webkit-text-fill-color:transparent;
+        animation: rgbShift 6s linear infinite;
+        text-align:center;
+    }
+    @keyframes rgbShift{
+        0%{background-position:0% 50%}
+        50%{background-position:100% 50%}
+        100%{background-position:0% 50%}
+    }
+    @media (max-width:520px){
+        .footer-rgb .rgb-text{font-size:0.92rem}
+    }
+    </style>
+  </footer>
+</body>
+</html>

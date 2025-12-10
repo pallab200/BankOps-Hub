@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Image to Combined Image</title>
+    <link rel="stylesheet" href="../css/fontawesome.min.css">
+    <link rel="stylesheet" href="../css/fontawesome-fix.css">
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      :root { --primary: #6366f1; --primary-dark: #4f46e5; --accent: #ec4899; --border-color: #e2e8f0; }
+      .gradient-title {
+        background: linear-gradient(135deg, var(--primary, #6366f1) 0%, var(--accent, #ec4899) 100%);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        animation: gradientShift 8s ease infinite;
+        font-weight: 900 !important;
+        display: inline-block;
+      }
+      @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+      .primary-btn { padding: 10px 18px; border-radius: 10px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; border: 0; font-weight: 700; box-shadow: 0 10px 30px rgba(99, 102, 241, 0.18); cursor: pointer; }
+      .primary-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(99, 102, 241, 0.22); }
+      .app-header i { color: var(--primary, #6366f1); font-style: normal; display: inline-block; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="app-header">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+          <i class="fas fa-id-card-alt" style="font-size: 2rem; color: var(--primary,#6366f1);"></i>
+          <h1 class="gradient-title" style="margin: 0; font-size: 2rem;">NID Stack & Enhance</h1>
+        </div>
+        <p class="lead" style="margin: 0; font-size: 1.05rem; line-height: 1.6;">Upload front and back NID photos, crop each as needed, tweak brightness/contrast/saturation/sharpness, then export a single high-quality JPEG.</p>
+      </header>
+
+      <section class="upload-section">
+        <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 2px solid var(--border-color);">
+          <i class="fas fa-cloud-upload-alt" style="color: var(--primary); font-size: 1.2rem;"></i>Upload Images
+        </h2>
+        <div class="inputs">
+          <div class="upload-card">
+            <label class="dropzone" id="drop1">
+              <div class="dropzone-header">
+                <i class="fas fa-image" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Image 1 (Front)</h3>
+              </div>
+              <input id="file1" type="file" accept="image/*" />
+              <button id="crop1" type="button" class="crop-btn"><i class="fas fa-crop"></i>Crop Image 1</button>
+            </label>
+          </div>
+
+          <div class="upload-card">
+            <label class="dropzone" id="drop2">
+              <div class="dropzone-header">
+                <i class="fas fa-image" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Image 2 (Back)</h3>
+                <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 400;">(Optional)</span>
+              </div>
+              <input id="file2" type="file" accept="image/*" />
+              <button id="crop2" type="button" class="crop-btn"><i class="fas fa-crop"></i>Crop Image 2</button>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="options-section">
+        <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 2px solid var(--border-color);">
+          <i class="fas fa-cog" style="color: var(--primary); font-size: 1.2rem;"></i>Options
+        </h2>
+        <div class="options">
+          <div class="option-item">
+            <label style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-arrows-alt-h" style="color: var(--primary);"></i>
+              Spacing (px):
+            </label>
+            <input id="spacing" type="number" value="10" min="0" style="margin-top: 8px; padding: 8px 12px; border: 2px solid var(--border-color); border-radius: 8px; width: 100px; font-size: 1rem;" />
+          </div>
+          <div class="option-item">
+            <label style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-palette" style="color: var(--primary);"></i>
+              Background:
+            </label>
+            <input id="bgcolor" type="color" value="#ffffff" style="margin-top: 8px; height: 45px; width: 100px; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;" />
+          </div>
+        </div>
+      </section>
+
+      <div class="action-section">
+        <div class="buttons">
+          <button id="combine" class="primary-btn"><i class="fas fa-layer-group"></i>Combine Images</button>
+          <button id="clear" class="secondary-btn"><i class="fas fa-redo"></i>Clear All</button>
+          <a id="download" class="hidden" download="combined.jpg">Download combined image</a>
+          <div id="progress" class="progress hidden"><div id="progressBar"></div></div>
+        </div>
+      </div>
+
+      <section class="preview-section">
+        <div class="preview-main">
+          <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0 0 16px 0; display: flex; align-items: center; gap: 10px; color: var(--text-primary);">
+            <i class="fas fa-eye" style="color: var(--primary);"></i>Combined Preview
+          </h3>
+          <div class="canvas-wrapper">
+            <canvas id="previewCanvas"></canvas>
+          </div>
+        </div>
+        <div class="preview-inputs">
+          <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0 0 16px 0; display: flex; align-items: center; gap: 10px; color: var(--text-primary);">
+            <i class="fas fa-images" style="color: var(--primary);"></i>Input Images
+          </h3>
+          <div class="thumbs-container">
+            <div class="thumbwrap">
+              <img id="thumb1" class="thumb" alt="Image 1 preview"/>
+              <div class="cropinfo" id="cropInfo1"></div>
+            </div>
+            <div class="thumbwrap">
+              <img id="thumb2" class="thumb" alt="Image 2 preview"/>
+              <div class="cropinfo" id="cropInfo2"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="adjustments">
+        <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 2px solid var(--border-color);">
+          <i class="fas fa-sliders-h" style="color: var(--primary); font-size: 1.2rem;"></i>Adjust Combined Image
+        </h2>
+        
+        <div class="adjustment-controls-card">
+          <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0 0 16px 0; color: var(--text-primary);">Image Adjustments</h3>
+          <div class="adj-controls">
+            <div class="control-group">
+              <label style="font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <i class="fas fa-sun" style="color: var(--primary);"></i>
+                Brightness: <span id="adjBrightVal" style="min-width: 45px; font-weight: 700; color: var(--primary);">100%</span>
+              </label>
+              <input id="adjBrightness" type="range" min="0" max="200" value="100" style="width: 100%;" />
+            </div>
+            <div class="control-group">
+              <label style="font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <i class="fas fa-adjust" style="color: var(--primary);"></i>
+                Contrast: <span id="adjContrastVal" style="min-width: 45px; font-weight: 700; color: var(--primary);">100%</span>
+              </label>
+              <input id="adjContrast" type="range" min="0" max="200" value="100" style="width: 100%;" />
+            </div>
+            <div class="control-group">
+              <label style="font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <i class="fas fa-tint" style="color: var(--primary);"></i>
+                Saturation: <span id="adjSatVal" style="min-width: 45px; font-weight: 700; color: var(--primary);">100%</span>
+              </label>
+              <input id="adjSaturation" type="range" min="0" max="200" value="100" style="width: 100%;" />
+            </div>
+            <div class="control-group">
+              <label style="font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <i class="fas fa-magic" style="color: var(--primary);"></i>
+                Sharpness: <span id="adjSharpVal" style="min-width: 45px; font-weight: 700; color: var(--primary);">0</span>
+              </label>
+              <input id="adjSharp" type="range" min="0" max="100" value="0" style="width: 100%;" />
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-card">
+          <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0 0 16px 0; color: var(--text-primary);">Filters</h3>
+          <div class="filter-controls">
+            <div style="flex: 1;">
+              <label style="font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <i class="fas fa-filter" style="color: var(--primary);"></i>
+                Select Filter:
+              </label>
+              <select id="filterSelect" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem; cursor: pointer;">
+                <option value="none">None</option>
+                <option value="lighten">Lighten</option>
+                <option value="document">Document (scan-like)</option>
+                <option value="grayscale">Grayscale</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: flex-end;">
+              <button id="applyFilter" class="primary-btn"><i class="fas fa-check"></i>Apply</button>
+              <button id="resetFilter" class="secondary-btn"><i class="fas fa-undo"></i>Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="adj-buttons">
+          <button id="applyAdj" class="primary-btn"><i class="fas fa-check-circle"></i>Apply Adjustments</button>
+          <a id="downloadAdj" class="hidden" download="combined_adjusted.jpg">Download adjusted image</a>
+        </div>
+        
+        <div class="adj-preview">
+          <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0 0 16px 0; color: var(--text-primary); display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-check-circle" style="color: var(--primary);"></i>Adjusted Preview
+          </h3>
+          <div class="canvas-wrapper">
+            <canvas id="adjustedCanvas"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <p class="notes"></p>
+    </div>
+
+    <!-- Cropping modal -->
+    <div id="cropModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-content" role="dialog" aria-modal="true">
+        <div class="modal-header">
+          <i class="fas fa-crop-alt" style="color: var(--primary); margin-right: 10px;"></i>
+          <h3 id="cropTitle" style="margin: 0; flex: 1; font-size: 1.3rem; font-weight: 700;">Crop Image</h3>
+        </div>
+        <div class="modal-body">
+          <canvas id="cropCanvas"></canvas>
+          <p class="modal-note"><i class="fas fa-info-circle" style="color: var(--primary); margin-right: 6px;"></i>Drag the corner handles to resize, drag inside the rectangle to move. Or draw a new rectangle to replace.</p>
+        </div>
+        <div class="modal-actions">
+          <button id="applyCrop" class="primary-btn"><i class="fas fa-check"></i>Apply Crop</button>
+          <button id="cancelCrop" class="secondary-btn"><i class="fas fa-times"></i>Cancel</button>
+        </div>
+      </div>
+    </div>
+    <footer class="neon-footer" style="margin-top:28px; text-align:center;">
+      <div class="footer-rgb" style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span>
+      </div>
+      <style>
+        .footer-rgb .rgb-text{
+            padding:8px 14px;
+            border-radius:999px;
+            font-weight:600;
+            background: linear-gradient(90deg,
+                #5b21b6 0%,
+                #7c3aed 12%,
+                #ec4899 24%,
+                #fb7185 36%,
+                #f97316 48%,
+                #f59e0b 60%,
+                #06b6d4 72%,
+                #0ea5a1 84%,
+                #5b21b6 100%
+            );
+            background-size:300% 300%;
+            -webkit-background-clip:text;
+            background-clip:text;
+            color:transparent;
+            -webkit-text-fill-color:transparent;
+            animation: rgbShift 6s linear infinite;
+            text-align:center;
+        }
+        @keyframes rgbShift{
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+        @media (max-width:520px){
+            .footer-rgb .rgb-text{font-size:0.92rem}
+        }
+      </style>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

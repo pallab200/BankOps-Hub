@@ -1,0 +1,1426 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Credit Commitment Editor</title>
+  <link rel="stylesheet" href="../css/fontawesome.min.css">
+  <link rel="stylesheet" href="../css/fontawesome-fix.css">
+  <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Color System */
+      :root{ 
+        --primary: #6366f1; 
+        --primary-dark: #4f46e5; 
+        --primary-light: #818cf8;
+        --accent: #ec4899; 
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --bg-primary: #f8fafc;
+        --bg-secondary: #f1f5f9;
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+        --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+        --shadow-lg: 0 10px 25px rgba(99,102,241,0.15);
+      }
+      
+      /* Global Styles */
+      * {
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      
+      body {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        color: var(--text-primary);
+      }
+      
+      /* Gradients & Animations */
+      .gradient-title{ 
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        -webkit-background-clip: text; 
+        background-clip: text; 
+        -webkit-text-fill-color: transparent;
+        font-weight: 900;
+        animation: gradientShift 8s ease-in-out infinite;
+      }
+      
+      @keyframes gradientShift{
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+      
+      @keyframes floatButton{ 
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
+      }
+      
+      @keyframes slideInDown {
+        from { 
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      /* Primary Button */
+      .iss-btn { 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 8px; 
+        padding: 12px 28px; 
+        border-radius: 10px; 
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: #fff; 
+        border: none; 
+        font-weight: 700;
+        font-size: 0.95rem;
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
+        transition: all 0.3s ease;
+        cursor: pointer; 
+        animation: floatButton 3.6s ease-in-out infinite;
+        position: relative; 
+        overflow: hidden;
+      }
+      
+      .iss-btn::after { 
+        content: ''; 
+        position: absolute; 
+        inset: 0; 
+        background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0) 100%);
+        transform: translateX(-120%);
+        pointer-events: none;
+        transition: transform 0.6s ease;
+      }
+      
+      .iss-btn:hover::after { 
+        transform: translateX(120%);
+      }
+      
+      .iss-btn:hover { 
+        transform: translateY(-4px);
+        box-shadow: 0 15px 40px rgba(99, 102, 241, 0.35);
+      }
+      
+      .iss-btn:active {
+        transform: translateY(-2px);
+      }
+      
+      .iss-btn.small { 
+        padding: 10px 16px; 
+        font-weight: 600; 
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+      
+      /* Secondary Button */
+      .iss-btn.secondary, .secondary { 
+        background: #fff;
+        color: var(--text-primary); 
+        border: 2px solid var(--border-color);
+        padding: 10px 16px;
+        border-radius: 8px;
+        box-shadow: var(--shadow-sm);
+      }
+      
+      .iss-btn.secondary:hover,
+      .secondary:hover {
+        background: var(--bg-primary);
+        border-color: var(--primary);
+        box-shadow: var(--shadow-md);
+      }
+      
+      /* Main Layout */
+      main {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 32px 32px 32px;
+        animation: slideInDown 0.6s ease-out;
+      }
+      
+      /* Unified Editor Section */
+      .unified-editor {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        padding: 32px;
+        border-radius: 16px;
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        box-shadow: var(--shadow-lg);
+        display: grid;
+        grid-template-columns: 30% 70%;
+        gap: 32px;
+        margin-bottom: 32px;
+        transition: all 0.3s ease;
+      }
+      
+      .unified-editor:hover {
+        box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+      }
+      
+      /* Unified Customers Section */
+      .unified-customers {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        padding: 32px;
+        border-radius: 16px;
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        box-shadow: var(--shadow-lg);
+        display: grid;
+        grid-template-columns: 30% 70%;
+        gap: 32px;
+        transition: all 0.3s ease;
+      }
+      
+      .unified-customers:hover {
+        box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+      }
+      
+      /* Columns */
+      .editor-column,
+      .customer-column {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .editor-column:first-child,
+      .customer-column:first-child {
+        border-right: 2px solid var(--border-color);
+        padding-right: 32px;
+      }
+      
+      .editor-column:last-child,
+      .customer-column:last-child {
+        padding-left: 32px;
+      }
+      
+      /* Section Headers */
+      .unified-editor h2,
+      .unified-editor h3,
+      .unified-customers h2,
+      .unified-customers h3 {
+        margin: 0 0 24px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        font-size: 1.15rem;
+        color: var(--text-primary);
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--border-color);
+      }
+      
+      .unified-editor h2 i,
+      .unified-editor h3 i,
+      .unified-customers h2 i,
+      .unified-customers h3 i {
+        font-size: 1.3rem;
+        color: var(--primary);
+      }
+      
+      /* Form Controls */
+      .editor-column label,
+      .customer-column label {
+        display: block;
+        margin-top: 16px;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+      }
+      
+      .editor-column label:first-of-type,
+      .customer-column label:first-of-type {
+        margin-top: 0;
+      }
+      
+      .editor-column label i,
+      .customer-column label i {
+        color: var(--primary);
+        margin-right: 6px;
+        font-size: 0.9rem;
+      }
+      
+      .editor-column input,
+      .editor-column select,
+      .editor-column textarea,
+      .customer-column input,
+      .customer-column select,
+      .customer-column textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+        background: #fff;
+      }
+      
+      .editor-column input:focus,
+      .editor-column select:focus,
+      .editor-column textarea:focus,
+      .customer-column input:focus,
+      .customer-column select:focus,
+      .customer-column textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        background: rgba(99, 102, 241, 0.02);
+      }
+      
+      .editor-column textarea,
+      .customer-column textarea {
+        resize: vertical;
+        font-family: inherit;
+      }
+      
+      /* Buttons Container */
+      .buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+      }
+      
+      .buttons button {
+        flex: 1;
+        min-width: 140px;
+        min-height: 44px;
+      }
+      
+      /* Table Styling */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      table thead {
+        background: var(--bg-secondary);
+      }
+      
+      table th {
+        padding: 14px 12px;
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        border-bottom: 2px solid var(--border-color);
+      }
+      
+      table td {
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+      
+      table tbody tr {
+        transition: all 0.2s ease;
+      }
+      
+      table tbody tr:hover {
+        background: var(--bg-primary);
+      }
+      
+      table button {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        min-height: auto;
+        border-radius: 6px;
+      }
+      
+      /* Header */
+      header {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        padding: 18px 32px;
+        border-radius: 14px;
+        margin-bottom: 0;
+        animation: slideInDown 0.6s ease-out;
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+      }
+      
+      header h1 {
+        font-size: 1.5rem;
+        font-weight: 900;
+        margin: 0 0 4px 0;
+        color: #fff;
+      }
+      
+      header .lead {
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0 0 12px 0;
+        font-size: 0.85rem;
+        line-height: 1.4;
+      }
+      
+      header .accent-text {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 6px;
+        display: inline-block;
+      }
+      
+      /* Navigation */
+      .nav {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 0;
+        flex-wrap: wrap;
+      }
+      
+      .nav-btn {
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        position: relative;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border: none;
+        padding: 8px 14px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+      
+      .nav-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+      
+      .nav-btn.active {
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--primary);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Top Actions */
+      .top-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      
+      .top-actions button {
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border: none;
+        padding: 8px 14px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      
+      .top-actions button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      .top-actions button:active {
+        transform: translateY(0);
+      }
+      
+      /* Enhanced Input & Select Styling */
+      input:not([type="hidden"]):not([type="file"]),
+      select,
+      textarea {
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+      }
+      
+      input:not([type="hidden"]):not([type="file"]):focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+        background: rgba(99, 102, 241, 0.02) !important;
+        transform: translateY(-1px);
+      }
+      
+      select {
+        cursor: pointer;
+      }
+      
+      select:hover {
+        border-color: var(--primary-light);
+      }
+      
+      /* Table Row Hover Effect */
+      #editorListTable tbody tr,
+      #customerTable tbody tr {
+        transition: all 0.2s ease;
+      }
+      
+      #editorListTable tbody tr:hover,
+      #customerTable tbody tr:hover {
+        background: rgba(99, 102, 241, 0.05);
+        transform: translateX(2px);
+      }
+      
+      #editorListTable tbody td,
+      #customerTable tbody td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border-color);
+      }
+      
+      /* Responsive Design */
+      @media (max-width: 1200px) {
+        .unified-editor,
+        .unified-customers {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        main {
+          padding: 16px;
+        }
+        
+        .unified-editor,
+        .unified-customers {
+          grid-template-columns: 1fr;
+          gap: 0;
+          padding: 20px;
+        }
+        
+        .editor-column:first-child,
+        .customer-column:first-child {
+          border-right: none;
+          border-bottom: 2px solid var(--border-color);
+          padding-right: 0;
+          padding-bottom: 24px;
+          margin-bottom: 24px;
+        }
+        
+        .editor-column:last-child,
+        .customer-column:last-child {
+          padding-left: 0;
+          padding-top: 24px;
+        }
+        
+        header {
+          padding: 20px;
+        }
+        
+        header h1 {
+          font-size: 1.5rem;
+        }
+        
+        .top-actions {
+          flex-direction: column;
+        }
+        
+        .top-actions button {
+          width: 100%;
+        }
+      }
+      
+      /* Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        backdrop-filter: blur(4px);
+      }
+      
+      .modal-overlay.hidden {
+        display: none;
+      }
+      
+      .modal-content {
+        position: relative;
+        background: #fff;
+        padding: 32px;
+        max-width: 800px;
+        width: 94%;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideInDown 0.4s ease-out;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      
+      .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--border-color);
+      }
+      
+      .modal-header h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        flex: 1;
+      }
+      
+      .modal-header i {
+        font-size: 1.4rem;
+        color: var(--primary);
+      }
+      
+      .modal-close {
+        background: transparent;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+      
+      .modal-close:hover {
+        background: var(--bg-primary);
+        color: var(--primary);
+      }
+      
+      .modal-body {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .modal-section {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .modal-section h4 {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+      
+      .modal-section.two-column {
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+      
+      .modal-section.two-column > div {
+        display: grid;
+        gap: 16px;
+      }
+      
+      .modal-divider {
+        border-right: 2px solid var(--border-color);
+        padding-right: 24px;
+      }
+      
+      .modal-form-group {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .modal-form-group label {
+        display: block;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+      }
+      
+      .modal-form-group label i {
+        color: var(--primary);
+        margin-right: 6px;
+        font-size: 0.85rem;
+      }
+      
+      .modal-form-group input,
+      .modal-form-group textarea {
+        padding: 12px 14px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+        background: #fff;
+      }
+      
+      .modal-form-group input:focus,
+      .modal-form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        background: rgba(99, 102, 241, 0.02);
+      }
+      
+      .modal-form-group textarea {
+        resize: vertical;
+        font-family: inherit;
+      }
+      
+      .modal-preview {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+        background: var(--bg-primary);
+        border-radius: 8px;
+      }
+      
+      .modal-preview img {
+        max-width: 100%;
+        max-height: 150px;
+        border-radius: 6px;
+        object-fit: contain;
+      }
+      
+      .modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 2px solid var(--border-color);
+      }
+      
+      .modal-actions button {
+        min-width: 120px;
+        min-height: 42px;
+        border-radius: 8px;
+        font-weight: 600;
+      }
+      
+      .modal-actions .btn-cancel {
+        background: #fff;
+        color: var(--text-primary);
+        border: 2px solid var(--border-color);
+      }
+      
+      .modal-actions .btn-cancel:hover {
+        background: var(--bg-primary);
+        border-color: var(--primary);
+      }
+
+      /* Page Navigation - Enhanced (matching Account Opening Editor) */
+      header {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        padding: 18px 32px;
+        border-radius: 14px;
+        margin-bottom: 0;
+        animation: slideInDown 0.6s ease-out;
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+        font-weight: 900;
+        margin: 0 0 4px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #fff;
+      }
+
+      header h1 i {
+        font-size: 1.8rem;
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .nav-btn {
+        padding: 10px 18px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+
+      .nav-btn.active {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1));
+        box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        font-weight: 700;
+      }
+
+      .nav-btn:not(.active) {
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+
+      .nav-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      .nav-btn:active {
+        transform: translateY(-1px);
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-left: 16px;
+        padding-left: 16px;
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      @media (max-width: 768px) {
+        header {
+          padding: 20px;
+        }
+
+        header h1 {
+          font-size: 1.5rem;
+        }
+
+        .nav-buttons {
+          flex-direction: column;
+        }
+
+        .nav-buttons button {
+          width: 100%;
+        }
+      }
+
+      /* Left Slide Menu */
+      .slide-menu-toggle {
+        position: fixed;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1001;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        border: none;
+        border-radius: 0 12px 12px 0;
+        padding: 14px 9px;
+        cursor: pointer;
+        box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15);
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .slide-menu-toggle:hover {
+        padding-left: 14px;
+        background: linear-gradient(135deg, var(--primary-dark), var(--accent));
+      }
+      .slide-menu-toggle i {
+        font-size: 1.2rem;
+      }
+
+      .slide-menu-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.4);
+        z-index: 1002;
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .slide-menu-backdrop.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .slide-menu {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 252px;
+        max-width: 85vw;
+        background: rgba(255, 255, 255, 0.98);
+        z-index: 1003;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
+        transform: translateX(-100%);
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+      }
+      .slide-menu.open {
+        transform: translateX(0);
+      }
+      .slide-menu-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+      }
+      .slide-menu-header h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .slide-menu-close {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: #fff;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.15s ease;
+      }
+      .slide-menu-close:hover {
+        background: rgba(255,255,255,0.3);
+      }
+      .slide-menu-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 14px;
+      }
+      .slide-menu-nav {
+        list-style: none;
+      }
+      .slide-menu-nav li {
+        margin-bottom: 4px;
+      }
+      .slide-menu-nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        color: var(--text-primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: 0.15s ease;
+      }
+      .slide-menu-nav a:hover {
+        background: var(--bg-secondary);
+        color: var(--primary);
+      }
+      .slide-menu-nav a i {
+        width: 20px;
+        text-align: center;
+        color: var(--primary);
+      }
+
+      @media (max-width: 768px) {
+        .slide-menu-toggle { display: none !important; }
+      }
+    </style>
+</head>
+<body>
+  <!-- Left Slide Menu Toggle -->
+  <button class="slide-menu-toggle" id="slideMenuToggle" title="Open Menu"><i class="fas fa-bars"></i></button>
+  <!-- Slide Menu Backdrop -->
+  <div class="slide-menu-backdrop" id="slideMenuBackdrop"></div>
+  <!-- Slide Menu Panel -->
+  <div class="slide-menu" id="slideMenu">
+    <div class="slide-menu-header">
+      <h3><i class="fas fa-list"></i> Quick Navigation</h3>
+      <button class="slide-menu-close" id="slideMenuClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="slide-menu-body">
+      <ul class="slide-menu-nav" style="padding:7px; display:flex; flex-direction:column; gap:5px;">
+        <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuExportCommit"><i class="fas fa-file-export"></i> Export Commitments</a></li>
+        <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuImportCommit"><i class="fas fa-file-import"></i> Import Commitments</a></li>
+        <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuExportCust"><i class="fas fa-users"></i> Export Customers</a></li>
+        <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuImportCust"><i class="fas fa-users"></i> Import Customers</a></li>
+        <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuEditBranch"><i class="fas fa-building"></i> Edit Branch Details</a></li>
+        <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuEditOfficer"><i class="fas fa-user-tie"></i> Edit Officer Details</a></li>
+      </ul>
+      <div style="padding:6px;border-top:1px solid var(--border-color); margin-top:4px; display:flex; justify-content:center;">
+        <div style="text-align:center; font-size:0.9rem; color:var(--text-secondary); font-weight:600;">Developed by Tanzil Ahmed — EID 7966.</div>
+      </div>
+    </div>
+  </div>
+  
+  <header>
+    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+      <h1 style="margin: 0; display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 900; color: white; letter-spacing: -0.02em;">
+        <i class="fas fa-file-contract" style="font-size: 1.8rem;"></i>Credit Commitment Editor
+      </h1>
+    </div>
+    <div class="nav-buttons" style="margin-top: 16px; display: flex; gap: 8px;">
+      <button id="navEditor" class="nav-btn iss-btn small">Editor</button>
+      <button id="navCustomers" class="nav-btn iss-btn small">Customers</button>
+      <div class="header-actions" style="margin-left: auto;">
+        <!-- Header actions managed via side menu -->
+      </div>
+    </div>
+    <!-- Hidden file inputs for importing JSON -->
+    <input id="importCommitFile" type="file" accept="application/json" style="display:none" />
+    <input id="importCustFile" type="file" accept="application/json" style="display:none" />
+    <!-- Hidden button references (now accessed via side menu only) -->
+    <button id="exportCommitBtn" type="button" style="display:none;"></button>
+    <button id="importCommitBtn" type="button" style="display:none;"></button>
+    <button id="exportCustBtn" type="button" style="display:none;"></button>
+    <button id="importCustBtn" type="button" style="display:none;"></button>
+    <button id="branchEditBtn" type="button" style="display:none;"></button>
+    <button id="signEditBtn" type="button" style="display:none;"></button>
+  </header>
+
+  <main>
+    <section id="editorPage" class="unified-editor">
+      <!-- Configuration Column (Left) -->
+      <div class="editor-column">
+        <h2 style="margin: 0 0 24px 0; display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-size: 1.2rem; font-weight: 700; padding-bottom: 12px; border-bottom: 2px solid var(--border-color);">
+          <i class="fas fa-sliders-h" style="color: var(--primary); font-size: 1.1rem;"></i>Configuration
+        </h2>
+        
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-md); margin-bottom: 16px;">
+          <label for="templateSelect" style="font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: block;"><i class="fas fa-file-alt" style="color: var(--primary); margin-right: 8px;"></i>Form Type</label>
+          <select id="templateSelect" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; background: #fff; transition: all 0.3s ease;"></select>
+        </div>
+
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-md); margin-bottom: 16px;">
+          <label for="orgSelect" style="font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: block;"><i class="fas fa-building" style="color: var(--primary); margin-right: 8px;"></i>Organization</label>
+          <select id="orgSelect" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; background: #fff; transition: all 0.3s ease;"><option value="-1">— Select organization —</option></select>
+        </div>
+
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-md); margin-bottom: 16px;">
+          <label for="customerName" style="font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: block;"><i class="fas fa-user" style="color: var(--primary); margin-right: 8px;"></i>Customer Name</label>
+          <input id="customerName" type="text" placeholder="Enter customer name" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; transition: all 0.3s ease;" />
+        </div>
+
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-md); margin-bottom: 16px;">
+          <label for="refStart" style="font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: block;"><i class="fas fa-hashtag" style="color: var(--primary); margin-right: 8px;"></i>Reference No</label>
+          <input id="refStart" type="number" placeholder="e.g. 427" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; transition: all 0.3s ease;" />
+        </div>
+
+        <!-- Address and Proprietor moved out of visible editor; keep hidden inputs so templates and persistence still work -->
+        <input id="address" type="hidden" />
+        <input id="proprietorName" type="hidden" />
+
+        <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-md); margin-bottom: 16px;">
+          <label for="recipient" style="font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: block;"><i class="fas fa-envelope" style="color: var(--primary); margin-right: 8px;"></i>Recipient Address</label>
+          <textarea id="recipient" rows="3" placeholder="The Executive Engineer,&#10;LGED, Pabna" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; transition: all 0.3s ease; font-family: inherit; resize: vertical;"></textarea>
+        </div>
+
+        <!-- Branch details are edited via popup only -->
+        <input id="branchDetails" type="hidden" />
+
+        <!-- Signatory details edited via popup only; hidden fields store values -->
+        <input id="leftSignName" type="hidden" />
+        <input id="leftSignTitle" type="hidden" />
+        <input id="leftSignSig" type="hidden" />
+        <input id="rightSignName" type="hidden" />
+        <input id="rightSignTitle" type="hidden" />
+        <input id="rightSignSig" type="hidden" />
+
+        <div class="buttons" style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <button id="printBtn" class="iss-btn"><i class="fas fa-file-pdf"></i>Print / PDF</button>
+          <button id="sendMailBtn" class="iss-btn"><i class="fas fa-paper-plane"></i>Send Mail</button>
+        </div>
+      </div>
+
+      <!-- Commitment List Column (Right) -->
+      <div class="editor-column">
+        <h3 style="margin: 0 0 24px 0; display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-size: 1.2rem; font-weight: 700; padding-bottom: 12px; border-bottom: 2px solid var(--border-color);">
+          <i class="fas fa-list-check" style="color: var(--primary); font-size: 1.1rem;"></i>Commitment List
+        </h3>
+
+        <div id="editorListForm" style="display:block; margin-bottom:24px; background: #fff; padding: 18px; border-radius: 12px; box-shadow: var(--shadow-md);">
+          <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+            <div style="flex:0 0 120px; min-width:100px;">
+              <label style="display:block; font-weight:600; margin-bottom:6px; color:var(--text-primary);">Tender ID</label>
+              <input id="el_tenderId" type="text" placeholder="Tender ID" style="width:100%; padding:10px 12px; border:2px solid var(--border-color); border-radius:8px; font-size:0.95rem; transition:all 0.3s ease;" />
+            </div>
+
+            <div style="flex:2 1 360px; min-width:220px;">
+              <label style="display:block; font-weight:600; margin-bottom:6px; color:var(--text-primary);">Tender Package No</label>
+              <input id="el_packageNo" type="text" placeholder="Tender Package No" style="width:100%; padding:10px 12px; border:2px solid var(--border-color); border-radius:8px; font-size:0.95rem; transition:all 0.3s ease;" />
+            </div>
+
+            <div style="flex:0 0 140px; min-width:120px;">
+              <label style="display:block; font-weight:600; margin-bottom:6px; color:var(--text-primary);">Amount (Lac)</label>
+              <input id="el_amount" type="text" placeholder="Amount (e.g. 2.00)" style="width:100%; padding:10px 12px; border:2px solid var(--border-color); border-radius:8px; font-size:0.95rem; transition:all 0.3s ease; text-align:right;" />
+            </div>
+
+            <div style="flex:1 1 220px; min-width:160px;">
+              <label style="display:block; font-weight:600; margin-bottom:6px; color:var(--text-primary);">Invitation for Tender No</label>
+              <input id="el_ift" type="text" placeholder="Invitation for Tender No" style="width:100%; padding:10px 12px; border:2px solid var(--border-color); border-radius:8px; font-size:0.95rem; transition:all 0.3s ease;" />
+            </div>
+          </div>
+
+          <div style="margin-top:12px;">
+            <label style="display:block; font-weight:600; margin-bottom:6px; color:var(--text-primary);">Package Description</label>
+            <input id="el_description" type="text" placeholder="Package Description" style="width:100%; padding:10px 12px; border:2px solid var(--border-color); border-radius:8px; font-size:0.95rem; transition:all 0.3s ease;" />
+          </div>
+
+          <div class="buttons" style="display:flex; gap:10px; margin-top:14px;">
+            <button id="editorAddSaveBtn" class="iss-btn small primary-btn"><i class="fas fa-save"></i>Save</button>
+            <button id="editorAddCancelBtn" class="iss-btn small secondary"><i class="fas fa-times"></i>Cancel</button>
+          </div>
+        </div>
+
+        <div style="overflow:auto; max-height:440px; background: #fff; border-radius: 12px; box-shadow: var(--shadow-md);">
+          <table id="editorListTable" style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
+                <th style="padding: 14px 12px; text-align: left; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);">S.L No</th>
+                <th style="padding: 14px 12px; text-align: left; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);">Tender ID</th>
+                <th style="padding: 14px 12px; text-align: left; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);">Tender Package No</th>
+                <th style="padding: 14px 12px; text-align: left; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);">Amount (Lac)</th>
+                <th style="padding: 14px 12px; text-align: left; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);">Invitation for Tender No</th>
+                <th style="padding: 14px 12px; text-align: left; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);">Package Description : Work</th>
+                <th style="padding: 14px 12px; text-align: center; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);"></th>
+              </tr>
+            </thead>
+            <tbody id="editorListBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Preview area hidden -->
+    <div id="previewArea" style="display:none"></div>
+
+    <section id="customerPage" style="display:none; width:100%;">
+      <div class="unified-customers">
+        <!-- Customer Form Column (Left - 30%) -->
+        <div class="customer-column">
+          <h2 style="margin: 0 0 24px 0; display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-size: 1.2rem; font-weight: 700; padding-bottom: 12px; border-bottom: 2px solid var(--border-color);">
+            <i class="fas fa-user-plus" style="color: var(--primary); font-size: 1.1rem;"></i>Add Customer
+          </h2>
+          
+          <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-md); margin-bottom: 16px;">
+            <label for="cust_org" style="font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: block;"><i class="fas fa-building" style="color: var(--primary); margin-right: 8px;"></i>Organization name</label>
+            <input id="cust_org" type="text" placeholder="Organization name" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; transition: all 0.3s ease;" />
+          </div>
+
+          <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-md); margin-bottom: 16px;">
+            <label for="cust_prop" style="font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: block;"><i class="fas fa-user" style="color: var(--primary); margin-right: 8px;"></i>Proprietor name</label>
+            <input id="cust_prop" type="text" placeholder="Proprietor name" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; transition: all 0.3s ease;" />
+          </div>
+
+          <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-md); margin-bottom: 16px;">
+            <label for="cust_addr" style="font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: block;"><i class="fas fa-map-marker-alt" style="color: var(--primary); margin-right: 8px;"></i>Address</label>
+            <input id="cust_addr" type="text" placeholder="Address" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; transition: all 0.3s ease;" />
+          </div>
+
+          <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-md); margin-bottom: 16px;">
+            <label for="cust_email" style="font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: block;"><i class="fas fa-envelope" style="color: var(--primary); margin-right: 8px;"></i>Email</label>
+            <input id="cust_email" type="email" placeholder="Email" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; transition: all 0.3s ease;" />
+          </div>
+
+          <div class="buttons" style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <button id="custAddBtn" class="iss-btn"><i class="fas fa-save"></i>Add / Save</button>
+            <button id="custClearBtn" class="iss-btn secondary"><i class="fas fa-times"></i>Clear</button>
+          </div>
+        </div>
+
+        <!-- Saved Customers Column (Right - 70%) -->
+        <div class="customer-column">
+          <h3 style="margin: 0 0 24px 0; display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-size: 1.2rem; font-weight: 700; padding-bottom: 12px; border-bottom: 2px solid var(--border-color);">
+            <i class="fas fa-list" style="color: var(--primary); font-size: 1.1rem;"></i>Saved Customers
+          </h3>
+          
+          <div style="overflow:auto; max-height:520px; background: #fff; border-radius: 12px; box-shadow: var(--shadow-md);">
+            <table id="customerTable" style="width:100%; border-collapse:collapse;">
+              <thead>
+                <tr style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
+                  <th style="padding: 14px 12px; text-align: left; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);">Organization</th>
+                  <th style="padding: 14px 12px; text-align: left; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);">Proprietor</th>
+                  <th style="padding: 14px 12px; text-align: left; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);">Address</th>
+                  <th style="padding: 14px 12px; text-align: left; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);">Email</th>
+                  <th style="padding: 14px 12px; text-align: center; color: #fff; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--primary-dark);"></th>
+                </tr>
+              </thead>
+              <tbody id="customerTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="neon-footer">
+    <div class="footer-rgb" style="display:flex;align-items:center;justify-content:center;gap:10px;">
+      <span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span>
+    </div>
+    <style>
+    .neon-footer{padding:12px 18px;text-align:center}
+    .footer-rgb .rgb-text{
+        padding:8px 14px;
+        border-radius:999px;
+        font-weight:600;
+        background: linear-gradient(90deg,
+            #5b21b6 0%,
+            #7c3aed 12%,
+            #ec4899 24%,
+            #fb7185 36%,
+            #f97316 48%,
+            #f59e0b 60%,
+            #06b6d4 72%,
+            #0ea5a1 84%,
+            #5b21b6 100%
+        );
+        background-size:300% 300%;
+        -webkit-background-clip:text;
+        background-clip:text;
+        color:transparent;
+        -webkit-text-fill-color:transparent;
+        animation: rgbShift 6s linear infinite;
+        text-align:center;
+    }
+    @keyframes rgbShift{
+        0%{background-position:0% 50%}
+        50%{background-position:100% 50%}
+        100%{background-position:0% 50%}
+    }
+    @media (max-width:520px){
+        .footer-rgb .rgb-text{font-size:0.92rem}
+    }
+    </style>
+  </footer>
+
+  
+
+  <!-- Branch details modal -->
+    <div id="branchModal" class="modal-overlay hidden" onclick="closeBranchModalOnBackdrop(event)">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <i class="fas fa-building"></i>
+          <h3>Branch Details</h3>
+          <button type="button" class="modal-close" id="branchModalClose">×</button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="modal-section">
+            <div class="modal-form-group">
+              <label><i class="fas fa-building"></i>Branch Name</label>
+              <input id="modal_branch_name" type="text" placeholder="Enter branch name" />
+            </div>
+            
+            <div class="modal-form-group">
+              <label><i class="fas fa-map-marker-alt"></i>Address</label>
+              <textarea id="modal_branch_address" rows="3" placeholder="Enter branch address"></textarea>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="modal-form-group">
+                <label><i class="fas fa-phone"></i>Contact</label>
+                <input id="modal_branch_contact" type="text" placeholder="Phone number" />
+              </div>
+              <div class="modal-form-group">
+                <label><i class="fas fa-globe"></i>Website</label>
+                <input id="modal_branch_website" type="text" placeholder="Website URL" />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="iss-btn btn-cancel" id="branchModalCancel"><i class="fas fa-times"></i>Cancel</button>
+          <button id="modal_branch_save" type="button" class="iss-btn"><i class="fas fa-save"></i>Save</button>
+        </div>
+      </div>
+    </div>
+
+  <!-- Signatory modal -->
+    <div id="signModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fas fa-pen-fancy"></i>
+          <h3>Officer Details</h3>
+          <button type="button" class="modal-close" id="signModalClose">×</button>
+        </div>
+        
+        <div class="modal-body">
+          <!-- Officers Section -->
+          <div class="modal-section two-column">
+            <div>
+              <h4>Left Officer</h4>
+              <div class="modal-form-group">
+                <label><i class="fas fa-user"></i>Name</label>
+                <input id="modal_left_name" type="text" placeholder="Officer name" />
+              </div>
+              <div class="modal-form-group">
+                <label><i class="fas fa-briefcase"></i>Designation</label>
+                <input id="modal_left_title" type="text" placeholder="Job title" />
+              </div>
+              <div class="modal-form-group">
+                <label><i class="fas fa-image"></i>Signature (Image)</label>
+                <input id="modal_left_sigfile" type="file" accept="image/*" />
+              </div>
+              <div id="modal_left_sig_preview" class="modal-preview"></div>
+              <button id="modal_left_sig_remove" type="button" class="iss-btn btn-cancel" style="width: 100%;"><i class="fas fa-trash"></i>Remove Signature</button>
+            </div>
+            
+            <div>
+              <h4>Right Officer</h4>
+              <div class="modal-form-group">
+                <label><i class="fas fa-user"></i>Name</label>
+                <input id="modal_right_name" type="text" placeholder="Officer name" />
+              </div>
+              <div class="modal-form-group">
+                <label><i class="fas fa-briefcase"></i>Designation</label>
+                <input id="modal_right_title" type="text" placeholder="Job title" />
+              </div>
+              <div class="modal-form-group">
+                <label><i class="fas fa-image"></i>Signature (Image)</label>
+                <input id="modal_right_sigfile" type="file" accept="image/*" />
+              </div>
+              <div id="modal_right_sig_preview" class="modal-preview"></div>
+              <button id="modal_right_sig_remove" type="button" class="iss-btn btn-cancel" style="width: 100%;"><i class="fas fa-trash"></i>Remove Signature</button>
+            </div>
+          </div>
+          
+          <!-- Logo Section -->
+          <div class="modal-section">
+            <h4>Header Logo</h4>
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start;">
+              <div class="modal-form-group">
+                <label><i class="fas fa-image"></i>Logo (Top-Left)</label>
+                <input id="headerLogoFile" type="file" accept="image/*" style="display:none" />
+                <div style="display:flex; gap:8px;">
+                  <button id="headerLogoAdd" type="button" class="iss-btn" style="flex: 1;"><i class="fas fa-plus"></i>Add Logo</button>
+                  <button id="headerLogoRemove" type="button" class="iss-btn btn-cancel"><i class="fas fa-trash"></i>Remove</button>
+                </div>
+                <input id="headerLogoData" type="hidden" />
+              </div>
+              <div style="background: var(--bg-primary); padding: 16px; border-radius: 8px; width: 120px; height: 100px; display: flex; align-items: center; justify-content: center; border: 2px dashed var(--border-color);">
+                <div id="headerLogoPreview" style="max-width: 100%; max-height: 100%; text-align: center; color: var(--text-secondary); font-size: 0.9rem;">Logo</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Footer Section -->
+          <div class="modal-section">
+            <h4>Footer Text</h4>
+            <div class="modal-form-group">
+              <label><i class="fas fa-file-alt"></i>Footer Content (appears at bottom)</label>
+              <textarea id="footerText" rows="3" placeholder="Enter footer text (e.g. bank contact details)"></textarea>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="iss-btn btn-cancel" id="signModalCancel"><i class="fas fa-times"></i>Cancel</button>
+          <button id="modal_sign_save" type="button" class="iss-btn"><i class="fas fa-save"></i>Save</button>
+        </div>
+      </div>
+    </div>
+
+  <script src="app.js"></script>
+  
+  <script>
+    // Left Slide Menu Toggle Logic
+    const slideMenuToggle = document.getElementById('slideMenuToggle');
+    const slideMenu = document.getElementById('slideMenu');
+    const slideMenuBackdrop = document.getElementById('slideMenuBackdrop');
+    const slideMenuClose = document.getElementById('slideMenuClose');
+
+    function openSlideMenu() {
+      slideMenu.classList.add('open');
+      slideMenuBackdrop.classList.add('show');
+    }
+    function closeSlideMenu() {
+      slideMenu.classList.remove('open');
+      slideMenuBackdrop.classList.remove('show');
+    }
+
+    if (slideMenuToggle) slideMenuToggle.addEventListener('click', openSlideMenu);
+    if (slideMenuClose) slideMenuClose.addEventListener('click', closeSlideMenu);
+    if (slideMenuBackdrop) slideMenuBackdrop.addEventListener('click', closeSlideMenu);
+
+    // Menu item handlers
+    const slideMenuExportCommit = document.getElementById('slideMenuExportCommit');
+    const slideMenuImportCommit = document.getElementById('slideMenuImportCommit');
+    const slideMenuExportCust = document.getElementById('slideMenuExportCust');
+    const slideMenuImportCust = document.getElementById('slideMenuImportCust');
+    const slideMenuEditBranch = document.getElementById('slideMenuEditBranch');
+    const slideMenuEditOfficer = document.getElementById('slideMenuEditOfficer');
+
+    if (slideMenuExportCommit) {
+      slideMenuExportCommit.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeSlideMenu();
+        const btn = document.getElementById('exportCommitBtn');
+        if (btn) btn.click();
+      });
+    }
+
+    if (slideMenuImportCommit) {
+      slideMenuImportCommit.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeSlideMenu();
+        const btn = document.getElementById('importCommitBtn');
+        if (btn) btn.click();
+      });
+    }
+
+    if (slideMenuExportCust) {
+      slideMenuExportCust.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeSlideMenu();
+        const btn = document.getElementById('exportCustBtn');
+        if (btn) btn.click();
+      });
+    }
+
+    if (slideMenuImportCust) {
+      slideMenuImportCust.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeSlideMenu();
+        const btn = document.getElementById('importCustBtn');
+        if (btn) btn.click();
+      });
+    }
+
+    if (slideMenuEditBranch) {
+      slideMenuEditBranch.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeSlideMenu();
+        const btn = document.getElementById('branchEditBtn');
+        if (btn) btn.click();
+      });
+    }
+
+    if (slideMenuEditOfficer) {
+      slideMenuEditOfficer.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeSlideMenu();
+        const btn = document.getElementById('signEditBtn');
+        if (btn) btn.click();
+      });
+    }
+  </script>
+</body>
+</html>

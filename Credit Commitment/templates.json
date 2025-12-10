@@ -1,0 +1,32 @@
+﻿[
+  {
+    "id": "pw3-7",
+    "name": "Form PW3-7",
+    "template": "Letter of Commitment (Form PW3-7)\n\nTo: {{customerName}}\nAddress: {{address}}\nProprietor: {{proprietorName}}\n\nCREDIT COMMITMENT No: 427/2025    Date: 25.10.2025\n\nWe hereby commit to provide a revolving line of credit as required for the Tender submission and performance as per the terms.\n\n(Authorized signatory)"
+  },
+  {
+    "id": "pw2b-3",
+    "name": "Form PW2b-3",
+    "template": "Letter of Commitment (Form PW2b-3)\n\nTo: {{customerName}}\nAddress: {{address}}\nProprietor: {{proprietorName}}\n\nThis is to confirm that the bank will provide the required line of credit in accordance with the tender conditions.\n\n(Authorized signatory)"
+  },
+  {
+    "id": "pg2-5",
+    "name": "Form PG2-5",
+    "template": "Letter of Commitment (Form PG2-5)\n\nTo: {{customerName}}\nAddress: {{address}}\nProprietor: {{proprietorName}}\n\nWe undertake to provide the credit facility necessary for execution of the contract if awarded.\n\n(Authorized signatory)"
+  },
+  {
+    "id": "epw2a-3",
+    "name": "Form e-PW2A-3",
+    "template": "Letter of Commitment (Form e-PW2A-3)\n\nTo: {{customerName}}\nAddress: {{address}}\nProprietor: {{proprietorName}}\n\nThis electronic format confirms the bank's commitment to provide the required credit line.\n\n(Authorized signatory)"
+  },
+  {
+    "id": "pg3-11",
+    "name": "Form PG3-11",
+    "template": "Letter of Commitment (Form PG3-11)\n\nTo: {{customerName}}\nAddress: {{address}}\nProprietor: {{proprietorName}}\n\nWe confirm the bank will issue the required undertaking for credit as per tender conditions.\n\n(Authorized signatory)"
+  },
+  {
+    "id": "pw2a-3",
+    "name": "Form PW2a-3",
+    "template": "Letter of Commitment (Form PW2a-3)\n\nTo: {{customerName}}\nAddress: {{address}}\nProprietor: {{proprietorName}}\n\nThe bank hereby undertakes to provide the requested line of credit in support of the Tenderer.\n\n(Authorized signatory)"
+  }
+]

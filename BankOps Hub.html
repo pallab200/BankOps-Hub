@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankOps Hub</title>
+    <link rel="stylesheet" href="css/fontawesome.min.css">
+    <!-- Local fix: ensure Font Awesome webfonts load from css/webfonts/ -->
+    <link rel="stylesheet" href="css/fontawesome-fix.css">
+    <link rel="stylesheet" href="css/poppins.css">
+    <style>
+        /* Unified Modern Design System */
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-primary: #f0f4f9;
+            --bg-secondary: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Inter', 'Segoe UI', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-primary);
+        }
+
+        /* Modern Header */
+        .app-header {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
+            padding: 20px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 100;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 0 10px;
+        }
+
+        .header-main-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.02em;
+            background: linear-gradient(90deg, 
+                #6366f1 0%,
+                #ec4899 25%,
+                #f59e0b 50%,
+                #ec4899 75%,
+                #6366f1 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            animation: titleFadeInSlide 0.8s ease-out 0.1s both, rgbGradientShift 6s ease infinite;
+        }
+
+        @keyframes titleFadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes rgbGradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header-main-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin: 0;
+            font-weight: 500;
+            max-width: 900px;
+            line-height: 1.5;
+            letter-spacing: 0.3px;
+            animation: subtitleFadeInSlide 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes subtitleFadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 14px 12px;
+            }
+
+            .header-content {
+                gap: 3px;
+            }
+
+            .header-main-title {
+                font-size: 1.6rem;
+            }
+
+            .header-main-subtitle {
+                font-size: 0.85rem;
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px;
+            margin: 40px 20px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* Modern Animated Header */
+        h1 {
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 50%, #f59e0b 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        h1:hover {
+            animation: gradientShift 4s ease infinite;
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            font-size: 1rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 12px;
+        }
+
+        .section {
+            margin-bottom: 10px;
+            border-radius: 16px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(99, 102, 241, 0.1);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        .section:hover {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            user-select: none;
+            transition: all 0.2s ease;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(236, 72, 153, 0.03) 100%);
+        }
+
+        .section-header:hover {
+            padding-left: 16px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(236, 72, 153, 0.08) 100%);
+        }
+
+        .section-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            font-size: 1.5rem;
+            color: #ffffff;
+            width: 52px;
+            height: 52px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 1) 0%, rgba(79, 70, 229, 1) 100%);
+            border-radius: 14px;
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .section-header:hover .section-icon {
+            transform: scale(1.08) rotate(3deg);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .section-note {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .section-chevron {
+            transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .section-body {
+            overflow: hidden;
+            transition: max-height 400ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms ease;
+            max-height: 2000px;
+            opacity: 1;
+        }
+
+        .section-body.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .section-chevron.rotated {
+            transform: rotate(180deg);
+        }
+
+        .app-icon {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .data-buttons {
+            margin-top: 14px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .data-btn {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid var(--border-color);
+            padding: 9px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-primary);
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .data-btn:hover {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .app-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
+            border: 2px solid rgba(99, 102, 241, 0.12);
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            /* Make all cards visually equal height */
+            min-height: 260px;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5) 0%, rgba(236, 72, 153, 0.5) 100%);
+            border-radius: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .app-card:hover::before {
+            opacity: 0.12;
+        }
+
+        .app-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.18);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .app-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .app-card:hover .app-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .app-title {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .app-description {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* Unified Button Style */
+        .open-btn {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .open-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: translateX(-120%);
+            transition: transform 0.6s ease;
+            pointer-events: none;
+        }
+
+        .open-btn:hover::after {
+            transform: translateX(120%);
+        }
+
+        .open-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.35);
+        }
+
+        .open-btn:active {
+            transform: translateY(-2px);
+        }
+
+        @keyframes floatButton {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* Modern Footer with RGB Gradient Animation */
+        footer.neon-footer {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-top: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+
+        footer.neon-footer p {
+            font-weight: 600;
+            background: linear-gradient(90deg, #6366f1, #ec4899, #f59e0b, #10b981, #3b82f6, #6366f1);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite;
+            margin: 0;
+        }
+
+        /* Interest Calculator Styles - Modernized */
+        .ic-modal-inner { display:flex; gap:20px; align-items:flex-start; }
+        .ic-left { flex:1; }
+        .ic-right { width:260px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.08)); border-radius:12px; padding:18px; color:var(--text-primary); border: 1px solid var(--border-color); }
+        .ic-tabs { display:flex; gap:12px; margin-bottom:12px }
+        .ic-tab { padding:10px 16px; border-radius:10px; cursor:pointer; font-weight:600; color:var(--text-secondary); background:transparent; transition: all 0.3s ease; }
+        .ic-tab.active { background:white; color:var(--primary); box-shadow: var(--shadow-md); }
+        .ic-row { margin-bottom:12px }
+        .ic-row label { display:block; font-size:0.9rem; color:var(--text-primary); margin-bottom:6px; font-weight: 600; }
+        .ic-input, .ic-select { width:100%; padding:10px; border:1px solid var(--border-color); border-radius:8px; background: white; transition: all 0.2s ease; }
+        .ic-input:focus, .ic-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+        .ic-result-title { font-size:0.95rem; color:var(--text-secondary); margin-bottom:6px; font-weight: 600; }
+        .ic-result-amount { font-size:1.8rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight:900; margin-bottom:12px; }
+        .ic-breakdown { font-size:0.92rem; color:var(--text-primary); position:relative; padding:14px 12px; }
+        .ic-breakdown::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 18px;
+            bottom: 18px;
+            width: 3px;
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            border-radius: 2px;
+            transform: translateX(-50%);
+            opacity: 0.4;
+        }
+        .ic-breakdown .row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(15,23,42,0.04); }
+        .ic-breakdown .row span:first-child { width: calc(50% - 12px); text-align:left; word-break:break-word; padding-right:8px; font-weight: 500; }
+        .ic-breakdown .row span:last-child { width: calc(50% - 12px); text-align:right; white-space:nowrap; padding-left:8px; font-weight: 600; color: var(--primary); }
+        .ic-breakdown .row.final { font-weight:800; border-top:2px solid var(--primary); margin-top:10px; padding-top:12px; color: var(--primary); }
+
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Old neon styles - removed for cleaner modern look */
+        h1.neon-title { display: none; }
+        .subtitle.neon-subtitle { display: none; }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .app-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .app-card {
+                padding: 18px;
+                min-height: 200px;
+            }
+            .data-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            .app-card {
+                padding: 16px;
+                min-height: auto;
+            }
+            .open-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        /* Welcome Screen Styles */
+        #welcomeScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 25%, #4c1d95 50%, #312e81 75%, #1e1b4b 100%);
+            background-size: 400% 400%;
+            animation: welcomeGradient 8s ease infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            overflow: hidden;
+        }
+
+        @keyframes welcomeGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .welcome-content {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            animation: welcomeFadeInScale 1s ease-out;
+        }
+
+        @keyframes welcomeFadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .welcome-icon-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .welcome-icon-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.9;
+            }
+        }
+
+        .welcome-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.5);
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-10px) rotate(-2deg);
+            }
+            50% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            75% {
+                transform: translateY(-10px) rotate(2deg);
+            }
+        }
+
+        .welcome-icon i {
+            font-size: 3.5rem;
+            color: #ffffff;
+            animation: iconSpin 4s linear infinite;
+        }
+
+        @keyframes iconSpin {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        .welcome-greeting {
+            font-size: 2rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            animation: textFadeIn 1s ease-out 0.3s both;
+        }
+
+        @keyframes textFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-username {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #ffffff 0%, #a5b4fc 50%, #ffffff 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+            animation: textFadeIn 1s ease-out 0.5s both, shimmerText 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmerText {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: textFadeIn 1s ease-out 0.7s both;
+        }
+
+        .welcome-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            animation: particleFloat 8s ease-in-out infinite;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        .loading-bar-container {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 40px;
+            animation: textFadeIn 1s ease-out 0.9s both;
+        }
+
+        .loading-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1 0%, #ec4899 50%, #f59e0b 100%);
+            background-size: 200% 100%;
+            border-radius: 10px;
+            animation: loadingProgress 4s ease-out forwards, shimmerBar 1.5s linear infinite;
+        }
+
+        @keyframes loadingProgress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        @keyframes shimmerBar {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        .fade-out {
+            animation: fadeOutScale 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeOutScale {
+            to {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-icon {
+                width: 90px;
+                height: 90px;
+            }
+            .welcome-icon i {
+                font-size: 2.5rem;
+            }
+            .welcome-greeting {
+                font-size: 1.3rem;
+            }
+            .welcome-username {
+                font-size: 2.2rem;
+            }
+            .welcome-subtitle {
+                font-size: 0.9rem;
+            }
+            .loading-bar-container {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen">
+        <div class="welcome-particles">
+            <!-- Animated particles will be added via JS -->
+        </div>
+        <div class="welcome-content">
+            <div class="welcome-icon-wrapper">
+                <div class="welcome-icon-bg"></div>
+                <div class="welcome-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+            </div>
+            <div class="welcome-greeting">Welcome Back</div>
+            <div class="welcome-username" id="welcomeUsername">User</div>
+                            <div class="welcome-subtitle">BankOps Hub</div>
+            <div class="loading-bar-container">
+                <div class="loading-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get PC username (domain\username) and display welcome screen
+        (function() {
+            // Try to get username from environment or use a default
+            let username = 'User';
+            
+            // Method 1: Try to get from environment (works in Electron/Node.js environments)
+            if (typeof require !== 'undefined') {
+                try {
+                    const os = require('os');
+                    const userInfo = os.userInfo().username || '';
+                    // os.userInfo().username typically returns "domain\username" or just "username"
+                    if (userInfo) {
+                        username = userInfo;
+                    }
+                } catch (e) {
+                    // Not available, continue to next method
+                }
+            }
+            
+            // Method 2: Try to fetch from a backend endpoint (if available)
+            if (username === 'User') {
+                fetch('/api/username')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.username) {
+                            document.getElementById('welcomeUsername').textContent = data.username;
+                        }
+                    })
+                    .catch(() => {
+                        // No backend available, use extracted username
+                    });
+            }
+            
+            // Method 3: Extract from file path - get domain\username format
+            if (username === 'User') {
+                // Try to get from localStorage if previously stored
+                const storedUsername = localStorage.getItem('pcUsername');
+                if (storedUsername) {
+                    username = storedUsername;
+                } else {
+                    // Try to extract from window location or file path
+                    try {
+                        const path = window.location.pathname;
+                        // Look for pattern like Users\username or Users/username
+                        const match = path.match(/Users[\\\/]([^\\\/]+)/i);
+                        if (match && match[1]) {
+                            // Extract username and capitalize it
+                            let extractedUser = match[1];
+                            // If it looks like a domain\username format, keep it as is, otherwise capitalize
+                            if (!extractedUser.includes('\\') && !extractedUser.includes('@')) {
+                                extractedUser = extractedUser.charAt(0).toUpperCase() + extractedUser.slice(1);
+                            }
+                            username = extractedUser;
+                            localStorage.setItem('pcUsername', username);
+                        }
+                    } catch (e) {
+                        // Fallback to default
+                    }
+                }
+            }
+            
+            // Set the username in the welcome screen
+            document.getElementById('welcomeUsername').textContent = username;
+            
+            // Also set it in the header when page loads
+            window.addEventListener('load', function() {
+                const headerUsernameEl = document.getElementById('headerUsername');
+                if (headerUsernameEl) {
+                    headerUsernameEl.textContent = username;
+                }
+            });
+            
+            // Create animated particles
+            const particlesContainer = document.querySelector('.welcome-particles');
+            for (let i = 0; i < 25; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 6 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = Math.random() * 5 + 5 + 's';
+                particlesContainer.appendChild(particle);
+            }
+            
+            // Hide welcome screen after 4 seconds
+            setTimeout(function() {
+                const welcomeScreen = document.getElementById('welcomeScreen');
+                welcomeScreen.classList.add('fade-out');
+                
+                // Remove from DOM after animation completes
+                setTimeout(function() {
+                    welcomeScreen.style.display = 'none';
+                }, 800);
+            }, 4000);
+        })();
+    </script>
+
+    <!-- Modern Header -->
+    <header class="app-header" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 24px 20px 20px; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25);">
+        <!-- Username Display (Top Right) -->
+        <div style="position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 10;">
+            <div style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.95); padding: 8px 14px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; color: #6366f1; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);">
+                <i class="fas fa-user-circle" style="font-size: 1rem;"></i>
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                    <span style="font-size: 0.65rem; opacity: 0.8;">Welcome,</span>
+                    <span id="headerUsername" style="font-size: 0.8rem; font-weight: 800;">User</span>
+                </div>
+            </div>
+            <!-- COMMAND CENTER badge removed -->
+        </div>
+        
+        <div class="header-content" style="position: relative; z-index: 5;">
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; background: rgba(255, 255, 255, 0.15); border-radius: 14px; margin-bottom: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); backdrop-filter: blur(10px); animation: shimmerIcon 2.5s infinite;">
+                <i class="fas fa-building" style="font-size: 1.6rem; color: #ffffff;"></i>
+            </div>
+            <h1 class="header-main-title" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; letter-spacing: -0.04em; margin: 0 0 6px 0; text-shadow: 0 2px 16px rgba(0, 0, 0, 0.2); background: none; -webkit-text-fill-color: #ffffff;">BankOps Hub</h1>
+            <p class="header-main-subtitle" style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.95); margin: 0; font-weight: 500; max-width: 800px; line-height: 1.4; letter-spacing: 0.2px;">Unified, fast access to cash, customer service and credit workflows — export/import data, print-ready forms, and streamlined branch operations.</p>
+        </div>
+        
+        <style>
+        @keyframes shimmerIcon {
+            0%, 100% {
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(255, 255, 255, 0.4);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 10px rgba(255, 255, 255, 0.1);
+                transform: scale(1.03);
+            }
+        }
+        </style>
+    </header>
+
+    <div class="container" style="background: transparent; border: none; box-shadow: none; padding: 12px 20px; margin: 12px auto;">
+        <div class="utility-row" style="text-align:center; margin-bottom:12px;">
+            <button class="data-btn" onclick="openInterestCalculator()" title="Open Interest Calculator" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; font-size: 1rem; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3); transition: all 0.3s ease;">
+                <i class="fas fa-percent" style="font-size: 1.2rem;"></i>
+                Interest Calculator
+            </button>
+        </div>
+        <div class="sections">
+            <section class="section" id="section-cash">
+                <div class="section-header" onclick="toggleSection('cash')">
+                    <div class="section-left">
+                        <i class="fas fa-wallet section-icon"></i>
+                        <div>
+                            <div class="section-title">Cash</div>
+                            <div class="section-note">Branch cash ops — deposits, withdrawals, reconciliation and quick reports.</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down section-chevron" id="chev-cash"></i>
+                </div>
+                <div class="section-body" id="body-cash">
+                    <div class="app-grid">
+                        <div class="app-card">
+                            <i class="app-icon fas fa-wallet"></i>
+                            <div class="app-title">Cash Management</div>
+                            <div class="app-description">
+                                Handle cash transactions, deposits, withdrawals, and branch reconciliation with exportable reports.
+                            </div>
+                            <button class="open-btn" onclick="window.open('Cash/Cash Management.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                            <div class="data-buttons">
+                                <button class="data-btn" onclick="exportData('cash')">
+                                    <i class="fas fa-download"></i>
+                                    Export Data
+                                </button>
+                                <button class="data-btn" onclick="importData('cash')">
+                                    <i class="fas fa-upload"></i>
+                                    Import Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="section-customer">
+                <div class="section-header" onclick="toggleSection('customer')">
+                    <div class="section-left">
+                        <i class="fas fa-user-circle section-icon"></i>
+                        <div>
+                            <div class="section-title">Customer Service</div>
+                            <div class="section-note">Front-desk tools — account opening, RTGS/BEFTN forms and customer requests.</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down section-chevron" id="chev-customer"></i>
+                </div>
+                <div class="section-body" id="body-customer">
+                    <div class="app-grid">
+                        <div class="app-card">
+                            <i class="app-icon fas fa-user-edit"></i>
+                            <div class="app-title">Account Opening Form Editor</div>
+                            <div class="app-description">
+                                Create and edit account opening forms with validation and printable output.
+                            </div>
+                            <button class="open-btn" onclick="window.open('Account Opening Form Editor/Account Opening Form Editor.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                            <div class="data-buttons">
+                                <button class="data-btn" onclick="exportData('acct')">
+                                    <i class="fas fa-download"></i>
+                                    Export Data
+                                </button>
+                                <button class="data-btn" onclick="importData('acct')">
+                                    <i class="fas fa-upload"></i>
+                                    Import Data
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="app-card">
+                            <i class="app-icon fas fa-file-invoice-dollar"></i>
+                            <div class="app-title">RTGS BEFTN Form Editor</div>
+                            <div class="app-description">
+                                Create and edit RTGS/BEFTN payment forms with validation and printable output.
+                            </div>
+                            <button class="open-btn" onclick="window.open('RTGS and BEFTN/RTGS BEFTN Form Editor.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                            <div class="data-buttons">
+                                <button class="data-btn" onclick="exportData('rtgs')">
+                                    <i class="fas fa-download"></i>
+                                    Export Data
+                                </button>
+                                <button class="data-btn" onclick="importData('rtgs')">
+                                    <i class="fas fa-upload"></i>
+                                    Import Data
+                                </button>
+                            </div>
+                        </div>
+                        <div class="app-card">
+                            <i class="app-icon fas fa-layer-group"></i>
+                            <div class="app-title">Expense</div>
+                            <div class="app-description">
+                                Expense tracker with detailed reports and quick export/import support.
+                            </div>
+                            <button class="open-btn" onclick="window.open('Expense/Expense.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                            <div class="data-buttons">
+                                <button class="data-btn" onclick="exportData('expense')">
+                                    <i class="fas fa-download"></i>
+                                    Export Data
+                                </button>
+                                <button class="data-btn" onclick="importData('expense')">
+                                    <i class="fas fa-upload"></i>
+                                    Import Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="section-credit">
+                <div class="section-header" onclick="toggleSection('credit')">
+                    <div class="section-left">
+                        <i class="fas fa-briefcase section-icon"></i>
+                        <div>
+                            <div class="section-title">Credit</div>
+                            <div class="section-note">Lending & analysis — ISS insights, commitment templates and reports.</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down section-chevron" id="chev-credit"></i>
+                </div>
+                <div class="section-body" id="body-credit">
+                    <div class="app-grid">
+                        <div class="app-card">
+                            <i class="app-icon fas fa-chart-line"></i>
+                            <div class="app-title">ISS Analyzer</div>
+                            <div class="app-description">
+                                Analyze and process ISS data with advanced features for data visualization and reporting.
+                            </div>
+                            <button class="open-btn" onclick="window.open('ISS/ISS.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                            <div class="data-buttons">
+                                <button class="data-btn" onclick="exportData('iss')">
+                                    <i class="fas fa-download"></i>
+                                    Export Data
+                                </button>
+                                <button class="data-btn" onclick="importData('iss')">
+                                    <i class="fas fa-upload"></i>
+                                    Import Data
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="app-card">
+                            <i class="app-icon fas fa-file-contract"></i>
+                            <div class="app-title">Credit Commitment Editor</div>
+                            <div class="app-description">
+                                Edit customer name, address and proprietor across 6 commitment templates — quick, accurate & print-ready.
+                            </div>
+                            <button class="open-btn" onclick="window.open('Credit Commitment/Credit Commitment.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                            <div class="data-buttons">
+                                <button class="data-btn" onclick="exportData('credit-commitment')">
+                                    <i class="fas fa-download"></i>
+                                    Export Data
+                                </button>
+                                <button class="data-btn" onclick="importData('credit-commitment')">
+                                    <i class="fas fa-upload"></i>
+                                    Import Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="section" id="section-misc">
+                <div class="section-header" onclick="toggleSection('misc')">
+                    <div class="section-left">
+                        <i class="fas fa-th-large section-icon"></i>
+                        <div>
+                            <div class="section-title">Utilities & Tools</div>
+                                <div class="section-note">Handy utilities — Translator, PDF Compressor, and other small tools designed to speed up common tasks.</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down section-chevron" id="chev-misc"></i>
+                </div>
+                <div class="section-body" id="body-misc">
+                    <div class="app-grid">
+                        <div class="app-card">
+                            <i class="app-icon fas fa-language"></i>
+                            <div class="app-title">Translator</div>
+                            <div class="app-description">
+                                Quick language translator for short texts. English ↔ Bangla support.
+                            </div>
+                            <button class="open-btn" onclick="window.open('Translator/Translator.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                        </div>
+
+                        <div class="app-card">
+                            <i class="app-icon fas fa-user-tie"></i>
+                            <div class="app-title">Customer Prospectus</div>
+                            <div class="app-description">
+                                Generate a professional customer prospectus.
+                            </div>
+                            <button class="open-btn" onclick="window.open('Customer Prospectus/Customer Prospectus.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                        </div>
+
+                        <div class="app-card">
+                            <i class="app-icon fas fa-file-pdf"></i>
+                            <div class="app-title">PDF Compressor</div>
+                            <div class="app-description">
+                                Compress PDF files locally for smaller file sizes and quicker sharing.
+                            </div>
+                            <button class="open-btn" onclick="window.open('PDF Compressor/PDF Compressor.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                        </div>
+                        <div class="app-card">
+                            <i class="app-icon fas fa-id-card-alt"></i>
+                            <div class="app-title">NID Stack &amp; Enhance</div>
+                            <div class="app-description">
+                                Upload NID images, crop and enhance, then export a single combined image.
+                            </div>
+                            <button class="open-btn" onclick="window.open('NID Stack & Enhance/NID Stack & Enhance.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                        </div>
+                        <div class="app-card">
+                            <i class="app-icon fas fa-vault"></i>
+                            <div class="app-title">Secure Vault</div>
+                            <div class="app-description">
+                                Local, encrypted password manager for your sensitive data.
+                            </div>
+                            <button class="open-btn" onclick="window.open('Secure Vault/Secure Vault.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <footer class="neon-footer">
+        <div class="footer-rgb" style="display:flex;align-items:center;justify-content:center;gap:10px;">
+            <span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span>
+        </div>
+        <style>
+        /* Updated footer RGB lighting: cooler, softer palette and smoother motion */
+        .footer-rgb .rgb-text{
+            padding:8px 14px;
+            border-radius:999px;
+            font-weight:600;
+            /* Richer spectrum: indigo -> violet -> magenta -> pink -> orange -> amber -> cyan -> teal -> indigo */
+            background: linear-gradient(90deg,
+                #5b21b6 0%,  /* indigo */
+                #7c3aed 12%, /* violet */
+                #ec4899 24%, /* magenta */
+                #fb7185 36%, /* pink */
+                #f97316 48%, /* orange */
+                #f59e0b 60%, /* amber */
+                #06b6d4 72%, /* cyan */
+                #0ea5a1 84%, /* teal */
+                #5b21b6 100%  /* loop back */
+            );
+            background-size:300% 300%;
+            -webkit-background-clip:text;
+            background-clip:text;
+            color:transparent;
+            -webkit-text-fill-color:transparent;
+            /* Livelier color movement (no shadow) */
+            animation: rgbShift 6s linear infinite;
+            text-align:center;
+        }
+        @keyframes rgbShift{
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+        /* footerGlow removed to disable shadow/glow */
+        @media (max-width:520px){
+            .footer-rgb .rgb-text{font-size:0.92rem}
+        }
+        </style>
+    </footer>
+
+    <input type="file" id="fileInput" style="display: none" accept=".json">
+
+    <!-- Interest Calculator Modal -->
+    <div id="interest-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); align-items:center; justify-content:center; z-index:9999;" onclick="closeModalOnBackdropClick(event, 'interest-modal')">
+    <div style="background:#fff; width:720px; max-width:96%; margin:auto; border-radius:10px; padding:18px; box-shadow:none;" onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <strong style="font-size:1.05rem">TD/RD and Loan (EMI) Interest Calculator</strong>
+                <button onclick="closeInterestCalculator()" style="background:transparent;border:none;font-size:1.2rem;cursor:pointer;color:#6b7280">&times;</button>
+            </div>
+            <div class="ic-modal-inner">
+                <div class="ic-left">
+                    <div class="ic-tabs">
+                        <div class="ic-tab active" id="tab-td" onclick="selectCalcTab('td')">Term Deposit (TD)</div>
+                        <div class="ic-tab" id="tab-rd" onclick="selectCalcTab('rd')">Recurring Deposit (RD)</div>
+                        <div class="ic-tab" id="tab-loan" onclick="selectCalcTab('loan')">Loan (EMI)</div>
+                    </div>
+
+                    <div class="ic-row" id="principal-row">
+                        <label id="lbl-principal-input">Principal / Loan Amount</label>
+                        <input id="ic-principal" class="ic-input" type="number" min="0" step="0.01" placeholder="1000.00" oninput="calculateInterest()">
+                    </div>
+
+                    <div class="ic-row" id="rd-row" style="display:none">
+                        <label>Monthly Deposit (RD)</label>
+                        <input id="ic-rd-amount" class="ic-input" type="number" min="0" step="0.01" placeholder="100.00" oninput="calculateInterest()">
+                    </div>
+
+                    <div style="display:flex;gap:10px">
+                        <div style="flex:1" class="ic-row">
+                            <label>Annual Interest Rate (%)</label>
+                            <input id="ic-rate" class="ic-input" type="number" min="0" step="0.01" placeholder="6.5" oninput="calculateInterest()">
+                        </div>
+                        <div id="compounds-row" style="width:140px" class="ic-row">
+                            <label>Compounding</label>
+                            <select id="ic-compounds" class="ic-select" onchange="calculateInterest()">
+                                <option value="1">Annually</option>
+                                <option value="2">Semi-annually</option>
+                                <option value="4">Quarterly</option>
+                                <option value="12" selected>Monthly</option>
+                                <option value="365">Daily</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;gap:8px">
+                        <div style="flex:1" class="ic-row">
+                            <label>Tenure</label>
+                            <input id="ic-years" class="ic-input" type="number" min="0" step="1" placeholder="1" oninput="calculateInterest()">
+                        </div>
+                        <div id="duration-unit-row" style="width:130px" class="ic-row">
+                            <label>Unit</label>
+                            <select id="ic-duration-unit" class="ic-select" onchange="calculateInterest()">
+                                <option value="years">Years</option>
+                                <option value="months">Months</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="ic-tax-block" class="ic-row" style="display:flex;gap:8px;align-items:center">
+                        <div style="flex:1">
+                            <label>Tax Payer Status</label>
+                            <select id="ic-taxable" class="ic-select" onchange="updateTaxFields(); calculateInterest();">
+                                <option value="no_tin">Without TIN (15% tax)</option>
+                                <option value="with_tin">With TIN (10% tax)</option>
+                            </select>
+                        </div>
+                        <div style="width:120px;display:none" id="ic-taxrate-row">
+                            <label>Tax %</label>
+                            <input id="ic-tax-rate" class="ic-input" type="number" min="0" step="0.1" value="15" oninput="calculateInterest()">
+                        </div>
+                    </div>
+
+                    <!-- bottom Close button intentionally removed; keep top-right × control -->
+                </div>
+
+                <div class="ic-right">
+                    <div id="ic-result-title" class="ic-result-title">Maturity Amount (After Tax)</div>
+                    <div id="ic-result-amount" class="ic-result-amount">BDT 0</div>
+                    <div class="ic-breakdown" id="ic-breakdown">
+                        <div class="row"><span id="lbl-principal">Principal Amount</span><span id="bdt-principal">BDT 0</span></div>
+                        <div class="row"><span id="lbl-before">Maturity (Before Tax)</span><span id="bdt-before">BDT 0</span></div>
+                        <div class="row"><span id="lbl-interest">Total Interest</span><span id="bdt-interest">BDT 0</span></div>
+                        <div class="row" id="bdt-tax-row" style="color:#b91c1c"><span id="lbl-tax">Tax on Profit</span><span id="bdt-tax">BDT 0</span></div>
+                        <div class="row final"><span id="lbl-net">Net Profit</span><span id="bdt-net">BDT 0</span></div>
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 16px; border-top: 2px solid #e2e8f0;">
+                        <button onclick="window.open('Customer Prospectus/Customer Prospectus.html', '_blank')" style="display: inline-flex; align-items: center; gap: 10px; width: 100%; padding: 12px 16px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #ffffff; font-weight: 700; font-size: 0.95rem; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3); transition: all 0.3s ease; justify-content: center;">
+                            <i class="fas fa-user-tie" style="font-size: 1rem;"></i>
+                            Customer Prospectus
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function exportData(app) {
+            const keys = getLocalStorageKeys(app);
+            if (keys.length === 0) {
+                alert('No data found to export!');
+                return;
+            }
+
+            const data = {};
+            keys.forEach(key => {
+                data[key] = localStorage.getItem(key);
+            });
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${app}-data-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(app) {
+            const fileInput = document.getElementById('fileInput');
+            fileInput.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        const keys = getLocalStorageKeys(app);
+                        
+                        // Clear existing data for this app
+                        keys.forEach(key => localStorage.removeItem(key));
+                        
+                        // Import new data
+                        Object.entries(data).forEach(([key, value]) => {
+                            localStorage.setItem(key, value);
+                        });
+                        
+                        alert('Data imported successfully!');
+                    } catch (err) {
+                        alert('Error importing data. Please check the file format.');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            fileInput.click();
+        }
+
+        function getLocalStorageKeys(app) {
+            const keys = [];
+            // Known explicit keys for RTGS and ISS apps (use exact names when present)
+            const knownRtgs = [
+                'rtgs_form_v1',
+                'rtgs_positions_v1',
+                'rtgs_senders_v1',
+                'rtgs_receivers_v1',
+                'rtgs_sender_v1',
+                'rtgs_receiver_v1'
+            ];
+            const knownIss = [
+                'iss_local_selections_v1',
+                'iss_full_state_v1',
+                'iss_cust_assets_v1',
+                'iss_state_v5',
+                'iss_sme_earnest_pct_v1'
+            ];
+            const knownExpense = [
+                // reasonable defaults / versioned keys that the Expense app may use
+                'expanse_entries_v1',
+                'expanse_state_v1',
+                'expanse_settings_v1',
+                'expenses_v1',
+                // keys used by the Expense app (storage keys keep 'expanse' prefix)
+                'transactions',
+                'budgets',
+                // UI state flags
+                'glBudgetsCollapsed',
+                'expenseLedgerCollapsed'
+            ];
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+
+                if (app === 'credit-commitment') {
+                        // Credit Commitment editor stores data under keys like:
+                        // - cc_editor:<templateId>
+                        // - cc_customers
+                        // - cc_editor_list
+                        // older versions may have used 'creditCommitment' prefixes or branch_/sign_ keys
+                        const lk = (key || '').toLowerCase();
+                        if (
+                            key.startsWith('cc_editor:') ||
+                            lk.startsWith('cc_') ||
+                            key.startsWith('creditCommitment') ||
+                            lk.includes('branch_') ||
+                            lk.includes('sign_')
+                        ) {
+                            keys.push(key);
+                        }
+                        // ensure explicit known keys are included if present (customers list, editor index)
+                        try {
+                            ['cc_customers', 'cc_editor_list'].forEach(k => {
+                                if (localStorage.getItem(k) && !keys.includes(k)) keys.push(k);
+                            });
+                        } catch (e) { /* ignore storage access errors */ }
+
+                } else if (app === 'iss') {
+                    // prefer known explicit keys, but also accept any iss_ prefix or cust asset key
+                    if (knownIss.includes(key) || key.startsWith('iss_') || key.includes('cust_asset')) {
+                        keys.push(key);
+                    }
+
+                } else if (app === 'expense') {
+                    // Expense: prefer explicit known keys, or keys that start with 'expanse' or mention 'expense(s)'
+                    if (
+                        knownExpense.includes(key) ||
+                        key.toLowerCase().startsWith('expanse') ||
+                        key.toLowerCase().includes('expense') ||
+                        key.toLowerCase().includes('expenses')
+                    ) {
+                        keys.push(key);
+                    }
+
+                } else if (app === 'cash') {
+                    // Cash app doesn't use a strict prefix in this project; fallback to any key mentioning 'cash'
+                    if (key && (key.toLowerCase().startsWith('cash') || key.toLowerCase().includes('cash') || key.toLowerCase().includes('cash_'))) {
+                        keys.push(key);
+                    }
+
+                } else if (app === 'rtgs') {
+                    // prefer exact RTGS keys, but also accept rtgs_ prefixes or beftn mentions
+                    if (knownRtgs.includes(key) || key.toLowerCase().startsWith('rtgs') || key.toLowerCase().includes('beftn')) {
+                        keys.push(key);
+                    }
+                }
+            }
+            return keys;
+        }
+
+        // Section toggle: collapse/expand (accordion) and persist state in localStorage
+        function toggleSection(name) {
+            const body = document.getElementById('body-' + name);
+            const chevron = document.getElementById('chev-' + name);
+            if (!body || !chevron) return;
+
+            // If the target is currently collapsed we will expand it and collapse others (accordion behavior)
+            const currentlyCollapsed = body.classList.contains('collapsed');
+
+            const sectionNames = ['cash', 'customer', 'credit', 'misc'];
+            if (currentlyCollapsed) {
+                // Open the clicked section and close others
+                sectionNames.forEach(n => {
+                    const b = document.getElementById('body-' + n);
+                    const c = document.getElementById('chev-' + n);
+                    if (!b || !c) return;
+                    if (n === name) {
+                        b.classList.remove('collapsed');
+                        c.classList.remove('rotated');
+                        localStorage.removeItem('section_' + n + '_collapsed');
+                    } else {
+                        b.classList.add('collapsed');
+                        c.classList.add('rotated');
+                        localStorage.setItem('section_' + n + '_collapsed', '1');
+                    }
+                });
+            } else {
+                // Currently open; collapse it (allow all-collapsed state)
+                body.classList.add('collapsed');
+                chevron.classList.add('rotated');
+                localStorage.setItem('section_' + name + '_collapsed', '1');
+            }
+        }
+
+        // Initialize sections from localStorage and run small feature-detects
+        window.addEventListener('DOMContentLoaded', () => {
+            ['cash', 'customer', 'credit', 'misc'].forEach(name => {
+                try {
+                    const body = document.getElementById('body-' + name);
+                    const chevron = document.getElementById('chev-' + name);
+                    if (!body || !chevron) return;
+                    const collapsed = localStorage.getItem('section_' + name + '_collapsed');
+                    if (collapsed) {
+                        body.classList.add('collapsed');
+                        chevron.classList.add('rotated');
+                    } else {
+                        body.classList.remove('collapsed');
+                        chevron.classList.remove('rotated');
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            });
+
+            // Feature-detect support for background-clip:text (used for gradient text).
+            // If not supported, add a class to enable a text-shadow fallback animation.
+            function supportsBgClipText() {
+                try {
+                    if (window.CSS && CSS.supports) {
+                        if (CSS.supports('background-clip', 'text') || CSS.supports('-webkit-background-clip', 'text')) return true;
+                    }
+                } catch (e) { /* ignore */ }
+                // Fallback: create element and inspect computed style
+                try {
+                    const t = document.createElement('span');
+                    t.style.backgroundClip = 'text';
+                    t.style.webkitBackgroundClip = 'text';
+                    t.style.position = 'absolute';
+                    t.style.left = '-9999px';
+                    document.body.appendChild(t);
+                    const v = getComputedStyle(t).backgroundClip || getComputedStyle(t).webkitBackgroundClip || '';
+                    document.body.removeChild(t);
+                    return (v && v.indexOf('text') !== -1);
+                } catch (e) { return false; }
+            }
+            if (!supportsBgClipText()) {
+                document.body.classList.add('no-bgclip');
+            }
+
+            // trigger subtitle entrance animation a short moment after load
+            setTimeout(() => {
+                const sub = document.querySelector('.subtitle.neon-subtitle');
+                if (sub) sub.classList.add('enter');
+            }, 140);
+        });
+
+        // Interest Calculator popup handlers
+        function openInterestCalculator() {
+            const m = document.getElementById('interest-modal');
+            if (!m) return;
+            m.style.display = 'flex';
+            // reset inputs and defaults
+            selectCalcTab('td');
+            document.getElementById('ic-principal').value = '';
+            if (document.getElementById('ic-rd-amount')) document.getElementById('ic-rd-amount').value = '';
+            document.getElementById('ic-rate').value = '';
+            document.getElementById('ic-years').value = '';
+            // TD defaults: quarterly compounding and months unit
+            document.getElementById('ic-duration-unit').value = 'months';
+            document.getElementById('ic-compounds').value = '4';
+            const taxSel = document.getElementById('ic-taxable');
+            if (taxSel) { taxSel.value = 'no_tin'; }
+            updateTaxFields();
+            // attempt a calculation (will quietly do nothing if inputs are empty)
+            calculateInterest();
+        }
+
+        function closeInterestCalculator() {
+            const m = document.getElementById('interest-modal');
+            if (!m) return;
+            m.style.display = 'none';
+        }
+
+        // --- tax UI block management: allow removing/restoring tax elements for Loan tab ---
+        let _icTaxBlock = null;
+        let _icTaxBlockParent = null;
+        let _icTaxBlockNext = null;
+        (function initIcTaxBlock(){
+            const tb = document.getElementById('ic-tax-block');
+            if (!tb) return;
+            _icTaxBlock = tb;
+            _icTaxBlockParent = tb.parentElement;
+            _icTaxBlockNext = tb.nextSibling;
+        })();
+
+        function removeTaxBlock() {
+            if (!_icTaxBlock) return;
+            if (_icTaxBlock.parentElement) _icTaxBlock.parentElement.removeChild(_icTaxBlock);
+        }
+
+        function restoreTaxBlock() {
+            if (!_icTaxBlock) return;
+            if (!_icTaxBlock.parentElement) {
+                if (_icTaxBlockNext && _icTaxBlockNext.parentElement) {
+                    _icTaxBlockNext.parentElement.insertBefore(_icTaxBlock, _icTaxBlockNext);
+                } else if (_icTaxBlockParent) {
+                    _icTaxBlockParent.appendChild(_icTaxBlock);
+                }
+            }
+        }
+
+        // tab selection (TD / RD / Loan)
+        function selectCalcTab(t) {
+            ['td','rd','loan'].forEach(x => {
+                const tab = document.getElementById('tab-' + x);
+                if (!tab) return;
+                tab.classList.toggle('active', x === t);
+            });
+            // show/hide RD-specific input
+            const rdRow = document.getElementById('rd-row');
+            if (rdRow) rdRow.style.display = (t === 'rd') ? '' : 'none';
+            // show/hide principal input for RD vs TD/Loan
+            const principalRow = document.getElementById('principal-row');
+            if (principalRow) principalRow.style.display = (t === 'rd') ? 'none' : '';
+            // show/hide compounding and unit rows based on type
+            const compRow = document.getElementById('compounds-row');
+            const unitRow = document.getElementById('duration-unit-row');
+            const comp = document.getElementById('ic-compounds');
+            if (t === 'td') {
+                // TD: show compounding and months unit
+                if (compRow) compRow.style.display = '';
+                if (unitRow) unitRow.style.display = '';
+                if (comp) { comp.disabled = false; comp.value = '4'; }
+                const du = document.getElementById('ic-duration-unit'); if (du) du.value = 'months';
+            } else if (t === 'rd') {
+                // RD: hide compounding and hide unit (RD uses years)
+                if (compRow) compRow.style.display = 'none';
+                if (unitRow) unitRow.style.display = 'none';
+                const du = document.getElementById('ic-duration-unit'); if (du) du.value = 'years';
+                if (comp) comp.disabled = true;
+            } else {
+                // loan: hide compounding (not applicable); keep duration unit visible
+                if (compRow) compRow.style.display = 'none';
+                if (unitRow) unitRow.style.display = '';
+                if (comp) comp.disabled = true;
+            }
+            // set internal type marker for calculation
+            document.body.dataset.icType = t;
+            // update labels and tax UI depending on tab
+            if (t === 'loan') {
+                setLoanLabels();
+            } else {
+                setTDLabels();
+            }
+            updateTaxFields();
+            // recalc automatically when switching tabs
+            calculateInterest();
+        }
+
+        function updateTaxFields() {
+            const taxable = document.getElementById('ic-taxable');
+            const taxRateRow = document.getElementById('ic-taxrate-row');
+            if (!taxable || !taxRateRow) return;
+            if (taxable.value === 'no_tin') {
+                taxRateRow.style.display = '';
+                document.getElementById('ic-tax-rate').value = 15;
+                document.getElementById('ic-tax-rate').disabled = true;
+            } else if (taxable.value === 'with_tin') {
+                taxRateRow.style.display = '';
+                document.getElementById('ic-tax-rate').value = 10;
+                document.getElementById('ic-tax-rate').disabled = true;
+            } else {
+                // unknown state: hide tax row
+                taxRateRow.style.display = 'none';
+            }
+        }
+
+        // helper: format BDT currency with thousand separators
+        function formatBDT(v) {
+            const n = Number(v) || 0;
+            return 'BDT ' + n.toLocaleString('en-US', {maximumFractionDigits:2, minimumFractionDigits:2});
+        }
+
+        function setResult({amount, principal, before, interest, tax, net}){
+            document.getElementById('ic-result-amount').textContent = formatBDT(amount);
+            document.getElementById('bdt-principal').textContent = formatBDT(principal);
+            document.getElementById('bdt-before').textContent = formatBDT(before);
+            document.getElementById('bdt-interest').textContent = formatBDT(interest);
+            document.getElementById('bdt-tax').textContent = formatBDT(tax);
+            document.getElementById('bdt-net').textContent = formatBDT(net);
+            // hide tax row when tax is zero
+            const taxRow = document.getElementById('bdt-tax-row');
+            if (taxRow) taxRow.style.display = (tax > 0) ? '' : 'none';
+        }
+
+        function setTDLabels() {
+            const l1 = document.getElementById('lbl-principal');
+            const l2 = document.getElementById('lbl-before');
+            const l3 = document.getElementById('lbl-interest');
+            const l4 = document.getElementById('lbl-tax');
+            const l5 = document.getElementById('lbl-net');
+            const inputLabel = document.getElementById('lbl-principal-input');
+            if (l1) l1.textContent = 'Principal Amount';
+            if (l2) l2.textContent = 'Maturity (Before Tax)';
+            if (l3) l3.textContent = 'Total Interest';
+            if (l4) l4.textContent = 'Tax on Profit';
+            if (l5) l5.textContent = 'Net Profit';
+            if (inputLabel) inputLabel.textContent = 'Principal';
+            const title = document.getElementById('ic-result-title');
+            if (title) title.textContent = 'Maturity Amount (After Tax)';
+            // ensure tax UI is present for TD/RD (restore if previously removed for Loan)
+            restoreTaxBlock();
+            const taxRateRow = document.getElementById('ic-taxrate-row');
+            if (taxRateRow) taxRateRow.style.display = '';
+        }
+
+        function setLoanLabels() {
+            const l1 = document.getElementById('lbl-principal');
+            const l2 = document.getElementById('lbl-before');
+            const l3 = document.getElementById('lbl-interest');
+            const l4 = document.getElementById('lbl-tax');
+            const l5 = document.getElementById('lbl-net');
+            const inputLabel = document.getElementById('lbl-principal-input');
+            if (l1) l1.textContent = 'Loan Amount';
+            if (l2) l2.textContent = 'Total Paid';
+            if (l3) l3.textContent = 'Total Interest';
+            if (l4) l4.textContent = '';
+            if (l5) { 
+                l5.textContent = 'Installment (EMI)';
+                l5.style.fontSize = '0.80rem';
+            }
+            if (inputLabel) inputLabel.textContent = 'Loan Amount';
+            const title = document.getElementById('ic-result-title');
+            if (title) title.textContent = 'Monthly Installment';
+            // hide tax row in breakdown for loan
+            const taxRow = document.getElementById('bdt-tax-row');
+            if (taxRow) taxRow.style.display = 'none';
+            // remove tax selector and tax-rate input from the left form for loan
+            removeTaxBlock();
+        }
+
+        function setLoanResult({emi, principal, totalPayment, totalInterest}){
+            // show EMI as main amount, and map values into breakdown
+            document.getElementById('ic-result-amount').textContent = formatBDT(emi) + ' /mo';
+            document.getElementById('bdt-principal').textContent = formatBDT(principal);
+            document.getElementById('bdt-before').textContent = formatBDT(totalPayment);
+            document.getElementById('bdt-interest').textContent = formatBDT(totalInterest);
+            // hide tax row
+            const taxRow = document.getElementById('bdt-tax-row');
+            if (taxRow) taxRow.style.display = 'none';
+            // final row shows EMI value
+            document.getElementById('bdt-net').textContent = formatBDT(emi);
+        }
+
+        
+
+        function calculateInterest() {
+            const type = document.body.dataset.icType || 'td';
+            const rateInput = parseFloat(document.getElementById('ic-rate').value);
+            const durationInput = parseFloat(document.getElementById('ic-years').value);
+            const durationUnit = document.getElementById('ic-duration-unit').value || 'years';
+            // If required numeric inputs are missing or invalid, silently do nothing (for auto-calc UX)
+            if (!isFinite(rateInput) || rateInput < 0 || !isFinite(durationInput) || durationInput <= 0) {
+                // clear results to zero
+                setResult({amount:0, principal:0, before:0, interest:0, tax:0, net:0});
+                return;
+            }
+
+            const r = rateInput / 100;
+
+            if (type === 'td') {
+                const p = parseFloat(document.getElementById('ic-principal').value);
+                const n = parseFloat(document.getElementById('ic-compounds').value) || 1;
+                if (!isFinite(p) || p <= 0) { setResult({amount:0, principal:0, before:0, interest:0, tax:0, net:0}); return; }
+                const years = (durationUnit === 'months') ? (durationInput / 12) : durationInput;
+                const A = p * Math.pow(1 + r / n, n * years);
+                const interest = A - p;
+
+                // tax handling
+                let taxAmount = 0;
+                const taxableEl = document.getElementById('ic-taxable');
+                if (taxableEl && taxableEl.value !== 'none') {
+                    const taxRate = parseFloat(document.getElementById('ic-tax-rate').value) || 0;
+                    taxAmount = interest * (taxRate / 100);
+                }
+                const netInterest = interest - taxAmount;
+                const maturityAfterTax = p + netInterest;
+                setResult({amount: maturityAfterTax, principal: p, before: A, interest: interest, tax: taxAmount, net: netInterest});
+
+            } else if (type === 'rd') {
+                const monthly = parseFloat(document.getElementById('ic-rd-amount').value);
+                if (!isFinite(monthly) || monthly <= 0) { setResult({amount:0, principal:0, before:0, interest:0, tax:0, net:0}); return; }
+                const nMonths = (durationUnit === 'months') ? Math.round(durationInput) : Math.round(durationInput * 12);
+                const i = r / 12; // monthly rate
+                let M;
+                if (i === 0) {
+                    M = monthly * nMonths;
+                } else {
+                    // Use annuity-due (deposits at beginning of each period)
+                    // Ordinary annuity formula: monthly * ((1+i)^N - 1) / i
+                    // For annuity-due, multiply by (1 + i)
+                    M = monthly * (Math.pow(1 + i, nMonths) - 1) / i;
+                    M = M * (1 + i);
+                }
+                const totalDeposited = monthly * nMonths;
+                const interest = M - totalDeposited;
+                let taxAmount = 0;
+                const taxableEl = document.getElementById('ic-taxable');
+                if (taxableEl && taxableEl.value !== 'none') {
+                    const taxRate = parseFloat(document.getElementById('ic-tax-rate').value) || 0;
+                    taxAmount = interest * (taxRate / 100);
+                }
+                const netInterest = interest - taxAmount;
+                const maturityAfterTax = totalDeposited + netInterest;
+                setResult({amount: maturityAfterTax, principal: totalDeposited, before: M, interest: interest, tax: taxAmount, net: netInterest});
+
+            } else if (type === 'loan') {
+                const principal = parseFloat(document.getElementById('ic-principal').value);
+                if (!isFinite(principal) || principal <= 0) { setLoanResult({emi:0, principal:0, totalPayment:0, totalInterest:0}); return; }
+                const years = (durationUnit === 'months') ? (durationInput / 12) : durationInput;
+                const N = Math.round(years * 12);
+                const monthlyRate = r / 12;
+                let EMI;
+                if (monthlyRate === 0) {
+                    EMI = principal / N;
+                } else {
+                    const pow = Math.pow(1 + monthlyRate, N);
+                    EMI = principal * monthlyRate * pow / (pow - 1);
+                }
+                const totalPayment = EMI * N;
+                const totalInterest = totalPayment - principal;
+                // render loan-specific result
+                setLoanResult({emi: EMI, principal: principal, totalPayment: totalPayment, totalInterest: totalInterest});
+            }
+        }
+
+        // Close modal on ESC
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeInterestCalculator();
+        });
+
+        // Helper function to close modal when clicking on backdrop (outside the modal content)
+        function closeModalOnBackdropClick(event, modalId) {
+            // Only close if clicked on the backdrop (the outer container), not on the modal content
+            if (event.target.id === modalId) {
+                const modal = document.getElementById(modalId);
+                if (modalId === 'interest-modal') {
+                    closeInterestCalculator();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
