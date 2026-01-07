@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>RTGS/BEFTN Form Editor — Preview & Print</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg viewBox='0 0 24 24' fill='%236366f1'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-8-6z'/><path d='M9 12h6M9 16h6' stroke='white' stroke-width='1.5' stroke-linecap='round'/></svg>" />
   <style>
 /* Modern Unified Design System */
 :root {
@@ -278,6 +279,7 @@ button:active, .btn:active {
 .overlay[data-field="recvBank"]{top:320px;left:60px}
 .overlay[data-field="recvBranch"]{top:350px;left:60px}
 .overlay[data-field="recvName"]{top:380px;left:60px}
+.overlay[data-field="recvAccount"]:not(.no-space){letter-spacing:1.52em;font-family:monospace}
 .overlay[data-field="recvAccount"]{top:410px;left:60px}
 /* New overlays: in-words and date */
 .overlay[data-field="inWords"]{top:200px;left:60px}
@@ -388,7 +390,13 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
 </head>
 <body>
   <header>
-    <h1>RTGS/BEFTN Form Editor</h1>
+    <h1>
+      <svg style="display:inline-block;width:32px;height:32px;margin-right:10px;vertical-align:middle" viewBox="0 0 24 24" fill="white">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-8-6z"/>
+        <path d="M9 12h6M9 16h6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      RTGS/BEFTN Form Editor
+    </h1>
     <p>Place and align overlays, save sender/receiver presets, and generate accurate print previews for RTGS and BEFTN forms.</p>
     <div class="header-left-controls">
       <button id="export-data-btn" class="ie-btn" title="Export Data">
@@ -415,7 +423,7 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
     <div class="two-col">
       <section class="form-panel">
         <h2>Entry</h2>
-  <div class="form-top-right"><button type="button" id="preview-page-btn" class="btn-float">Form Preview</button></div>
+  <div class="form-top-right"><button type="button" id="preview-page-btn" class="btn-float"><svg style="display:inline;width:16px;height:16px;margin-right:4px;vertical-align:middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Preview</button></div>
         <form id="rtgs-form">
           <label>Name of Branch
             <input name="branchName" type="text" placeholder="Branch name">
@@ -477,8 +485,9 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
           </label>
 
           <div class="form-actions">
-            <button type="button" id="print-btn">RTGS Print</button>
-            <button type="button" id="print-beftn-btn" style="margin-left:8px">BEFTN Print</button>
+            <button type="button" id="print-btn"><svg style="display:inline;width:16px;height:16px;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24" fill="currentColor"><path d="M6 9V3h12v6M6 15H4a2 2 0 0 0-2 2v3h20v-3a2 2 0 0 0-2-2h-2M9 19h6"/></svg>RTGS Print</button>
+            <button type="button" id="print-beftn-btn" style="margin-left:8px"><svg style="display:inline;width:16px;height:16px;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24" fill="currentColor"><path d="M6 9V3h12v6M6 15H4a2 2 0 0 0-2 2v3h20v-3a2 2 0 0 0-2-2h-2M9 19h6"/></svg>BEFTN Print</button>
+            <button type="button" id="clear-quick-btn" class="btn-ghost" style="margin-left:8px"><svg style="display:inline;width:16px;height:16px;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.4L17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"/></svg>Clear</button>
             <!-- Save buttons removed from entry panel (use quick-save on right or presets) -->
           </div>
         </form>
@@ -490,7 +499,7 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
         <!-- Data panel: shown in the right column while editing the entry (preview hidden) -->
         <div class="data-panel">
           <div style="background:linear-gradient(180deg,#eaf6ff,#ffffff);border-radius:6px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)">
-            <h3 style="margin-top:0">Sender & Receiver (quick inputs)</h3>
+            <h3 style="margin-top:0">Sender & Receiver inputs</h3>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
               <div>
                 <h4 style="margin:.25rem 0">Sender</h4>
@@ -530,17 +539,17 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
             <!-- Horizontal quick-save row: Save Sender and Save Receiver aligned horizontally -->
             <div style="display:flex;gap:.5rem;margin-top:10px;align-items:center">
               <div style="flex:1;display:flex;justify-content:flex-start">
-                <button id="save-sender-quick" type="button" style="padding:.45rem .6rem">Save Sender</button>
+                <button id="save-sender-quick" type="button" style="padding:.45rem .6rem"><svg style="display:inline;width:14px;height:14px;margin-right:4px;vertical-align:middle" viewBox="0 0 24 24" fill="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>Save Sender</button>
               </div>
               <div style="flex:1;display:flex;justify-content:flex-end">
-                <button id="save-recv-quick" type="button" style="padding:.45rem .6rem">Save Receiver</button>
+                <button id="save-recv-quick" type="button" style="padding:.45rem .6rem"><svg style="display:inline;width:14px;height:14px;margin-right:4px;vertical-align:middle" viewBox="0 0 24 24" fill="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>Save Receiver</button>
               </div>
             </div>
 
             <!-- Amount, In Words, Reason and quick preview buttons removed from data-panel as requested -->
             <div style="display:flex;gap:.5rem;margin-top:10px">
-              <button id="view-senders-btn" style="flex:1;padding:.45rem .6rem">View Senders</button>
-              <button id="view-receivers-btn" style="flex:1;padding:.45rem .6rem">View Receivers</button>
+              <button id="view-senders-btn" style="flex:1;padding:.45rem .6rem"><svg style="display:inline;width:14px;height:14px;margin-right:4px;vertical-align:middle" viewBox="0 0 24 24" fill="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View Senders</button>
+              <button id="view-receivers-btn" style="flex:1;padding:.45rem .6rem"><svg style="display:inline;width:14px;height:14px;margin-right:4px;vertical-align:middle" viewBox="0 0 24 24" fill="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View Receivers</button>
             </div>
           </div>
         </div>
@@ -681,6 +690,170 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
   </div>
 
   <script>
+// ============================================
+// CENTRALIZED CONFIGURATION
+// ============================================
+const CONFIG = {
+  // Font sizes for print output (in pixels)
+  PRINT_FONT_SIZE: 100,
+  PRINT_FONT_SIZE_SMALL: 10,
+  
+  // Canvas rendering multipliers (relative to canvas width)
+  CANVAS_ACCOUNT_MULTIPLIER: 0.18,
+  CANVAS_CIF_DATE_MULTIPLIER: 0.16,
+  CANVAS_BASE_MULTIPLIER: 0.028,
+  
+  // Letter spacing multipliers
+  BEFTN_ACCOUNT_SPACING: 1.20,
+  BEFTN_ACCOUNT_SPACING_ALT: 0.60,
+  RTGS_ACCOUNT_SPACING: 0.92,
+  BEFTN_ROUTING_SPACING: 1.70,
+  BEFTN_ROUTING1_SPACING: 1.10,
+  RTGS_DATE_SPACING_1: 1.60,
+  RTGS_DATE_SPACING_2: 1.30,
+  RECV_ACCOUNT_SPACING: 2.20,
+  CIF_LETTER_SPACING: 0.875,
+  
+  // Date spacing per instance for BEFTN [first, second, third]
+  DATE_SPACING_EM: ['1.76em', '1.40em', '1.20em'],
+  DATE_SPACING_MULTIPLIERS: [1.76, 1.40, 1.20],
+  
+  // Default font family
+  FONT_FAMILY: '"Times New Roman", Times, serif'
+};
+
+// Helper: Generate overlay style string for print
+function getOverlayStyle(field, template, options = {}) {
+  const fs = CONFIG.PRINT_FONT_SIZE;
+  const ff = CONFIG.FONT_FAMILY;
+  let style = `font-family:${ff};font-size:${fs}px;`;
+  
+  if (field === 'accountNumber' || field === 'accountNumberBeftn') {
+    if (template === 'beftn') {
+      const spacing = field === 'accountNumberBeftn' ? CONFIG.BEFTN_ACCOUNT_SPACING : CONFIG.BEFTN_ACCOUNT_SPACING_ALT;
+      style = `letter-spacing:${spacing}em;${style}`;
+    } else {
+      style = `letter-spacing:${CONFIG.RTGS_ACCOUNT_SPACING}em;${style}`;
+    }
+  } else if (field === 'recvAccount') {
+    if (template !== 'beftn') {
+      style = `letter-spacing:${CONFIG.RECV_ACCOUNT_SPACING}em;${style}`;
+    }
+  } else if (field === 'routingNumber') {
+    if (template === 'beftn') {
+      const spacing = options.isRouting1 ? CONFIG.BEFTN_ROUTING1_SPACING : CONFIG.BEFTN_ROUTING_SPACING;
+      style = `letter-spacing:${spacing}em;${style}`;
+    }
+  } else if (field === 'date') {
+    const em = CONFIG.DATE_SPACING_EM[options.dateIndex] || CONFIG.DATE_SPACING_EM[2];
+    if (template === 'beftn') {
+      style = `letter-spacing:${em};${style}`;
+    } else {
+      const rtgsSpacing = options.dateIndex === 0 ? CONFIG.RTGS_DATE_SPACING_1 : CONFIG.RTGS_DATE_SPACING_2;
+      style = `letter-spacing:${rtgsSpacing}em;${style}`;
+    }
+  } else if (field === 'cifNumber') {
+    style = `letter-spacing:${CONFIG.CIF_LETTER_SPACING}em;${style}`;
+  }
+  
+  return style;
+}
+
+// Helper: Get current template
+function getCurrentTemplate() {
+  const tplEl = document.getElementById('template-select');
+  return (tplEl && tplEl.value) ? tplEl.value : 'rtgs';
+}
+
+// Helper: Create overlay HTML for print/preview
+function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
+  const text = (overlay.innerText || '').trim().toUpperCase();
+  if (!text) return '';
+  
+  const field = overlay.dataset?.field || '';
+  const left = overlay.style.left || '0%';
+  const top = overlay.style.top || '0%';
+  
+  let displayText = text;
+  let extraStyle = '';
+  
+  // Account Number fields (sender)
+  if ((field === 'accountNumber' || field === 'accountNumberBeftn') && !overlay.classList.contains('no-space')) {
+    displayText = text.split('').join(' ');
+    if (template === 'beftn') {
+      const spacing = field === 'accountNumberBeftn' ? CONFIG.BEFTN_ACCOUNT_SPACING : CONFIG.BEFTN_ACCOUNT_SPACING_ALT;
+      extraStyle = `letter-spacing:${spacing}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
+    } else {
+      extraStyle = `letter-spacing:${CONFIG.RTGS_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
+    }
+    return `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtmlFn(displayText)}</div>`;
+  }
+  
+  // Receiver Account
+  if (field === 'recvAccount' && !overlay.classList.contains('no-space')) {
+    if (template === 'beftn') {
+      return `<div class="print-overlay" style="left:${left};top:${top};font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px">${escapeHtmlFn(displayText)}</div>`;
+    } else {
+      // RTGS: apply letter-spacing only to first 16 characters
+      const first16 = displayText.slice(0, 16);
+      const rest = displayText.slice(16);
+      const spanStyle = `letter-spacing:${CONFIG.RECV_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px`;
+      if (rest) {
+        return `<div class="print-overlay" style="left:${left};top:${top};"><span style="${spanStyle}">${escapeHtmlFn(first16)}</span><span style="font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px">${escapeHtmlFn(rest)}</span></div>`;
+      } else {
+        return `<div class="print-overlay" style="left:${left};top:${top};${spanStyle}">${escapeHtmlFn(displayText)}</div>`;
+      }
+    }
+  }
+  
+  // Routing Number
+  if (field === 'routingNumber') {
+    if (template === 'rtgs') {
+      const txt = 'Routing: ' + displayText;
+      return `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtmlFn(txt)}</div>`;
+    } else {
+      const isRouting1 = String(overlay.dataset?.label || '').trim().toLowerCase() === 'routing number 1';
+      const routeSpacing = isRouting1 ? CONFIG.BEFTN_ROUTING1_SPACING : CONFIG.BEFTN_ROUTING_SPACING;
+      const routeStyle = `letter-spacing:${routeSpacing}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
+      return `<div class="print-overlay" style="left:${left};top:${top};${routeStyle}">${escapeHtmlFn(displayText)}</div>`;
+    }
+  }
+  
+  // Date fields
+  if (field === 'date') {
+    const idx = dateOverlays.indexOf(overlay);
+    if (template === 'beftn') {
+      const em = CONFIG.DATE_SPACING_EM[idx] || CONFIG.DATE_SPACING_EM[2];
+      extraStyle = `letter-spacing:${em};font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
+    } else {
+      const rtgsSpacing = idx === 0 ? CONFIG.RTGS_DATE_SPACING_1 : CONFIG.RTGS_DATE_SPACING_2;
+      extraStyle = `letter-spacing:${rtgsSpacing}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
+    }
+    return `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtmlFn(displayText)}</div>`;
+  }
+  
+  // CIF Number
+  if (field === 'cifNumber') {
+    displayText = text.split('').join(' ');
+    extraStyle = `letter-spacing:${CONFIG.CIF_LETTER_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
+    return `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtmlFn(displayText)}</div>`;
+  }
+  
+  // InWords - split long text
+  if ((field === 'inWords' || field === 'inWords2') && displayText.length > 60) {
+    const mid = Math.floor(displayText.length / 2);
+    let splitIdx = displayText.lastIndexOf(' ', mid);
+    if (splitIdx === -1) splitIdx = displayText.indexOf(' ', mid);
+    if (splitIdx === -1) splitIdx = mid;
+    const first = escapeHtmlFn(displayText.slice(0, splitIdx).trim());
+    const second = escapeHtmlFn(displayText.slice(splitIdx).trim());
+    return `<div class="print-overlay" style="left:${left};top:${top};font-size:${CONFIG.PRINT_FONT_SIZE_SMALL}px;">${first}<br>${second}</div>`;
+  }
+  
+  // Default: small font
+  return `<div class="print-overlay" style="left:${left};top:${top};font-size:${CONFIG.PRINT_FONT_SIZE_SMALL}px;">${escapeHtmlFn(displayText)}</div>`;
+}
+
 // Minimal lightbox with keyboard navigation
 (function(){
   // Note: This lightbox logic is not wired up as there's no ".gallery" class.
@@ -910,7 +1083,7 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
     Object.keys(values).forEach(k => {
       if(overlays[k]) overlays[k].forEach(el => {
         try{
-          const v = values[k] || '';
+          let v = values[k] || '';
           if(v && String(v).trim() !== ''){
             el.textContent = v;
             el.classList.remove('overlay-empty');
@@ -1257,17 +1430,10 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
 
   // Clear Sender's Name, Receiver's Name and Amount from both main form and quick-inputs after printing
   function clearPrintFields(){
-    try{
-      const names = ['senderName','recvName','amount'];
-      names.forEach(k=>{ try{ if(form && form.elements && form.elements[k]) form.elements[k].value = ''; }catch(e){} });
-      // also clear right-side quick inputs if present
-      names.forEach(k=>{ try{ const inp = document.querySelector('.data-panel [data-name="'+k+'"]'); if(inp) inp.value = ''; }catch(e){} });
-      // clear preset search boxes as well (these show selected preset names)
-      try{ const sp = document.getElementById('sender-preset-input'); if(sp) sp.value = ''; }catch(e){}
-      try{ const rp = document.getElementById('recv-preset-input'); if(rp) rp.value = ''; }catch(e){}
-      // trigger an update so overlays reflect cleared values
-      try{ update(); }catch(e){}
-    }catch(e){ console.warn('clearPrintFields failed', e); }
+    // Intentionally do not clear form fields after printing.
+    // Keep the amount, sender and receiver values intact so users can reprint or continue editing.
+    return;
+    try{}catch(e){}
   }
 
   function renderSendersList(){
@@ -1402,12 +1568,17 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
             const found = (type==='sender' ? loadList(SENDERS_LIST_KEY) : loadList(RECEIVERS_LIST_KEY)).find(i=>i.id===it.id);
             if(found && found.data){
                 try{
-                  // load values into main form but keep quick-sync disabled so quick-inputs remain blank
+                  // load values into main form but keep quick-sync disabled so programmatic fill doesn't back-propagate
                   suppressQuickSync = true;
                   Object.keys(found.data).forEach(k=>{ if(form.elements[k]) form.elements[k].value = found.data[k]; });
+                  // also populate the right-side quick inputs with the selected preset details
+                  Object.keys(found.data).forEach(k=>{
+                    const qp = document.querySelector('.data-panel [data-name="'+k+'"]');
+                    if(qp) qp.value = found.data[k] || '';
+                  });
                   update();
                 }finally{
-                  // intentionally do NOT re-enable quick-sync
+                  // keep quick-sync disabled; quick inputs will now show the selected preset
                 }
             }
             // set input display (keep the search box showing the selected text)
@@ -1498,6 +1669,26 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
   const loadRecvBtn = document.getElementById('load-recv-btn'); if(loadRecvBtn) loadRecvBtn.addEventListener('click', ()=>{ const raw = localStorage.getItem(LAST_RECV_KEY); if(!raw) return; try{ const obj=JSON.parse(raw); // load into main form but keep quick inputs blank
     suppressQuickSync = true; Object.keys(obj).forEach(k=>{ if(form.elements[k]) form.elements[k].value = obj[k]; }); update(); }catch(e){} });
   const delRecvBtn = document.getElementById('delete-recv-btn'); if(delRecvBtn) delRecvBtn.addEventListener('click', ()=>{ localStorage.removeItem(LAST_RECV_KEY); refreshPresetIndicators(); });
+
+  // Clear Quick inputs button (Entry panel)
+  const clearQuickBtn = document.getElementById('clear-quick-btn');
+  if(clearQuickBtn){
+    clearQuickBtn.addEventListener('click', ()=>{
+      try{
+        // List of quick-input data-name fields for sender and receiver to clear (include amount)
+        const keys = ['cifNumber','accountNumber','senderName','senderContact','recvBank','recvBranch','recvName','recvAccount','routingNumber','amount'];
+        keys.forEach(k=>{
+          try{ const inp = document.querySelector('.data-panel [data-name="'+k+'"]'); if(inp) inp.value = ''; }catch(e){}
+        });
+        // Also clear the main form's amount field
+        try{ if(form && form.elements && form.elements['amount']) form.elements['amount'].value = ''; }catch(e){}
+        // Also clear the preset search boxes (selected display text)
+        try{ const sp = document.getElementById('sender-preset-input'); if(sp) sp.value = ''; }catch(e){}
+        try{ const rp = document.getElementById('recv-preset-input'); if(rp) rp.value = ''; }catch(e){}
+        showToast('Quick inputs cleared');
+      }catch(e){ console.error('Clear quick inputs failed', e); }
+    });
+  }
 
   // show current state
   refreshPresetIndicators();
@@ -1905,15 +2096,13 @@ async function renderPagesToImage(pages){
       const top = parsePercentOrPx(topStr, ch);
       // style for text
       ctx.fillStyle = '#000000';
-      // choose base font size relative to image width
-      let fontSize = Math.round(cw * 0.028);
+      // choose base font size relative to image width using CONFIG constants
+      let fontSize = Math.round(cw * CONFIG.CANVAS_BASE_MULTIPLIER);
       // increase font size for specific fields to improve readability in the printed PDF
-  if(field === 'accountNumber' || field === 'accountNumberBeftn' || field === 'recvAccount'){
-        // account numbers benefit from a larger monospace rendering
-        fontSize = Math.round(cw * 0.042);
-      } else if(field === 'cifNumber' || field === 'date'){
-        // CIF and date slightly larger than base
-        fontSize = Math.round(cw * 0.038);
+      if(field === 'accountNumber' || field === 'accountNumberBeftn' || field === 'recvAccount'){
+        fontSize = Math.round(cw * CONFIG.CANVAS_ACCOUNT_MULTIPLIER);
+      } else if(field === 'cifNumber' || field === 'date' || field === 'routingNumber'){
+        fontSize = Math.round(cw * CONFIG.CANVAS_CIF_DATE_MULTIPLIER);
       }
       // Reduce inWords font size by 2px as requested
       if(field === 'inWords' || field === 'inWords2'){
@@ -1924,19 +2113,21 @@ async function renderPagesToImage(pages){
       // ensure uppercase
       let txt = rawText.toUpperCase();
       // If this is the account number, add spacing between characters so digits align better
-  if((field === 'accountNumber' || field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
+      if((field === 'accountNumber' || field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
           // For BEFTN: accountNumberBeftn should have stronger per-character spacing than the regular accountNumber
           if(currentTemplate === 'beftn'){
               // use a larger multiplier for the BEFTN-only account overlay so spacing is more pronounced
               const multiplier = (field === 'accountNumberBeftn') ? 3.20 : 2.20;
               const accLetterSpacing = Math.max(0, Math.round(fontSize * multiplier));
               drawTextWithLetterSpacing(ctx, txt, left, top, accLetterSpacing);
-            return; // already drawn
+              return; // already drawn
           } else {
-            // RTGS: Insert a single space between characters (preserve previous behavior)
-            txt = txt.split('').join(' ');
+            // RTGS: draw with a small pixel spacing instead of naive split to give a subtle +0.1em equivalent
+            const rtgsSpacingPx = Math.max(0, Math.round(fontSize * 0.10));
+            drawTextWithLetterSpacing(ctx, txt, left, top, rtgsSpacingPx);
+            return;
           }
-        }
+      }
       // If this is the routing number, prefix with 'Routing: ' for printed output
       if(field === 'routingNumber'){
         // RTGS: keep the 'Routing: ' prefix and draw normally.
@@ -1966,10 +2157,9 @@ async function renderPagesToImage(pages){
       // Do NOT change the combined dateTime field (data-field="dateTime").
       if(field === 'date'){
         if(currentTemplate === 'beftn'){
-          // BEFTN: apply per-instance spacing: first date 1.60, second 1.40, third 1.20 (em equivalents)
+          // BEFTN: apply per-instance spacing using CONFIG
           const idx = dateOverlays.indexOf(o); // 0-based
-          const mapping = [1.60, 1.40, 1.20];
-          const multiplier = mapping[idx] || mapping[mapping.length - 1];
+          const multiplier = CONFIG.DATE_SPACING_MULTIPLIERS[idx] || CONFIG.DATE_SPACING_MULTIPLIERS[2];
           const letterSpacing = Math.max(0, Math.round(fontSize * multiplier));
           drawTextWithLetterSpacing(ctx, txt, left, top, letterSpacing);
           return; // already drawn
@@ -1980,7 +2170,7 @@ async function renderPagesToImage(pages){
           return;
         }
       }
-      // If this is the receiver's account, only apply spacing to the first 15 characters
+      // If this is the receiver's account, apply spacing only to first 16 characters
       // NOTE: BEFTN should NOT add extra letter-spacing for receiver account numbers (render plain)
       if(field === 'recvAccount' && !o.classList.contains('no-space')){
         if(currentTemplate === 'beftn'){
@@ -1988,10 +2178,23 @@ async function renderPagesToImage(pages){
           ctx.fillText(txt, left, top);
           return;
         } else {
-          // RTGS: apply spacing only to the first 15 characters (existing behavior)
-          const first = txt.slice(0,15).split('').join(' ');
-          const rest = txt.slice(15);
-          txt = rest ? (first + ' ' + rest) : first;
+          // RTGS: apply per-character spacing only to first 16 characters
+          const first16 = txt.slice(0, 16);
+          const rest = txt.slice(16);
+          const spacingPx = Math.max(0, Math.round(fontSize * CONFIG.RECV_ACCOUNT_SPACING));
+          let currentX = left;
+          // Draw first 16 chars with spacing
+          for(let i = 0; i < first16.length; i++){
+            const ch = first16[i];
+            ctx.fillText(ch, currentX, top);
+            const w = ctx.measureText(ch).width;
+            currentX += w + spacingPx;
+          }
+          // Draw rest without spacing
+          if(rest){
+            ctx.fillText(rest, currentX, top);
+          }
+          return;
         }
       }
       // draw text (transparent background by request)
@@ -2056,6 +2259,14 @@ function loadImage(src){
         j.onerror = () => reject(new Error('Image failed to load: ' + src));
         j.src = src;
         return;
+      }
+      // CIF number: for RTGS add a subtle per-character spacing (approx +0.1em)
+      if(field === 'cifNumber' && currentTemplate === 'rtgs'){
+        try{
+          const cifSpacingPx = Math.max(0, Math.round(fontSize * 0.10));
+          drawTextWithLetterSpacing(ctx, txt, left, top, cifSpacingPx);
+          return;
+        }catch(e){}
       }
       reject(new Error('Image failed to load: ' + src));
     };
@@ -2138,26 +2349,30 @@ function fallbackPrintHTML(pages){
     // For BEFTN: increase accountNumberBeftn letter-spacing more than regular accountNumber
     if(tpl === 'beftn'){
       if(o.dataset.field === 'accountNumberBeftn'){
-        extraStyle = 'letter-spacing:1.10em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+        extraStyle = `letter-spacing:${CONFIG.BEFTN_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
       } else {
-        extraStyle = 'letter-spacing:0.55em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+        extraStyle = `letter-spacing:${CONFIG.BEFTN_ACCOUNT_SPACING_ALT}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
       }
     } else {
-      extraStyle = 'letter-spacing:0.82em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+      extraStyle = `letter-spacing:${CONFIG.RTGS_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
     }
     pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
   } else if (o.dataset && o.dataset.field === 'recvAccount' && !o.classList.contains('no-space')){
-    // For receiver's account: RTGS keeps the first-15-char spacing, but BEFTN should show the account plainly
+    // For receiver's account: RTGS applies letter-spacing to first 16 chars, BEFTN shows the account plainly
     const up = displayText;
     if(tpl === 'beftn'){
       // BEFTN: render receiver account without added letter-spacing
-      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(up)}</div>`;
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px">${escapeHtml(up)}</div>`;
     } else {
-      // RTGS: apply spacing only to the first 15 characters and increase font-size
-      const first = up.slice(0,15).split('').join(' ');
-      const rest = up.slice(15);
-      const span = rest ? `<span style="letter-spacing:0.82em;font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(first)}</span>${escapeHtml(rest)}` : `<span style="letter-spacing:0.82em;font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(first)}</span>`;
-      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${span}</div>`;
+      // RTGS: apply letter-spacing only to first 16 characters
+      const first16 = up.slice(0, 16);
+      const rest = up.slice(16);
+      const spanStyle = `letter-spacing:${CONFIG.RECV_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px`;
+      if(rest){
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};"><span style="${spanStyle}">${escapeHtml(first16)}</span><span style="font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px">${escapeHtml(rest)}</span></div>`;
+      } else {
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${spanStyle}">${escapeHtml(up)}</div>`;
+      }
     }
   } else if (o.dataset && o.dataset.field === 'routingNumber'){
     // Prefix routing number only for RTGS; BEFTN should show only the number but with letter-spacing in print
@@ -2168,26 +2383,28 @@ function fallbackPrintHTML(pages){
         // BEFTN: apply letter-spacing for print fallback
         // Reduce spacing for Routing Number 1 specifically; keep larger spacing for other routing overlays
         const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
-        const routeStyle = isRouting1 ? 'letter-spacing:1.10em;font-family:"Times New Roman", Times, serif;font-size:24px;' : 'letter-spacing:1.70em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+        const routeSpacing = isRouting1 ? CONFIG.BEFTN_ROUTING1_SPACING : CONFIG.BEFTN_ROUTING_SPACING;
+        const routeStyle = `letter-spacing:${routeSpacing}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
         pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${routeStyle}">${escapeHtml(displayText)}</div>`;
       }
   } else if (o.dataset && o.dataset.field === 'date'){
     // Date: increase letter-spacing in print ONLY for BEFTN template. Do not touch dateTime.
     if(tpl === 'beftn'){
-      // BEFTN: per-instance spacing for date overlays: 1.60em, 1.40em, 1.20em
+      // BEFTN: per-instance spacing for date overlays using CONFIG
       const idx = dateOverlays.indexOf(o);
-  const mapping = ['1.60em', '1.40em', '1.20em'];
-      const em = mapping[idx] || mapping[mapping.length - 1];
-      extraStyle = `letter-spacing:${em};font-family:"Times New Roman", Times, serif;font-size:24px;`;
+      const em = CONFIG.DATE_SPACING_EM[idx] || CONFIG.DATE_SPACING_EM[2];
+      extraStyle = `letter-spacing:${em};font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
     } else {
       // RTGS: increase printed date spacing more as requested
-      extraStyle = 'letter-spacing:1.20em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+      const idx = dateOverlays.indexOf(o);
+      const rtgsSpacing = idx === 0 ? CONFIG.RTGS_DATE_SPACING_1 : CONFIG.RTGS_DATE_SPACING_2;
+      extraStyle = `letter-spacing:${rtgsSpacing}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
     }
     pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
   } else if (o.dataset && o.dataset.field === 'cifNumber'){
     // CIF number: apply moderate letter-spacing for print to help digit alignment and increase font-size
     displayText = displayText.split('').join(' ');
-  extraStyle = 'letter-spacing:0.82em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+    extraStyle = `letter-spacing:${CONFIG.CIF_LETTER_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
     pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
   } else {
     // Special-case: split long inWords into two lines for printable HTML
@@ -2198,11 +2415,11 @@ function fallbackPrintHTML(pages){
       if(splitIdx === -1) splitIdx = Math.floor(displayText.length/2);
       const first = escapeHtml(displayText.slice(0, splitIdx).trim());
       const second = escapeHtml(displayText.slice(splitIdx).trim());
-      // reduce font-size by 2px for inWords in printable HTML
-      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${first}<br>${second}</div>`;
+      // reduce font-size for inWords in printable HTML
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:${CONFIG.PRINT_FONT_SIZE_SMALL}px;">${first}<br>${second}</div>`;
     } else {
       if(o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')){
-        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${escapeHtml(displayText)}</div>`;
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:${CONFIG.PRINT_FONT_SIZE_SMALL}px;">${escapeHtml(displayText)}</div>`;
       } else {
         pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(displayText)}</div>`;
       }
@@ -2270,20 +2487,24 @@ function fallbackPrintToIframe(pages, template){
       if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
         displayText = displayText.split('').join(' ');
         if(tpl === 'beftn'){
-          if(o.dataset.field === 'accountNumberBeftn') extraStyle = 'letter-spacing:1.10em;font-family:"Times New Roman", Times, serif;font-size:24px;'; else extraStyle = 'letter-spacing:0.55em;font-family:"Times New Roman", Times, serif;font-size:24px;';
-        } else { extraStyle = 'letter-spacing:0.82em;font-family:"Times New Roman", Times, serif;font-size:24px;'; }
+          if(o.dataset.field === 'accountNumberBeftn') extraStyle = `letter-spacing:${CONFIG.BEFTN_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`; else extraStyle = `letter-spacing:${CONFIG.BEFTN_ACCOUNT_SPACING_ALT}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
+        } else { extraStyle = `letter-spacing:${CONFIG.RTGS_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`; }
         pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
       } else if (o.dataset && o.dataset.field === 'recvAccount' && !o.classList.contains('no-space')){
         const up = displayText;
         if(tpl === 'beftn'){
           // BEFTN: render receiver account without letter-spacing
-          pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(up)}</div>`;
+          pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px">${escapeHtml(up)}</div>`;
         } else {
-          // RTGS: keep existing spaced-first-15 behavior
-          const first = up.slice(0,15).split('').join(' ');
-          const rest = up.slice(15);
-          const span = rest ? `<span style="letter-spacing:0.82em;font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(first)}</span>${escapeHtml(rest)}` : `<span style="letter-spacing:0.82em;font-family:\"Times New Roman\", Times, serif;font-size:24px">${escapeHtml(first)}</span>`;
-          pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${span}</div>`;
+          // RTGS: apply letter-spacing only to first 16 characters
+          const first16 = up.slice(0, 16);
+          const rest = up.slice(16);
+          const spanStyle = `letter-spacing:${CONFIG.RECV_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px`;
+          if(rest){
+            pageHtml += `<div class="print-overlay" style="left:${left};top:${top};"><span style="${spanStyle}">${escapeHtml(first16)}</span><span style="font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px">${escapeHtml(rest)}</span></div>`;
+          } else {
+            pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${spanStyle}">${escapeHtml(up)}</div>`;
+          }
         }
       } else if (o.dataset && o.dataset.field === 'routingNumber'){
         if(tpl === 'rtgs'){
@@ -2291,20 +2512,20 @@ function fallbackPrintToIframe(pages, template){
           pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(txt)}</div>`;
         } else {
           const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
-          const routeStyle = isRouting1 ? 'letter-spacing:1.10em;font-family:\"Times New Roman\", Times, serif;font-size:24px;' : 'letter-spacing:1.70em;font-family:\"Times New Roman\", Times, serif;font-size:24px;';
+          const routeSpacing = isRouting1 ? CONFIG.BEFTN_ROUTING1_SPACING : CONFIG.BEFTN_ROUTING_SPACING;
+          const routeStyle = `letter-spacing:${routeSpacing}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
           pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${routeStyle}">${escapeHtml(displayText)}</div>`;
         }
       } else if (o.dataset && o.dataset.field === 'date'){
         if(tpl === 'beftn'){
           const idx = dateOverlays.indexOf(o);
-          const mapping = ['1.60em', '1.40em', '1.20em'];
-          const em = mapping[idx] || mapping[mapping.length - 1];
-          extraStyle = `letter-spacing:${em};font-family:"Times New Roman", Times, serif;font-size:24px;`;
-        } else { extraStyle = 'letter-spacing:1.20em;font-family:"Times New Roman", Times, serif;font-size:24px;'; }
+          const em = CONFIG.DATE_SPACING_EM[idx] || CONFIG.DATE_SPACING_EM[2];
+          extraStyle = `letter-spacing:${em};font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
+        } else { const idx = dateOverlays.indexOf(o); const rtgsSpacing = idx === 0 ? CONFIG.RTGS_DATE_SPACING_1 : CONFIG.RTGS_DATE_SPACING_2; extraStyle = `letter-spacing:${rtgsSpacing}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`; }
         pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
       } else if (o.dataset && o.dataset.field === 'cifNumber'){
         displayText = displayText.split('').join(' ');
-        extraStyle = 'letter-spacing:0.82em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+        extraStyle = `letter-spacing:${CONFIG.CIF_LETTER_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
         pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
       } else {
         if((o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')) && displayText.length > 60){
@@ -2314,10 +2535,10 @@ function fallbackPrintToIframe(pages, template){
           if(splitIdx === -1) splitIdx = Math.floor(displayText.length/2);
           const first = escapeHtml(displayText.slice(0, splitIdx).trim());
           const second = escapeHtml(displayText.slice(splitIdx).trim());
-          pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${first}<br>${second}</div>`;
+          pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:${CONFIG.PRINT_FONT_SIZE_SMALL}px;">${first}<br>${second}</div>`;
         } else {
           if(o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')){
-            pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${escapeHtml(displayText)}</div>`;
+            pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:${CONFIG.PRINT_FONT_SIZE_SMALL}px;">${escapeHtml(displayText)}</div>`;
           } else {
             pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(displayText)}</div>`;
           }
@@ -2399,32 +2620,31 @@ function openPreviewWindow(pages){
       if (!left.includes('%') && !left.includes('px')) left += '%';
       if (!top.includes('%') && !top.includes('px')) top += '%';
       
-  // Format account number with spaced characters and add large letter-spacing for print preview
-  let displayText = text.toUpperCase();
-  let extraStyle = '';
-  if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
-    displayText = displayText.split('').join(' ');
-    // For BEFTN preview: make accountNumberBeftn spacing larger than regular accountNumber
-    if(tpl === 'beftn'){
-      if(o.dataset.field === 'accountNumberBeftn'){
-        extraStyle = 'letter-spacing:3.20em;font-family:"Times New Roman", Times, serif;font-size:16px;';
-      } else {
-        extraStyle = 'letter-spacing:2.20em;font-family:"Times New Roman", Times, serif;font-size:16px;';
-      }
-    } else {
-      extraStyle = 'letter-spacing:1.02em;font-family:"Times New Roman", Times, serif;font-size:16px;';
-    }
-    pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+      // Format account number with spaced characters and add large letter-spacing for print preview
+      let displayText = text.toUpperCase();
+      let extraStyle = '';
+      if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
+        displayText = displayText.split('').join(' ');
+        // For BEFTN preview: make accountNumberBeftn spacing larger than regular accountNumber
+        if(tpl === 'beftn'){
+          if(o.dataset.field === 'accountNumberBeftn') extraStyle = `letter-spacing:${CONFIG.BEFTN_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`; else extraStyle = `letter-spacing:${CONFIG.BEFTN_ACCOUNT_SPACING_ALT}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
+        } else { extraStyle = `letter-spacing:${CONFIG.RTGS_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`; }
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
   } else if (o.dataset && o.dataset.field === 'recvAccount' && !o.classList.contains('no-space')){
-    // For receiver's account: BEFTN preview should not add letter-spacing; RTGS keeps the spaced-first-15 behavior
+    // For receiver's account: BEFTN preview should not add letter-spacing; RTGS applies letter-spacing to first 16 chars
     const up = displayText;
     if(tpl === 'beftn'){
-      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-family:\"Times New Roman\", Times, serif;font-size:16px">${escapeHtml(up)}</div>`;
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px">${escapeHtml(up)}</div>`;
     } else {
-      const first = up.slice(0,15).split('').join(' ');
-      const rest = up.slice(15);
-      const span = rest ? `<span style="letter-spacing:0.35em;font-family:\"Times New Roman\", Times, serif;font-size:16px">${escapeHtml(first)}</span>${escapeHtml(rest)}` : `<span style="letter-spacing:0.35em;font-family:\"Times New Roman\", Times, serif;font-size:16px">${escapeHtml(first)}</span>`;
-      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${span}</div>`;
+      // RTGS: apply letter-spacing only to first 16 characters
+      const first16 = up.slice(0, 16);
+      const rest = up.slice(16);
+      const spanStyle = `letter-spacing:${CONFIG.RECV_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px`;
+      if(rest){
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};"><span style="${spanStyle}">${escapeHtml(first16)}</span><span style="font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px">${escapeHtml(rest)}</span></div>`;
+      } else {
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${spanStyle}">${escapeHtml(up)}</div>`;
+      }
     }
   } else if (o.dataset && o.dataset.field === 'routingNumber'){
     // Prefix routing number label only for RTGS preview; BEFTN should show raw number with letter-spacing
@@ -2433,27 +2653,29 @@ function openPreviewWindow(pages){
       pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(displayText)}</div>`;
       } else {
       // BEFTN preview: apply letter-spacing; use reduced spacing for Routing Number 1
-  const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
-  const routeStyle = isRouting1 ? 'letter-spacing:1.50em;font-family:"Times New Roman", Times, serif;font-size:24px;' : 'letter-spacing:1.60em;font-family:"Times New Roman", Times, serif;font-size:24px;';
+      const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
+      const routeSpacing = isRouting1 ? CONFIG.BEFTN_ROUTING1_SPACING : CONFIG.BEFTN_ROUTING_SPACING;
+      const routeStyle = `letter-spacing:${routeSpacing}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
       pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${routeStyle}">${escapeHtml(displayText)}</div>`;
     }
   } else if (o.dataset && o.dataset.field === 'date'){
     // Date in preview: increase letter-spacing only for BEFTN; keep dateTime unchanged
     if(tpl === 'beftn'){
-      // BEFTN: per-instance spacing for preview: 1.60em, 1.40em, 1.20em
+      // BEFTN: per-instance spacing for preview using CONFIG
       const idx = dateOverlays.indexOf(o);
-  const mapping = ['1.60em', '1.40em', '1.20em'];
-      const em = mapping[idx] || mapping[mapping.length - 1];
-      extraStyle = `letter-spacing:${em};font-family:"Times New Roman", Times, serif;font-size:16px;`;
+      const em = CONFIG.DATE_SPACING_EM[idx] || CONFIG.DATE_SPACING_EM[2];
+      extraStyle = `letter-spacing:${em};font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
     } else {
       // RTGS: increase preview date spacing as requested
-      extraStyle = 'letter-spacing:1.20em;font-family:"Times New Roman", Times, serif;font-size:16px;';
+      const idx = dateOverlays.indexOf(o);
+      const rtgsSpacing = idx === 0 ? CONFIG.RTGS_DATE_SPACING_1 : CONFIG.RTGS_DATE_SPACING_2;
+      extraStyle = `letter-spacing:${rtgsSpacing}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
     }
     pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
   } else if (o.dataset && o.dataset.field === 'cifNumber'){
     // CIF number: moderate spacing for preview/print
     displayText = displayText.split('').join(' ');
-  extraStyle = 'letter-spacing:0.15em;font-family:"Times New Roman", Times, serif;font-size:16px;';
+    extraStyle = `letter-spacing:${CONFIG.CIF_LETTER_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
     pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
   } else {
     // Special-case: split long inWords into two lines for preview
@@ -2464,9 +2686,9 @@ function openPreviewWindow(pages){
       if(splitIdx === -1) splitIdx = Math.floor(displayText.length/2);
       const first = escapeHtml(displayText.slice(0, splitIdx).trim());
       const second = escapeHtml(displayText.slice(splitIdx).trim());
-  pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${first}<br>${second}</div>`;
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:${CONFIG.PRINT_FONT_SIZE_SMALL}px;">${first}<br>${second}</div>`;
     } else {
-  pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:10px;">${escapeHtml(displayText)}</div>`;
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-size:${CONFIG.PRINT_FONT_SIZE_SMALL}px;">${escapeHtml(displayText)}</div>`;
     }
   }
     });
@@ -2536,15 +2758,66 @@ function openPreviewWindow(pages){
         const obj = JSON.parse(String(reader.result || '{}'));
         // basic validation
         if(!obj || typeof obj !== 'object'){ throw new Error('Invalid file format'); }
-        if(obj.positions) localStorage.setItem('rtgs_positions_v1', JSON.stringify(obj.positions));
-        if(obj.senders) localStorage.setItem('rtgs_senders_v1', JSON.stringify(obj.senders));
-        if(obj.receivers) localStorage.setItem('rtgs_receivers_v1', JSON.stringify(obj.receivers));
+        // Merge positions instead of overwriting to avoid removing existing saved positions
+        try{
+          if(obj.positions){
+            const existingPos = JSON.parse(localStorage.getItem('rtgs_positions_v1') || '{}');
+            Object.keys(obj.positions).forEach(k=>{ existingPos[k] = obj.positions[k]; });
+            localStorage.setItem('rtgs_positions_v1', JSON.stringify(existingPos));
+          }
+        }catch(e){ console.warn('Failed to merge positions', e); }
+
+        // Merge sender presets without removing existing saved senders
+        try{
+          if(Array.isArray(obj.senders)){
+            const existing = loadList(SENDERS_LIST_KEY) || [];
+            obj.senders.forEach(it => {
+              try{
+                // match by id or accountNumber
+                const acc = it && it.data && (it.data.accountNumber || '');
+                const found = existing.find(e => (it.id && e.id === it.id) || (acc && e.data && e.data.accountNumber === acc));
+                if(found){
+                  // merge data fields, prefer imported values
+                  found.data = Object.assign({}, found.data || {}, it.data || {});
+                  found.name = it.name || found.name;
+                } else {
+                  // ensure id
+                  if(!it.id) it.id = makeId();
+                  existing.push(it);
+                }
+              }catch(err){ /* ignore item errors */ }
+            });
+            saveList(SENDERS_LIST_KEY, existing);
+          }
+        }catch(e){ console.warn('Failed to merge senders', e); }
+
+        // Merge receiver presets without removing existing saved receivers
+        try{
+          if(Array.isArray(obj.receivers)){
+            const existing = loadList(RECEIVERS_LIST_KEY) || [];
+            obj.receivers.forEach(it => {
+              try{
+                const acc = it && it.data && (it.data.recvAccount || '');
+                const found = existing.find(e => (it.id && e.id === it.id) || (acc && e.data && e.data.recvAccount === acc));
+                if(found){
+                  found.data = Object.assign({}, found.data || {}, it.data || {});
+                  found.name = it.name || found.name;
+                } else {
+                  if(!it.id) it.id = makeId();
+                  existing.push(it);
+                }
+              }catch(err){}
+            });
+            saveList(RECEIVERS_LIST_KEY, existing);
+          }
+        }catch(e){ console.warn('Failed to merge receivers', e); }
         if(obj.formValues){
           const form = document.getElementById('rtgs-form');
           if(form){ Object.keys(obj.formValues).forEach(k=>{ try{ if(form.elements[k]) form.elements[k].value = obj.formValues[k]; }catch(e){} }); }
         }
-        alert('Import complete. The page will reload to apply overlay positions.');
-        setTimeout(()=> location.reload(), 700);
+        // Refresh UI to reflect merged presets and updated form values. Do not remove existing saved data.
+        try{ renderSendersList(); renderReceiversList(); populateEntryDropdowns(); update(); }catch(e){}
+        alert('Import complete. Saved data merged and applied.');
       }catch(err){ console.error('Import failed', err); alert('Import failed: ' + (err && err.message)); }
     };
     reader.onerror = ()=>{ alert('Failed to read file'); };

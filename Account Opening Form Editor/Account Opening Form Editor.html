@@ -3232,6 +3232,10 @@ body::after {
                 <label>3rd Applicant Name</label>
                 <input type="text" name="thirdApplicantName" placeholder="Third applicant full name">
               </div>
+              <div class="form-group" style="display:none;">
+                <label>Account Title (bangla)</label>
+                <input type="text" name="combinedApplicantsBn" placeholder="Account Title (bangla)">
+              </div>
               <div class="form-group">
                 <label>Initial Deposit (BDT)</label>
                 <input type="text" name="initialDeposit" placeholder="Initial deposit amount">
@@ -4451,7 +4455,7 @@ body::after {
       { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
       { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
       { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
-      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Name (Bangla) joint' },
+      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Account Title (bangla)' },
       { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
       { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
       { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
@@ -4804,6 +4808,12 @@ body::after {
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
       { field: 'withdrawalMaxSingleCombined', top: '80%', left: '78%', label: 'Withdrawal Max Single/Combined'},
     ],
+
+    // Page 14: add Officer 2 Seal
+    14: [
+      { field: 'officer2Seal', top: '80%', left: '78%', label: 'Officer 2 Seal', sealType: 'officer2' },
+    ],
+
     15: [
       { field: 'branchName', top: '6%', left: '70%', label: 'Branch Name' },
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -4842,7 +4852,7 @@ body::after {
       { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
       { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
       { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
-      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Name (Bangla) joint' },
+      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Account Title (bangla)' },
       { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
       { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
       { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
@@ -4974,7 +4984,7 @@ body::after {
       { field: 'gFemale', top: '27%', left: '70%', label: '' },
       { field: 'todayDate', top: '6%', left: '85%', label: 'Date' },
       { field: 'combinedApplicants', top: '18.5%', left: '22%', label: 'Full Name joint' },
-      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Name (Bangla) joint' },
+      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Account Title (bangla)' },
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number 1' },
       { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
@@ -5010,7 +5020,7 @@ body::after {
       { field: 'isrCustomer', top: '16%', left: '70%', label: 'ISR Customer' },
       { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
       { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
-      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Name (Bangla) joint' },
+      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Account Title (bangla)' },
       { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
       { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
       { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
@@ -5128,7 +5138,7 @@ body::after {
       { field: 'isrCustomer', top: '16%', left: '70%', label: 'ISR Customer' },
       { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
       { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
-      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Name (Bangla) joint' },
+      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Account Title' },
       { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
       { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
       { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
@@ -5383,14 +5393,43 @@ body::after {
     return result;
   }
 
+  // Helper function to handle mst/most prefix for translation
+  function processMstMostPrefix(text) {
+    if (!text || text.trim() === '') return { hasTitle: false, cleanText: '' };
+    let cleanText = text.trim();
+    let hasTitle = false;
+    const titlePattern = /^(mst|most)(\.)?(\s+)/i;
+    const match = cleanText.match(titlePattern);
+    
+    if (match) {
+      // Remove the title prefix (mst/most/mst./most.) from the text
+      cleanText = cleanText.substring(match[0].length).trim();
+      hasTitle = true;
+    }
+    return { hasTitle, cleanText };
+  }
+
   // Translate an array of English name parts to Bangla and join with ' এবং '
   async function translateNamesToBn(parts) {
     try {
       const cleaned = parts.map(p => (p || '').trim()).filter(Boolean);
       if (cleaned.length === 0) return '';
-      const translatedParts = await Promise.all(cleaned.map(p => translateText(p)));
-      // If translation fails for a part, fall back to the original part
-      const final = translatedParts.map((t, i) => (t && t.trim()) ? t.trim() : cleaned[i]);
+      
+      // Process each part for mst/most prefix
+      const processedParts = cleaned.map(p => processMstMostPrefix(p));
+      const textsToTranslate = processedParts.map(p => p.cleanText);
+      
+      const translatedParts = await Promise.all(textsToTranslate.map(p => translateText(p)));
+      
+      // If translation fails for a part, fall back to the original part (without mst/most)
+      // If the original had mst/most, prepend মোছাঃ
+      const final = translatedParts.map((t, i) => {
+        let result = (t && t.trim()) ? t.trim() : processedParts[i].cleanText;
+        if (processedParts[i].hasTitle) {
+          result = 'মোছাঃ ' + result;
+        }
+        return result;
+      });
       return final.join(' এবং ');
     } catch (e) {
       console.error('translateNamesToBn error', e);
@@ -6068,54 +6107,48 @@ body::after {
         }
       }
 
-      // Bangla combined applicants: translate names and join with ' এবং '
+      // Bangla combined applicants: use fullNameBn + translate 2nd/3rd applicants and join with ' এবং '
       else if (field === 'combinedApplicantsBn') {
-        const first = data.fullNameEn || '';
+        const first = data.fullNameBn || '';
         const second = (form.elements['secondApplicantName'] && form.elements['secondApplicantName'].value) || '';
         const third = (form.elements['thirdApplicantName'] && form.elements['thirdApplicantName'].value) || '';
         const ownershipVal = form.elements['accountOwnership'] ? form.elements['accountOwnership'].value : '';
+        const inputEl = form.elements['combinedApplicantsBn'];
 
-        // Show Bangla combined box when joint (translate all present parts) or when single (translate first only)
-        if (ownershipVal === 'joint' && (second || third)) {
-          const parts = [];
-          if (first) parts.push(first);
-          if (second) parts.push(second);
-          if (third) parts.push(third);
-          overlay.textContent = '';
-          overlay.classList.remove('overlay-empty');
-          translateNamesToBn(parts).then(bn => {
-            if (bn && String(bn).trim() !== '') {
-              overlay.textContent = bn;
+        // Always use fullNameBn as base
+        if (first && String(first).trim() !== '') {
+          // Joint account with 2nd/3rd applicants: combine fullNameBn with translated names
+          if (ownershipVal === 'joint' && (second || third)) {
+            const partsToTranslate = [];
+            if (second) partsToTranslate.push(second);
+            if (third) partsToTranslate.push(third);
+            
+            translateNamesToBn(partsToTranslate).then(bn => {
+              const parts = [first];
+              if (bn) parts.push(bn);
+              const combined = parts.join(' এবং ');
+              overlay.textContent = combined;
               overlay.classList.remove('overlay-empty');
-            } else {
-              overlay.textContent = '';
-              overlay.classList.add('overlay-empty');
-            }
-          }).catch(err => {
-            console.error('Failed to translate combined applicants to Bangla', err);
-            overlay.textContent = '';
-            overlay.classList.add('overlay-empty');
-          });
-          displayValue = '';
-        } else if (ownershipVal === 'single' && first) {
-          // Translate only the first name to Bangla
-          overlay.textContent = '';
-          overlay.classList.remove('overlay-empty');
-          translateNamesToBn([first]).then(bn => {
-            if (bn && String(bn).trim() !== '') {
-              overlay.textContent = bn;
+              if (inputEl) inputEl.value = combined;
+            }).catch(err => {
+              console.error('Failed to translate 2nd/3rd applicants to Bangla', err);
+              overlay.textContent = first;
               overlay.classList.remove('overlay-empty');
-            } else {
-              overlay.textContent = '';
-              overlay.classList.add('overlay-empty');
-            }
-          }).catch(err => {
-            console.error('Failed to translate single applicant to Bangla', err);
-            overlay.textContent = '';
-            overlay.classList.add('overlay-empty');
-          });
-          displayValue = '';
+              if (inputEl) inputEl.value = first;
+            });
+            displayValue = 'SKIP_FINAL_CHECK'; // Skip final empty check
+          } else {
+            // Single account: just show fullNameBn
+            overlay.textContent = first;
+            overlay.classList.remove('overlay-empty');
+            if (inputEl) inputEl.value = first;
+            displayValue = 'SKIP_FINAL_CHECK'; // Skip final empty check
+          }
         } else {
+          // No fullNameBn available
+          overlay.textContent = '';
+          overlay.classList.add('overlay-empty');
+          if (inputEl) inputEl.value = '';
           displayValue = '';
         }
       }
@@ -6583,6 +6616,11 @@ body::after {
             displayValue = cleanedPc.split('').join('\u00A0\u00A0\u00A0');
           }
         }
+      }
+
+      // Skip final display logic for fields that handle their own overlay updates
+      if (displayValue === 'SKIP_FINAL_CHECK') {
+        return; // Skip to next overlay
       }
 
       if (displayValue && String(displayValue).trim() !== '') {
@@ -7457,11 +7495,26 @@ body::after {
       }
       return;
     }
-    const translated = await translateText(text);
+    
+    // Check if name starts with mst, most, mst., or most. (case-insensitive)
+    let textToTranslate = text.trim();
+    let hasTitle = false;
+    const titlePattern = /^(mst|most)(\.)?(\s+)/i;
+    const match = textToTranslate.match(titlePattern);
+    
+    if (match) {
+      // Remove the title prefix (mst/most/mst./most.) from the text to translate
+      textToTranslate = textToTranslate.substring(match[0].length).trim();
+      hasTitle = true;
+    }
+    
+    const translated = await translateText(textToTranslate);
     if (translated && form.elements['fullNameBn']) {
-      form.elements['fullNameBn'].value = translated;
+      // If the original text had mst/most prefix, prepend মোছাঃ to the translated result
+      const finalResult = hasTitle ? 'মোছাঃ ' + translated : translated;
+      form.elements['fullNameBn'].value = finalResult;
       updateOverlays();
-      console.log('Updated fullNameBn field with:', translated);
+      console.log('Updated fullNameBn field with:', finalResult);
     }
   }, 700);
 
@@ -7484,11 +7537,26 @@ body::after {
       }
       return;
     }
-    const translated = await translateText(text);
+    
+    // Check if name starts with mst, most, mst., or most. (case-insensitive)
+    let textToTranslate = text.trim();
+    let hasTitle = false;
+    const titlePattern = /^(mst|most)(\.)?(\s+)/i;
+    const match = textToTranslate.match(titlePattern);
+    
+    if (match) {
+      // Remove the title prefix (mst/most/mst./most.) from the text to translate
+      textToTranslate = textToTranslate.substring(match[0].length).trim();
+      hasTitle = true;
+    }
+    
+    const translated = await translateText(textToTranslate);
     if (translated && form.elements['boNameBn']) {
-      form.elements['boNameBn'].value = translated;
+      // If the original text had mst/most prefix, prepend মোছাঃ to the translated result
+      const finalResult = hasTitle ? 'মোছাঃ ' + translated : translated;
+      form.elements['boNameBn'].value = finalResult;
       updateOverlays();
-      console.log('Updated boNameBn field with:', translated);
+      console.log('Updated boNameBn field with:', finalResult);
     }
   }, 700);
 
