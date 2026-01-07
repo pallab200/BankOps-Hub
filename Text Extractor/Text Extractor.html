@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Extractor</title>
+    <link rel="stylesheet" href="../css/fontawesome.min.css">
+    <link rel="stylesheet" href="../css/fontawesome-fix.css">
+    <link rel="stylesheet" href="../css/poppins.css">
+    <!-- Tesseract.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <style>
+        /* Unified Modern Design System */
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-primary: #f0f4f9;
+            --bg-secondary: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Inter', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Modern Header */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 24px 20px;
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25);
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: shimmer 15s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+        }
+
+        .header-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            animation: shimmerIcon 2.5s infinite;
+        }
+
+        @keyframes shimmerIcon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); }
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-subtitle {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 500;
+        }
+
+        /* Container & Cards */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Typography */
+        h2, h3 {
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        small {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        /* Inputs & Select */
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background: white;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            margin-bottom: 10px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        textarea {
+            height: 250px;
+            resize: vertical;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            padding-right: 40px;
+        }
+
+        /* File Input */
+        .file-input-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .file-input-wrapper:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .file-input-wrapper.dragover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            transform: scale(1.01);
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-input-wrapper i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .file-input-wrapper span {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .file-input-wrapper small {
+            margin-top: 8px;
+            color: var(--text-secondary);
+        }
+
+        /* Image Preview */
+        .image-preview {
+            display: none;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .image-preview.active {
+            display: block;
+        }
+
+        /* Buttons */
+        button {
+            font-family: inherit;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .primary-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .secondary-btn {
+            background: white;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .secondary-btn:hover {
+            background: var(--bg-primary);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Status Badge */
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .status-badge.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .status-badge.processing {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        /* Progress Bar */
+        .progress-wrapper {
+            flex: 1;
+            display: none;
+        }
+
+        .progress-wrapper.active {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* Layout Helpers */
+        .row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .col {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Action Buttons Row */
+        .action-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .action-row button {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* Modern Footer with RGB Gradient Animation */
+        footer.neon-footer {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-top: 1px solid var(--border-color);
+        }
+
+        footer.neon-footer p {
+            font-weight: 600;
+            background: linear-gradient(90deg, #6366f1, #ec4899, #f59e0b, #10b981, #3b82f6, #6366f1);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite;
+            margin: 0;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 18px 16px;
+            }
+
+            .header-title {
+                font-size: 1.6rem;
+            }
+
+            .header-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .container {
+                margin: 20px auto;
+                padding: 0 16px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .action-row {
+                flex-direction: column;
+            }
+
+            .action-row button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-file-image" style="font-size: 1.8rem; color: white;"></i>
+            </div>
+            <h1 class="header-title">Text Extractor</h1>
+            <p class="header-subtitle">Extract text from images with Bangla & English support</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Upload Section -->
+        <div class="card">
+            <h3 class="section-title"><i class="fas fa-upload"></i> Upload Image</h3>
+            
+            <div class="file-input-wrapper" id="dropZone">
+                <input type="file" id="imageInput" accept="image/*">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span>Drop image here or click to browse</span>
+                <small>Supports JPG, PNG, GIF, BMP, WebP</small>
+            </div>
+
+            <div class="image-preview" id="imagePreview">
+                <img id="previewImg" src="" alt="Preview">
+            </div>
+
+            <button class="primary-btn" id="ocrBtn" onclick="runOCR()">
+                <i class="fas fa-search"></i>
+                <span id="btnText">Extract Text</span>
+            </button>
+        </div>
+
+        <!-- Status Section -->
+        <div class="card" id="statusCard" style="display: none;">
+            <h3 class="section-title"><i class="fas fa-tasks"></i> Processing Status</h3>
+            <div class="status-container">
+                <div class="status-badge" id="statusBadge">
+                    <i class="fas fa-circle-notch fa-spin" style="margin-right: 8px;"></i>
+                    <span id="statusText">Ready</span>
+                </div>
+                <div class="progress-wrapper" id="progressWrapper">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="card" id="resultsCard" style="display: none;">
+            <h3 class="section-title"><i class="fas fa-file-alt"></i> Extracted Text</h3>
+            <textarea id="output" placeholder="Extracted text will appear here..."></textarea>
+            
+            <div class="action-row">
+                <button class="secondary-btn" onclick="copyText()">
+                    <i class="fas fa-copy"></i> Copy Text
+                </button>
+                <button class="secondary-btn" onclick="clearAll()">
+                    <i class="fas fa-trash-alt"></i> Clear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="neon-footer">
+        <p>Developed by Tanzil Ahmed — EID 7966.</p>
+    </footer>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const statusCard = document.getElementById('statusCard');
+        const resultsCard = document.getElementById('resultsCard');
+        const statusBadge = document.getElementById('statusBadge');
+        const statusText = document.getElementById('statusText');
+        const progressWrapper = document.getElementById('progressWrapper');
+        const progressFill = document.getElementById('progressFill');
+        const output = document.getElementById('output');
+        const ocrBtn = document.getElementById('ocrBtn');
+        const btnText = document.getElementById('btnText');
+
+        // Drag and drop handlers
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                imageInput.files = e.dataTransfer.files;
+                showPreview(e.dataTransfer.files[0]);
+            }
+        });
+
+        // File input change handler
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                showPreview(e.target.files[0]);
+            }
+        });
+
+        function showPreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                imagePreview.classList.add('active');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateStatus(message, type = 'processing') {
+            statusCard.style.display = 'block';
+            statusText.textContent = message;
+            statusBadge.className = 'status-badge ' + type;
+            
+            const icon = statusBadge.querySelector('i');
+            if (type === 'processing') {
+                icon.className = 'fas fa-circle-notch fa-spin';
+                icon.style.marginRight = '8px';
+            } else if (type === 'success') {
+                icon.className = 'fas fa-check-circle';
+                icon.style.marginRight = '8px';
+            } else if (type === 'error') {
+                icon.className = 'fas fa-times-circle';
+                icon.style.marginRight = '8px';
+            }
+        }
+
+        function runOCR() {
+            const fileInput = document.getElementById('imageInput');
+            const lang = 'eng+ben';
+
+            if (!fileInput.files.length) {
+                alert("Please select an image file first.");
+                return;
+            }
+
+            // Show status and disable button
+            updateStatus('Initializing extraction engine...', 'processing');
+            progressWrapper.classList.add('active');
+            progressFill.style.width = '0%';
+            resultsCard.style.display = 'block';
+            output.value = '';
+            ocrBtn.disabled = true;
+            btnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            Tesseract.recognize(
+                fileInput.files[0],
+                lang,
+                {
+                    logger: m => {
+                        if (m.status === "recognizing text") {
+                            const progress = Math.round(m.progress * 100);
+                            progressFill.style.width = progress + '%';
+                            updateStatus(`Recognizing text... ${progress}%`, 'processing');
+                        } else if (m.status === "loading language traineddata") {
+                            updateStatus('Loading language data...', 'processing');
+                        }
+                    }
+                }
+            ).then(({ data: { text } }) => {
+                output.value = text;
+                progressFill.style.width = '100%';
+                updateStatus('Extraction Completed Successfully!', 'success');
+                progressWrapper.classList.remove('active');
+                ocrBtn.disabled = false;
+                btnText.innerHTML = 'Extract Text';
+            }).catch(err => {
+                updateStatus('Extraction Failed - Please try again', 'error');
+                progressWrapper.classList.remove('active');
+                ocrBtn.disabled = false;
+                btnText.innerHTML = 'Extract Text';
+                console.error(err);
+            });
+        }
+
+        function copyText() {
+            const text = output.value;
+            if (text.trim() === '') {
+                alert('No text to copy!');
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                const copyBtn = document.querySelector('.action-row button:first-child');
+                const originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHTML;
+                }, 2000);
+            });
+        }
+
+        function clearAll() {
+            imageInput.value = '';
+            imagePreview.classList.remove('active');
+            previewImg.src = '';
+            output.value = '';
+            statusCard.style.display = 'none';
+            resultsCard.style.display = 'none';
+            progressFill.style.width = '0%';
+        }
+    </script>
+</body>
+</html>

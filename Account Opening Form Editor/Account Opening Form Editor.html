@@ -1394,6 +1394,17 @@ body::after {
   font-style: italic;
 }
 
+/* Static overlay styled like a textbox for labels such as AML Tracking Number */
+.overlay-static {
+  border: 1px solid rgba(0,0,0,0.9);
+  background: rgba(255,255,255,0.9);
+  padding: 6px 8px;
+  border-radius: 4px;
+  min-width: 160px;
+  text-align: center;
+  pointer-events: none;
+}
+
 /* Checkbox / tick overlays — larger so ticks are more visible (digits kept small) */
 .overlay-check {
   position: absolute;
@@ -2890,8 +2901,15 @@ body::after {
               <label>Beneficial Owner(s)</label>
               <div class="kyc-value" id="kycBeneficialOwners">—</div>
             </div>
-            <div class="kyc-field" style="display: flex; align-items: flex-end; justify-content: center; padding: 12px;">
-              <button type="button" id="popupPrintOthersBtn" class="btn btn-info" style="width: 100%; padding: 10px 16px; font-size: 0.9rem;"><i class="fas fa-print"></i> Print Others</button>
+            <div class="kyc-field" style="display:flex; align-items:center; justify-content:space-between; padding:12px; gap:8px;">
+              <button type="button" id="popupPrintOthersBtn" class="btn btn-info" style="padding:10px 16px; font-size:0.9rem;"><i class="fas fa-print"></i> Print KYC, TP, SBS</button>
+              <select id="popupPrintTargetSelect" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-size:0.9rem; width:220px; text-align:left;">
+                <option value="accountHolder">Account Holder</option>
+                <option value="secondApplicant" style="display:none;">2nd Applicant</option>
+                <option value="thirdApplicant" style="display:none;">3rd Applicant</option>
+                <option value="guardian" style="display:none;">Guardian</option>
+                <option value="beneficialOwner" style="display:none;">Beneficial Owner</option>
+              </select>
             </div>
           </div>
         </div>
@@ -2997,6 +3015,189 @@ body::after {
               </div>
             </div>
           </div>
+          <!-- Guardian Information (New - similar to Beneficial Owner) -->
+          <div class="form-section" id="guardian-info-new">
+            <div class="section-header">
+              <i class="fas fa-user-shield"></i>
+              <h2>Guardian Information</h2>
+              <i class="fas fa-chevron-down section-toggle"></i>
+            </div>
+            <div class="form-fields" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
+              <div class="form-group">
+                <label>Name of Guardian (In English)</label>
+                <input type="text" name="gNameEn" placeholder="Enter name in English">
+              </div>
+              <div class="form-group">
+                <label>Name of Guardian (In Bangla)</label>
+                <input type="text" name="gNameBn" placeholder="Guardians name in Bangla">
+              </div>
+              <div class="form-group">
+                <label>AML Tracking Number</label>
+                <input type="text" name="gAmlTrackingNumber" placeholder="AML Tracking Number">
+              </div>
+              <div class="form-group">
+                <label>Date of Birth</label>
+                <input type="date" name="gDob">
+              </div>
+              <div class="form-group">
+                <label>Father's Name</label>
+                <input type="text" name="gFatherName" placeholder="Father's full name">
+              </div>
+              <div class="form-group">
+                <label>Mother's Name</label>
+                <input type="text" name="gMotherName" placeholder="Mother's full name">
+              </div>
+              <div class="form-group">
+                <label>Spouse Name</label>
+                <input type="text" name="gSpouseName" placeholder="Spouse's full name">
+              </div>
+              <div class="form-group">
+                <label>Gender</label>
+                <select name="gGender">
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>National ID No</label>
+                <input type="text" name="gNid" placeholder="Enter National ID no">
+              </div>
+              <div class="form-group">
+                <label>Passport No</label>
+                <input type="text" name="gPassport" placeholder="Enter Passport no">
+              </div>
+              <div class="form-group">
+                <label>Birth Registration No</label>
+                <input type="text" name="gBirthReg" placeholder="Enter Birth Registration no">
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="gPhone" placeholder="01XXXXXXXXX">
+              </div>
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="gEmail" placeholder="example@email.com">
+              </div>
+              <div class="form-group">
+                <label>Occupation (In detail)</label>
+                <input type="text" name="gOccupation" placeholder="Occupation in detail">
+              </div>
+              <div class="form-group">
+                <label>Monthly Income</label>
+                <input type="text" name="gMonthlyIncome" placeholder="Monthly income">
+              </div>
+              <div class="form-group">
+                <label>Source of fund (In detail)</label>
+                <input type="text" name="gSourceOfFund" placeholder="Source of fund in detail">
+              </div>
+              <div class="form-group">
+                <label>TIN No. (If any)</label>
+                <input type="text" name="gTin" placeholder="TIN number (if any)">
+              </div>
+              <div class="form-group">
+                <label>Nationality</label>
+                <input type="text" name="gNationality" placeholder="Nationality" value="Bangladeshi">
+              </div>
+
+              <!-- Present Address header full width -->
+              <div class="form-group span-4">
+                <label style="font-weight:700;">Present Address</label>
+              </div>
+              <div class="form-group">
+                <label>House, Street, Block, Sector</label>
+                <input type="text" name="gPresentHouse" placeholder="House, Street, Block, Sector">
+              </div>
+              <div class="form-group">
+                <label>Area / Village</label>
+                <input type="text" name="gPresentArea" placeholder="Area / Village">
+              </div>
+              <div class="form-group">
+                <label>Post Office</label>
+                <input type="text" name="gPresentPO" placeholder="Post Office">
+              </div>
+              <div class="form-group">
+                <label>Upazila/Thana</label>
+                <input type="text" name="gPresentThana" placeholder="Upazila/Thana">
+              </div>
+              <div class="form-group">
+                <label>District</label>
+                <input type="text" name="gPresentDistrict" placeholder="District">
+              </div>
+              <div class="form-group">
+                <label>Post Code</label>
+                <input type="text" name="gPresentPostCode" placeholder="Post Code">
+              </div>
+              <div class="form-group">
+                <label>Country</label>
+                <input type="text" name="gPresentCountry" value="Bangladesh">
+              </div>
+              <!-- Nearest Landmark removed for guardian present address -->
+
+              <!-- Permanent Address header with inline Same-as-Present checkbox -->
+              <div class="form-group span-4" style="display:flex; align-items:center; justify-content:flex-start; gap:8px;">
+                <label style="font-weight:700; margin:0;">Permanent Address</label>
+                <div class="checkbox-inline" style="margin:0 0 0 4px;">
+                  <label style="margin:0;"><input type="checkbox" id="gSameAddress" style="margin-right:4px; vertical-align:middle;">Same as Present Address</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>House, Street, Block, Sector</label>
+                <input type="text" name="gPermanentHouse" placeholder="House, Street, Block, Sector">
+              </div>
+              <div class="form-group">
+                <label>Area / Village</label>
+                <input type="text" name="gPermanentArea" placeholder="Area / Village">
+              </div>
+              <div class="form-group">
+                <label>Post Office</label>
+                <input type="text" name="gPermanentPO" placeholder="Post Office">
+              </div>
+              <div class="form-group">
+                <label>Upazila/Thana</label>
+                <input type="text" name="gPermanentThana" placeholder="Upazila/Thana">
+              </div>
+              <div class="form-group">
+                <label>District</label>
+                <input type="text" name="gPermanentDistrict" placeholder="District">
+              </div>
+              <div class="form-group">
+                <label>Post Code</label>
+                <input type="text" name="gPermanentPostCode" placeholder="Post Code">
+              </div>
+              <div class="form-group">
+                <label>Country</label>
+                <input type="text" name="gPermanentCountry" value="Bangladesh">
+              </div>
+              <!-- Nearest Landmark removed for guardian permanent address -->
+
+              <!-- Client's Business & Profession removed for Guardian section -->
+            </div>
+          </div>
+
+          <!-- Introducer Information (moved here) -->
+          <div class="form-section" id="introducer-info">
+            <div class="section-header">
+              <i class="fas fa-handshake"></i>
+              <h2>Introducer Information</h2>
+              <i class="fas fa-chevron-down section-toggle"></i>
+            </div>
+            <div class="form-fields">
+              <div class="form-group">
+                <label>Introducer Name</label>
+                <input type="text" name="introducerName" placeholder="Introducer's full name">
+              </div>
+              <div class="form-group">
+                <label>Introducer Date of Birth</label>
+                <input type="date" name="introducerDob">
+              </div>
+              <div class="form-group">
+                <label>Introducer Account Number</label>
+                <input type="text" name="introducerAccount" placeholder="Introducer's account number">
+              </div>
+            </div>
+          </div>
 
           <!-- Account Information -->
           <div class="form-section" id="account-info">
@@ -3030,6 +3231,10 @@ body::after {
               <div class="form-group owner-joint-only" style="display:none;">
                 <label>3rd Applicant Name</label>
                 <input type="text" name="thirdApplicantName" placeholder="Third applicant full name">
+              </div>
+              <div class="form-group" style="display:none;">
+                <label>Account Title (bangla)</label>
+                <input type="text" name="combinedApplicantsBn" placeholder="Account Title (bangla)">
               </div>
               <div class="form-group">
                 <label>Initial Deposit (BDT)</label>
@@ -3193,8 +3398,42 @@ body::after {
               </div>
             </div>
           </div>
+            <!-- Guardian Information (moved here) -->
+            <div class="form-section" id="guardian-info">
+              <div class="section-header">
+                <i class="fas fa-user-shield"></i>
+                <h2>Guardian Information (Nominee)</h2>
+                <i class="fas fa-chevron-down section-toggle"></i>
+              </div>
+              <div class="form-fields">
+                <div class="form-group">
+                  <label>Guardian's Name</label>
+                  <input type="text" name="guardianName" placeholder="Guardian's full name">
+                </div>
+                <div class="form-group">
+                  <label>Relationship with Nominee</label>
+                  <input type="text" name="guardianRelation" placeholder="Relationship with nominee">
+                </div>
+                <div class="form-group">
+                  <label>Guardian NID</label>
+                  <input type="text" name="guardianNid" placeholder="Guardian's NID number">
+                </div>
+                <div class="form-group">
+                  <label>Phone / Mobile No.</label>
+                  <input type="tel" name="guardianMobile" placeholder="Guardian's phone/mobile number">
+                </div>
+                <div class="form-group span-2">
+                  <label>Guardian Permanent Address</label>
+                  <div class="checkbox-inline">
+                    <input type="checkbox" id="guardianSameAddress" name="guardianSameAddress">
+                    <label for="guardianSameAddress">Same as Account Holder Present Address</label>
+                  </div>
+                  <textarea name="guardianPermanentAddress" placeholder="Guardian's permanent address"></textarea>
+                </div>
+              </div>
+            </div>
 
-          <!-- KYC Information -->
+            <!-- KYC Information -->
           <div class="form-section" id="kyc-info-main">
             <div class="section-header">
               <i class="fas fa-id-card"></i>
@@ -3547,63 +3786,7 @@ body::after {
           </div>
 
 
-          <!-- Introducer Information -->
-          <div class="form-section" id="introducer-info">
-            <div class="section-header">
-              <i class="fas fa-handshake"></i>
-              <h2>Introducer Information</h2>
-              <i class="fas fa-chevron-down section-toggle"></i>
-            </div>
-            <div class="form-fields">
-              <div class="form-group">
-                <label>Introducer Name</label>
-                <input type="text" name="introducerName" placeholder="Introducer's full name">
-              </div>
-              <div class="form-group">
-                <label>Introducer Date of Birth</label>
-                <input type="date" name="introducerDob">
-              </div>
-              <div class="form-group">
-                <label>Introducer Account Number</label>
-                <input type="text" name="introducerAccount" placeholder="Introducer's account number">
-              </div>
-            </div>
-          </div>
-
-          <!-- Guardian Information -->
-          <div class="form-section" id="guardian-info">
-            <div class="section-header">
-              <i class="fas fa-user-shield"></i>
-              <h2>Guardian Information</h2>
-              <i class="fas fa-chevron-down section-toggle"></i>
-            </div>
-            <div class="form-fields">
-              <div class="form-group">
-                <label>Guardian's Name</label>
-                <input type="text" name="guardianName" placeholder="Guardian's full name">
-              </div>
-              <div class="form-group">
-                <label>Relationship with Nominee</label>
-                <input type="text" name="guardianRelation" placeholder="Relationship with nominee">
-              </div>
-              <div class="form-group">
-                <label>Guardian NID</label>
-                <input type="text" name="guardianNid" placeholder="Guardian's NID number">
-              </div>
-              <div class="form-group">
-                <label>Phone / Mobile No.</label>
-                <input type="tel" name="guardianMobile" placeholder="Guardian's phone/mobile number">
-              </div>
-              <div class="form-group span-2">
-                <label>Guardian Permanent Address</label>
-                <div class="checkbox-inline">
-                  <input type="checkbox" id="guardianSameAddress" name="guardianSameAddress">
-                  <label for="guardianSameAddress">Same as Account Holder Present Address</label>
-                </div>
-                <textarea name="guardianPermanentAddress" placeholder="Guardian's permanent address"></textarea>
-              </div>
-            </div>
-          </div>
+          
 
           <!-- Transaction Profile -->
           <div class="form-section" id="transaction-info">
@@ -3761,7 +3944,18 @@ body::after {
       <div class="print-btn-wrap" style="display:flex; flex-direction:column; align-items:center; margin-right:8px;">
         <button type="button" class="btn btn-success" id="printFormBtn"><i class="fas fa-print"></i> Print Form</button>
       </div>
-      <button type="button" class="btn btn-info" id="printOthersBtn"><i class="fas fa-print"></i> Print KYC, TP, SBS</button>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div style="display:flex; flex-direction:column;">
+          <select id="printTargetSelect" aria-label="Print target" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px;">
+            <option value="accountHolder">Account Holder</option>
+            <option value="secondApplicant">2nd Applicant</option>
+            <option value="thirdApplicant">3rd Applicant</option>
+            <option value="guardian">Guardian</option>
+            <option value="beneficialOwner">Beneficial Owner</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-info" id="printOthersBtn"><i class="fas fa-print"></i> Print KYC, TP, SBS</button>
+      </div>
       <button type="button" class="btn btn-danger" id="clearFormBtn"><i class="fas fa-trash"></i> Clear Form</button>
     </div>
   </div>
@@ -3783,6 +3977,7 @@ body::after {
             <option value="taqwa-imperial">Taqwa Imperial</option>
             <option value="others">Others</option>
             <option value="beneficial-owner">Beneficial Owner</option>
+            <option value="guardian">Guardian</option>
           </select>
         </div>
         <div class="preview-actions">
@@ -3872,6 +4067,10 @@ body::after {
         <div class="form-page beneficial-owner-page" data-page="40" style="display:none;">
           <img src="Images/Beneficial Owner/Beneficial Owner Information-1_page-0001.jpg" alt="Beneficial Owner Information Page 1">
         </div>
+        <!-- Guardian Form Pages (hidden by default) -->
+        <div class="form-page guardian-page" data-page="48" style="display:none;">
+          <img src="Images/personal account opening form/personal-account-opening-formgeneral_page-0001.jpg" alt="Guardian Form Page 1">
+        </div>
         <!-- Others Form Pages (hidden by default) -->
         <div class="form-page others-page" data-page="7" style="display:none;">
           <img src="Images/Other/1. KYC Profile Form_page-0001.jpg" alt="KYC Page 1">
@@ -3952,11 +4151,13 @@ body::after {
   const presetsList = document.getElementById('presetsList');
   const sameAddressCheckbox = document.getElementById('sameAddress');
   const nomineeSameCheckbox = document.getElementById('nomineeSameAddress');
-  const guardianSameCheckbox = document.getElementById('guardianSameAddress');
+  const guardianSameCheckbox = document.getElementById('gSameAddress');
   const formTypeSelect = document.getElementById('formTypeSelect');
   const beneficialOwnersSelect = form ? form.elements['beneficialOwners'] : null;
   const boSection = document.getElementById('beneficial-owner-details');
   const boSameAddressCheckbox = document.getElementById('boSameAddress');
+  const printTargetSelect = document.getElementById('printTargetSelect');
+  const popupPrintTargetSelect = document.getElementById('popupPrintTargetSelect');
   // Keep a space-free account number for specific page overlays (page 17)
   const accountNumberEl = form ? form.elements['accountNumber'] : null;
   const accountNumberNoSpaceEl = form ? form.elements['accountNumberNoSpace'] : null;
@@ -3975,6 +4176,221 @@ body::after {
   // initialize on load
   updateAccountNumberNoSpace();
   const slideBranchInput = document.getElementById('slideBranchInput');
+
+  // Guardian section visibility based on age (< 18)
+  const guardianSectionNew = document.getElementById('guardian-info-new');
+  function calculateAge(dobStr) {
+    try {
+      const dt = new Date(dobStr);
+      if (isNaN(dt)) return NaN;
+      const today = new Date();
+      let age = today.getFullYear() - dt.getFullYear();
+      const m = today.getMonth() - dt.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dt.getDate())) age--;
+      return age;
+    } catch (e) { return NaN; }
+  }
+  function updateGuardianVisibility() {
+    const dobEl = form && form.elements ? form.elements['dob'] : null;
+    const dobVal = dobEl ? dobEl.value : '';
+    const age = dobVal ? calculateAge(dobVal) : NaN;
+    const isMinor = Number.isFinite(age) ? age < 18 : false;
+    if (guardianSectionNew) guardianSectionNew.style.display = isMinor ? '' : 'none';
+    try {
+      document.querySelectorAll('.guardian-page').forEach(pg => { pg.style.display = isMinor ? '' : 'none'; });
+    } catch (e) {}
+    if (typeof updateOverlays === 'function') updateOverlays();
+  }
+  if (form && form.elements && form.elements['dob']) {
+    form.elements['dob'].addEventListener('input', updateGuardianVisibility);
+    form.elements['dob'].addEventListener('change', updateGuardianVisibility);
+  }
+  // Initialize guardian section visibility
+  updateGuardianVisibility();
+
+  // Wire up print target dropdown to update overlays
+  if (printTargetSelect) {
+    // Function to update dropdown option visibility based on name field values
+    function updatePrintTargetOptions() {
+      const form = document.getElementById('account-form');
+      if (!form) return;
+
+      const secondApplicantName = form.elements['secondApplicantName']?.value || '';
+      const thirdApplicantName = form.elements['thirdApplicantName']?.value || '';
+      const gNameEn = form.elements['gNameEn']?.value || '';
+      const boNameEn = form.elements['boNameEn']?.value || '';
+
+      // Get all options in the dropdown
+      const options = printTargetSelect.querySelectorAll('option');
+      let hasOtherOptions = false;
+      options.forEach(option => {
+        const value = option.value;
+        // Show/hide options based on corresponding name field values
+        if (value === 'secondApplicant') {
+          option.style.display = secondApplicantName.trim() ? 'block' : 'none';
+          if (secondApplicantName.trim()) hasOtherOptions = true;
+        } else if (value === 'thirdApplicant') {
+          option.style.display = thirdApplicantName.trim() ? 'block' : 'none';
+          if (thirdApplicantName.trim()) hasOtherOptions = true;
+        } else if (value === 'guardian') {
+          option.style.display = gNameEn.trim() ? 'block' : 'none';
+          if (gNameEn.trim()) hasOtherOptions = true;
+        } else if (value === 'beneficialOwner') {
+          option.style.display = boNameEn.trim() ? 'block' : 'none';
+          if (boNameEn.trim()) hasOtherOptions = true;
+        }
+      });
+
+      // If only Account Holder is available, clear the label/name data to hide overlays
+      if (!hasOtherOptions) {
+        form.dataset.printTargetLabel = '';
+        form.dataset.printTargetNameField = '';
+      }
+
+      // If currently selected option is now hidden, reset to Account Holder
+      const currentValue = printTargetSelect.value;
+      if (printTargetSelect.querySelector(`option[value="${currentValue}"]`).style.display === 'none') {
+        printTargetSelect.value = 'accountHolder';
+        printTargetSelect.dispatchEvent(new Event('change'));
+      }
+
+      // Trigger overlay update to reflect label/name visibility
+      if (typeof updateOverlays === 'function') {
+        updateOverlays();
+      }
+    }
+
+    // Wire up name input fields to update dropdown visibility
+    const nameFields = ['secondApplicantName', 'thirdApplicantName', 'gNameEn', 'boNameEn'];
+    nameFields.forEach(fieldName => {
+      const field = form.elements[fieldName];
+      if (field) {
+        field.addEventListener('input', updatePrintTargetOptions);
+        field.addEventListener('change', updatePrintTargetOptions);
+      }
+    });
+
+    // Initial update on page load
+    updatePrintTargetOptions();
+
+    // Wire up dropdown change listener
+    printTargetSelect.addEventListener('change', function() {
+      const targetLabelMap = {
+        'accountHolder': 'Account Holder',
+        'secondApplicant': '2nd Applicant',
+        'thirdApplicant': '3rd Applicant',
+        'guardian': 'Guardian',
+        'beneficialOwner': 'Beneficial Owner'
+      };
+      const targetNameFieldMap = {
+        'accountHolder': 'fullNameEn',
+        'secondApplicant': 'secondApplicantName',
+        'thirdApplicant': 'thirdApplicantName',
+        'guardian': 'gNameEn',
+        'beneficialOwner': 'boNameEn'
+      };
+      const selectedLabel = targetLabelMap[this.value] || '';
+      const selectedNameField = targetNameFieldMap[this.value] || '';
+      const form = document.getElementById('account-form');
+      if (form) {
+        form.dataset.printTargetLabel = selectedLabel;
+        form.dataset.printTargetNameField = selectedNameField;
+      }
+      if (typeof updateOverlays === 'function') {
+        updateOverlays();
+      }
+    });
+  }
+
+  // Wire up popup print target dropdown with same functionality
+  if (popupPrintTargetSelect) {
+    function updatePopupPrintTargetOptions() {
+      const form = document.getElementById('account-form');
+      if (!form) return;
+
+      const secondApplicantName = form.elements['secondApplicantName']?.value || '';
+      const thirdApplicantName = form.elements['thirdApplicantName']?.value || '';
+      const gNameEn = form.elements['gNameEn']?.value || '';
+      const boNameEn = form.elements['boNameEn']?.value || '';
+
+      const options = popupPrintTargetSelect.querySelectorAll('option');
+      let hasOtherOptions = false;
+      options.forEach(option => {
+        const value = option.value;
+        if (value === 'secondApplicant') {
+          option.style.display = secondApplicantName.trim() ? 'block' : 'none';
+          if (secondApplicantName.trim()) hasOtherOptions = true;
+        } else if (value === 'thirdApplicant') {
+          option.style.display = thirdApplicantName.trim() ? 'block' : 'none';
+          if (thirdApplicantName.trim()) hasOtherOptions = true;
+        } else if (value === 'guardian') {
+          option.style.display = gNameEn.trim() ? 'block' : 'none';
+          if (gNameEn.trim()) hasOtherOptions = true;
+        } else if (value === 'beneficialOwner') {
+          option.style.display = boNameEn.trim() ? 'block' : 'none';
+          if (boNameEn.trim()) hasOtherOptions = true;
+        }
+      });
+
+      // If only Account Holder is available, clear the label/name data to hide overlays
+      if (!hasOtherOptions) {
+        form.dataset.printTargetLabel = '';
+        form.dataset.printTargetNameField = '';
+      }
+
+      const currentValue = popupPrintTargetSelect.value;
+      if (popupPrintTargetSelect.querySelector(`option[value="${currentValue}"]`).style.display === 'none') {
+        popupPrintTargetSelect.value = 'accountHolder';
+        popupPrintTargetSelect.dispatchEvent(new Event('change'));
+      }
+
+      // Trigger overlay update to reflect label/name visibility
+      if (typeof updateOverlays === 'function') {
+        updateOverlays();
+      }
+    }
+
+    // Wire name input fields to update popup dropdown
+    const nameFields = ['secondApplicantName', 'thirdApplicantName', 'gNameEn', 'boNameEn'];
+    nameFields.forEach(fieldName => {
+      const field = form.elements[fieldName];
+      if (field) {
+        field.addEventListener('input', updatePopupPrintTargetOptions);
+        field.addEventListener('change', updatePopupPrintTargetOptions);
+      }
+    });
+
+    // Initial update on page load
+    updatePopupPrintTargetOptions();
+
+    // Wire up popup dropdown change listener
+    popupPrintTargetSelect.addEventListener('change', function() {
+      const targetLabelMap = {
+        'accountHolder': 'Account Holder',
+        'secondApplicant': '2nd Applicant',
+        'thirdApplicant': '3rd Applicant',
+        'guardian': 'Guardian',
+        'beneficialOwner': 'Beneficial Owner'
+      };
+      const targetNameFieldMap = {
+        'accountHolder': 'fullNameEn',
+        'secondApplicant': 'secondApplicantName',
+        'thirdApplicant': 'thirdApplicantName',
+        'guardian': 'gNameEn',
+        'beneficialOwner': 'boNameEn'
+      };
+      const selectedLabel = targetLabelMap[this.value] || '';
+      const selectedNameField = targetNameFieldMap[this.value] || '';
+      const form = document.getElementById('account-form');
+      if (form) {
+        form.dataset.printTargetLabel = selectedLabel;
+        form.dataset.printTargetNameField = selectedNameField;
+      }
+      if (typeof updateOverlays === 'function') {
+        updateOverlays();
+      }
+    });
+  }
 
   // Helper: Get account type name from product code in account number
   // Account number format: first 3 digits ignored, next 4 digits = product code
@@ -4010,6 +4426,8 @@ body::after {
     if (form.elements['boPermanentPostCode']) form.elements['boPermanentPostCode'].value = src.postCode;
     if (form.elements['boPermanentCountry']) form.elements['boPermanentCountry'].value = src.country;
     if (form.elements['boPermanentLandmark']) form.elements['boPermanentLandmark'].value = src.landmark;
+    
+    updateOverlays();
   }
 
   // Show/hide Beneficial Owner section based on dropdown
@@ -4037,7 +4455,7 @@ body::after {
       { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
       { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
       { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
-      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Name (Bangla) joint' },
+      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Account Title (bangla)' },
       { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
       { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
       { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
@@ -4171,6 +4589,10 @@ body::after {
       { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
       { field: 'birthCertNo', top: '88%', left: '35%', label: 'Birth Certificate' },
       { field: 'passportNo', top: '88%', left: '35%', label: 'Passport Number' },
+      // Dynamic print target label (appears based on dropdown selection)
+      { field: 'printTargetLabel', top: '8%', left: '10%', label: '', alwaysShow: false },
+      // Dynamic print target name (appears based on dropdown selection)
+      { field: 'printTargetName', top: '10%', left: '10%', label: '', alwaysShow: false },
     ]
     ,
     8: [
@@ -4386,6 +4808,12 @@ body::after {
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
       { field: 'withdrawalMaxSingleCombined', top: '80%', left: '78%', label: 'Withdrawal Max Single/Combined'},
     ],
+
+    // Page 14: add Officer 2 Seal
+    14: [
+      { field: 'officer2Seal', top: '80%', left: '78%', label: 'Officer 2 Seal', sealType: 'officer2' },
+    ],
+
     15: [
       { field: 'branchName', top: '6%', left: '70%', label: 'Branch Name' },
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -4424,7 +4852,7 @@ body::after {
       { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
       { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
       { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
-      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Name (Bangla) joint' },
+      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Account Title (bangla)' },
       { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
       { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
       { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
@@ -4524,6 +4952,59 @@ body::after {
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' }, 
     ],
+    // Guardian preview page overlays (page 48)
+    48: [
+      { field: 'gNameBn', top: '15%', left: '30%', label: 'Guardian Name (Bangla)' },
+      { field: 'gNameEn', top: '15%', left: '55%', label: 'Guardian Name (English)' },
+      { field: 'gFatherName', top: '18%', left: '11%', label: "Father's Name" },
+      { field: 'gMotherName', top: '18%', left: '42%', label: "Mother's Name" },
+      { field: 'gSpouseName', top: '21%', left: '11%', label: 'Spouse Name' },
+      { field: 'branchName', top: '6%', left: '70%', label: 'Branch Name' },
+      { field: 'branchName', top: '6%', left: '70%', label: 'Branch Name 1' },
+      { field: 'gRelation', top: '18%', left: '30%', label: 'Relation' },
+      { field: 'gNid', top: '21%', left: '30%', label: 'NID' },
+      { field: 'gDob', top: '24%', left: '30%', label: 'Date of Birth' },
+      { field: 'gPresentHouse', top: '40%', left: '20%', label: 'Present House/Street' },
+      { field: 'gPresentArea', top: '40%', left: '55%', label: 'Present Area/Village' },
+      { field: 'gPresentPO', top: '43%', left: '11%', label: 'Present PO' },
+      { field: 'gPresentThana', top: '43%', left: '32%', label: 'Present Thana' },
+      { field: 'gPresentDistrict', top: '43%', left: '54%', label: 'Present District' },
+      { field: 'gPresentPostCode', top: '43%', left: '78%', label: 'Present Post Code' },
+      { field: 'gPresentCountry', top: '46%', left: '11%', label: 'Present Country' },
+      { field: 'gPermanentHouse', top: '52%', left: '20%', label: 'Permanent House/Street' },
+      { field: 'gPermanentArea', top: '52%', left: '55%', label: 'Permanent Area/Village' },
+      { field: 'gPermanentPO', top: '55%', left: '11%', label: 'Permanent PO' },
+      { field: 'gPermanentThana', top: '55%', left: '32%', label: 'Permanent Thana' },
+      { field: 'gPermanentDistrict', top: '55%', left: '54%', label: 'Permanent District' },
+      { field: 'gPermanentPostCode', top: '55%', left: '78%', label: 'Permanent Post Code' },
+      { field: 'gPermanentCountry', top: '58%', left: '11%', label: 'Permanent Country' },
+      { field: 'gPhone', top: '66%', left: '18%', label: 'Phone' },
+      { field: 'gEmail', top: '66%', left: '55%', label: 'Email' },
+      { field: 'gMale', top: '27%', left: '55%', label: '' },
+      { field: 'gFemale', top: '27%', left: '70%', label: '' },
+      { field: 'todayDate', top: '6%', left: '85%', label: 'Date' },
+      { field: 'combinedApplicants', top: '18.5%', left: '22%', label: 'Full Name joint' },
+      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Account Title (bangla)' },
+      { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
+      { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number 1' },
+      { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
+      { field: 'gOccupation', top: '10%', left: '48%', label: 'Occupation' },
+      { field: 'gProfession', top: '10%', left: '48%', label: 'Profession' },
+      { field: 'gSourceOfFund', top: '56%', left: '35%', label: 'Source of Fund' },
+      { field: 'gMonthlyIncome', top: '88%', left: '35%', label: 'Probable Monthly Income' },
+      { field: 'gPassport', top: '20%', left: '66%', label: 'Passport No' },
+      { field: 'gBirthReg', top: '20%', left: '66%', label: 'Birth Registration' },
+      { field: 'gTin', top: '20%', left: '66%', label: 'TIN' },
+      { field: 'tick3', top: '90%', left: '32%', label: '' },
+      { field: 'digit1', top: '90%', left: '50%', label: '1' },
+      { field: 'digit6', top: '90%', left: '56%', label: '6' },
+      { field: 'nationality', top: '26%', left: '35%', label: 'Nationality' },
+      // Static guardian label box (always visible)
+      { field: 'guardianStaticLabel', top: '4%', left: '10%', label: 'guardian', alwaysShow: true },
+      { field: 'amlTrackingNumber', top: '6%', left: '60%', label: 'AML Tracking Number', alwaysShow: true},
+      { field: 'gAmlTrackingNumber', top: '6%', left: '60%', label: 'AML Tracking Number 1'},
+      { field: 'officer1Seal', top: '80%', left: '68%', label: 'Officer 1 Seal', sealType: 'officer1' },
+    ],
     // Taqwa Pages 24-29 (copy of Conventional pages 1-6)
     24: [
       { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
@@ -4539,7 +5020,7 @@ body::after {
       { field: 'isrCustomer', top: '16%', left: '70%', label: 'ISR Customer' },
       { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
       { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
-      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Name (Bangla) joint' },
+      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Account Title (bangla)' },
       { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
       { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
       { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
@@ -4657,7 +5138,7 @@ body::after {
       { field: 'isrCustomer', top: '16%', left: '70%', label: 'ISR Customer' },
       { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
       { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
-      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Name (Bangla) joint' },
+      { field: 'combinedApplicantsBn', top: '11%', left: '35%', label: 'Account Title' },
       { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
       { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
       { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
@@ -4791,7 +5272,8 @@ body::after {
           config.field.startsWith('credibleSourceOfFunds_') ||
           config.field.startsWith('riskLowTick') ||
           config.field.startsWith('riskHighTick') ||
-          config.field === 'male' || config.field === 'female'
+          config.field === 'male' || config.field === 'female' ||
+          config.field === 'gMale' || config.field === 'gFemale'
         );
         overlay.className = (isFixedTick || (boundEl && boundEl.type === 'checkbox') || config.field === 'chequeBook' || config.field === 'debitCard') ? 'overlay overlay-check' : 'overlay';
         overlay.dataset.field = config.field;
@@ -4816,7 +5298,14 @@ body::after {
         
         overlay.textContent = config.label;
         overlay.classList.add('overlay-empty');
-        
+
+        // Apply optional layout overrides from config
+        if (config.width) overlay.style.width = config.width;
+        if (config.height) overlay.style.height = config.height;
+        if (config.className) overlay.classList.add(config.className);
+        // alwaysShow overlays should be visible regardless of value
+        if (config.alwaysShow) overlay.classList.remove('overlay-empty');
+
         page.appendChild(overlay);
       });
     });
@@ -4904,14 +5393,43 @@ body::after {
     return result;
   }
 
+  // Helper function to handle mst/most prefix for translation
+  function processMstMostPrefix(text) {
+    if (!text || text.trim() === '') return { hasTitle: false, cleanText: '' };
+    let cleanText = text.trim();
+    let hasTitle = false;
+    const titlePattern = /^(mst|most)(\.)?(\s+)/i;
+    const match = cleanText.match(titlePattern);
+    
+    if (match) {
+      // Remove the title prefix (mst/most/mst./most.) from the text
+      cleanText = cleanText.substring(match[0].length).trim();
+      hasTitle = true;
+    }
+    return { hasTitle, cleanText };
+  }
+
   // Translate an array of English name parts to Bangla and join with ' এবং '
   async function translateNamesToBn(parts) {
     try {
       const cleaned = parts.map(p => (p || '').trim()).filter(Boolean);
       if (cleaned.length === 0) return '';
-      const translatedParts = await Promise.all(cleaned.map(p => translateText(p)));
-      // If translation fails for a part, fall back to the original part
-      const final = translatedParts.map((t, i) => (t && t.trim()) ? t.trim() : cleaned[i]);
+      
+      // Process each part for mst/most prefix
+      const processedParts = cleaned.map(p => processMstMostPrefix(p));
+      const textsToTranslate = processedParts.map(p => p.cleanText);
+      
+      const translatedParts = await Promise.all(textsToTranslate.map(p => translateText(p)));
+      
+      // If translation fails for a part, fall back to the original part (without mst/most)
+      // If the original had mst/most, prepend মোছাঃ
+      const final = translatedParts.map((t, i) => {
+        let result = (t && t.trim()) ? t.trim() : processedParts[i].cleanText;
+        if (processedParts[i].hasTitle) {
+          result = 'মোছাঃ ' + result;
+        }
+        return result;
+      });
       return final.join(' এবং ');
     } catch (e) {
       console.error('translateNamesToBn error', e);
@@ -4988,12 +5506,24 @@ body::after {
       data.initialDepositWords = '';
     }
 
+    // Add print target label and name from dropdown (stored in form.dataset)
+    if (form && form.dataset) {
+      if (form.dataset.printTargetLabel) {
+        data.printTargetLabel = form.dataset.printTargetLabel;
+      }
+      if (form.dataset.printTargetNameField) {
+        // Map the dynamic field name to its actual value
+        const fieldName = form.dataset.printTargetNameField;
+        data.printTargetName = data[fieldName] || '';
+      }
+    }
+
     // Update all overlays
     document.querySelectorAll('.overlay, .overlay-check').forEach(overlay => {
       const field = overlay.dataset.field;
-      const value = data[field] || '';
-
       const boundEl = form.elements[field];
+      // Prefer value from collected form data, fall back to the actual input element's value
+      const value = (data[field] !== undefined && data[field] !== null) ? data[field] : ((boundEl && boundEl.value) || '');
       let displayValue = '';
 
       // Ticks: some tick overlays are conditional based on account type
@@ -5031,6 +5561,18 @@ body::after {
       else if (field === 'male' || field === 'female') {
         const genderVal = form.elements['accountGender'] ? form.elements['accountGender'].value : '';
         displayValue = (genderVal === field) ? '✔' : '';
+      }
+
+      // Guardian Gender tick overlays (gMale/gFemale) — bound to the select `gGender`
+      else if (field === 'gMale' || field === 'gFemale') {
+        const gGenderVal = form.elements['gGender'] ? form.elements['gGender'].value : '';
+        if (field === 'gMale') {
+          displayValue = (gGenderVal === 'male') ? '✔' : '';
+        } else if (field === 'gFemale') {
+          displayValue = (gGenderVal === 'female') ? '✔' : '';
+        } else {
+          displayValue = '';
+        }
       }
 
       // Beneficial Owner(s) ticks: two separate overlay positions (beneficialOwners_yes / beneficialOwners_no)
@@ -5565,54 +6107,48 @@ body::after {
         }
       }
 
-      // Bangla combined applicants: translate names and join with ' এবং '
+      // Bangla combined applicants: use fullNameBn + translate 2nd/3rd applicants and join with ' এবং '
       else if (field === 'combinedApplicantsBn') {
-        const first = data.fullNameEn || '';
+        const first = data.fullNameBn || '';
         const second = (form.elements['secondApplicantName'] && form.elements['secondApplicantName'].value) || '';
         const third = (form.elements['thirdApplicantName'] && form.elements['thirdApplicantName'].value) || '';
         const ownershipVal = form.elements['accountOwnership'] ? form.elements['accountOwnership'].value : '';
+        const inputEl = form.elements['combinedApplicantsBn'];
 
-        // Show Bangla combined box when joint (translate all present parts) or when single (translate first only)
-        if (ownershipVal === 'joint' && (second || third)) {
-          const parts = [];
-          if (first) parts.push(first);
-          if (second) parts.push(second);
-          if (third) parts.push(third);
-          overlay.textContent = '';
-          overlay.classList.remove('overlay-empty');
-          translateNamesToBn(parts).then(bn => {
-            if (bn && String(bn).trim() !== '') {
-              overlay.textContent = bn;
+        // Always use fullNameBn as base
+        if (first && String(first).trim() !== '') {
+          // Joint account with 2nd/3rd applicants: combine fullNameBn with translated names
+          if (ownershipVal === 'joint' && (second || third)) {
+            const partsToTranslate = [];
+            if (second) partsToTranslate.push(second);
+            if (third) partsToTranslate.push(third);
+            
+            translateNamesToBn(partsToTranslate).then(bn => {
+              const parts = [first];
+              if (bn) parts.push(bn);
+              const combined = parts.join(' এবং ');
+              overlay.textContent = combined;
               overlay.classList.remove('overlay-empty');
-            } else {
-              overlay.textContent = '';
-              overlay.classList.add('overlay-empty');
-            }
-          }).catch(err => {
-            console.error('Failed to translate combined applicants to Bangla', err);
-            overlay.textContent = '';
-            overlay.classList.add('overlay-empty');
-          });
-          displayValue = '';
-        } else if (ownershipVal === 'single' && first) {
-          // Translate only the first name to Bangla
-          overlay.textContent = '';
-          overlay.classList.remove('overlay-empty');
-          translateNamesToBn([first]).then(bn => {
-            if (bn && String(bn).trim() !== '') {
-              overlay.textContent = bn;
+              if (inputEl) inputEl.value = combined;
+            }).catch(err => {
+              console.error('Failed to translate 2nd/3rd applicants to Bangla', err);
+              overlay.textContent = first;
               overlay.classList.remove('overlay-empty');
-            } else {
-              overlay.textContent = '';
-              overlay.classList.add('overlay-empty');
-            }
-          }).catch(err => {
-            console.error('Failed to translate single applicant to Bangla', err);
-            overlay.textContent = '';
-            overlay.classList.add('overlay-empty');
-          });
-          displayValue = '';
+              if (inputEl) inputEl.value = first;
+            });
+            displayValue = 'SKIP_FINAL_CHECK'; // Skip final empty check
+          } else {
+            // Single account: just show fullNameBn
+            overlay.textContent = first;
+            overlay.classList.remove('overlay-empty');
+            if (inputEl) inputEl.value = first;
+            displayValue = 'SKIP_FINAL_CHECK'; // Skip final empty check
+          }
         } else {
+          // No fullNameBn available
+          overlay.textContent = '';
+          overlay.classList.add('overlay-empty');
+          if (inputEl) inputEl.value = '';
           displayValue = '';
         }
       }
@@ -5777,6 +6313,20 @@ body::after {
           displayValue = 'Bangladeshi';
         }
 
+        // Visual formatting for E-TIN and guardian TIN: insert four non-breaking spaces between every character
+        // For pages 1,18,24,30,48 add an extra hair-space (~+0.10 NBSP) for improved visual spacing
+        if ((field === 'etin' || field === 'boTin' || field === 'gTin') && value) {
+          const cleanedTin = String(value).replace(/\s+/g, '');
+          const page = overlay.dataset.page;
+          const extraPages = ['1','18','24','30','48'];
+          if (extraPages.includes(String(page))) {
+            const sep = '\u00A0\u00A0\u00A0\u00A0\u200A';
+            displayValue = cleanedTin.split('').join(sep);
+          } else {
+            displayValue = cleanedTin.split('').join('\u00A0\u00A0\u00A0\u00A0');
+          }
+        }
+
         // Special compact DOB format for Nominee: DD<NBSP>MM<NBSP>YYYY (component grouped)
         // On page 25 or 31: use digit-level spacing (4 NBSPs between each digit)
         if (field === 'nomineeDob' && value) {
@@ -5821,6 +6371,28 @@ body::after {
                 const gap = '\u00A0\u00A0\u00A0\u00A0\u00A0';
                 displayValue = dd + gap + mm + gap + yyyy;
               }
+            }
+          } catch (e) {
+            // fall back to raw value
+          }
+        }
+
+        // Guardian DOB: format as individual digits with NBSP gaps: d   d   m   m   y   y   y   y
+        // Add one extra NBSP on guardian preview page (48)
+        if (field === 'gDob' && value) {
+          try {
+            const parts = String(value).split('-');
+            if (parts.length === 3) {
+              const yyyy = parts[0];
+              const mm = parts[1];
+              const dd = parts[2];
+              // default gap (4 NBSPs)
+              let digitGap = '\u00A0\u00A0\u00A0\u00A0';
+              // on guardian preview page add one extra NBSP
+              if (overlay && overlay.dataset && overlay.dataset.page === '48') {
+                digitGap = '\u00A0\u00A0\u00A0\u00A0\u00A0';
+              }
+              displayValue = dd.split('').join(digitGap) + digitGap + mm.split('').join(digitGap) + digitGap + yyyy.split('').join(digitGap);
             }
           } catch (e) {
             // fall back to raw value
@@ -5998,9 +6570,43 @@ body::after {
           displayValue = cleaned.split('').join('\u00A0\u00A0\u00A0\u00A0');
         }
 
-        // Visual formatting for Post Codes: insert three non-breaking spaces between every digit
+        // Guardian-specific: increase spacing slightly (~+0.10 NBSP equivalent)
+        // Apply to account number, DOB, CIF and E-TIN, but only on guardian preview page (48)
+        if (overlay.dataset.page === '48' && value && (field === 'accountNumber' || field === 'cif' || field === 'etin' || field === 'dob')) {
+          const guardianGap = '\u00A0\u00A0\u00A0\u00A0\u200A\u200A';
+          // Account number / cif / etin: remove spaces then insert guardianGap between characters
+          if (field === 'accountNumber' || field === 'cif' || field === 'etin') {
+            displayValue = String(value).replace(/\s+/g, '').split('').join(guardianGap);
+          } else if (field === 'dob') {
+            // DOB: try to handle yyyy-mm-dd or Date object; render as dd MM yyyy with guardianGap between digits
+            try {
+              let dd = '', mm = '', yyyy = '';
+              if (String(value).includes('-')) {
+                const parts = String(value).split('-');
+                if (parts.length === 3) {
+                  yyyy = parts[0]; mm = parts[1]; dd = parts[2];
+                }
+              }
+              if (!dd) {
+                const dt = new Date(value);
+                if (!isNaN(dt)) {
+                  dd = String(dt.getDate()).padStart(2, '0');
+                  mm = String(dt.getMonth() + 1).padStart(2, '0');
+                  yyyy = String(dt.getFullYear());
+                }
+              }
+              if (dd) {
+                displayValue = dd.split('').join(guardianGap) + guardianGap + mm.split('').join(guardianGap) + guardianGap + yyyy.split('').join(guardianGap);
+              }
+            } catch (e) {
+              // fall back to raw value
+            }
+          }
+        }
+
+        // Visual formatting for Post Codes: insert non-breaking spaces between every digit
         // On page 40: use same spacing as account number (~4.10 NBSPs)
-        if ((field === 'presentPostCode' || field === 'permanentPostCode' || field === 'boPresentPostCode' || field === 'boPermanentPostCode') && value) {
+        if ((field === 'presentPostCode' || field === 'permanentPostCode' || field === 'boPresentPostCode' || field === 'boPermanentPostCode' || field === 'gPresentPostCode' || field === 'gPermanentPostCode') && value) {
           const cleanedPc = String(value).replace(/\s+/g, '');
           if (overlay.dataset.page === '40') {
             // Page 40: insert 4 NBSPs + hair space between each digit (same as account number)
@@ -6010,12 +6616,11 @@ body::after {
             displayValue = cleanedPc.split('').join('\u00A0\u00A0\u00A0');
           }
         }
+      }
 
-        // Visual formatting for E-TIN: insert three non-breaking spaces between every character
-        if (field === 'etin' && value) {
-          const cleanedEtin = String(value).replace(/\s+/g, '');
-          displayValue = cleanedEtin.split('').join('\u00A0\u00A0\u00A0\u00A0');
-        }
+      // Skip final display logic for fields that handle their own overlay updates
+      if (displayValue === 'SKIP_FINAL_CHECK') {
+        return; // Skip to next overlay
       }
 
       if (displayValue && String(displayValue).trim() !== '') {
@@ -6061,8 +6666,14 @@ body::after {
           }
         } else {
           const config = overlayConfig[overlay.dataset.page]?.[overlay.dataset.index];
-          overlay.textContent = config?.label || field;
-          overlay.classList.add('overlay-empty');
+          // If overlay is configured to always show, render its label and keep it visible
+          if (config && config.alwaysShow) {
+            overlay.textContent = config.label || field;
+            overlay.classList.remove('overlay-empty');
+          } else {
+            overlay.textContent = config?.label || field;
+            overlay.classList.add('overlay-empty');
+          }
         }
       }
     });
@@ -6370,6 +6981,7 @@ body::after {
     const taqwaImperialPages = document.querySelectorAll('.form-page.taqwa-imperial-page');
     const othersPages = document.querySelectorAll('.form-page.others-page');
     const boPages = document.querySelectorAll('.form-page.beneficial-owner-page');
+    const guardianPages = document.querySelectorAll('.form-page.guardian-page');
 
     // Hide all first
     conventionalPages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
@@ -6390,6 +7002,8 @@ body::after {
       taqwaImperialPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
     } else if (formType === 'beneficial-owner') {
       boPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
+    } else if (formType === 'guardian') {
+      guardianPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
     } else {
       othersPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
     }
@@ -6517,6 +7131,41 @@ body::after {
         }
       });
     }
+
+    // If account holder age is below 18, show Guardian page; otherwise hide it
+    const dobEl = form.elements['dob'];
+    const dobVal = dobEl ? dobEl.value : '';
+    let accountHolderAgeBelowEighteen = false;
+    const guardianPages = document.querySelectorAll('.form-page.guardian-page');
+    const guardianOriginalDisplay = [];
+    if (dobVal) {
+      try {
+        const dobDate = new Date(dobVal);
+        const today = new Date();
+        const age = today.getFullYear() - dobDate.getFullYear();
+        const monthDiff = today.getMonth() - dobDate.getMonth();
+        const dayDiff = today.getDate() - dobDate.getDate();
+        const actualAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
+        if (actualAge < 18) {
+          accountHolderAgeBelowEighteen = true;
+        }
+      } catch (e) {}
+    }
+    // Save original display state and apply print-time visibility
+    if (guardianPages && guardianPages.length) {
+      guardianPages.forEach((p, idx) => {
+        guardianOriginalDisplay[idx] = p.style.display;
+        if (accountHolderAgeBelowEighteen) {
+          // Age < 18: show guardian page
+          p.style.display = 'block';
+          p.classList.add('active');
+        } else {
+          // Age >= 18: hide guardian page during print
+          p.style.display = 'none';
+          p.classList.remove('active');
+        }
+      });
+    }
     
     infoPage.classList.remove('active');
     formPage.classList.add('active');
@@ -6535,6 +7184,15 @@ body::after {
         boPages.forEach((p, idx) => {
           if (typeof boOriginalDisplay[idx] !== 'undefined') {
             p.style.display = boOriginalDisplay[idx];
+          }
+        });
+      }
+
+      // Restore Guardian pages to their original display state
+      if (guardianPages && guardianPages.length) {
+        guardianPages.forEach((p, idx) => {
+          if (typeof guardianOriginalDisplay[idx] !== 'undefined') {
+            p.style.display = guardianOriginalDisplay[idx];
           }
         });
       }
@@ -6672,36 +7330,15 @@ body::after {
   // Guardian: copy present address to guardianPermanentAddress when checked
   function handleGuardianSameAddress() {
     if (!form) return;
-    const guardianAddrEl = form.elements['guardianPermanentAddress'];
-    if (!guardianAddrEl) return;
-
     if (guardianSameCheckbox && guardianSameCheckbox.checked) {
-      const ph = form.elements['presentHouse'] ? form.elements['presentHouse'].value : '';
-      const pr = form.elements['presentRoad'] ? form.elements['presentRoad'].value : '';
-      const ppo = form.elements['presentPO'] ? form.elements['presentPO'].value : '';
-      const ppc = form.elements['presentPostCode'] ? form.elements['presentPostCode'].value : '';
-      const pt = form.elements['presentThana'] ? form.elements['presentThana'].value : '';
-      const pd = form.elements['presentDistrict'] ? form.elements['presentDistrict'].value : '';
-
-      const segments = [];
-      if (ph) segments.push(ph);
-      if (pr) segments.push(pr);
-
-      // Post Office - Post Code
-      let poSeg = '';
-      if (ppo) poSeg += ppo;
-      if (ppc) poSeg += (poSeg ? ' - ' : '') + ppc;
-      if (poSeg) segments.push(poSeg);
-
-      if (pt) segments.push(pt);
-      if (pd) segments.push(pd);
-
-      const addr = segments.join(', ');
-      guardianAddrEl.value = addr;
-      guardianAddrEl.readOnly = true;
-    } else {
-      // allow editing when unchecked
-      guardianAddrEl.readOnly = false;
+      // Copy individual present address fields to permanent address fields
+      form.elements['gPermanentHouse'].value = form.elements['gPresentHouse'] ? form.elements['gPresentHouse'].value : '';
+      form.elements['gPermanentArea'].value = form.elements['gPresentArea'] ? form.elements['gPresentArea'].value : '';
+      form.elements['gPermanentPO'].value = form.elements['gPresentPO'] ? form.elements['gPresentPO'].value : '';
+      form.elements['gPermanentPostCode'].value = form.elements['gPresentPostCode'] ? form.elements['gPresentPostCode'].value : '';
+      form.elements['gPermanentThana'].value = form.elements['gPresentThana'] ? form.elements['gPresentThana'].value : '';
+      form.elements['gPermanentDistrict'].value = form.elements['gPresentDistrict'] ? form.elements['gPresentDistrict'].value : '';
+      form.elements['gPermanentCountry'].value = form.elements['gPresentCountry'] ? form.elements['gPresentCountry'].value : '';
     }
 
     updateOverlays();
@@ -6858,11 +7495,26 @@ body::after {
       }
       return;
     }
-    const translated = await translateText(text);
+    
+    // Check if name starts with mst, most, mst., or most. (case-insensitive)
+    let textToTranslate = text.trim();
+    let hasTitle = false;
+    const titlePattern = /^(mst|most)(\.)?(\s+)/i;
+    const match = textToTranslate.match(titlePattern);
+    
+    if (match) {
+      // Remove the title prefix (mst/most/mst./most.) from the text to translate
+      textToTranslate = textToTranslate.substring(match[0].length).trim();
+      hasTitle = true;
+    }
+    
+    const translated = await translateText(textToTranslate);
     if (translated && form.elements['fullNameBn']) {
-      form.elements['fullNameBn'].value = translated;
+      // If the original text had mst/most prefix, prepend মোছাঃ to the translated result
+      const finalResult = hasTitle ? 'মোছাঃ ' + translated : translated;
+      form.elements['fullNameBn'].value = finalResult;
       updateOverlays();
-      console.log('Updated fullNameBn field with:', translated);
+      console.log('Updated fullNameBn field with:', finalResult);
     }
   }, 700);
 
@@ -6885,11 +7537,26 @@ body::after {
       }
       return;
     }
-    const translated = await translateText(text);
+    
+    // Check if name starts with mst, most, mst., or most. (case-insensitive)
+    let textToTranslate = text.trim();
+    let hasTitle = false;
+    const titlePattern = /^(mst|most)(\.)?(\s+)/i;
+    const match = textToTranslate.match(titlePattern);
+    
+    if (match) {
+      // Remove the title prefix (mst/most/mst./most.) from the text to translate
+      textToTranslate = textToTranslate.substring(match[0].length).trim();
+      hasTitle = true;
+    }
+    
+    const translated = await translateText(textToTranslate);
     if (translated && form.elements['boNameBn']) {
-      form.elements['boNameBn'].value = translated;
+      // If the original text had mst/most prefix, prepend মোছাঃ to the translated result
+      const finalResult = hasTitle ? 'মোছাঃ ' + translated : translated;
+      form.elements['boNameBn'].value = finalResult;
       updateOverlays();
-      console.log('Updated boNameBn field with:', translated);
+      console.log('Updated boNameBn field with:', finalResult);
     }
   }, 700);
 
@@ -6898,6 +7565,31 @@ body::after {
     boNameEnField.addEventListener('input', (e) => {
       const englishText = e.target.value;
       boTranslateDebounced(englishText);
+    });
+  }
+
+  // Guardian: auto-translate Guardian English name to Bangla (mirror Full Name behavior)
+  const gTranslateDebounced = debounce(async (text) => {
+    if (!text || text.trim() === '') {
+      if (form.elements['gNameBn']) {
+        form.elements['gNameBn'].value = '';
+        updateOverlays();
+      }
+      return;
+    }
+    const translated = await translateText(text);
+    if (translated && form.elements['gNameBn']) {
+      form.elements['gNameBn'].value = translated;
+      updateOverlays();
+      console.log('Updated gNameBn field with:', translated);
+    }
+  }, 700);
+
+  const gNameEnField = form.elements['gNameEn'];
+  if (gNameEnField) {
+    gNameEnField.addEventListener('input', (e) => {
+      const englishText = e.target.value;
+      gTranslateDebounced(englishText);
     });
   }
 
@@ -7694,6 +8386,63 @@ body::after {
   }
 
 })();
+  </script>
+  <script>
+    (function() {
+      const nomineeDobEl = document.querySelector('input[name="nomineeDob"]');
+      const guardianSection = document.getElementById('guardian-info');
+
+      function updateGuardianVisibility() {
+        try {
+          if (!guardianSection) return;
+          const val = nomineeDobEl && nomineeDobEl.value ? nomineeDobEl.value : '';
+          if (!val) {
+            guardianSection.style.display = 'none';
+            return;
+          }
+          const dob = new Date(val);
+          if (isNaN(dob.getTime())) {
+            guardianSection.style.display = 'none';
+            return;
+          }
+          const today = new Date();
+          let age = today.getFullYear() - dob.getFullYear();
+          const m = today.getMonth() - dob.getMonth();
+          if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+          guardianSection.style.display = (age < 18) ? '' : 'none';
+        } catch (e) {
+          console.error('updateGuardianVisibility error', e);
+        }
+      }
+
+      if (nomineeDobEl) {
+        nomineeDobEl.addEventListener('change', updateGuardianVisibility);
+        nomineeDobEl.addEventListener('input', updateGuardianVisibility);
+      }
+      // Run immediately and after DOM content loaded to cover timing
+      document.addEventListener('DOMContentLoaded', updateGuardianVisibility);
+      setTimeout(updateGuardianVisibility, 200);
+      // Introducer visibility: show when Personal Information NID is empty
+      const nidEl = document.querySelector('input[name="nid"]');
+      const introducerSection = document.getElementById('introducer-info');
+
+      function updateIntroducerVisibility() {
+        try {
+          if (!introducerSection) return;
+          const nidVal = nidEl && nidEl.value ? String(nidEl.value).trim() : '';
+          introducerSection.style.display = (!nidVal) ? '' : 'none';
+        } catch (e) {
+          console.error('updateIntroducerVisibility error', e);
+        }
+      }
+
+      if (nidEl) {
+        nidEl.addEventListener('change', updateIntroducerVisibility);
+        nidEl.addEventListener('input', updateIntroducerVisibility);
+      }
+      document.addEventListener('DOMContentLoaded', updateIntroducerVisibility);
+      setTimeout(updateIntroducerVisibility, 200);
+    })();
   </script>
 </body>
 </html>
