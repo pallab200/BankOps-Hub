@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2025-12-10T18:48:12.384Z",
+  "exportedAt": "2025-12-13T16:57:13.924Z",
   "form": {
     "branchName": "serajgonj",
     "fullNameEn": "",
@@ -18,6 +18,41 @@
     "occupation": "",
     "monthlyIncome": "",
     "sourceOfFund": "",
+    "gNameEn": "",
+    "gNameBn": "",
+    "gAmlTrackingNumber": "",
+    "gDob": "",
+    "gFatherName": "",
+    "gMotherName": "",
+    "gSpouseName": "",
+    "gGender": "",
+    "gNid": "",
+    "gPassport": "",
+    "gBirthReg": "",
+    "gPhone": "",
+    "gEmail": "",
+    "gOccupation": "",
+    "gMonthlyIncome": "",
+    "gSourceOfFund": "",
+    "gTin": "",
+    "gNationality": "Bangladeshi",
+    "gPresentHouse": "",
+    "gPresentArea": "",
+    "gPresentPO": "",
+    "gPresentThana": "",
+    "gPresentDistrict": "",
+    "gPresentPostCode": "",
+    "gPresentCountry": "Bangladesh",
+    "gPermanentHouse": "",
+    "gPermanentArea": "",
+    "gPermanentPO": "",
+    "gPermanentThana": "",
+    "gPermanentDistrict": "",
+    "gPermanentPostCode": "",
+    "gPermanentCountry": "Bangladesh",
+    "introducerName": "",
+    "introducerDob": "",
+    "introducerAccount": "",
     "accountNumber": "",
     "accountNumberNoSpace": "",
     "cif": "",
@@ -52,6 +87,11 @@
     "nomineeMobile": "",
     "nomineeShare": "100",
     "nomineeAddress": "",
+    "guardianName": "",
+    "guardianRelation": "",
+    "guardianNid": "",
+    "guardianMobile": "",
+    "guardianPermanentAddress": "",
     "occupationProfession": "",
     "numberOfDepositWithdrawal": "",
     "transectionProfile": "",
@@ -99,14 +139,6 @@
     "boPermanentPostCode": "",
     "boPermanentCountry": "Bangladesh",
     "boPermanentLandmark": "",
-    "introducerName": "",
-    "introducerDob": "",
-    "introducerAccount": "",
-    "guardianName": "",
-    "guardianRelation": "",
-    "guardianNid": "",
-    "guardianMobile": "",
-    "guardianPermanentAddress": "",
     "depositCashCount": "5",
     "depositCashAmount": "",
     "depositCashTotal": "",
@@ -1941,6 +1973,202 @@
       "top": "87.7258%",
       "left": "72.9%"
     },
+    "48_gNameBn_0": {
+      "top": "42.5695%",
+      "left": "13.4%"
+    },
+    "48_gNameEn_1": {
+      "top": "45.0169%",
+      "left": "23.4%"
+    },
+    "48_gFatherName_2": {
+      "top": "50.3204%",
+      "left": "22.9%"
+    },
+    "48_gMotherName_3": {
+      "top": "52.5518%",
+      "left": "23.4%"
+    },
+    "48_gSpouseName_4": {
+      "top": "54.76%",
+      "left": "23.6%"
+    },
+    "48_branchName_5": {
+      "top": "16.3655%",
+      "left": "5.6%"
+    },
+    "48_branchName_6": {
+      "top": "6.50388%",
+      "left": "42.4%"
+    },
+    "48_gRelation_7": {
+      "top": "18%",
+      "left": "30%"
+    },
+    "48_gNid_8": {
+      "top": "84.4169%",
+      "left": "28.1%"
+    },
+    "48_gDob_9": {
+      "top": "48.5461%",
+      "left": "15.8%"
+    },
+    "48_gPresentHouse_10": {
+      "top": "71.5285%",
+      "left": "19.2%"
+    },
+    "48_gPresentArea_11": {
+      "top": "71.6005%",
+      "left": "72.2%"
+    },
+    "48_gPresentPO_12": {
+      "top": "73.8087%",
+      "left": "12.2%"
+    },
+    "48_gPresentThana_13": {
+      "top": "73.8807%",
+      "left": "39.2%"
+    },
+    "48_gPresentDistrict_14": {
+      "top": "73.8087%",
+      "left": "60.8%"
+    },
+    "48_gPresentPostCode_15": {
+      "top": "73.7367%",
+      "left": "85.3%"
+    },
+    "48_gPresentCountry_16": {
+      "top": "75.8729%",
+      "left": "10.3%"
+    },
+    "48_gPermanentHouse_17": {
+      "top": "78.1298%",
+      "left": "19.5%"
+    },
+    "48_gPermanentArea_18": {
+      "top": "78.2018%",
+      "left": "72.2%"
+    },
+    "48_gPermanentPO_19": {
+      "top": "80.5539%",
+      "left": "12.1%"
+    },
+    "48_gPermanentThana_20": {
+      "top": "80.554%",
+      "left": "39.1%"
+    },
+    "48_gPermanentDistrict_21": {
+      "top": "80.4819%",
+      "left": "60.8%"
+    },
+    "48_gPermanentPostCode_22": {
+      "top": "80.6259%",
+      "left": "85.5%"
+    },
+    "48_gPermanentCountry_23": {
+      "top": "82.5462%",
+      "left": "10.1%"
+    },
+    "48_gPhone_24": {
+      "top": "75.9336%",
+      "left": "40.7%"
+    },
+    "48_gEmail_25": {
+      "top": "75.9336%",
+      "left": "60.7%"
+    },
+    "48_gMale_26": {
+      "top": "56.9448%",
+      "left": "63.4%"
+    },
+    "48_gFemale_27": {
+      "top": "27%",
+      "left": "70%"
+    },
+    "48_todayDate_28": {
+      "top": "11.7586%",
+      "left": "11.7%"
+    },
+    "48_combinedApplicants_29": {
+      "top": "25.7703%",
+      "left": "31.3%"
+    },
+    "48_combinedApplicantsBn_30": {
+      "top": "23.669%",
+      "left": "25.8%"
+    },
+    "48_accountNumber_31": {
+      "top": "40.6492%",
+      "left": "52.2%"
+    },
+    "48_accountNumber_32": {
+      "top": "14.3035%",
+      "left": "52.1%"
+    },
+    "48_cif_33": {
+      "top": "16.1905%",
+      "left": "52.5%"
+    },
+    "48_gOccupation_34": {
+      "top": "62.9075%",
+      "left": "18.6%"
+    },
+    "48_gProfession_35": {
+      "top": "10%",
+      "left": "48%"
+    },
+    "48_gSourceOfFund_36": {
+      "top": "66.9414%",
+      "left": "20.9%"
+    },
+    "48_gMonthlyIncome_37": {
+      "top": "64.8935%",
+      "left": "21%"
+    },
+    "48_gPassport_38": {
+      "top": "86.2242%",
+      "left": "38.4%"
+    },
+    "48_gBirthReg_39": {
+      "top": "86.1523%",
+      "left": "30.1%"
+    },
+    "48_gTin_40": {
+      "top": "69.6681%",
+      "left": "16.5%"
+    },
+    "48_tick3_41": {
+      "top": "59.8392%",
+      "left": "22.8%"
+    },
+    "48_digit1_42": {
+      "top": "93.8151%",
+      "left": "81%"
+    },
+    "48_digit6_43": {
+      "top": "93.8871%",
+      "left": "87.8%"
+    },
+    "48_nationality_44": {
+      "top": "57.0966%",
+      "left": "12.5%"
+    },
+    "48_guardianStaticLabel_45": {
+      "top": "3.56811%",
+      "left": "80.1%"
+    },
+    "48_amlTrackingNumber_46": {
+      "top": "5.06421%",
+      "left": "75.9%"
+    },
+    "48_gAmlTrackingNumber_47": {
+      "top": "6.71983%",
+      "left": "76%"
+    },
+    "48_officer1Seal_48": {
+      "top": "87.6302%",
+      "left": "71.9%"
+    },
     "7_todayDate_0": {
       "top": "17.1726%",
       "left": "21.1%"
@@ -2040,6 +2268,14 @@
     "7_passportNo_24": {
       "top": "64.868%",
       "left": "27.6%"
+    },
+    "7_printTargetLabel_25": {
+      "top": "6.79742%",
+      "left": "74%"
+    },
+    "7_printTargetName_26": {
+      "top": "8.37298%",
+      "left": "76.8%"
     },
     "8_tick8_1_0": {
       "top": "12.643%",
