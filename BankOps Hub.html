@@ -9,23 +9,33 @@
     <link rel="stylesheet" href="css/fontawesome-fix.css">
     <link rel="stylesheet" href="css/poppins.css">
     <style>
-        /* Unified Modern Design System */
+        /* Unified Modern Design System - 2026 Edition */
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --accent: #ec4899;
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --primary-light: #a78bfa;
+            --accent: #f472b6;
+            --accent-dark: #ec4899;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --bg-primary: #f0f4f9;
+            --bg-primary: #fafbff;
             --bg-secondary: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1);
+            --bg-glass: rgba(255, 255, 255, 0.7);
+            --text-primary: #1e1b4b;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --border-color: rgba(124, 58, 237, 0.1);
+            --border-glass: rgba(255, 255, 255, 0.5);
+            --shadow-sm: 0 2px 8px rgba(124, 58, 237, 0.06);
+            --shadow-md: 0 8px 24px rgba(124, 58, 237, 0.1);
+            --shadow-lg: 0 16px 48px rgba(124, 58, 237, 0.12);
+            --shadow-xl: 0 24px 64px rgba(124, 58, 237, 0.15);
+            --shadow-glow: 0 0 40px rgba(124, 58, 237, 0.2);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
         }
 
         * {
@@ -34,26 +44,68 @@
             box-sizing: border-box;
         }
 
+        html {
+            overflow-anchor: none;
+            scroll-behavior: auto;
+        }
+
         body {
             font-family: 'Poppins', 'Inter', 'Segoe UI', sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(ellipse at 20% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(244, 114, 182, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.04) 0%, transparent 70%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             color: var(--text-primary);
+            scrollbar-gutter: stable;
+            overflow-anchor: none;
+            overflow-x: hidden;
         }
 
-        /* Modern Header */
+        /* Main content wrapper */
+        body > header,
+        body > footer {
+            width: 100%;
+        }
+        
+        body > main,
+        body > div:not(#welcomeScreen) {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0;
+        }
         .app-header {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
-            padding: 20px 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 10px 24px;
+            border-bottom: 1px solid var(--border-glass);
             position: relative;
             z-index: 100;
             animation: slideDown 0.6s ease-out;
+        }
+
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--success), var(--primary));
+            background-size: 300% 100%;
+            animation: shimmerBar 4s linear infinite;
+        }
+
+        @keyframes shimmerBar {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
         }
 
         @keyframes slideDown {
@@ -74,27 +126,27 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 2px;
             padding: 0 10px;
         }
 
         .header-main-title {
-            font-size: 2.2rem;
+            font-size: 1.5rem;
             font-weight: 800;
             margin: 0;
-            letter-spacing: -0.02em;
-            background: linear-gradient(90deg, 
-                #6366f1 0%,
-                #ec4899 25%,
-                #f59e0b 50%,
-                #ec4899 75%,
-                #6366f1 100%);
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, 
+                var(--primary) 0%,
+                var(--accent) 30%,
+                var(--primary-light) 60%,
+                var(--primary) 100%);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             color: transparent;
             animation: titleFadeInSlide 0.8s ease-out 0.1s both, rgbGradientShift 6s ease infinite;
+            text-shadow: 0 4px 30px rgba(124, 58, 237, 0.2);
         }
 
         @keyframes titleFadeInSlide {
@@ -114,13 +166,13 @@
         }
 
         .header-main-subtitle {
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
             margin: 0;
             font-weight: 500;
             max-width: 900px;
-            line-height: 1.5;
-            letter-spacing: 0.3px;
+            line-height: 1.3;
+            letter-spacing: 0.2px;
             animation: subtitleFadeInSlide 0.8s ease-out 0.2s both;
         }
 
@@ -137,35 +189,49 @@
 
         @media (max-width: 768px) {
             .app-header {
-                padding: 14px 12px;
+                padding: 8px 16px;
             }
 
             .header-content {
-                gap: 3px;
+                gap: 2px;
             }
 
             .header-main-title {
-                font-size: 1.6rem;
+                font-size: 1.2rem;
             }
 
             .header-main-subtitle {
-                font-size: 0.85rem;
+                font-size: 0.65rem;
             }
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px 30px;
-            margin: 40px 20px;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 32px 24px;
+            margin: 24px 16px;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-glass);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.03) 0%, transparent 70%);
+            pointer-events: none;
         }
 
         /* Modern Animated Header */
         h1 {
-            background: linear-gradient(135deg, #6366f1 0%, #ec4899 50%, #f59e0b 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--primary-light) 100%);
             background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -200,25 +266,45 @@
 
         .app-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 12px;
         }
 
         .section {
-            margin-bottom: 10px;
-            border-radius: 16px;
+            margin-bottom: 8px;
+            border-radius: var(--radius-lg);
             padding: 12px;
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid rgba(99, 102, 241, 0.1);
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.02) 0%, rgba(244, 114, 182, 0.02) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .section:hover::before {
+            opacity: 1;
         }
 
         .section:hover {
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.15);
-            border-color: rgba(99, 102, 241, 0.2);
-            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl), var(--shadow-glow);
+            border-color: rgba(124, 58, 237, 0.2);
+            transform: translateY(-4px);
         }
 
         .section-header {
@@ -226,63 +312,83 @@
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            padding: 8px 10px;
+            padding: 10px 12px;
             margin-bottom: 8px;
             user-select: none;
-            transition: all 0.2s ease;
-            border-radius: 10px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(236, 72, 153, 0.03) 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.04) 0%, rgba(244, 114, 182, 0.02) 100%);
         }
 
         .section-header:hover {
-            padding-left: 16px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(236, 72, 153, 0.08) 100%);
+            padding-left: 20px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(244, 114, 182, 0.06) 100%);
         }
 
         .section-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 14px;
         }
 
         .section-icon {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: #ffffff;
-            width: 52px;
-            height: 52px;
+            width: 56px;
+            height: 56px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 1) 0%, rgba(79, 70, 229, 1) 100%);
-            border-radius: 14px;
-            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
-            transition: transform 0.3s ease;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-dark) 100%);
+            border-radius: var(--radius-md);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .section-icon::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            border-radius: var(--radius-md);
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            filter: blur(8px);
         }
 
         .section-header:hover .section-icon {
-            transform: scale(1.08) rotate(3deg);
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .section-header:hover .section-icon::after {
+            opacity: 0.5;
         }
 
         .section-title {
-            font-size: 1.3rem;
+            font-size: 1.35rem;
             color: var(--text-primary);
-            font-weight: 800;
+            font-weight: 700;
             letter-spacing: -0.02em;
             margin-bottom: 4px;
         }
 
         .section-note {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--text-secondary);
-            margin-top: 4px;
-            line-height: 1.4;
+            margin-top: 2px;
+            line-height: 1.5;
             font-weight: 500;
         }
 
         .section-chevron {
-            transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--text-secondary);
-            font-size: 1.2rem;
+            transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            padding: 8px;
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 50%;
         }
 
         .section-body {
@@ -290,11 +396,16 @@
             transition: max-height 400ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms ease;
             max-height: 2000px;
             opacity: 1;
+            overflow-anchor: none;
         }
 
         .section-body.collapsed {
             max-height: 0;
             opacity: 0;
+        }
+
+        .section {
+            overflow-anchor: none;
         }
 
         .section-chevron.rotated {
@@ -307,153 +418,146 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             transition: transform 0.3s ease;
         }
 
-        .data-buttons {
-            margin-top: 14px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .data-btn {
-            background: rgba(99, 102, 241, 0.08);
-            border: 1px solid var(--border-color);
-            padding: 9px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--text-primary);
-            display: inline-flex;
-            gap: 8px;
-            align-items: center;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-
-        .data-btn:hover {
-            background: rgba(99, 102, 241, 0.15);
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
         .app-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
-            border: 2px solid rgba(99, 102, 241, 0.12);
-            border-radius: 16px;
-            padding: 28px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(124, 58, 237, 0.08);
+            border-radius: var(--radius-lg);
+            padding: 20px 18px;
             text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            /* Make all cards visually equal height */
-            min-height: 260px;
+            min-height: 240px;
         }
 
         .app-card::before {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5) 0%, rgba(236, 72, 153, 0.5) 100%);
-            border-radius: 16px;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .app-card::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle at center, rgba(124, 58, 237, 0.06) 0%, transparent 50%);
             opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: -1;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
         }
 
         .app-card:hover::before {
-            opacity: 0.12;
+            transform: scaleX(1);
+        }
+
+        .app-card:hover::after {
+            opacity: 1;
         }
 
         .app-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.18);
-            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: var(--shadow-xl), 0 0 60px rgba(124, 58, 237, 0.15);
+            border-color: rgba(124, 58, 237, 0.2);
         }
 
         .app-icon {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 16px;
-            transition: transform 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-block;
+            filter: drop-shadow(0 4px 8px rgba(124, 58, 237, 0.2));
         }
 
         .app-card:hover .app-icon {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.15) rotate(8deg);
+            filter: drop-shadow(0 8px 16px rgba(124, 58, 237, 0.3));
         }
 
         .app-title {
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             margin-bottom: 12px;
             color: var(--text-primary);
-            font-weight: 800;
+            font-weight: 700;
             letter-spacing: -0.02em;
         }
 
         .app-description {
             color: var(--text-secondary);
             margin-bottom: 20px;
-            font-size: 0.95rem;
-            line-height: 1.5;
+            font-size: 0.92rem;
+            line-height: 1.6;
             font-weight: 500;
         }
 
-        /* Unified Button Style */
+        /* Modern Pill Button Style */
         .open-btn {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, var(--accent-dark) 100%);
+            background-size: 200% 200%;
             color: white;
             border: none;
-            padding: 14px 32px;
-            border-radius: 10px;
+            padding: 14px 28px;
+            border-radius: 50px;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            letter-spacing: 0.3px;
         }
 
-        .open-btn::after {
+        .open-btn::before {
             content: '';
             position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 100%);
-            transform: translateX(-120%);
-            transition: transform 0.6s ease;
-            pointer-events: none;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.6s ease;
         }
 
-        .open-btn:hover::after {
-            transform: translateX(120%);
+        .open-btn:hover::before {
+            left: 100%;
         }
 
         .open-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.35);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 16px 40px rgba(124, 58, 237, 0.4);
+            background-position: 100% 0;
         }
 
         .open-btn:active {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1);
         }
 
         @keyframes floatButton {
@@ -462,22 +566,50 @@
         }
 
         footer {
-            margin-top: 50px;
+            margin-top: 40px;
             text-align: center;
             font-size: 0.9rem;
         }
 
-        /* Modern Footer with RGB Gradient Animation */
+        /* Search Bar Styles */
+        #appSearchInput:hover {
+            border-color: rgba(124, 58, 237, 0.25);
+        }
+        
+        #appSearchInput::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Quick Action Button Hover */
+        .utility-row button:hover,
+        button[onclick*="toggleAllSections"]:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        /* Stat Pills Animation */
+        .stat-pill {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-pill:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modern Footer with Glass Effect */
         footer.neon-footer {
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.5);
-            border-top: 1px solid var(--border-color);
-            border-radius: 12px;
+            padding: 24px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            margin: 0 16px 24px 16px;
         }
 
         footer.neon-footer p {
             font-weight: 600;
-            background: linear-gradient(90deg, #6366f1, #ec4899, #f59e0b, #10b981, #3b82f6, #6366f1);
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--success), var(--primary-light), var(--primary));
             background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -486,36 +618,45 @@
             margin: 0;
         }
 
-        /* Interest Calculator Styles - Modernized */
-        .ic-modal-inner { display:flex; gap:20px; align-items:flex-start; }
+        /* Interest Calculator Styles - Ultra Modern */
+        .ic-modal-inner { display:flex; gap:16px; align-items:flex-start; }
         .ic-left { flex:1; }
-        .ic-right { width:260px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.08)); border-radius:12px; padding:18px; color:var(--text-primary); border: 1px solid var(--border-color); }
-        .ic-tabs { display:flex; gap:12px; margin-bottom:12px }
-        .ic-tab { padding:10px 16px; border-radius:10px; cursor:pointer; font-weight:600; color:var(--text-secondary); background:transparent; transition: all 0.3s ease; }
+        .ic-right { 
+            width:240px; 
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(244, 114, 182, 0.05)); 
+            border-radius: var(--radius-md); 
+            padding:14px; 
+            color:var(--text-primary); 
+            border: 1px solid rgba(124, 58, 237, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .ic-tabs { display:flex; gap:6px; margin-bottom:12px; background: rgba(124, 58, 237, 0.05); padding: 4px; border-radius: 50px; }
+        .ic-tab { padding:8px 14px; border-radius:50px; cursor:pointer; font-weight:600; color:var(--text-secondary); background:transparent; transition: all 0.3s ease; font-size: 0.8rem; }
         .ic-tab.active { background:white; color:var(--primary); box-shadow: var(--shadow-md); }
-        .ic-row { margin-bottom:12px }
-        .ic-row label { display:block; font-size:0.9rem; color:var(--text-primary); margin-bottom:6px; font-weight: 600; }
-        .ic-input, .ic-select { width:100%; padding:10px; border:1px solid var(--border-color); border-radius:8px; background: white; transition: all 0.2s ease; }
-        .ic-input:focus, .ic-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
-        .ic-result-title { font-size:0.95rem; color:var(--text-secondary); margin-bottom:6px; font-weight: 600; }
-        .ic-result-amount { font-size:1.8rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight:900; margin-bottom:12px; }
-        .ic-breakdown { font-size:0.92rem; color:var(--text-primary); position:relative; padding:14px 12px; }
+        .ic-tab:hover:not(.active) { color: var(--primary); background: rgba(255,255,255,0.5); }
+        .ic-row { margin-bottom:10px }
+        .ic-row label { display:block; font-size:0.8rem; color:var(--text-primary); margin-bottom:4px; font-weight: 600; }
+        .ic-input, .ic-select { width:100%; padding:8px 10px; border:1px solid var(--border-color); border-radius: var(--radius-sm); background: white; transition: all 0.3s ease; font-size: 0.85rem; }
+        .ic-input:focus, .ic-select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1); outline: none; }
+        .ic-result-title { font-size:0.75rem; color:var(--text-secondary); margin-bottom:6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ic-result-amount { font-size:1.6rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight:800; margin-bottom:12px; }
+        .ic-breakdown { font-size:0.8rem; color:var(--text-primary); position:relative; padding:12px 10px; background: rgba(255,255,255,0.5); border-radius: var(--radius-sm); }
         .ic-breakdown::before {
             content: '';
             position: absolute;
             left: 50%;
-            top: 18px;
-            bottom: 18px;
+            top: 15px;
+            bottom: 15px;
             width: 3px;
             background: linear-gradient(180deg, var(--primary), var(--accent));
             border-radius: 2px;
             transform: translateX(-50%);
-            opacity: 0.4;
+            opacity: 0.3;
         }
-        .ic-breakdown .row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(15,23,42,0.04); }
+        .ic-breakdown .row { display:flex; align-items:center; gap:12px; padding:7px 0; border-bottom:1px solid rgba(124, 58, 237, 0.05); }
         .ic-breakdown .row span:first-child { width: calc(50% - 12px); text-align:left; word-break:break-word; padding-right:8px; font-weight: 500; }
         .ic-breakdown .row span:last-child { width: calc(50% - 12px); text-align:right; white-space:nowrap; padding-left:8px; font-weight: 600; color: var(--primary); }
-        .ic-breakdown .row.final { font-weight:800; border-top:2px solid var(--primary); margin-top:10px; padding-top:12px; color: var(--primary); }
+        .ic-breakdown .row.final { font-weight:800; border-top:2px solid var(--primary); margin-top:10px; padding-top:10px; color: var(--primary); border-bottom: none; }
 
         @keyframes rainbow {
             0% { background-position: 0% 50%; }
@@ -530,21 +671,22 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
-                padding: 24px 20px;
+                padding: 20px 16px;
+                margin: 16px 12px;
             }
             h1 {
                 font-size: 1.8rem;
             }
             .app-grid {
                 grid-template-columns: 1fr;
-                gap: 16px;
+                gap: 14px;
             }
             .app-card {
-                padding: 18px;
-                min-height: 200px;
+                padding: 20px;
+                min-height: 220px;
             }
-            .data-buttons {
-                flex-wrap: wrap;
+            .section {
+                padding: 12px;
             }
         }
 
@@ -560,9 +702,33 @@
                 min-height: auto;
             }
             .open-btn {
-                padding: 10px 20px;
-                font-size: 0.9rem;
+                padding: 12px 22px;
+                font-size: 0.88rem;
             }
+            .section-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Utility Button Hover Effects */
+        .utility-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            background-position: 100% 0;
+        }
+        .utility-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        .utility-btn:hover::before {
+            left: 100%;
         }
         /* Welcome Screen Styles */
         #welcomeScreen {
@@ -571,9 +737,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 25%, #4c1d95 50%, #312e81 75%, #1e1b4b 100%);
-            background-size: 400% 400%;
-            animation: welcomeGradient 8s ease infinite;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -581,17 +745,40 @@
             z-index: 10000;
             overflow: hidden;
         }
-
-        @keyframes welcomeGradient {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        
+        #welcomeScreen::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(99, 102, 241, 0.4) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(236, 72, 153, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.2) 0%, transparent 60%);
+            animation: meshMove 10s ease-in-out infinite;
+        }
+        
+        @keyframes meshMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(2%, -2%) rotate(1deg); }
+            50% { transform: translate(-1%, 2%) rotate(-1deg); }
+            75% { transform: translate(-2%, -1%) rotate(0.5deg); }
         }
 
         .welcome-content {
             text-align: center;
             position: relative;
             z-index: 2;
-            animation: welcomeFadeInScale 1s ease-out;
+            animation: welcomeFadeInScale 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 50px 60px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
         }
 
         @keyframes welcomeFadeInScale {
@@ -608,7 +795,7 @@
         .welcome-icon-wrapper {
             position: relative;
             display: inline-block;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .welcome-icon-bg {
@@ -616,11 +803,17 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 160px;
-            height: 160px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+            width: 180px;
+            height: 180px;
+            background: conic-gradient(from 0deg, rgba(99, 102, 241, 0.5), rgba(236, 72, 153, 0.5), rgba(139, 92, 246, 0.5), rgba(99, 102, 241, 0.5));
             border-radius: 50%;
-            animation: pulseGlow 2s ease-in-out infinite;
+            filter: blur(30px);
+            animation: pulseGlow 3s ease-in-out infinite, spinSlow 8s linear infinite;
+        }
+        
+        @keyframes spinSlow {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         @keyframes pulseGlow {
@@ -639,49 +832,55 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(145deg, rgba(99, 102, 241, 0.9) 0%, rgba(139, 92, 246, 0.9) 50%, rgba(236, 72, 153, 0.9) 100%);
+            border-radius: 28px;
+            box-shadow: 
+                0 20px 40px rgba(99, 102, 241, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            animation: iconFloat 4s ease-in-out infinite;
+        }
+        
+        .welcome-icon::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            background: linear-gradient(145deg, rgba(99, 102, 241, 0.6), rgba(236, 72, 153, 0.6));
             border-radius: 30px;
-            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.5);
-            animation: iconFloat 3s ease-in-out infinite;
+            z-index: -1;
+            animation: borderPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes borderPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
         }
 
         @keyframes iconFloat {
             0%, 100% {
-                transform: translateY(0px) rotate(0deg);
-            }
-            25% {
-                transform: translateY(-10px) rotate(-2deg);
+                transform: translateY(0px);
             }
             50% {
-                transform: translateY(0px) rotate(0deg);
-            }
-            75% {
-                transform: translateY(-10px) rotate(2deg);
+                transform: translateY(-12px);
             }
         }
 
         .welcome-icon i {
-            font-size: 3.5rem;
+            font-size: 2.8rem;
             color: #ffffff;
-            animation: iconSpin 4s linear infinite;
-        }
-
-        @keyframes iconSpin {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-5deg); }
-            50% { transform: rotate(0deg); }
-            75% { transform: rotate(5deg); }
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
 
         .welcome-greeting {
-            font-size: 2rem;
-            font-weight: 300;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-            animation: textFadeIn 1s ease-out 0.3s both;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 8px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            animation: textFadeIn 0.6s ease-out 0.2s both;
         }
 
         @keyframes textFadeIn {
@@ -696,16 +895,16 @@
         }
 
         .welcome-username {
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(90deg, #ffffff 0%, #a5b4fc 50%, #ffffff 100%);
-            background-size: 200% 200%;
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 40%, #f0abfc 60%, #ffffff 100%);
+            background-size: 300% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 15px;
-            letter-spacing: -1px;
-            animation: textFadeIn 1s ease-out 0.5s both, shimmerText 3s ease-in-out infinite;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+            animation: textFadeIn 0.6s ease-out 0.35s both, shimmerText 4s ease-in-out infinite;
         }
 
         @keyframes shimmerText {
@@ -714,12 +913,12 @@
         }
 
         .welcome-subtitle {
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.7);
-            letter-spacing: 3px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 6px;
             text-transform: uppercase;
-            animation: textFadeIn 1s ease-out 0.7s both;
+            animation: textFadeIn 0.6s ease-out 0.5s both;
         }
 
         .welcome-particles {
@@ -734,9 +933,18 @@
 
         .particle {
             position: absolute;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 50%;
-            animation: particleFloat 8s ease-in-out infinite;
+            animation: particleFloat 12s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        
+        .particle:nth-child(odd) {
+            background: rgba(99, 102, 241, 0.15);
+        }
+        
+        .particle:nth-child(even) {
+            background: rgba(236, 72, 153, 0.12);
         }
 
         @keyframes particleFloat {
@@ -757,21 +965,37 @@
         }
 
         .loading-bar-container {
-            width: 300px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            width: 220px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
             overflow: hidden;
-            margin-top: 40px;
-            animation: textFadeIn 1s ease-out 0.9s both;
+            margin-top: 30px;
+            animation: textFadeIn 0.6s ease-out 0.65s both;
+            position: relative;
+        }
+        
+        .loading-bar-container::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+            border-radius: 20px;
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
         }
 
         .loading-bar {
             height: 100%;
-            background: linear-gradient(90deg, #6366f1 0%, #ec4899 50%, #f59e0b 100%);
-            background-size: 200% 100%;
-            border-radius: 10px;
-            animation: loadingProgress 4s ease-out forwards, shimmerBar 1.5s linear infinite;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899, #f472b6);
+            background-size: 300% 100%;
+            border-radius: 20px;
+            animation: loadingProgress 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards, shimmerBar 1.2s linear infinite;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
         }
 
         @keyframes loadingProgress {
@@ -796,24 +1020,29 @@
         }
 
         @media (max-width: 768px) {
+            .welcome-content {
+                padding: 35px 40px;
+                margin: 0 20px;
+            }
             .welcome-icon {
-                width: 90px;
-                height: 90px;
+                width: 80px;
+                height: 80px;
             }
             .welcome-icon i {
-                font-size: 2.5rem;
-            }
-            .welcome-greeting {
-                font-size: 1.3rem;
-            }
-            .welcome-username {
                 font-size: 2.2rem;
             }
-            .welcome-subtitle {
+            .welcome-greeting {
                 font-size: 0.9rem;
             }
+            .welcome-username {
+                font-size: 2rem;
+            }
+            .welcome-subtitle {
+                font-size: 0.75rem;
+                letter-spacing: 4px;
+            }
             .loading-bar-container {
-                width: 200px;
+                width: 180px;
             }
         }
     </style>
@@ -926,7 +1155,7 @@
                 particlesContainer.appendChild(particle);
             }
             
-            // Hide welcome screen after 4 seconds
+            // Hide welcome screen after 2.5 seconds
             setTimeout(function() {
                 const welcomeScreen = document.getElementById('welcomeScreen');
                 welcomeScreen.classList.add('fade-out');
@@ -934,53 +1163,85 @@
                 // Remove from DOM after animation completes
                 setTimeout(function() {
                     welcomeScreen.style.display = 'none';
-                }, 800);
-            }, 4000);
+                }, 500);
+            }, 2500);
         })();
     </script>
 
     <!-- Modern Header -->
-    <header class="app-header" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 24px 20px 20px; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25);">
+    <header class="app-header" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 40%, #4c1d95 100%); padding: 10px 24px; position: relative; overflow: hidden; box-shadow: 0 6px 16px rgba(124, 58, 237, 0.2);">
+        <!-- Decorative Elements -->
+        <div style="position: absolute; top: -50%; right: -20%; width: 60%; height: 200%; background: radial-gradient(circle, rgba(244, 114, 182, 0.15) 0%, transparent 60%); pointer-events: none;"></div>
+        <div style="position: absolute; bottom: -50%; left: -20%; width: 60%; height: 200%; background: radial-gradient(circle, rgba(167, 139, 250, 0.15) 0%, transparent 60%); pointer-events: none;"></div>
         <!-- Username Display (Top Right) -->
-        <div style="position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 10;">
-            <div style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.95); padding: 8px 14px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; color: #6366f1; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);">
-                <i class="fas fa-user-circle" style="font-size: 1rem;"></i>
-                <div style="display: flex; flex-direction: column; gap: 2px;">
-                    <span style="font-size: 0.65rem; opacity: 0.8;">Welcome,</span>
-                    <span id="headerUsername" style="font-size: 0.8rem; font-weight: 800;">User</span>
+        <div style="position: absolute; top: 7px; right: 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; z-index: 10;">
+            <div style="display: flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.95); padding: 6px 12px; border-radius: 50px; font-size: 0.65rem; font-weight: 700; color: #7c3aed; letter-spacing: 0.2px; box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);">
+                <i class="fas fa-user-circle" style="font-size: 0.85rem;"></i>
+                <div style="display: flex; flex-direction: column; gap: 0px;">
+                    <span style="font-size: 0.5rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.3px;">Welcome</span>
+                    <span id="headerUsername" style="font-size: 0.65rem; font-weight: 800;">User</span>
                 </div>
             </div>
-            <!-- COMMAND CENTER badge removed -->
         </div>
         
         <div class="header-content" style="position: relative; z-index: 5;">
-            <div style="display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; background: rgba(255, 255, 255, 0.15); border-radius: 14px; margin-bottom: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); backdrop-filter: blur(10px); animation: shimmerIcon 2.5s infinite;">
-                <i class="fas fa-building" style="font-size: 1.6rem; color: #ffffff;"></i>
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.15); border-radius: 12px; margin-bottom: 3px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12); backdrop-filter: blur(16px); animation: shimmerIcon 2.5s infinite; border: 1px solid rgba(255, 255, 255, 0.2);">
+                <i class="fas fa-building" style="font-size: 1.1rem; color: #ffffff;"></i>
             </div>
-            <h1 class="header-main-title" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; letter-spacing: -0.04em; margin: 0 0 6px 0; text-shadow: 0 2px 16px rgba(0, 0, 0, 0.2); background: none; -webkit-text-fill-color: #ffffff;">BankOps Hub</h1>
-            <p class="header-main-subtitle" style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.95); margin: 0; font-weight: 500; max-width: 800px; line-height: 1.4; letter-spacing: 0.2px;">Unified, fast access to cash, customer service and credit workflows — export/import data, print-ready forms, and streamlined branch operations.</p>
+            <h1 class="header-main-title" style="font-size: 1.4rem; font-weight: 800; color: #ffffff; letter-spacing: -0.03em; margin: 0 0 2px 0; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2); background: none; -webkit-text-fill-color: #ffffff;">BankOps Hub</h1>
+            <p class="header-main-subtitle" style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.9); margin: 0; font-weight: 500; max-width: 800px; line-height: 1.2; letter-spacing: 0.2px;">Unified, fast access to cash, customer service and credit workflows — print-ready forms, and streamlined branch operations.</p>
         </div>
         
         <style>
         @keyframes shimmerIcon {
             0%, 100% {
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(255, 255, 255, 0.4);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(255, 255, 255, 0.4);
                 transform: scale(1);
             }
             50% {
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 10px rgba(255, 255, 255, 0.1);
-                transform: scale(1.03);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 0 0 6px rgba(255, 255, 255, 0.1);
+                transform: scale(1.02);
             }
         }
         </style>
     </header>
 
-    <div class="container" style="background: transparent; border: none; box-shadow: none; padding: 12px 20px; margin: 12px auto;">
-        <div class="utility-row" style="text-align:center; margin-bottom:12px;">
-            <button class="data-btn" onclick="openInterestCalculator()" title="Open Interest Calculator" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; font-size: 1rem; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3); transition: all 0.3s ease;">
-                <i class="fas fa-percent" style="font-size: 1.2rem;"></i>
+    <div class="container" style="background: transparent; border: none; box-shadow: none; padding: 12px 16px; margin: 12px auto;">
+        <!-- Search & Quick Actions Bar -->
+        <div style="background: var(--bg-glass); backdrop-filter: blur(20px); border-radius: var(--radius-xl); padding: 14px 18px; margin-bottom: 14px; border: 1px solid var(--border-glass); box-shadow: var(--shadow-md);">
+            <!-- Search Bar -->
+            <div style="position: relative; margin-bottom: 12px;">
+                <i class="fas fa-search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
+                <input type="text" id="appSearchInput" placeholder="Search apps..." oninput="filterApps(this.value)" style="width: 100%; padding: 10px 16px 10px 44px; font-size: 0.9rem; border: 2px solid rgba(124, 58, 237, 0.1); border-radius: 50px; background: rgba(255, 255, 255, 0.8); color: var(--text-primary); font-family: inherit; outline: none; transition: all 0.3s ease;">
+                <span id="searchClearBtn" onclick="clearSearch()" style="display: none; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 0.9rem; padding: 4px;">
+                    <i class="fas fa-times-circle"></i>
+                </span>
+            </div>
+            
+        </div>
+        
+        <!-- Quick Tools Row -->
+        <div class="utility-row" style="text-align:center; margin-bottom:14px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <button class="data-btn utility-btn" onclick="openInterestCalculator()" title="Open Interest Calculator" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%); background-size: 200% 200%; color: #ffffff; font-weight: 600; font-size: 0.85rem; border-radius: 50px; border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden;">
+                <i class="fas fa-percent" style="font-size: 0.9rem;"></i>
                 Interest Calculator
             </button>
+            <button class="data-btn utility-btn" onclick="openSelectOptions()" title="Select Visible Sections" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #6d28d9 100%); background-size: 200% 200%; color: #ffffff; font-weight: 600; font-size: 0.85rem; border-radius: 50px; border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden;">
+                <i class="fas fa-sliders-h" style="font-size: 0.9rem;"></i>
+                Customize View
+            </button>
+        </div>
+        
+        <!-- Search Results Container (hidden by default) -->
+        <div id="searchResultsContainer" style="display: none; margin-bottom: 14px;">
+            <div style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(244, 114, 182, 0.03)); border-radius: var(--radius-lg); padding: 12px 16px; border: 1px solid rgba(124, 58, 237, 0.1);">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <i class="fas fa-search" style="color: var(--primary);"></i>
+                    <span style="font-weight: 600; color: var(--text-primary);">Search Results</span>
+                    <span id="searchResultCount" style="background: var(--primary); color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">0</span>
+                </div>
+                <div id="searchResults" class="app-grid" style="gap: 12px;"></div>
+            </div>
         </div>
         <div class="sections">
             <section class="section" id="section-cash">
@@ -988,7 +1249,7 @@
                     <div class="section-left">
                         <i class="fas fa-wallet section-icon"></i>
                         <div>
-                            <div class="section-title">Cash</div>
+                            <div class="section-title">Cash <span class="app-count-badge" style="display: inline-flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, 0.15); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 12px; margin-left: 8px;">1 app</span></div>
                             <div class="section-note">Branch cash ops — deposits, withdrawals, reconciliation and quick reports.</div>
                         </div>
                     </div>
@@ -996,26 +1257,16 @@
                 </div>
                 <div class="section-body" id="body-cash">
                     <div class="app-grid">
-                        <div class="app-card">
+                        <div class="app-card" id="app-cash-management">
                             <i class="app-icon fas fa-wallet"></i>
                             <div class="app-title">Cash Management</div>
                             <div class="app-description">
-                                Handle cash transactions, deposits, withdrawals, and branch reconciliation with exportable reports.
+                                Handle cash transactions, deposits, withdrawals, and branch reconciliation with detailed reports.
                             </div>
                             <button class="open-btn" onclick="window.open('Cash/Cash Management.html', '_blank')">
                                 <i class="fas fa-external-link-alt"></i>
                                 Open App
                             </button>
-                            <div class="data-buttons">
-                                <button class="data-btn" onclick="exportData('cash')">
-                                    <i class="fas fa-download"></i>
-                                    Export Data
-                                </button>
-                                <button class="data-btn" onclick="importData('cash')">
-                                    <i class="fas fa-upload"></i>
-                                    Import Data
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1026,7 +1277,7 @@
                     <div class="section-left">
                         <i class="fas fa-user-circle section-icon"></i>
                         <div>
-                            <div class="section-title">Customer Service</div>
+                            <div class="section-title">Customer Service <span class="app-count-badge" style="display: inline-flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, 0.15); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 12px; margin-left: 8px;">5 apps</span></div>
                             <div class="section-note">Front-desk tools — account opening, RTGS/BEFTN forms and customer requests.</div>
                         </div>
                     </div>
@@ -1034,7 +1285,7 @@
                 </div>
                 <div class="section-body" id="body-customer">
                     <div class="app-grid">
-                        <div class="app-card">
+                        <div class="app-card" id="app-account-opening">
                             <i class="app-icon fas fa-user-edit"></i>
                             <div class="app-title">Account Opening Form Editor</div>
                             <div class="app-description">
@@ -1044,19 +1295,21 @@
                                 <i class="fas fa-external-link-alt"></i>
                                 Open App
                             </button>
-                            <div class="data-buttons">
-                                <button class="data-btn" onclick="exportData('acct')">
-                                    <i class="fas fa-download"></i>
-                                    Export Data
-                                </button>
-                                <button class="data-btn" onclick="importData('acct')">
-                                    <i class="fas fa-upload"></i>
-                                    Import Data
-                                </button>
-                            </div>
                         </div>
 
-                        <div class="app-card">
+                        <div class="app-card" id="app-org-account-opening">
+                            <i class="app-icon fas fa-building"></i>
+                            <div class="app-title">Organizational Account Opening Form Editor</div>
+                            <div class="app-description">
+                                Create and edit organizational account opening forms with validation and printable output.
+                            </div>
+                            <button class="open-btn" onclick="window.open('Organizational Account Opening Form Editor/Organizational Account Opening Form Editor.html', '_blank')">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open App
+                            </button>
+                        </div>
+
+                        <div class="app-card" id="app-tdrd-form">
                             <i class="app-icon fas fa-hourglass-half"></i>
                             <div class="app-title">TD/RD Account Form Editor</div>
                             <div class="app-description">
@@ -1066,19 +1319,9 @@
                                 <i class="fas fa-external-link-alt"></i>
                                 Open App
                             </button>
-                            <div class="data-buttons">
-                                <button class="data-btn" onclick="exportData('tdrd')">
-                                    <i class="fas fa-download"></i>
-                                    Export Data
-                                </button>
-                                <button class="data-btn" onclick="importData('tdrd')">
-                                    <i class="fas fa-upload"></i>
-                                    Import Data
-                                </button>
-                            </div>
                         </div>
 
-                        <div class="app-card">
+                        <div class="app-card" id="app-rtgs-beftn">
                             <i class="app-icon fas fa-file-invoice-dollar"></i>
                             <div class="app-title">RTGS BEFTN Form Editor</div>
                             <div class="app-description">
@@ -1088,37 +1331,17 @@
                                 <i class="fas fa-external-link-alt"></i>
                                 Open App
                             </button>
-                            <div class="data-buttons">
-                                <button class="data-btn" onclick="exportData('rtgs')">
-                                    <i class="fas fa-download"></i>
-                                    Export Data
-                                </button>
-                                <button class="data-btn" onclick="importData('rtgs')">
-                                    <i class="fas fa-upload"></i>
-                                    Import Data
-                                </button>
-                            </div>
                         </div>
-                        <div class="app-card">
+                        <div class="app-card" id="app-expense">
                             <i class="app-icon fas fa-layer-group"></i>
                             <div class="app-title">Expense</div>
                             <div class="app-description">
-                                Expense tracker with detailed reports and quick export/import support.
+                                Expense tracker with detailed reports.
                             </div>
                             <button class="open-btn" onclick="window.open('Expense/Expense.html', '_blank')">
                                 <i class="fas fa-external-link-alt"></i>
                                 Open App
                             </button>
-                            <div class="data-buttons">
-                                <button class="data-btn" onclick="exportData('expense')">
-                                    <i class="fas fa-download"></i>
-                                    Export Data
-                                </button>
-                                <button class="data-btn" onclick="importData('expense')">
-                                    <i class="fas fa-upload"></i>
-                                    Import Data
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1129,7 +1352,7 @@
                     <div class="section-left">
                         <i class="fas fa-briefcase section-icon"></i>
                         <div>
-                            <div class="section-title">Credit</div>
+                            <div class="section-title">Credit <span class="app-count-badge" style="display: inline-flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, 0.15); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 12px; margin-left: 8px;">2 apps</span></div>
                             <div class="section-note">Lending & analysis — ISS insights, commitment templates and reports.</div>
                         </div>
                     </div>
@@ -1137,7 +1360,7 @@
                 </div>
                 <div class="section-body" id="body-credit">
                     <div class="app-grid">
-                        <div class="app-card">
+                        <div class="app-card" id="app-iss-analyzer">
                             <i class="app-icon fas fa-chart-line"></i>
                             <div class="app-title">ISS Analyzer</div>
                             <div class="app-description">
@@ -1147,19 +1370,9 @@
                                 <i class="fas fa-external-link-alt"></i>
                                 Open App
                             </button>
-                            <div class="data-buttons">
-                                <button class="data-btn" onclick="exportData('iss')">
-                                    <i class="fas fa-download"></i>
-                                    Export Data
-                                </button>
-                                <button class="data-btn" onclick="importData('iss')">
-                                    <i class="fas fa-upload"></i>
-                                    Import Data
-                                </button>
-                            </div>
                         </div>
 
-                        <div class="app-card">
+                        <div class="app-card" id="app-credit-commitment">
                             <i class="app-icon fas fa-file-contract"></i>
                             <div class="app-title">Credit Commitment Editor</div>
                             <div class="app-description">
@@ -1169,16 +1382,6 @@
                                 <i class="fas fa-external-link-alt"></i>
                                 Open App
                             </button>
-                            <div class="data-buttons">
-                                <button class="data-btn" onclick="exportData('credit-commitment')">
-                                    <i class="fas fa-download"></i>
-                                    Export Data
-                                </button>
-                                <button class="data-btn" onclick="importData('credit-commitment')">
-                                    <i class="fas fa-upload"></i>
-                                    Import Data
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1188,15 +1391,15 @@
                     <div class="section-left">
                         <i class="fas fa-th-large section-icon"></i>
                         <div>
-                            <div class="section-title">Utilities & Tools</div>
-                                <div class="section-note">Handy utilities — Translator, PDF Compressor, and other small tools designed to speed up common tasks.</div>
+                            <div class="section-title">Utilities & Tools <span class="app-count-badge" style="display: inline-flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, 0.15); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 12px; margin-left: 8px;">6 apps</span></div>
+                            <div class="section-note">Handy utilities — Translator, PDF Compressor, and other small tools designed to speed up common tasks.</div>
                         </div>
                     </div>
                     <i class="fas fa-chevron-down section-chevron" id="chev-misc"></i>
                 </div>
                 <div class="section-body" id="body-misc">
                     <div class="app-grid">
-                        <div class="app-card">
+                        <div class="app-card" id="app-translator">
                             <i class="app-icon fas fa-language"></i>
                             <div class="app-title">Translator</div>
                             <div class="app-description">
@@ -1208,7 +1411,7 @@
                             </button>
                         </div>
 
-                        <div class="app-card">
+                        <div class="app-card" id="app-text-extractor">
                             <i class="app-icon fas fa-file-alt"></i>
                             <div class="app-title">Text Extractor</div>
                             <div class="app-description">
@@ -1220,7 +1423,7 @@
                             </button>
                         </div>
 
-                        <div class="app-card">
+                        <div class="app-card" id="app-customer-prospectus">
                             <i class="app-icon fas fa-user-tie"></i>
                             <div class="app-title">Customer Prospectus</div>
                             <div class="app-description">
@@ -1232,7 +1435,7 @@
                             </button>
                         </div>
 
-                        <div class="app-card">
+                        <div class="app-card" id="app-pdf-compressor">
                             <i class="app-icon fas fa-file-pdf"></i>
                             <div class="app-title">PDF Compressor</div>
                             <div class="app-description">
@@ -1243,7 +1446,7 @@
                                 Open App
                             </button>
                         </div>
-                        <div class="app-card">
+                        <div class="app-card" id="app-nid-stack">
                             <i class="app-icon fas fa-id-card-alt"></i>
                             <div class="app-title">NID Stack &amp; Enhance</div>
                             <div class="app-description">
@@ -1254,7 +1457,7 @@
                                 Open App
                             </button>
                         </div>
-                        <div class="app-card">
+                        <div class="app-card" id="app-secure-vault">
                             <i class="app-icon fas fa-vault"></i>
                             <div class="app-title">Secure Vault</div>
                             <div class="app-description">
@@ -1316,11 +1519,16 @@
     <input type="file" id="fileInput" style="display: none" accept=".json">
 
     <!-- Interest Calculator Modal -->
-    <div id="interest-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); align-items:center; justify-content:center; z-index:9999;" onclick="closeModalOnBackdropClick(event, 'interest-modal')">
-    <div style="background:#fff; width:720px; max-width:96%; margin:auto; border-radius:10px; padding:18px; box-shadow:none;" onclick="event.stopPropagation()">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <strong style="font-size:1.05rem">TD/RD and Loan (EMI) Interest Calculator</strong>
-                <button onclick="closeInterestCalculator()" style="background:transparent;border:none;font-size:1.2rem;cursor:pointer;color:#6b7280">&times;</button>
+    <div id="interest-modal" style="display:none; position:fixed; inset:0; background:rgba(30, 27, 75, 0.6); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); align-items:center; justify-content:center; z-index:9999;" onclick="closeModalOnBackdropClick(event, 'interest-modal')">
+    <div style="background:rgba(255,255,255,0.98); width:720px; max-width:96%; margin:auto; border-radius:20px; padding:20px; box-shadow:0 24px 60px rgba(124, 58, 237, 0.2); border: 1px solid rgba(124, 58, 237, 0.1);" onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:12px; border-bottom: 1px solid rgba(124, 58, 237, 0.1);">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:36px; height:36px; background:linear-gradient(135deg, #7c3aed, #ec4899); border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-calculator" style="color:white; font-size:0.9rem;"></i>
+                    </div>
+                    <strong style="font-size:0.95rem; font-weight:700; color:#1e1b4b;">TD/RD and Loan (EMI) Calculator</strong>
+                </div>
+                <button onclick="closeInterestCalculator()" style="background:rgba(124, 58, 237, 0.1); border:none; width:32px; height:32px; border-radius:50%; font-size:1.1rem; cursor:pointer; color:#7c3aed; transition: all 0.2s ease;">&times;</button>
             </div>
             <div class="ic-modal-inner">
                 <div class="ic-left">
@@ -1409,150 +1617,142 @@
         </div>
     </div>
 
+    <!-- Select Options Modal -->
+    <div id="select-options-modal" style="display:none; position:fixed; inset:0; background:rgba(30, 27, 75, 0.6); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); align-items:center; justify-content:center; z-index:9999;" onclick="closeModalOnBackdropClick(event, 'select-options-modal')">
+    <div style="background:rgba(255,255,255,0.98); width:520px; max-width:96%; max-height:85vh; margin:auto; border-radius:24px; padding:28px; box-shadow:0 32px 80px rgba(124, 58, 237, 0.25); overflow-y:auto; border: 1px solid rgba(124, 58, 237, 0.1);" onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:16px; border-bottom: 1px solid rgba(124, 58, 237, 0.1);">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:44px; height:44px; background:linear-gradient(135deg, #7c3aed, #ec4899); border-radius:12px; display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-sliders-h" style="color:white; font-size:1.1rem;"></i>
+                    </div>
+                    <strong style="font-size:1.15rem; font-weight:700; color:#1e1b4b;">Customize View</strong>
+                </div>
+                <button onclick="closeSelectOptions()" style="background:rgba(124, 58, 237, 0.1); border:none; width:36px; height:36px; border-radius:50%; font-size:1.2rem; cursor:pointer; color:#7c3aed; transition: all 0.2s ease;">&times;</button>
+            </div>
+            <div style="padding-top:8px;">
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <!-- Cash Section -->
+                    <div class="section-option-group">
+                        <label style="display:flex; align-items:center; padding:14px 16px; background:linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(244, 114, 182, 0.03)); border-radius:14px; cursor:pointer; transition:all 0.3s ease; border: 1px solid rgba(124, 58, 237, 0.08);">
+                            <input type="checkbox" id="toggle-cash" class="section-toggle" onchange="updateSectionVisibility()" style="width:20px; height:20px; cursor:pointer; accent-color:#7c3aed;">
+                            <span style="margin-left:14px; font-weight:600; color:#1e1b4b; flex:1; font-size:0.95rem;">💰 Cash Management</span>
+                            <i class="fas fa-chevron-down" id="expand-cash" onclick="event.preventDefault(); toggleSubOptions('cash')" style="cursor:pointer; color:#a78bfa; transition:transform 0.3s ease; padding:6px; background:rgba(124, 58, 237, 0.08); border-radius:50%;"></i>
+                        </label>
+                        <div id="suboptions-cash" class="sub-options" style="display:none; margin-left:28px; margin-top:6px; border-left:3px solid rgba(124, 58, 237, 0.2); padding-left:16px; border-radius:0 0 0 8px;">
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:all 0.2s ease;">
+                                <input type="checkbox" id="toggle-app-cash-management" class="app-toggle" data-section="cash" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Cash Management</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Customer Service Section -->
+                    <div class="section-option-group">
+                        <label style="display:flex; align-items:center; padding:14px 16px; background:linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(244, 114, 182, 0.03)); border-radius:14px; cursor:pointer; transition:all 0.2s; border:1px solid rgba(124, 58, 237, 0.1);">
+                            <input type="checkbox" id="toggle-customer-service" class="section-toggle" onchange="updateSectionVisibility()" style="width:20px; height:20px; cursor:pointer; accent-color:#7c3aed;">
+                            <span style="margin-left:14px; font-weight:600; color:#374151; flex:1; font-size:1rem;">👥 Customer Service</span>
+                            <span onclick="event.preventDefault(); toggleSubOptions('customer')" style="cursor:pointer; background:rgba(124, 58, 237, 0.1); padding:6px 12px; border-radius:20px; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+                                <span style="font-size:0.75rem; color:#7c3aed; font-weight:500;">Apps</span>
+                                <i class="fas fa-chevron-down" id="expand-customer" style="color:#7c3aed; font-size:0.7rem; transition:transform 0.2s;"></i>
+                            </span>
+                        </label>
+                        <div id="suboptions-customer" class="sub-options" style="display:none; margin-left:28px; margin-top:8px; border-left:3px solid rgba(124, 58, 237, 0.2); padding-left:16px; background:linear-gradient(90deg, rgba(124, 58, 237, 0.02), transparent); border-radius:0 8px 8px 0;">
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-account-opening" class="app-toggle" data-section="customer" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Account Opening Form Editor</span>
+                            </label>
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-org-account-opening" class="app-toggle" data-section="customer" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Organizational Account Form Editor</span>
+                            </label>
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-tdrd-form" class="app-toggle" data-section="customer" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">TD/RD Account Form Editor</span>
+                            </label>
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-rtgs-beftn" class="app-toggle" data-section="customer" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">RTGS BEFTN Form Editor</span>
+                            </label>
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-expense" class="app-toggle" data-section="customer" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Expense</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Credit Section -->
+                    <div class="section-option-group">
+                        <label style="display:flex; align-items:center; padding:14px 16px; background:linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(244, 114, 182, 0.03)); border-radius:14px; cursor:pointer; transition:all 0.2s; border:1px solid rgba(124, 58, 237, 0.1);">
+                            <input type="checkbox" id="toggle-credit" class="section-toggle" onchange="updateSectionVisibility()" style="width:20px; height:20px; cursor:pointer; accent-color:#7c3aed;">
+                            <span style="margin-left:14px; font-weight:600; color:#374151; flex:1; font-size:1rem;">💼 Credit</span>
+                            <span onclick="event.preventDefault(); toggleSubOptions('credit')" style="cursor:pointer; background:rgba(124, 58, 237, 0.1); padding:6px 12px; border-radius:20px; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+                                <span style="font-size:0.75rem; color:#7c3aed; font-weight:500;">Apps</span>
+                                <i class="fas fa-chevron-down" id="expand-credit" style="color:#7c3aed; font-size:0.7rem; transition:transform 0.2s;"></i>
+                            </span>
+                        </label>
+                        <div id="suboptions-credit" class="sub-options" style="display:none; margin-left:28px; margin-top:8px; border-left:3px solid rgba(124, 58, 237, 0.2); padding-left:16px; background:linear-gradient(90deg, rgba(124, 58, 237, 0.02), transparent); border-radius:0 8px 8px 0;">
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-iss-analyzer" class="app-toggle" data-section="credit" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">ISS Analyzer</span>
+                            </label>
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-credit-commitment" class="app-toggle" data-section="credit" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Credit Commitment Editor</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Miscellaneous Section -->
+                    <div class="section-option-group">
+                        <label style="display:flex; align-items:center; padding:14px 16px; background:linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(244, 114, 182, 0.03)); border-radius:14px; cursor:pointer; transition:all 0.2s; border:1px solid rgba(124, 58, 237, 0.1);">
+                            <input type="checkbox" id="toggle-misc" class="section-toggle" onchange="updateSectionVisibility()" style="width:20px; height:20px; cursor:pointer; accent-color:#7c3aed;">
+                            <span style="margin-left:14px; font-weight:600; color:#374151; flex:1; font-size:1rem;">🔧 Utilities & Tools</span>
+                            <span onclick="event.preventDefault(); toggleSubOptions('misc')" style="cursor:pointer; background:rgba(124, 58, 237, 0.1); padding:6px 12px; border-radius:20px; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+                                <span style="font-size:0.75rem; color:#7c3aed; font-weight:500;">Apps</span>
+                                <i class="fas fa-chevron-down" id="expand-misc" style="color:#7c3aed; font-size:0.7rem; transition:transform 0.2s;"></i>
+                            </span>
+                        </label>
+                        <div id="suboptions-misc" class="sub-options" style="display:none; margin-left:28px; margin-top:8px; border-left:3px solid rgba(124, 58, 237, 0.2); padding-left:16px; background:linear-gradient(90deg, rgba(124, 58, 237, 0.02), transparent); border-radius:0 8px 8px 0;">
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-translator" class="app-toggle" data-section="misc" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Translator</span>
+                            </label>
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-text-extractor" class="app-toggle" data-section="misc" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Text Extractor</span>
+                            </label>
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-customer-prospectus" class="app-toggle" data-section="misc" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Customer Prospectus</span>
+                            </label>
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-pdf-compressor" class="app-toggle" data-section="misc" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">PDF Compressor</span>
+                            </label>
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-nid-stack" class="app-toggle" data-section="misc" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">NID Stack & Enhance</span>
+                            </label>
+                            <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
+                                <input type="checkbox" id="toggle-app-secure-vault" class="app-toggle" data-section="misc" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Secure Vault</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; gap:12px; margin-top:24px;">
+                <button onclick="resetSectionVisibility()" style="flex:1; padding:14px 20px; background:rgba(124, 58, 237, 0.08); color:#7c3aed; font-weight:600; border-radius:50px; border:2px solid rgba(124, 58, 237, 0.2); cursor:pointer; transition:all 0.3s; font-size:0.95rem;">
+                    <i class="fas fa-undo" style="margin-right:8px;"></i>Reset to All
+                </button>
+                <button onclick="closeSelectOptions()" style="flex:1; padding:14px 20px; background:linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #4c1d95 100%); background-size:200% 100%; color:#ffffff; font-weight:600; border-radius:50px; border:none; cursor:pointer; transition:all 0.3s; box-shadow:0 8px 24px rgba(124, 58, 237, 0.35); font-size:0.95rem;">
+                    <i class="fas fa-check" style="margin-right:8px;"></i>Apply Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        function exportData(app) {
-            const keys = getLocalStorageKeys(app);
-            if (keys.length === 0) {
-                alert('No data found to export!');
-                return;
-            }
-
-            const data = {};
-            keys.forEach(key => {
-                data[key] = localStorage.getItem(key);
-            });
-
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${app}-data-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function importData(app) {
-            const fileInput = document.getElementById('fileInput');
-            fileInput.onchange = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const data = JSON.parse(e.target.result);
-                        const keys = getLocalStorageKeys(app);
-                        
-                        // Clear existing data for this app
-                        keys.forEach(key => localStorage.removeItem(key));
-                        
-                        // Import new data
-                        Object.entries(data).forEach(([key, value]) => {
-                            localStorage.setItem(key, value);
-                        });
-                        
-                        alert('Data imported successfully!');
-                    } catch (err) {
-                        alert('Error importing data. Please check the file format.');
-                    }
-                };
-                reader.readAsText(file);
-            };
-            fileInput.click();
-        }
-
-        function getLocalStorageKeys(app) {
-            const keys = [];
-            // Known explicit keys for RTGS and ISS apps (use exact names when present)
-            const knownRtgs = [
-                'rtgs_form_v1',
-                'rtgs_positions_v1',
-                'rtgs_senders_v1',
-                'rtgs_receivers_v1',
-                'rtgs_sender_v1',
-                'rtgs_receiver_v1'
-            ];
-            const knownIss = [
-                'iss_local_selections_v1',
-                'iss_full_state_v1',
-                'iss_cust_assets_v1',
-                'iss_state_v5',
-                'iss_sme_earnest_pct_v1'
-            ];
-            const knownExpense = [
-                // reasonable defaults / versioned keys that the Expense app may use
-                'expanse_entries_v1',
-                'expanse_state_v1',
-                'expanse_settings_v1',
-                'expenses_v1',
-                // keys used by the Expense app (storage keys keep 'expanse' prefix)
-                'transactions',
-                'budgets',
-                // UI state flags
-                'glBudgetsCollapsed',
-                'expenseLedgerCollapsed'
-            ];
-
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-
-                if (app === 'credit-commitment') {
-                        // Credit Commitment editor stores data under keys like:
-                        // - cc_editor:<templateId>
-                        // - cc_customers
-                        // - cc_editor_list
-                        // older versions may have used 'creditCommitment' prefixes or branch_/sign_ keys
-                        const lk = (key || '').toLowerCase();
-                        if (
-                            key.startsWith('cc_editor:') ||
-                            lk.startsWith('cc_') ||
-                            key.startsWith('creditCommitment') ||
-                            lk.includes('branch_') ||
-                            lk.includes('sign_')
-                        ) {
-                            keys.push(key);
-                        }
-                        // ensure explicit known keys are included if present (customers list, editor index)
-                        try {
-                            ['cc_customers', 'cc_editor_list'].forEach(k => {
-                                if (localStorage.getItem(k) && !keys.includes(k)) keys.push(k);
-                            });
-                        } catch (e) { /* ignore storage access errors */ }
-
-                } else if (app === 'iss') {
-                    // prefer known explicit keys, but also accept any iss_ prefix or cust asset key
-                    if (knownIss.includes(key) || key.startsWith('iss_') || key.includes('cust_asset')) {
-                        keys.push(key);
-                    }
-
-                } else if (app === 'expense') {
-                    // Expense: prefer explicit known keys, or keys that start with 'expanse' or mention 'expense(s)'
-                    if (
-                        knownExpense.includes(key) ||
-                        key.toLowerCase().startsWith('expanse') ||
-                        key.toLowerCase().includes('expense') ||
-                        key.toLowerCase().includes('expenses')
-                    ) {
-                        keys.push(key);
-                    }
-
-                } else if (app === 'cash') {
-                    // Cash app doesn't use a strict prefix in this project; fallback to any key mentioning 'cash'
-                    if (key && (key.toLowerCase().startsWith('cash') || key.toLowerCase().includes('cash') || key.toLowerCase().includes('cash_'))) {
-                        keys.push(key);
-                    }
-
-                } else if (app === 'rtgs') {
-                    // prefer exact RTGS keys, but also accept rtgs_ prefixes or beftn mentions
-                    if (knownRtgs.includes(key) || key.toLowerCase().startsWith('rtgs') || key.toLowerCase().includes('beftn')) {
-                        keys.push(key);
-                    }
-                }
-            }
-            return keys;
-        }
 
         // Section toggle: collapse/expand (accordion) and persist state in localStorage
         function toggleSection(name) {
@@ -1562,6 +1762,9 @@
 
             // If the target is currently collapsed we will expand it and collapse others (accordion behavior)
             const currentlyCollapsed = body.classList.contains('collapsed');
+            
+            // Save scroll position before toggle
+            const scrollY = window.scrollY;
 
             const sectionNames = ['cash', 'customer', 'credit', 'misc'];
             if (currentlyCollapsed) {
@@ -1586,10 +1789,168 @@
                 chevron.classList.add('rotated');
                 localStorage.setItem('section_' + name + '_collapsed', '1');
             }
+            
+            // Restore scroll position after toggle
+            requestAnimationFrame(() => {
+                window.scrollTo(0, scrollY);
+            });
         }
+
+        // Toggle all sections expand/collapse
+        function toggleAllSections(expand) {
+            // Save scroll position
+            const scrollY = window.scrollY;
+            
+            ['cash', 'customer', 'credit', 'misc'].forEach(name => {
+                const body = document.getElementById('body-' + name);
+                const chevron = document.getElementById('chev-' + name);
+                const section = document.getElementById('section-' + name);
+                if (!body || !chevron || !section || section.style.display === 'none') return;
+                
+                if (expand) {
+                    body.classList.remove('collapsed');
+                    chevron.classList.remove('rotated');
+                    localStorage.removeItem('section_' + name + '_collapsed');
+                } else {
+                    body.classList.add('collapsed');
+                    chevron.classList.add('rotated');
+                    localStorage.setItem('section_' + name + '_collapsed', '1');
+                }
+            });
+            
+            // Restore scroll position
+            requestAnimationFrame(() => {
+                window.scrollTo(0, scrollY);
+            });
+        }
+
+        // App search functionality
+        const appData = [
+            { id: 'app-cash-management', title: 'Cash Management', section: 'cash', keywords: ['cash', 'deposit', 'withdrawal', 'reconciliation', 'transaction'], url: 'Cash/Cash Management.html', icon: 'fa-wallet' },
+            { id: 'app-account-opening', title: 'Account Opening Form Editor', section: 'customer', keywords: ['account', 'opening', 'form', 'personal', 'savings'], url: 'Account Opening Form Editor/Account Opening Form Editor.html', icon: 'fa-user-edit' },
+            { id: 'app-org-account-opening', title: 'Organizational Account Opening Form Editor', section: 'customer', keywords: ['organization', 'org', 'company', 'business', 'corporate'], url: 'Organizational Account Opening Form Editor/Organizational Account Opening Form Editor.html', icon: 'fa-building' },
+            { id: 'app-tdrd-form', title: 'TD/RD Account Form Editor', section: 'customer', keywords: ['td', 'rd', 'term', 'deposit', 'recurring', 'fixed'], url: 'TDRD Account Form Editor/TDRD Account Form Editor.html', icon: 'fa-hourglass-half' },
+            { id: 'app-rtgs-beftn', title: 'RTGS BEFTN Form Editor', section: 'customer', keywords: ['rtgs', 'beftn', 'transfer', 'payment', 'remittance'], url: 'RTGS and BEFTN/RTGS BEFTN Form Editor.html', icon: 'fa-file-invoice-dollar' },
+            { id: 'app-expense', title: 'Expense', section: 'customer', keywords: ['expense', 'tracker', 'spending', 'budget'], url: 'Expense/Expense.html', icon: 'fa-layer-group' },
+            { id: 'app-iss-analyzer', title: 'ISS Analyzer', section: 'credit', keywords: ['iss', 'analyzer', 'analysis', 'data', 'report'], url: 'ISS/ISS.html', icon: 'fa-chart-line' },
+            { id: 'app-credit-commitment', title: 'Credit Commitment Editor', section: 'credit', keywords: ['credit', 'commitment', 'loan', 'lending', 'template'], url: 'Credit Commitment/Credit Commitment.html', icon: 'fa-file-contract' },
+            { id: 'app-translator', title: 'Translator', section: 'misc', keywords: ['translate', 'language', 'bangla', 'english', 'text'], url: 'Translator/Translator.html', icon: 'fa-language' },
+            { id: 'app-text-extractor', title: 'Text Extractor', section: 'misc', keywords: ['ocr', 'extract', 'image', 'scan', 'text'], url: 'Text Extractor/Text Extractor.html', icon: 'fa-file-alt' },
+            { id: 'app-customer-prospectus', title: 'Customer Prospectus', section: 'misc', keywords: ['customer', 'prospectus', 'profile', 'document'], url: 'Customer Prospectus/Customer Prospectus.html', icon: 'fa-user-tie' },
+            { id: 'app-pdf-compressor', title: 'PDF Compressor', section: 'misc', keywords: ['pdf', 'compress', 'reduce', 'size', 'file'], url: 'PDF Compressor/PDF Compressor.html', icon: 'fa-file-pdf' },
+            { id: 'app-nid-stack', title: 'NID Stack & Enhance', section: 'misc', keywords: ['nid', 'id', 'card', 'image', 'stack', 'enhance'], url: 'NID Stack & Enhance/NID Stack & Enhance.html', icon: 'fa-id-card-alt' },
+            { id: 'app-secure-vault', title: 'Secure Vault', section: 'misc', keywords: ['password', 'vault', 'secure', 'encrypt', 'storage'], url: 'Secure Vault/Secure Vault.html', icon: 'fa-vault' }
+        ];
+
+        function filterApps(query) {
+            const searchInput = document.getElementById('appSearchInput');
+            const clearBtn = document.getElementById('searchClearBtn');
+            const resultsContainer = document.getElementById('searchResultsContainer');
+            const resultsDiv = document.getElementById('searchResults');
+            const resultCount = document.getElementById('searchResultCount');
+            const sectionsDiv = document.querySelector('.sections');
+            
+            query = query.trim().toLowerCase();
+            
+            // Show/hide clear button
+            clearBtn.style.display = query ? 'block' : 'none';
+            
+            if (!query) {
+                resultsContainer.style.display = 'none';
+                sectionsDiv.style.display = 'block';
+                return;
+            }
+            
+            // Search through apps
+            const matches = appData.filter(app => {
+                return app.title.toLowerCase().includes(query) || 
+                       app.keywords.some(kw => kw.includes(query)) ||
+                       app.section.includes(query);
+            });
+            
+            // Update result count
+            resultCount.textContent = matches.length;
+            
+            if (matches.length > 0) {
+                resultsContainer.style.display = 'block';
+                sectionsDiv.style.display = 'none';
+                
+                resultsDiv.innerHTML = matches.map(app => `
+                    <div class="app-card" style="min-height: 200px; padding: 20px;">
+                        <i class="app-icon fas ${app.icon}"></i>
+                        <div class="app-title" style="font-size: 1rem;">${highlightMatch(app.title, query)}</div>
+                        <div class="app-description" style="font-size: 0.85rem; -webkit-line-clamp: 2;">
+                            <span style="display: inline-block; background: rgba(124, 58, 237, 0.1); color: var(--primary); padding: 2px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 600; text-transform: capitalize; margin-bottom: 6px;">${app.section}</span>
+                        </div>
+                        <button class="open-btn" onclick="window.open('${app.url}', '_blank')" style="padding: 10px 16px; font-size: 0.85rem;">
+                            <i class="fas fa-external-link-alt"></i> Open App
+                        </button>
+                    </div>
+                `).join('');
+            } else {
+                resultsContainer.style.display = 'block';
+                sectionsDiv.style.display = 'none';
+                resultsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="fas fa-search" style="font-size: 2.5rem; opacity: 0.3; margin-bottom: 12px;"></i>
+                        <p style="font-weight: 500;">No apps found for "${query}"</p>
+                        <p style="font-size: 0.85rem; opacity: 0.7;">Try a different search term</p>
+                    </div>
+                `;
+            }
+        }
+
+        function highlightMatch(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<mark style="background: rgba(124, 58, 237, 0.2); padding: 0 2px; border-radius: 3px;">$1</mark>');
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('appSearchInput');
+            searchInput.value = '';
+            filterApps('');
+            searchInput.focus();
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+K or Cmd+K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const searchInput = document.getElementById('appSearchInput');
+                searchInput.focus();
+                searchInput.select();
+            }
+            // Escape to clear search
+            if (e.key === 'Escape') {
+                const searchInput = document.getElementById('appSearchInput');
+                if (document.activeElement === searchInput && searchInput.value) {
+                    clearSearch();
+                }
+            }
+        });
+
+        // Add focus styles to search input
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('appSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('focus', function() {
+                    this.style.borderColor = 'var(--primary)';
+                    this.style.boxShadow = '0 0 0 4px rgba(124, 58, 237, 0.1)';
+                });
+                searchInput.addEventListener('blur', function() {
+                    this.style.borderColor = 'rgba(124, 58, 237, 0.1)';
+                    this.style.boxShadow = 'none';
+                });
+            }
+        });
 
         // Initialize sections from localStorage and run small feature-detects
         window.addEventListener('DOMContentLoaded', () => {
+            // Load section visibility preferences
+            loadInitialSectionVisibility();
+            
             ['cash', 'customer', 'credit', 'misc'].forEach(name => {
                 try {
                     const body = document.getElementById('body-' + name);
@@ -1665,6 +2026,126 @@
             const m = document.getElementById('interest-modal');
             if (!m) return;
             m.style.display = 'none';
+        }
+
+        // Select Options Modal Functions
+        function openSelectOptions() {
+            const m = document.getElementById('select-options-modal');
+            if (!m) return;
+            loadSectionPreferences();
+            loadAppPreferences();
+            m.style.display = 'flex';
+        }
+
+        function closeSelectOptions() {
+            const m = document.getElementById('select-options-modal');
+            if (!m) return;
+            // Apply the current settings before closing
+            updateSectionVisibility();
+            updateAppVisibility();
+            m.style.display = 'none';
+        }
+
+        function toggleSubOptions(section) {
+            const subOptions = document.getElementById('suboptions-' + section);
+            const expandIcon = document.getElementById('expand-' + section);
+            if (!subOptions || !expandIcon) return;
+            
+            const isOpen = subOptions.style.display !== 'none';
+            subOptions.style.display = isOpen ? 'none' : 'block';
+            expandIcon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
+        function loadSectionPreferences() {
+            const prefs = JSON.parse(localStorage.getItem('bankops_section_visibility')) || {
+                cash: true,
+                customerService: true,
+                credit: true,
+                misc: true
+            };
+            document.getElementById('toggle-cash').checked = prefs.cash;
+            document.getElementById('toggle-customer-service').checked = prefs.customerService;
+            document.getElementById('toggle-credit').checked = prefs.credit;
+            document.getElementById('toggle-misc').checked = prefs.misc;
+        }
+
+        function loadAppPreferences() {
+            const appPrefs = JSON.parse(localStorage.getItem('bankops_app_visibility')) || {};
+            const appToggles = document.querySelectorAll('.app-toggle');
+            appToggles.forEach(toggle => {
+                const appId = toggle.id.replace('toggle-', '');
+                toggle.checked = appPrefs[appId] !== false; // default to true if not set
+            });
+        }
+
+        function updateSectionVisibility() {
+            const prefs = {
+                cash: document.getElementById('toggle-cash').checked,
+                customerService: document.getElementById('toggle-customer-service').checked,
+                credit: document.getElementById('toggle-credit').checked,
+                misc: document.getElementById('toggle-misc').checked
+            };
+            localStorage.setItem('bankops_section_visibility', JSON.stringify(prefs));
+            applySectionVisibility(prefs);
+        }
+
+        function updateAppVisibility() {
+            const appPrefs = {};
+            const appToggles = document.querySelectorAll('.app-toggle');
+            appToggles.forEach(toggle => {
+                const appId = toggle.id.replace('toggle-', '');
+                appPrefs[appId] = toggle.checked;
+            });
+            localStorage.setItem('bankops_app_visibility', JSON.stringify(appPrefs));
+            applyAppVisibility(appPrefs);
+        }
+
+        function applySectionVisibility(prefs) {
+            // Hide/show entire section elements (header + body)
+            document.getElementById('section-cash').style.display = prefs.cash ? '' : 'none';
+            document.getElementById('section-customer').style.display = prefs.customerService ? '' : 'none';
+            document.getElementById('section-credit').style.display = prefs.credit ? '' : 'none';
+            document.getElementById('section-misc').style.display = prefs.misc ? '' : 'none';
+        }
+
+        function applyAppVisibility(prefs) {
+            Object.keys(prefs).forEach(appId => {
+                const appCard = document.getElementById(appId);
+                if (appCard) {
+                    appCard.style.display = prefs[appId] ? '' : 'none';
+                }
+            });
+        }
+
+        function resetSectionVisibility() {
+            // Reset section toggles
+            document.getElementById('toggle-cash').checked = true;
+            document.getElementById('toggle-customer-service').checked = true;
+            document.getElementById('toggle-credit').checked = true;
+            document.getElementById('toggle-misc').checked = true;
+            updateSectionVisibility();
+            
+            // Reset app toggles
+            const appToggles = document.querySelectorAll('.app-toggle');
+            appToggles.forEach(toggle => {
+                toggle.checked = true;
+            });
+            updateAppVisibility();
+        }
+
+        // Load section visibility preferences on page load
+        function loadInitialSectionVisibility() {
+            const prefs = JSON.parse(localStorage.getItem('bankops_section_visibility')) || {
+                cash: true,
+                customerService: true,
+                credit: true,
+                misc: true
+            };
+            applySectionVisibility(prefs);
+            
+            // Also load app visibility
+            const appPrefs = JSON.parse(localStorage.getItem('bankops_app_visibility')) || {};
+            applyAppVisibility(appPrefs);
         }
 
         // --- tax UI block management: allow removing/restoring tax elements for Loan tab ---
@@ -1929,12 +2410,1129 @@
         function closeModalOnBackdropClick(event, modalId) {
             // Only close if clicked on the backdrop (the outer container), not on the modal content
             if (event.target.id === modalId) {
-                const modal = document.getElementById(modalId);
                 if (modalId === 'interest-modal') {
                     closeInterestCalculator();
+                } else if (modalId === 'select-options-modal') {
+                    closeSelectOptions();
                 }
             }
         }
+    </script>
+
+    <!-- DocuChat Floating Chat Popup -->
+    <style>
+        /* Chat Popup Styles */
+        .chat-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: all 0.3s ease;
+        }
+        .chat-fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 28px rgba(99, 102, 241, 0.5);
+        }
+        .chat-fab svg {
+            width: 28px;
+            height: 28px;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+        .chat-fab.open svg {
+            transform: rotate(180deg);
+        }
+        .chat-fab .chat-icon { display: block; }
+        .chat-fab .close-icon { display: none; position: absolute; }
+        .chat-fab.open .chat-icon { display: none; }
+        .chat-fab.open .close-icon { display: block; }
+
+        .chat-popup {
+            position: fixed;
+            bottom: 100px;
+            right: 24px;
+            width: 360px;
+            height: 450px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 9998;
+            overflow: hidden;
+            animation: popupSlideIn 0.3s ease;
+        }
+        .chat-popup.open {
+            display: flex;
+        }
+        @keyframes popupSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .chat-popup-header {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-popup-header .chat-logo-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-popup-header .chat-logo-icon svg {
+            width: 16px;
+            height: 16px;
+            color: white;
+        }
+        .chat-popup-header-info h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        .chat-popup-header-info p {
+            font-size: 0.65rem;
+            margin: 0;
+            opacity: 0.85;
+        }
+        .chat-popup-header .load-docs-btn {
+            margin-left: auto;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .chat-popup-header .load-docs-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .chat-popup-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #f9fafb;
+        }
+
+        .chat-popup-welcome {
+            text-align: center;
+            padding: 20px 16px;
+            color: #6b7280;
+        }
+        .chat-popup-welcome .welcome-emoji {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        .chat-popup-welcome h4 {
+            font-size: 0.85rem;
+            color: #374151;
+            margin: 0 0 6px 0;
+        }
+        .chat-popup-welcome p {
+            font-size: 0.75rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .chat-msg {
+            display: flex;
+            gap: 10px;
+            max-width: 90%;
+            animation: msgSlideIn 0.3s ease;
+        }
+        @keyframes msgSlideIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-msg.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .chat-msg.bot {
+            align-self: flex-start;
+        }
+        .chat-msg-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+        .chat-msg.user .chat-msg-avatar {
+            background: #6366f1;
+            color: white;
+        }
+        .chat-msg.bot .chat-msg-avatar {
+            background: #e5e7eb;
+        }
+        .chat-msg-bubble {
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+        .chat-msg.user .chat-msg-bubble {
+            background: #6366f1;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-msg.bot .chat-msg-bubble {
+            background: white;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Rich content styles inside bot bubbles */
+        .chat-msg.bot .chat-msg-bubble p {
+            margin: 0 0 6px 0;
+        }
+        .chat-msg.bot .chat-msg-bubble p:last-child {
+            margin-bottom: 0;
+        }
+        .chat-msg.bot .chat-msg-bubble strong {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .chat-msg.bot .chat-msg-bubble em {
+            font-style: italic;
+        }
+        .chat-msg.bot .chat-msg-bubble code {
+            background: #f3f4f6;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #e11d48;
+        }
+        .chat-msg.bot .chat-msg-bubble pre {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 10px 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.72rem;
+            margin: 6px 0;
+            line-height: 1.5;
+        }
+        .chat-msg.bot .chat-msg-bubble pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            font-size: inherit;
+        }
+        .chat-msg.bot .chat-msg-bubble ul,
+        .chat-msg.bot .chat-msg-bubble ol {
+            margin: 4px 0 6px 0;
+            padding-left: 18px;
+        }
+        .chat-msg.bot .chat-msg-bubble li {
+            margin-bottom: 3px;
+            line-height: 1.45;
+        }
+        .chat-msg.bot .chat-msg-bubble li::marker {
+            color: #6366f1;
+        }
+        .chat-msg.bot .chat-msg-bubble table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 6px 0;
+            font-size: 0.75rem;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+        .chat-msg.bot .chat-msg-bubble thead th {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            padding: 6px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.72rem;
+            white-space: nowrap;
+        }
+        .chat-msg.bot .chat-msg-bubble tbody td {
+            padding: 5px 10px;
+            border-bottom: 1px solid #f3f4f6;
+            color: #374151;
+        }
+        .chat-msg.bot .chat-msg-bubble tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .chat-msg.bot .chat-msg-bubble tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        .chat-msg.bot .chat-msg-bubble tbody tr:hover {
+            background: #eef2ff;
+        }
+        .chat-msg.bot .chat-msg-bubble blockquote {
+            border-left: 3px solid #6366f1;
+            margin: 6px 0;
+            padding: 4px 10px;
+            background: #f5f3ff;
+            border-radius: 0 6px 6px 0;
+            color: #4b5563;
+            font-style: italic;
+        }
+        .chat-msg.bot .chat-msg-bubble hr {
+            border: none;
+            border-top: 1px solid #e5e7eb;
+            margin: 8px 0;
+        }
+        .chat-msg.bot .chat-msg-bubble h1,
+        .chat-msg.bot .chat-msg-bubble h2,
+        .chat-msg.bot .chat-msg-bubble h3 {
+            font-weight: 600;
+            margin: 8px 0 4px 0;
+            color: #1f2937;
+        }
+        .chat-msg.bot .chat-msg-bubble h1 { font-size: 0.95rem; }
+        .chat-msg.bot .chat-msg-bubble h2 { font-size: 0.88rem; }
+        .chat-msg.bot .chat-msg-bubble h3 { font-size: 0.82rem; }
+
+        .chat-msg-sources {
+            font-size: 0.688rem;
+            color: #9ca3af;
+            margin-top: 4px;
+            padding: 4px 8px;
+            background: #f3f4f6;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .chat-typing {
+            display: flex;
+            gap: 4px;
+            padding: 10px 14px;
+        }
+        .chat-typing span {
+            width: 8px;
+            height: 8px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+        .chat-typing span:nth-child(1) { animation-delay: -0.32s; }
+        .chat-typing span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .chat-popup-input {
+            padding: 10px 12px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 8px;
+        }
+        .chat-popup-input input {
+            flex: 1;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .chat-popup-input input:focus {
+            border-color: #6366f1;
+        }
+        .chat-popup-input input:disabled {
+            background: #f9fafb;
+            cursor: not-allowed;
+        }
+        .chat-popup-input button {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 8px;
+            background: #6366f1;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .chat-popup-input button:hover:not(:disabled) {
+            background: #4f46e5;
+        }
+        .chat-popup-input button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .chat-popup-input button svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .chat-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #ef4444;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.813rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-status-bar {
+            background: #ecfdf5;
+            border-top: 1px solid #a7f3d0;
+            padding: 8px 16px;
+            font-size: 0.75rem;
+            color: #065f46;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chat-status-bar.loading {
+            background: #fef3c7;
+            border-color: #fcd34d;
+            color: #92400e;
+        }
+        .chat-status-bar.error {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #dc2626;
+        }
+
+        @media (max-width: 480px) {
+            .chat-popup {
+                width: calc(100% - 32px);
+                right: 16px;
+                bottom: 90px;
+                height: 60vh;
+            }
+            .chat-fab {
+                right: 16px;
+                bottom: 16px;
+            }
+        }
+    </style>
+
+    <!-- Chat FAB Button -->
+    <button class="chat-fab" id="chatFab" onclick="toggleChatPopup()" title="DocuChat">
+        <svg class="chat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <svg class="close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </button>
+
+    <!-- Chat Popup -->
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-popup-header">
+            <div class="chat-logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+            </div>
+            <div class="chat-popup-header-info">
+                <h3>DocuChat</h3>
+                <p id="chatDocStatus">Click to load documents</p>
+            </div>
+            <button class="load-docs-btn" id="chatLoadDocsBtn" onclick="chatLoadDocuments()">📂 Load</button>
+        </div>
+
+        <div id="chatStatusBar" class="chat-status-bar" style="display: none;">
+            <span id="chatStatusText"></span>
+        </div>
+
+        <div class="chat-popup-messages" id="chatPopupMessages">
+            <div class="chat-popup-welcome" id="chatWelcome">
+                <div class="welcome-emoji"> </div>
+                <h4>Hey there! I'm DocuChat</h4>
+                <p>Load up your documents folder and I'll read through everything — then just ask me whatever you need to know. I handle PDFs, Word, Excel & images!</p>
+            </div>
+        </div>
+
+        <div class="chat-popup-input">
+            <input type="text" id="chatPopupInput" placeholder="Ask about your documents..." disabled>
+            <button id="chatPopupSendBtn" onclick="chatSendMessage()" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- PDF.js and Mammoth for document parsing -->
+    <script src="lib/pdf.js/pdf.min.js"></script>
+    <script src="lib/mammoth/mammoth.browser.min.js"></script>
+    <!-- XLSX for Excel file parsing - local source -->
+    <script src="lib/xlsx/xlsx.full.min.js"></script>
+    <!-- Tesseract for image OCR - local source -->
+    <script src="lib/tesseract/tesseract.min.js"></script>
+    <!-- BankOps Configuration - loads API keys securely -->
+    <script src="config.js"></script>
+
+    <script>
+        // Configure Tesseract worker path for local file
+        if (typeof Tesseract !== 'undefined') {
+            Tesseract.setLogging(false);
+        }
+        
+        // DocuChat Popup Integration
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'lib/pdf.js/pdf.worker.min.js';
+
+        const chatState = {
+            documents: [],
+            chunks: [],
+            chatHistory: [],
+            apiKey: BankOpsConfig.getGeminiApiKey(),
+            isProcessing: false,
+            folderHandle: null,
+            isOpen: false
+        };
+
+        const chatElements = {
+            fab: document.getElementById('chatFab'),
+            popup: document.getElementById('chatPopup'),
+            messages: document.getElementById('chatPopupMessages'),
+            input: document.getElementById('chatPopupInput'),
+            sendBtn: document.getElementById('chatPopupSendBtn'),
+            welcome: document.getElementById('chatWelcome'),
+            docStatus: document.getElementById('chatDocStatus'),
+            loadBtn: document.getElementById('chatLoadDocsBtn'),
+            statusBar: document.getElementById('chatStatusBar'),
+            statusText: document.getElementById('chatStatusText')
+        };
+
+        function toggleChatPopup() {
+            chatState.isOpen = !chatState.isOpen;
+            chatElements.fab.classList.toggle('open', chatState.isOpen);
+            chatElements.popup.classList.toggle('open', chatState.isOpen);
+        }
+
+        // IndexedDB for chat folder handle
+        const CHAT_DB_NAME = 'DocuChatPopupDB';
+        const CHAT_STORE_NAME = 'folderHandles';
+
+        function openChatDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(CHAT_DB_NAME, 1);
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => resolve(request.result);
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(CHAT_STORE_NAME)) {
+                        db.createObjectStore(CHAT_STORE_NAME);
+                    }
+                };
+            });
+        }
+
+        async function saveChatFolderHandle(handle) {
+            try {
+                const db = await openChatDB();
+                const tx = db.transaction(CHAT_STORE_NAME, 'readwrite');
+                const store = tx.objectStore(CHAT_STORE_NAME);
+                store.put(handle, 'documentsFolder');
+                chatState.folderHandle = handle;
+            } catch (e) {
+                console.error('Failed to save folder handle:', e);
+            }
+        }
+
+        async function getChatSavedFolderHandle() {
+            try {
+                const db = await openChatDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(CHAT_STORE_NAME, 'readonly');
+                    const store = tx.objectStore(CHAT_STORE_NAME);
+                    const request = store.get('documentsFolder');
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => resolve(request.result);
+                });
+            } catch (e) {
+                console.error('Failed to get folder handle:', e);
+                return null;
+            }
+        }
+
+        async function chatLoadDocuments() {
+            try {
+                if ('showDirectoryPicker' in window) {
+                    const dirHandle = await window.showDirectoryPicker({ startIn: 'documents' });
+                    await saveChatFolderHandle(dirHandle);
+                    await chatLoadFilesFromHandle(dirHandle);
+                }
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    console.error('Folder picker error:', error);
+                    showChatStatus('Failed to load folder', 'error');
+                }
+            }
+        }
+
+        async function chatLoadFilesFromHandle(dirHandle) {
+            const files = [];
+            showChatStatus('Loading documents...', 'loading');
+            
+            async function getFilesFromDir(dir) {
+                for await (const entry of dir.values()) {
+                    if (entry.kind === 'file') {
+                        const file = await entry.getFile();
+                        file.webkitRelativePath = entry.name;
+                        files.push(file);
+                    } else if (entry.kind === 'directory') {
+                        await getFilesFromDir(entry);
+                    }
+                }
+            }
+            
+            await getFilesFromDir(dirHandle);
+            
+            if (files.length > 0) {
+                await chatProcessFiles(files);
+            } else {
+                showChatStatus('No files found', 'error');
+            }
+        }
+
+        async function chatProcessFiles(files) {
+            chatState.documents = [];
+            chatState.chunks = [];
+            
+            const supportedFiles = files.filter(file => {
+                const name = file.name.toLowerCase();
+                return name.endsWith('.pdf') || 
+                       name.endsWith('.docx') || 
+                       name.endsWith('.xlsx') || 
+                       name.endsWith('.xls') ||
+                       name.endsWith('.jpg') || 
+                       name.endsWith('.jpeg') || 
+                       name.endsWith('.png') || 
+                       name.endsWith('.gif') || 
+                       name.endsWith('.bmp') || 
+                       name.endsWith('.webp');
+            });
+            
+            if (supportedFiles.length === 0) {
+                showChatStatus('No PDF, Word, Excel or Image files found', 'error');
+                return;
+            }
+
+            let processed = 0;
+            for (const file of supportedFiles) {
+                try {
+                    showChatStatus(`Processing ${file.name}...`, 'loading');
+                    
+                    let text = '';
+                    const name = file.name.toLowerCase();
+                    let type = 'unknown';
+                    
+                    if (name.endsWith('.pdf')) {
+                        type = 'pdf';
+                        text = await chatExtractTextFromPDF(file);
+                    } else if (name.endsWith('.docx')) {
+                        type = 'docx';
+                        text = await chatExtractTextFromDocx(file);
+                    } else if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+                        type = 'excel';
+                        text = await chatExtractTextFromExcel(file);
+                    } else if (name.endsWith('.jpg') || name.endsWith('.jpeg') || 
+                               name.endsWith('.png') || name.endsWith('.gif') || 
+                               name.endsWith('.bmp') || name.endsWith('.webp')) {
+                        type = 'image';
+                        text = await chatExtractTextFromImage(file);
+                    }
+                    
+                    if (text.trim()) {
+                        chatState.documents.push({
+                            name: file.name,
+                            path: file.webkitRelativePath || file.name,
+                            type: type,
+                            text: text
+                        });
+                    }
+                } catch (error) {
+                    console.error(`Error processing ${file.name}:`, error);
+                }
+                processed++;
+            }
+            
+            chatCreateChunks();
+            chatState.chatHistory = [];
+            
+            if (chatState.chunks.length > 0) {
+                chatElements.input.disabled = false;
+                chatElements.sendBtn.disabled = false;
+                chatElements.docStatus.textContent = `${chatState.documents.length} files loaded`;
+                chatElements.loadBtn.textContent = '✓ Loaded';
+                if (chatElements.welcome) chatElements.welcome.style.display = 'none';
+                showChatStatus(`✓ ${chatState.documents.length} documents ready`, 'success');
+                const greetings = [
+                    `Alright, I've gone through ${chatState.documents.length} documents — fire away with your questions! 🙌`,
+                    `Got it! ${chatState.documents.length} files loaded and ready. What would you like to know?`,
+                    `All set! I've read through ${chatState.documents.length} documents. Ask me anything, I'm all ears 👂`,
+                    `Done! ${chatState.documents.length} documents loaded. Go ahead, I'm ready to help! 😊`
+                ];
+                addChatBotMessage(greetings[Math.floor(Math.random() * greetings.length)]);
+            } else {
+                showChatStatus('Could not extract text', 'error');
+            }
+        }
+
+        async function chatExtractTextFromPDF(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            let fullText = '';
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(' ');
+                fullText += pageText + '\n\n';
+            }
+            return fullText;
+        }
+
+        async function chatExtractTextFromDocx(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const result = await mammoth.extractRawText({ arrayBuffer });
+            return result.value;
+        }
+
+        async function chatExtractTextFromExcel(file) {
+            try {
+                // Check if XLSX library is available
+                if (typeof XLSX === 'undefined') {
+                    console.error('XLSX library not loaded');
+                    return `[Excel: ${file.name}]\n(Excel library not available)`;
+                }
+                
+                const arrayBuffer = await file.arrayBuffer();
+                const arr = new Uint8Array(arrayBuffer);
+                
+                // Read the workbook
+                const workbook = XLSX.read(arr, { type: 'array' });
+                let fullText = `[Excel File: ${file.name}]\n\n`;
+                
+                // Process each sheet
+                for (const sheetName of workbook.SheetNames) {
+                    const worksheet = workbook.Sheets[sheetName];
+                    if (!worksheet) continue;
+                    
+                    fullText += `Sheet: ${sheetName}\n`;
+                    fullText += '─'.repeat(40) + '\n';
+                    
+                    // Convert to CSV format for better text extraction
+                    const csvText = XLSX.utils.sheet_to_csv(worksheet, {
+                        blankrows: false,
+                        defval: ''
+                    });
+                    
+                    if (csvText.trim()) {
+                        fullText += csvText + '\n\n';
+                    }
+                }
+                
+                return fullText.trim();
+            } catch (error) {
+                console.error('Excel extraction error:', error);
+                // Return error message for debugging
+                return `[Excel: ${file.name}]\nError: ${error.message}`;
+            }
+        }
+
+        async function chatExtractTextFromImage(file) {
+            try {
+                const reader = new FileReader();
+                return new Promise((resolve) => {
+                    reader.onload = async (e) => {
+                        try {
+                            const imageData = e.target.result;
+                            const result = await Tesseract.recognize(imageData, 'eng');
+                            resolve(`[Image OCR: ${file.name}]\n${result.data.text}`);
+                        } catch (error) {
+                            console.error('OCR error:', error);
+                            resolve(`[Image: ${file.name}]\n(Image OCR processing failed)`);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
+            } catch (error) {
+                console.error('Image extraction error:', error);
+                return '';
+            }
+        }
+
+        function chatCreateChunks() {
+            chatState.chunks = [];
+            for (const doc of chatState.documents) {
+                const words = doc.text.split(/\s+/);
+                const chunkSize = 400;
+                const overlap = 50;
+                for (let i = 0; i < words.length; i += chunkSize - overlap) {
+                    const chunkWords = words.slice(i, i + chunkSize);
+                    const chunkText = chunkWords.join(' ').trim();
+                    if (chunkText.length > 50) {
+                        chatState.chunks.push({
+                            text: chunkText,
+                            source: doc.name,
+                            index: chatState.chunks.length
+                        });
+                    }
+                }
+            }
+        }
+
+        function chatFindRelevantChunks(query, maxChunks = 5) {
+            const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+            const scoredChunks = chatState.chunks.map(chunk => {
+                const chunkLower = chunk.text.toLowerCase();
+                let score = 0;
+                for (const word of queryWords) {
+                    const regex = new RegExp(word, 'gi');
+                    const matches = chunkLower.match(regex);
+                    if (matches) score += matches.length * 2;
+                }
+                const queryPhrase = queryWords.join(' ');
+                if (chunkLower.includes(queryPhrase)) score += 10;
+                for (let i = 0; i < queryWords.length - 1; i++) {
+                    const twoWordPhrase = `${queryWords[i]} ${queryWords[i + 1]}`;
+                    if (chunkLower.includes(twoWordPhrase)) score += 5;
+                }
+                return { ...chunk, score };
+            });
+            return scoredChunks.filter(c => c.score > 0).sort((a, b) => b.score - a.score).slice(0, maxChunks);
+        }
+
+        async function chatSendMessage() {
+            const message = chatElements.input.value.trim();
+            if (!message || chatState.isProcessing) return;
+            if (chatState.chunks.length === 0) {
+                showChatError('Hey, load some documents first so I have something to work with! 📂');
+                return;
+            }
+            
+            addChatUserMessage(message);
+            chatElements.input.value = '';
+            
+            const relevantChunks = chatFindRelevantChunks(message);
+            if (relevantChunks.length === 0) {
+                const noResultReplies = [
+                    'Hmm, I couldn\'t find anything about that in the docs I have. Want to try rephrasing?',
+                    'I\'ve looked through everything but nothing quite matches that. Could you ask it differently?',
+                    'That\'s a good question, but I don\'t see anything related in the loaded documents.',
+                    'No luck on that one — the documents don\'t seem to cover it. Try loading more files maybe?'
+                ];
+                addChatBotMessage(noResultReplies[Math.floor(Math.random() * noResultReplies.length)]);
+                return;
+            }
+            
+            const typingId = showChatTyping();
+            chatState.isProcessing = true;
+            
+            try {
+                const context = relevantChunks.map(chunk => `[${chunk.source}]\n${chunk.text}`).join('\n\n---\n\n');
+                chatState.chatHistory.push({ role: 'user', content: message });
+                const response = await chatCallAI(message, context);
+                chatState.chatHistory.push({ role: 'assistant', content: response });
+                removeChatTyping(typingId);
+                addChatBotMessage(response, relevantChunks.map(c => c.source));
+            } catch (error) {
+                removeChatTyping(typingId);
+                addChatBotMessage('Oops, something went wrong on my end — ' + (error.message || 'API hiccup') + '. Mind trying again?', null, true);
+            }
+            
+            chatState.isProcessing = false;
+        }
+
+        async function chatCallAI(question, documentText) {
+            const systemPrompt = `You are a friendly, warm human colleague who happens to have read all the loaded documents thoroughly. Talk naturally like a real person — use casual but professional language, contractions ("I'd", "you'll", "that's"), and a conversational tone. Feel free to say things like "Good question!", "Hmm, let me think...", "So basically...", or "From what I can see...". Keep answers clear and helpful but never robotic. Show personality — be approachable, occasionally use light humor where appropriate, and respond the way a knowledgeable coworker would over a chat. You have access to conversation history, so refer to previous messages naturally. If the information isn't in the documents, be honest and say something like: "Hmm, I couldn't find anything about that in the documents I've got. Maybe try loading more files?"
+
+FORMATTING RULES — use Markdown formatting to make your responses visually clear and easy to scan:
+- Use **bold** for key terms, names, amounts, or important phrases.
+- Use bullet points (- item) or numbered lists (1. item) when listing things.
+- Use tables (| Col1 | Col2 |) when comparing data, showing structured info, or presenting multiple fields/values side by side.
+- Use > blockquotes for direct quotes from documents.
+- Use headings (## or ###) to organize longer answers into sections.
+- Use \`code\` for account numbers, reference IDs, or technical values.
+- Keep formatting purposeful — don't over-format short simple answers. A one-liner doesn't need a table.`;
+            const userPrompt = `DOCUMENTS:\n${documentText}\n\nQUESTION:\n${question}`;
+            
+            const messages = [
+                { role: 'system', content: systemPrompt }
+            ];
+            
+            // Include recent conversation history (last 8 messages to avoid token limits)
+            const recentHistory = chatState.chatHistory.slice(-8);
+            for (const msg of recentHistory) {
+                messages.push(msg);
+            }
+            
+            messages.push({ role: 'user', content: userPrompt });
+            
+            if (!chatState.apiKey) {
+                throw new Error('Gemini API key not configured. Please set up your API key in settings.');
+            }
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${chatState.apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        role: 'user',
+                        parts: [{
+                            text: userPrompt
+                        }]
+                    }],
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 1024
+                    },
+                    systemInstruction: {
+                        parts: [{
+                            text: systemPrompt
+                        }]
+                    }
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.error?.message || `Error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                return data.candidates[0].content.parts[0].text;
+            }
+            throw new Error('Invalid response from Gemini API');
+        }
+
+        function addChatUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'chat-msg user';
+            div.innerHTML = `
+                <div class="chat-msg-avatar">👤</div>
+                <div class="chat-msg-bubble">${escapeHtmlChat(text)}</div>
+            `;
+            chatElements.messages.appendChild(div);
+            chatElements.messages.scrollTop = chatElements.messages.scrollHeight;
+        }
+
+        // Lightweight markdown-to-HTML renderer for bot messages
+        function chatMarkdownToHtml(md) {
+            // Escape HTML entities first for safety
+            let html = md.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            // Code blocks (```...```)
+            html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+                return `<pre><code>${code.trim()}</code></pre>`;
+            });
+
+            // Inline code (`...`)
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+            // Tables: detect lines with | separators
+            html = html.replace(/((?:^\|.+\|\s*$\n?)+)/gm, (tableBlock) => {
+                const rows = tableBlock.trim().split('\n').filter(r => r.trim());
+                if (rows.length < 2) return tableBlock;
+                const parseRow = (row) => row.split('|').slice(1, -1).map(c => c.trim());
+                const headerCells = parseRow(rows[0]);
+                // Check if row[1] is separator (---)
+                const isSep = /^[\|\s:\-]+$/.test(rows[1]);
+                let thead = '<thead><tr>' + headerCells.map(c => `<th>${c}</th>`).join('') + '</tr></thead>';
+                const bodyRows = rows.slice(isSep ? 2 : 1);
+                let tbody = '<tbody>' + bodyRows.map(r => {
+                    const cells = parseRow(r);
+                    return '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+                }).join('') + '</tbody>';
+                return `<table>${thead}${tbody}</table>`;
+            });
+
+            // Blockquotes
+            html = html.replace(/^&gt;\s?(.+)$/gm, '<blockquote>$1</blockquote>');
+            html = html.replace(/<\/blockquote>\n<blockquote>/g, '\n');
+
+            // Headers
+            html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+            // Horizontal rules
+            html = html.replace(/^---$/gm, '<hr>');
+
+            // Bold + italic
+            html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+            // Bold
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            // Italic
+            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+            // Unordered lists (- or * at start of line)
+            html = html.replace(/((?:^[\-\*]\s+.+$\n?)+)/gm, (block) => {
+                const items = block.trim().split('\n').map(l => l.replace(/^[\-\*]\s+/, ''));
+                return '<ul>' + items.map(i => `<li>${i}</li>`).join('') + '</ul>';
+            });
+
+            // Ordered lists (1. 2. etc at start of line)
+            html = html.replace(/((?:^\d+\.\s+.+$\n?)+)/gm, (block) => {
+                const items = block.trim().split('\n').map(l => l.replace(/^\d+\.\s+/, ''));
+                return '<ol>' + items.map(i => `<li>${i}</li>`).join('') + '</ol>';
+            });
+
+            // Paragraphs: convert double newlines to paragraph breaks
+            html = html.replace(/\n{2,}/g, '</p><p>');
+            // Single newlines to <br> (but not inside block elements)
+            html = html.replace(/(?<!<\/(li|tr|td|th|table|thead|tbody|ul|ol|pre|blockquote|h[1-3]|hr|p)>)\n(?!<)/g, '<br>');
+
+            // Wrap in paragraph if not starting with block element
+            if (!/^\s*<(table|ul|ol|pre|blockquote|h[1-3]|hr)/.test(html)) {
+                html = '<p>' + html + '</p>';
+            }
+
+            // Clean up empty paragraphs
+            html = html.replace(/<p>\s*<\/p>/g, '');
+
+            return html;
+        }
+
+        function addChatBotMessage(text, sources = null, isError = false) {
+            const div = document.createElement('div');
+            div.className = 'chat-msg bot';
+            let sourcesBadge = '';
+            if (sources && sources.length > 0) {
+                const unique = [...new Set(sources)];
+                sourcesBadge = `<div class="chat-msg-sources">📎 ${unique.join(', ')}</div>`;
+            }
+            // Use rich markdown rendering for bot messages, plain escape for errors
+            const renderedText = isError ? escapeHtmlChat(text) : chatMarkdownToHtml(text);
+            div.innerHTML = `
+                <div class="chat-msg-avatar">🤖</div>
+                <div>
+                    <div class="chat-msg-bubble" ${isError ? 'style="border-color: #fecaca; background: #fef2f2;"' : ''}>
+                        ${renderedText}
+                    </div>
+                    ${sourcesBadge}
+                </div>
+            `;
+            chatElements.messages.appendChild(div);
+            chatElements.messages.scrollTop = chatElements.messages.scrollHeight;
+        }
+
+        function showChatTyping() {
+            const id = 'chat-typing-' + Date.now();
+            const div = document.createElement('div');
+            div.className = 'chat-msg bot';
+            div.id = id;
+            div.innerHTML = `
+                <div class="chat-msg-avatar">🤖</div>
+                <div class="chat-msg-bubble">
+                    <div class="chat-typing">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            `;
+            chatElements.messages.appendChild(div);
+            chatElements.messages.scrollTop = chatElements.messages.scrollHeight;
+            return id;
+        }
+
+        function removeChatTyping(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function showChatStatus(text, type = 'success') {
+            chatElements.statusBar.style.display = 'flex';
+            chatElements.statusBar.className = 'chat-status-bar ' + type;
+            chatElements.statusText.textContent = text;
+            if (type === 'success') {
+                setTimeout(() => { chatElements.statusBar.style.display = 'none'; }, 3000);
+            }
+        }
+
+        function showChatError(text) {
+            const div = document.createElement('div');
+            div.className = 'chat-error';
+            div.innerHTML = `⚠️ ${escapeHtmlChat(text)}`;
+            chatElements.messages.appendChild(div);
+            chatElements.messages.scrollTop = chatElements.messages.scrollHeight;
+            setTimeout(() => div.remove(), 5000);
+        }
+
+        function escapeHtmlChat(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Enter key to send message
+        chatElements.input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                chatSendMessage();
+            }
+        });
+
+        // Close chat on ESC
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && chatState.isOpen) {
+                toggleChatPopup();
+            }
+        });
+
+        // Try to restore saved folder on page load
+        (async function tryRestoreChatFolder() {
+            try {
+                const handle = await getChatSavedFolderHandle();
+                if (handle) {
+                    const permission = await handle.queryPermission({ mode: 'read' });
+                    if (permission === 'granted') {
+                        chatState.folderHandle = handle;
+                        await chatLoadFilesFromHandle(handle);
+                    }
+                }
+            } catch (e) {
+                console.log('Could not restore chat folder:', e);
+            }
+        })();
     </script>
 </body>
 </html>
