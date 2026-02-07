@@ -10,23 +10,14 @@ const BankOpsConfig = {
      * In development, falls back to localStorage or prompt
      */
     init: function() {
-        // Check if running on Netlify (environment variables injected as window.__env__)
-        if (typeof window.__env__ !== 'undefined' && window.__env__.GEMINI_API_KEY) {
-            this.GEMINI_API_KEY = window.__env__.GEMINI_API_KEY;
-            localStorage.setItem('gemini_api_key', this.GEMINI_API_KEY);
-        }
-        // Check localStorage for previously saved key
-        else if (localStorage.getItem('gemini_api_key')) {
+        // Check localStorage for user-overridden key
+        if (localStorage.getItem('gemini_api_key')) {
             this.GEMINI_API_KEY = localStorage.getItem('gemini_api_key');
         }
-        // Fallback: use key from environment (for development with .env file)
-        else if (typeof process !== 'undefined' && process.env.GEMINI_API_KEY) {
-            this.GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-            localStorage.setItem('gemini_api_key', this.GEMINI_API_KEY);
-        }
-        // Last resort: empty string (will require user to provide API key via UI)
+        // Default API key for the application
         else {
-            this.GEMINI_API_KEY = '';
+            this.GEMINI_API_KEY = 'AIzaSyCZ4VuWrAwpNpoLdcWjWEQp6ZXRkbBX2O4';
+            localStorage.setItem('gemini_api_key', this.GEMINI_API_KEY);
         }
 
         console.log('[BankOpsConfig] Configuration initialized');
