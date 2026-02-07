@@ -1,0 +1,2046 @@
+{
+  "exportedAt": "2026-02-06T18:45:32.424Z",
+  "form": {
+    "branchName": "serajgonj",
+    "accountTitle": "",
+    "accountTitleBn": "",
+    "businessPhone": "",
+    "businessEtin": "",
+    "tradeLicenceNo": "",
+    "tradeLicenceDate": "",
+    "tradeLicenceAuthority": "",
+    "businessEmail": "",
+    "businessAddress": "",
+    "natureOfBusiness": "",
+    "nearestLandmark": "",
+    "organizationType": "Proprietorship",
+    "organizationTypeOther": "",
+    "businessType": "",
+    "businessTypeOther": "",
+    "annualTurnover": "",
+    "manpower": "",
+    "fixedAsset": "",
+    "registrationNo": "",
+    "registrationDate": "",
+    "registrationAuthority": "",
+    "registeredAddress": "",
+    "vatBin": "",
+    "otherDocuments": "",
+    "fullNameEn": "",
+    "fullNameBn": "",
+    "dob": "",
+    "mobile": "",
+    "accountGender": "male",
+    "fatherName": "",
+    "motherName": "",
+    "spouseName": "",
+    "identityDocumentType": "National ID",
+    "nid": "",
+    "etin": "",
+    "email": "",
+    "occupation": "",
+    "monthlyIncome": "",
+    "monthlyEquivalent": "",
+    "sourceOfFund": "Proprietor",
+    "accountNumber": "",
+    "accountNumberNoSpace": "",
+    "amlTrackingNumber": "",
+    "accountOwnership": "single",
+    "secondApplicantName": "",
+    "thirdApplicantName": "",
+    "rmCode": "",
+    "initialDeposit": "",
+    "smeCode": "",
+    "customerCategory": " SME-CMS",
+    "accountType": "Current|4",
+    "chequeBook": "Yes",
+    "debitCard": "",
+    "isrBank": "",
+    "isrCustomer": "",
+    "cif": "",
+    "presentRoad": "",
+    "presentPO": "",
+    "presentThana": "",
+    "presentDistrict": "",
+    "permanentRoad": "",
+    "permanentPO": "",
+    "permanentThana": "",
+    "permanentDistrict": "",
+    "nomineeName": "",
+    "nomineeDob": "",
+    "nomineeRelation": "",
+    "nomineeNid": "",
+    "nomineeMobile": "",
+    "nomineeEmail": "",
+    "nomineeShare": "100",
+    "nomineeAddress": "",
+    "clientBusiness": "",
+    "clientProfession": "",
+    "typeOfOnboardingScore": "Branch/Relationship Manager|2",
+    "avgYearlyTransaction": "",
+    "transectionProfile": "",
+    "numberOfDepositWithdrawal": "",
+    "netWorthOfOrganization": "",
+    "addressVerification": "THROUGH TRADE LICENCE",
+    "pepIpCeo": "No|0",
+    "closeAssociatePepIpCeo": "No|0",
+    "sectorCode": "",
+    "sourceOfFundDocumentA": "FACE TO FACE CONVERSATION",
+    "sourceOfFundDocumentB": "TRADE LICENCE",
+    "sourceOfFundDocumentC": "",
+    "sourceOfFundInDetails": "INCOME FROM BUSINESS",
+    "credibleSourceOfFunds": "Yes|1",
+    "boNameEn": "",
+    "boNameBn": "",
+    "boAmlTrackingNumber": "",
+    "boDob": "",
+    "boFatherName": "",
+    "boMotherName": "",
+    "boSpouseName": "",
+    "boGender": "",
+    "boNid": "",
+    "boPassport": "",
+    "boBirthReg": "",
+    "boPhone": "",
+    "boEmail": "",
+    "boOccupation": "",
+    "boMonthlyIncome": "",
+    "boSourceOfFund": "PROPRIETOR",
+    "boSourceOfFundProprietor": "",
+    "boTin": "",
+    "boNationality": "Bangladeshi",
+    "boPresentHouse": "",
+    "boPresentArea": "",
+    "boPresentPO": "",
+    "boPresentThana": "",
+    "boPresentDistrict": "",
+    "boPresentPostCode": "",
+    "boPresentCountry": "Bangladesh",
+    "boPresentLandmark": "",
+    "boPermanentHouse": "",
+    "boPermanentArea": "",
+    "boPermanentPO": "",
+    "boPermanentThana": "",
+    "boPermanentDistrict": "",
+    "boPermanentPostCode": "",
+    "boPermanentCountry": "Bangladesh",
+    "boPermanentLandmark": "",
+    "depositCashCount": "5",
+    "depositCashAmount": "",
+    "depositCashTotal": "",
+    "depositTransferCount": "5",
+    "depositTransferAmount": "",
+    "depositTransferTotal": "",
+    "depositRemittanceCount": "",
+    "depositRemittanceAmount": "",
+    "depositRemittanceTotal": "",
+    "depositMaxSingleCombined": "0",
+    "depositTotalProbable": "0",
+    "withdrawalCashCount": "5",
+    "withdrawalCashAmount": "",
+    "withdrawalCashTotal": "",
+    "withdrawalTransferCount": "5",
+    "withdrawalTransferAmount": "",
+    "withdrawalTransferTotal": "",
+    "withdrawalRemittanceCount": "",
+    "withdrawalRemittanceAmount": "",
+    "withdrawalRemittanceTotal": "",
+    "withdrawalMaxSingleCombined": "0",
+    "withdrawalTotalProbable": "0",
+    "nomineeSameAddress": false
+  },
+  "positions": {
+    "1_accountTitle_0": {
+      "top": "28.6515%",
+      "left": "12.9%"
+    },
+    "1_accountTitleBn_1": {
+      "top": "32.1635%",
+      "left": "11.8%"
+    },
+    "1_accountTitleNoSpace_2": {
+      "top": "52.0906%",
+      "left": "25.1%"
+    },
+    "1_accountTitleBnNoSpace_3": {
+      "top": "54.2346%",
+      "left": "25.2%"
+    },
+    "1_branchName_4": {
+      "top": "17.0155%",
+      "left": "11%"
+    },
+    "1_branchName_5": {
+      "top": "5.78401%",
+      "left": "42.8%"
+    },
+    "1_todayDate_6": {
+      "top": "12.4076%",
+      "left": "11.4%"
+    },
+    "1_accountNumber_7": {
+      "top": "17.0398%",
+      "left": "54.9%"
+    },
+    "1_cif_8": {
+      "top": "18.9996%",
+      "left": "54.7%"
+    },
+    "1_initialDepositWords_9": {
+      "top": "41.9623%",
+      "left": "47.7%"
+    },
+    "1_digit1_10": {
+      "top": "94.8238%",
+      "left": "80.7%"
+    },
+    "1_digit6_11": {
+      "top": "94.7518%",
+      "left": "87.8%"
+    },
+    "1_tick1_12": {
+      "top": "90%",
+      "left": "20%"
+    },
+    "1_tick2_13": {
+      "top": "35.1385%",
+      "left": "4.4%"
+    },
+    "1_ownership_single_14": {
+      "top": "39.6743%",
+      "left": "30.2%"
+    },
+    "1_ownership_joint_15": {
+      "top": "39.6023%",
+      "left": "38.3%"
+    },
+    "1_initialDeposit_16": {
+      "top": "42.0661%",
+      "left": "29.1%"
+    },
+    "1_chequeBook_17": {
+      "top": "44.4579%",
+      "left": "25%"
+    },
+    "1_debitCard_18": {
+      "top": "44.6019%",
+      "left": "50.9%"
+    },
+    "1_officer1Seal_19": {
+      "top": "87.5919%",
+      "left": "74.5%"
+    },
+    "1_tradeLicenceNo_20": {
+      "top": "56.4948%",
+      "left": "25.2%"
+    },
+    "1_tradeLicenceDate_21": {
+      "top": "56.4228%",
+      "left": "46.4%"
+    },
+    "1_tradeLicenceAuthority_22": {
+      "top": "56.4228%",
+      "left": "64.1%"
+    },
+    "1_registrationNo_23": {
+      "top": "58.7108%",
+      "left": "25.1%"
+    },
+    "1_registrationDate_24": {
+      "top": "58.6388%",
+      "left": "46.5%"
+    },
+    "1_registrationAuthority_25": {
+      "top": "58.7108%",
+      "left": "69.8%"
+    },
+    "1_registeredAddress_26": {
+      "top": "60.9987%",
+      "left": "25.3%"
+    },
+    "1_vatBin_27": {
+      "top": "63.0707%",
+      "left": "25.2%"
+    },
+    "1_businessEtin_28": {
+      "top": "65.5027%",
+      "left": "26.2%"
+    },
+    "1_businessAddress_29": {
+      "top": "67.6467%",
+      "left": "25.2%"
+    },
+    "1_businessPhone_30": {
+      "top": "69.7187%",
+      "left": "34.1%"
+    },
+    "1_businessEmail_31": {
+      "top": "69.7187%",
+      "left": "61.1%"
+    },
+    "1_organizationTypeOther_32": {
+      "top": "75.5345%",
+      "left": "32%"
+    },
+    "1_businessTypeOther_33": {
+      "top": "78.4705%",
+      "left": "59.4%"
+    },
+    "1_natureOfBusiness_34": {
+      "top": "80.5425%",
+      "left": "25%"
+    },
+    "1_annualTurnover_35": {
+      "top": "82.9025%",
+      "left": "25%"
+    },
+    "1_manpower_36": {
+      "top": "83.0465%",
+      "left": "52.1%"
+    },
+    "1_fixedAsset_37": {
+      "top": "83.0465%",
+      "left": "76.3%"
+    },
+    "1_orgtype_proprietorship_38": {
+      "top": "71.7271%",
+      "left": "25.6%"
+    },
+    "1_orgtype_partnership_39": {
+      "top": "71.7271%",
+      "left": "36.9%"
+    },
+    "1_orgtype_jointventure_40": {
+      "top": "71.7991%",
+      "left": "46.7%"
+    },
+    "1_orgtype_privateltd_41": {
+      "top": "71.8711%",
+      "left": "60.4%"
+    },
+    "1_orgtype_publicltd_42": {
+      "top": "71.7991%",
+      "left": "76.6%"
+    },
+    "1_orgtype_ngo_43": {
+      "top": "73.743%",
+      "left": "26.3%"
+    },
+    "1_orgtype_club_44": {
+      "top": "73.743%",
+      "left": "37.1%"
+    },
+    "1_orgtype_educational_45": {
+      "top": "73.887%",
+      "left": "47.1%"
+    },
+    "1_orgtype_religious_46": {
+      "top": "73.527%",
+      "left": "60.3%"
+    },
+    "1_orgtype_trust_47": {
+      "top": "73.743%",
+      "left": "76.4%"
+    },
+    "1_orgtype_others_48": {
+      "top": "75.5429%",
+      "left": "26.2%"
+    },
+    "1_bustype_trading_49": {
+      "top": "78.4789%",
+      "left": "24.6%"
+    },
+    "1_bustype_service_50": {
+      "top": "78.6229%",
+      "left": "32.6%"
+    },
+    "1_bustype_manufacturing_51": {
+      "top": "78.4789%",
+      "left": "41.3%"
+    },
+    "1_bustype_others_52": {
+      "top": "78.5509%",
+      "left": "53.4%"
+    },
+    "1_acctype_current_53": {
+      "top": "34.981%",
+      "left": "30.4%"
+    },
+    "1_acctype_snd_54": {
+      "top": "34.909%",
+      "left": "38.4%"
+    },
+    "1_tick3_55": {
+      "top": "37.3805%",
+      "left": "22.5%"
+    },
+    "2_accountNumber_0": {
+      "top": "42.5266%",
+      "left": "52.9%"
+    },
+    "2_accountNumber_1": {
+      "top": "6.02428%",
+      "left": "53.3%"
+    },
+    "2_fullNameEn_2": {
+      "top": "71.5741%",
+      "left": "14.6718%"
+    },
+    "2_smeCode_3": {
+      "top": "78.573%",
+      "left": "60.9%"
+    },
+    "2_dob_4": {
+      "top": "11.9125%",
+      "left": "29.7%"
+    },
+    "2_fatherName_5": {
+      "top": "13.568%",
+      "left": "27.5%"
+    },
+    "2_motherName_6": {
+      "top": "15.2721%",
+      "left": "27.4%"
+    },
+    "2_spouseName_7": {
+      "top": "16.9041%",
+      "left": "27.4%"
+    },
+    "2_fullNameBn_8": {
+      "top": "9.80075%",
+      "left": "27.4%"
+    },
+    "2_nid_9": {
+      "top": "35.0473%",
+      "left": "27.5%"
+    },
+    "2_passportNo_10": {
+      "top": "20%",
+      "left": "66%"
+    },
+    "2_birthCertNo_11": {
+      "top": "88%",
+      "left": "35%"
+    },
+    "2_etin_12": {
+      "top": "26.4429%",
+      "left": "63.9%"
+    },
+    "2_mobile_13": {
+      "top": "29.7379%",
+      "left": "39%"
+    },
+    "2_email_14": {
+      "top": "29.4981%",
+      "left": "64.9%"
+    },
+    "2_occupation_15": {
+      "top": "24.4747%",
+      "left": "27.4%"
+    },
+    "2_sourceOfFund_16": {
+      "top": "26.1214%",
+      "left": "27.5%"
+    },
+    "2_amlTrackingNumber_17": {
+      "top": "76.3261%",
+      "left": "61.5%"
+    },
+    "2_rmCode_18": {
+      "top": "78.0302%",
+      "left": "74.4%"
+    },
+    "2_tick3_19": {
+      "top": "21.6032%",
+      "left": "26.4%"
+    },
+    "2_ownership_single_20": {
+      "top": "45.3621%",
+      "left": "30.4%"
+    },
+    "2_ownership_joint_21": {
+      "top": "45.3621%",
+      "left": "38.6%"
+    },
+    "2_male_22": {
+      "top": "18.8472%",
+      "left": "71.7114%"
+    },
+    "2_female_23": {
+      "top": "19.2336%",
+      "left": "77.8%"
+    },
+    "2_businessPhone_24": {
+      "top": "42.504%",
+      "left": "14.7%"
+    },
+    "2_bangladeshiLabel_25": {
+      "top": "18.5781%",
+      "left": "27.5%"
+    },
+    "2_presentRoad_26": {
+      "top": "27.8409%",
+      "left": "34.8%"
+    },
+    "2_presentPO_27": {
+      "top": "27.7451%",
+      "left": "57.1%"
+    },
+    "2_presentThana_28": {
+      "top": "27.9853%",
+      "left": "80%"
+    },
+    "2_presentDistrict_29": {
+      "top": "29.6174%",
+      "left": "11.1%"
+    },
+    "2_permanentRoad_30": {
+      "top": "31.4256%",
+      "left": "34.7%"
+    },
+    "2_permanentPO_31": {
+      "top": "31.4018%",
+      "left": "57%"
+    },
+    "2_permanentThana_32": {
+      "top": "31.3541%",
+      "left": "80%"
+    },
+    "2_permanentDistrict_33": {
+      "top": "33.2741%",
+      "left": "10.9%"
+    },
+    "2_digit2_34": {
+      "top": "94.7518%",
+      "left": "11.1%"
+    },
+    "2_digit6_35": {
+      "top": "94.8238%",
+      "left": "17.8%"
+    },
+    "2_secondApplicantName_36": {
+      "top": "71.5111%",
+      "left": "45.5%"
+    },
+    "2_thirdApplicantName_37": {
+      "top": "71.7032%",
+      "left": "76.8%"
+    },
+    "2_officer1Seal_38": {
+      "top": "83.0959%",
+      "left": "3.3%"
+    },
+    "2_officer2Seal_39": {
+      "top": "83.0959%",
+      "left": "37.2%"
+    },
+    "2_officer3Seal_40": {
+      "top": "83.0239%",
+      "left": "73%"
+    },
+    "2_tick3_41": {
+      "top": "89.208%",
+      "left": "43.5%"
+    },
+    "2_customerCategory_1_42": {
+      "top": "78.1732%",
+      "left": "22.5%"
+    },
+    "2_customerCategory_2_43": {
+      "top": "78.1574%",
+      "left": "32.5%"
+    },
+    "2_customerCategory_3_44": {
+      "top": "78.1415%",
+      "left": "41.4%"
+    },
+    "2_fullNameEn_45": {
+      "top": "8.33654%",
+      "left": "27.4%"
+    },
+    "2_identityDocumentType_1_46": {
+      "top": "34.9523%",
+      "left": "8.73826%"
+    },
+    "2_identityDocumentType_2_47": {
+      "top": "35.7514%",
+      "left": "24.2%"
+    },
+    "2_identityDocumentType_3_48": {
+      "top": "35.7514%",
+      "left": "38.4%"
+    },
+    "2_identityDocumentType_4_49": {
+      "top": "35.5354%",
+      "left": "44.8%"
+    },
+    "3_accountNumber_0": {
+      "top": "3.86438%",
+      "left": "53.5%"
+    },
+    "3_digit3_1": {
+      "top": "94.6798%",
+      "left": "81.1%"
+    },
+    "3_digit6_2": {
+      "top": "94.7518%",
+      "left": "87.9%"
+    },
+    "4_digit4_0": {
+      "top": "94.6078%",
+      "left": "11.3%"
+    },
+    "4_digit6_1": {
+      "top": "94.6798%",
+      "left": "18.3%"
+    },
+    "4_accountNumber_2": {
+      "top": "3.93637%",
+      "left": "53.4%"
+    },
+    "5_digit5_0": {
+      "top": "94.8238%",
+      "left": "81%"
+    },
+    "5_digit6_1": {
+      "top": "94.8238%",
+      "left": "87.8%"
+    },
+    "5_accountNumber_2": {
+      "top": "3.93637%",
+      "left": "53.5%"
+    },
+    "6_fullNameEn_0": {
+      "top": "56.6861%",
+      "left": "12.7%"
+    },
+    "6_digit6_1": {
+      "top": "94.6798%",
+      "left": "11.3%"
+    },
+    "6_digit6_2": {
+      "top": "94.7518%",
+      "left": "18%"
+    },
+    "6_accountNumber_3": {
+      "top": "4.00837%",
+      "left": "54.6%"
+    },
+    "6_todayDate_4": {
+      "top": "58.9176%",
+      "left": "12.8%"
+    },
+    "6_secondApplicantDate_5": {
+      "top": "58.9176%",
+      "left": "46.7%"
+    },
+    "6_thirdApplicantDate_6": {
+      "top": "58.9896%",
+      "left": "78.5%"
+    },
+    "6_secondApplicantName_7": {
+      "top": "56.6078%",
+      "left": "46.4%"
+    },
+    "6_thirdApplicantName_8": {
+      "top": "56.7279%",
+      "left": "78.4%"
+    },
+    "6_officer1Seal_9": {
+      "top": "88.1357%",
+      "left": "74.1%"
+    },
+    "24_accountTitle_0": {
+      "top": "28.5795%",
+      "left": "12.7%"
+    },
+    "24_accountTitleBn_1": {
+      "top": "59.2342%",
+      "left": "24.6%"
+    },
+    "24_accountTitleNoSpace_2": {
+      "top": "56.8424%",
+      "left": "24.4%"
+    },
+    "24_accountTitleBnNoSpace_3": {
+      "top": "32.2036%",
+      "left": "11.7%"
+    },
+    "24_branchName_4": {
+      "top": "18.2394%",
+      "left": "10.6%"
+    },
+    "24_branchName_5": {
+      "top": "6.35998%",
+      "left": "49.5%"
+    },
+    "24_todayDate_6": {
+      "top": "13.4156%",
+      "left": "12.4%"
+    },
+    "24_accountNumber_7": {
+      "top": "15.8158%",
+      "left": "52.3%"
+    },
+    "24_cif_8": {
+      "top": "17.8476%",
+      "left": "52.5%"
+    },
+    "24_initialDepositWords_9": {
+      "top": "48.082%",
+      "left": "47.8%"
+    },
+    "24_digit1_10": {
+      "top": "94.8238%",
+      "left": "80.8%"
+    },
+    "24_digit6_11": {
+      "top": "94.8958%",
+      "left": "87.7%"
+    },
+    "24_tick1_12": {
+      "top": "90%",
+      "left": "20%"
+    },
+    "24_tick2_13": {
+      "top": "43.7782%",
+      "left": "24.6%"
+    },
+    "24_ownership_single_14": {
+      "top": "45.7221%",
+      "left": "30.5%"
+    },
+    "24_ownership_joint_15": {
+      "top": "45.7221%",
+      "left": "38.3%"
+    },
+    "24_initialDeposit_16": {
+      "top": "48.0419%",
+      "left": "24.3%"
+    },
+    "24_chequeBook_17": {
+      "top": "50.0017%",
+      "left": "24.9%"
+    },
+    "24_debitCard_18": {
+      "top": "50.1456%",
+      "left": "51.1%"
+    },
+    "24_officer1Seal_19": {
+      "top": "88.1679%",
+      "left": "73.9%"
+    },
+    "24_tradeLicenceNo_20": {
+      "top": "61.6785%",
+      "left": "24.7%"
+    },
+    "24_tradeLicenceDate_21": {
+      "top": "61.6785%",
+      "left": "55.5%"
+    },
+    "24_tradeLicenceAuthority_22": {
+      "top": "61.6065%",
+      "left": "76.8%"
+    },
+    "24_registrationNo_23": {
+      "top": "63.7506%",
+      "left": "24.7%"
+    },
+    "24_registrationDate_24": {
+      "top": "63.8225%",
+      "left": "49.9%"
+    },
+    "24_registrationAuthority_25": {
+      "top": "63.8225%",
+      "left": "76.3%"
+    },
+    "24_registeredAddress_26": {
+      "top": "65.7506%",
+      "left": "24.7%"
+    },
+    "24_vatBin_27": {
+      "top": "67.6785%",
+      "left": "24.7%"
+    },
+    "24_businessEtin_28": {
+      "top": "69.8225%",
+      "left": "26%"
+    },
+    "24_businessAddress_29": {
+      "top": "71.5345%",
+      "left": "24.8%"
+    },
+    "24_businessPhone_30": {
+      "top": "73.1745%",
+      "left": "34.4%"
+    },
+    "24_businessEmail_31": {
+      "top": "73.1025%",
+      "left": "60.8%"
+    },
+    "24_organizationTypeOther_32": {
+      "top": "79.2783%",
+      "left": "31.7%"
+    },
+    "24_businessTypeOther_33": {
+      "top": "81.4944%",
+      "left": "59.4%"
+    },
+    "24_natureOfBusiness_34": {
+      "top": "83.5664%",
+      "left": "24.6%"
+    },
+    "24_annualTurnover_35": {
+      "top": "86.0704%",
+      "left": "24.9%"
+    },
+    "24_manpower_36": {
+      "top": "86.0703%",
+      "left": "51.7%"
+    },
+    "24_fixedAsset_37": {
+      "top": "86.0704%",
+      "left": "78.6%"
+    },
+    "24_orgtype_proprietorship_38": {
+      "top": "75.3989%",
+      "left": "26%"
+    },
+    "24_orgtype_partnership_39": {
+      "top": "75.6869%",
+      "left": "37.5%"
+    },
+    "24_orgtype_jointventure_40": {
+      "top": "75.6149%",
+      "left": "46.7%"
+    },
+    "24_orgtype_privateltd_41": {
+      "top": "75.5429%",
+      "left": "60.7%"
+    },
+    "24_orgtype_publicltd_42": {
+      "top": "75.6869%",
+      "left": "76.9%"
+    },
+    "24_orgtype_ngo_43": {
+      "top": "77.5588%",
+      "left": "26%"
+    },
+    "24_orgtype_club_44": {
+      "top": "77.4868%",
+      "left": "37.1%"
+    },
+    "24_orgtype_educational_45": {
+      "top": "77.5588%",
+      "left": "46.8%"
+    },
+    "24_orgtype_religious_46": {
+      "top": "77.4148%",
+      "left": "60.5%"
+    },
+    "24_orgtype_trust_47": {
+      "top": "77.6308%",
+      "left": "76.7%"
+    },
+    "24_orgtype_others_48": {
+      "top": "79.3587%",
+      "left": "25.9%"
+    },
+    "24_bustype_trading_49": {
+      "top": "81.6467%",
+      "left": "24.5%"
+    },
+    "24_bustype_service_50": {
+      "top": "81.8627%",
+      "left": "32.7%"
+    },
+    "24_bustype_manufacturing_51": {
+      "top": "81.7188%",
+      "left": "40.9%"
+    },
+    "24_bustype_others_52": {
+      "top": "81.7907%",
+      "left": "52.9%"
+    },
+    "24_acctype_current_53": {
+      "top": "35.5569%",
+      "left": "23.6%"
+    },
+    "24_acctype_snd_54": {
+      "top": "35.4848%",
+      "left": "43.3%"
+    },
+    "24_isrBank_55": {
+      "top": "41.3719%",
+      "left": "78.2%"
+    },
+    "24_isrCustomer_56": {
+      "top": "41.2844%",
+      "left": "89.2%"
+    },
+    "25_accountNumber_0": {
+      "top": "45.6224%",
+      "left": "52.7%"
+    },
+    "25_accountNumber_1": {
+      "top": "4.08037%",
+      "left": "53.3%"
+    },
+    "25_fullNameEn_2": {
+      "top": "73.2776%",
+      "left": "14.5%"
+    },
+    "25_smeCode_3": {
+      "top": "79.1491%",
+      "left": "62%"
+    },
+    "25_dob_4": {
+      "top": "12.7765%",
+      "left": "29.5%"
+    },
+    "25_fatherName_5": {
+      "top": "14.432%",
+      "left": "27.6%"
+    },
+    "25_motherName_6": {
+      "top": "16.208%",
+      "left": "27.7%"
+    },
+    "25_spouseName_7": {
+      "top": "17.9121%",
+      "left": "27.6%"
+    },
+    "25_fullNameBn_8": {
+      "top": "11.0247%",
+      "left": "27.6%"
+    },
+    "25_nid_9": {
+      "top": "37.4232%",
+      "left": "27.4%"
+    },
+    "25_passportNo_10": {
+      "top": "20%",
+      "left": "66%"
+    },
+    "25_birthCertNo_11": {
+      "top": "88%",
+      "left": "35%"
+    },
+    "25_etin_12": {
+      "top": "27.5948%",
+      "left": "63.3%"
+    },
+    "25_mobile_13": {
+      "top": "32.1858%",
+      "left": "39.1%"
+    },
+    "25_email_14": {
+      "top": "32.234%",
+      "left": "64.8%"
+    },
+    "25_occupation_15": {
+      "top": "25.6266%",
+      "left": "27.4%"
+    },
+    "25_sourceOfFund_16": {
+      "top": "27.7053%",
+      "left": "27.7%"
+    },
+    "25_amlTrackingNumber_17": {
+      "top": "76.9741%",
+      "left": "61.5%"
+    },
+    "25_rmCode_18": {
+      "top": "78.6061%",
+      "left": "74.5%"
+    },
+    "25_tick3_19": {
+      "top": "22.5391%",
+      "left": "26.6%"
+    },
+    "25_ownership_single_20": {
+      "top": "48.314%",
+      "left": "27.6%"
+    },
+    "25_ownership_joint_21": {
+      "top": "48.5299%",
+      "left": "37.4%"
+    },
+    "25_male_22": {
+      "top": "20.3843%",
+      "left": "71.7%"
+    },
+    "25_female_23": {
+      "top": "20.2403%",
+      "left": "77.8%"
+    },
+    "25_businessPhone_24": {
+      "top": "45.5278%",
+      "left": "14.7%"
+    },
+    "25_bangladeshiLabel_25": {
+      "top": "19.586%",
+      "left": "27.6%"
+    },
+    "25_presentRoad_26": {
+      "top": "30.3608%",
+      "left": "34.8%"
+    },
+    "25_presentPO_27": {
+      "top": "30.4809%",
+      "left": "57%"
+    },
+    "25_presentThana_28": {
+      "top": "30.3612%",
+      "left": "80%"
+    },
+    "25_presentDistrict_29": {
+      "top": "32.1373%",
+      "left": "11.1%"
+    },
+    "25_permanentRoad_30": {
+      "top": "33.9455%",
+      "left": "34.8%"
+    },
+    "25_permanentPO_31": {
+      "top": "34.0657%",
+      "left": "57.1%"
+    },
+    "25_permanentThana_32": {
+      "top": "33.874%",
+      "left": "79.9%"
+    },
+    "25_permanentDistrict_33": {
+      "top": "35.794%",
+      "left": "11.1%"
+    },
+    "25_digit2_34": {
+      "top": "94.8958%",
+      "left": "11.1%"
+    },
+    "25_digit6_35": {
+      "top": "94.9678%",
+      "left": "17.7%"
+    },
+    "25_secondApplicantName_36": {
+      "top": "73.311%",
+      "left": "45.4%"
+    },
+    "25_thirdApplicantName_37": {
+      "top": "73.3592%",
+      "left": "76.4%"
+    },
+    "25_officer1Seal_38": {
+      "top": "80%",
+      "left": "3%"
+    },
+    "25_officer2Seal_39": {
+      "top": "79.7841%",
+      "left": "37.8%"
+    },
+    "25_officer3Seal_40": {
+      "top": "79.928%",
+      "left": "68.9%"
+    },
+    "25_tick3_41": {
+      "top": "89.424%",
+      "left": "42.8%"
+    },
+    "25_customerCategory_1_42": {
+      "top": "79.0373%",
+      "left": "22.7%"
+    },
+    "25_customerCategory_2_43": {
+      "top": "79.0213%",
+      "left": "32.7%"
+    },
+    "25_customerCategory_3_44": {
+      "top": "24%",
+      "left": "60%"
+    },
+    "25_fullNameEn_45": {
+      "top": "9.27249%",
+      "left": "27.7%"
+    },
+    "25_identityDocumentType_1_46": {
+      "top": "37.9833%",
+      "left": "9.5%"
+    },
+    "25_identityDocumentType_2_47": {
+      "top": "37.9113%",
+      "left": "22%"
+    },
+    "25_identityDocumentType_3_48": {
+      "top": "38.3432%",
+      "left": "38.5%"
+    },
+    "25_identityDocumentType_4_49": {
+      "top": "38.1993%",
+      "left": "41.1%"
+    },
+    "26_accountNumber_0": {
+      "top": "5.01632%",
+      "left": "53.3%"
+    },
+    "26_digit3_1": {
+      "top": "94.8958%",
+      "left": "81%"
+    },
+    "26_digit6_2": {
+      "top": "94.9678%",
+      "left": "88%"
+    },
+    "27_digit4_0": {
+      "top": "94.8238%",
+      "left": "11.4%"
+    },
+    "27_digit6_1": {
+      "top": "94.7518%",
+      "left": "18.2%"
+    },
+    "27_accountNumber_2": {
+      "top": "4.94433%",
+      "left": "53.2%"
+    },
+    "28_digit5_0": {
+      "top": "94.9678%",
+      "left": "80.9%"
+    },
+    "28_digit6_1": {
+      "top": "94.8958%",
+      "left": "87.8%"
+    },
+    "28_accountNumber_2": {
+      "top": "4.87233%",
+      "left": "53.1%"
+    },
+    "29_fullNameEn_0": {
+      "top": "56.5421%",
+      "left": "11.4%"
+    },
+    "29_digit6_1": {
+      "top": "94.6798%",
+      "left": "11.3%"
+    },
+    "29_digit6_2": {
+      "top": "94.7518%",
+      "left": "18.3%"
+    },
+    "29_accountNumber_3": {
+      "top": "4.94433%",
+      "left": "53.5%"
+    },
+    "29_todayDate_4": {
+      "top": "58.8456%",
+      "left": "11.6%"
+    },
+    "29_secondApplicantDate_5": {
+      "top": "58.9176%",
+      "left": "45.7%"
+    },
+    "29_thirdApplicantDate_6": {
+      "top": "59.0615%",
+      "left": "77.6%"
+    },
+    "29_secondApplicantName_7": {
+      "top": "56.6798%",
+      "left": "45.3%"
+    },
+    "29_thirdApplicantName_8": {
+      "top": "56.6559%",
+      "left": "77.2%"
+    },
+    "7_todayDate_0": {
+      "top": "18.8065%",
+      "left": "71.4%"
+    },
+    "7_branchName_1": {
+      "top": "15.6933%",
+      "left": "70.7%"
+    },
+    "7_accountNumber_2": {
+      "top": "25.3018%",
+      "left": "36.4%"
+    },
+    "7_cif_3": {
+      "top": "20.4716%",
+      "left": "36.3%"
+    },
+    "7_accountTitle_4": {
+      "top": "27.767%",
+      "left": "36.3%"
+    },
+    "7_accountTypeName_5": {
+      "top": "30.1414%",
+      "left": "36.2%"
+    },
+    "7_organizationType_6": {
+      "top": "32.5754%",
+      "left": "43.5%"
+    },
+    "7_addressVerification_7": {
+      "top": "53.6365%",
+      "left": "14.6%"
+    },
+    "7_sourceOfFundInDetails_8": {
+      "top": "37.3726%",
+      "left": "36.8%"
+    },
+    "7_sourceOfFundDocumentA_9": {
+      "top": "42.264%",
+      "left": "31.7%"
+    },
+    "7_sourceOfFundDocumentB_10": {
+      "top": "44.8206%",
+      "left": "31.8%"
+    },
+    "7_sourceOfFundDocumentC_11": {
+      "top": "47.1649%",
+      "left": "32.1%"
+    },
+    "7_na_text_1_12": {
+      "top": "86.2165%",
+      "left": "68.2%"
+    },
+    "7_na_text_2_13": {
+      "top": "87.9854%",
+      "left": "68.2%"
+    },
+    "7_printTargetLabel_14": {
+      "top": "8%",
+      "left": "10%"
+    },
+    "7_printTargetName_15": {
+      "top": "10%",
+      "left": "10%"
+    },
+    "7_netWorthOfOrganization_16": {
+      "top": "35.1511%",
+      "left": "39.7%"
+    },
+    "7_tradeLicenceNo_text_17": {
+      "top": "77.7544%",
+      "left": "31.8%"
+    },
+    "7_tradeLicenceNo_tick_18": {
+      "top": "77.8252%",
+      "left": "61.9%"
+    },
+    "7_registrationNo_19": {
+      "top": "75.0752%",
+      "left": "46.8%"
+    },
+    "7_vatBin_20": {
+      "top": "72.6885%",
+      "left": "33.7%"
+    },
+    "7_businessEtin_21": {
+      "top": "70.2309%",
+      "left": "39.9%"
+    },
+    "7_registrationNo_tick_22": {
+      "top": "75.3582%",
+      "left": "61.9%"
+    },
+    "7_vatBin_tick_23": {
+      "top": "72.9007%",
+      "left": "61.8%"
+    },
+    "7_businessEtin_tick_24": {
+      "top": "70.4432%",
+      "left": "61.7%"
+    },
+    "7_tick3_25": {
+      "top": "56.3917%",
+      "left": "63.6%"
+    },
+    "7_na_text_2_26": {
+      "top": "82.2543%",
+      "left": "46.5%"
+    },
+    "7_otherDocuments_27": {
+      "top": "77.8139%",
+      "left": "31.4%"
+    },
+    "7_otherDocuments_tick_28": {
+      "top": "77.7431%",
+      "left": "61.7%"
+    },
+    "8_tick8_1_0": {
+      "top": "14.5519%",
+      "left": "50.1%"
+    },
+    "8_tick8_2_1": {
+      "top": "32.099%",
+      "left": "24.7%"
+    },
+    "8_na_text_3_2": {
+      "top": "40.2735%",
+      "left": "49.1%"
+    },
+    "8_clientBusiness_1_3": {
+      "top": "52.5001%",
+      "left": "48.3%"
+    },
+    "8_clientBusiness_2_4": {
+      "top": "52.3067%",
+      "left": "91.8%"
+    },
+    "8_clientBusiness_3_5": {
+      "top": "54.8727%",
+      "left": "48.4%"
+    },
+    "8_clientBusiness_4_6": {
+      "top": "54.8208%",
+      "left": "91.5%"
+    },
+    "8_clientBusiness_5_7": {
+      "top": "57.8114%",
+      "left": "48.6%"
+    },
+    "8_clientBusiness_6_8": {
+      "top": "57.7595%",
+      "left": "91.5%"
+    },
+    "8_clientBusiness_7_9": {
+      "top": "60.8208%",
+      "left": "48.6%"
+    },
+    "8_clientBusiness_8_10": {
+      "top": "60.8397%",
+      "left": "91.7%"
+    },
+    "8_clientBusiness_9_11": {
+      "top": "63.2642%",
+      "left": "48.4%"
+    },
+    "8_clientBusiness_10_12": {
+      "top": "63.2124%",
+      "left": "91.5%"
+    },
+    "8_clientBusiness_11_13": {
+      "top": "65.3539%",
+      "left": "48.5%"
+    },
+    "8_clientBusiness_12_14": {
+      "top": "65.4435%",
+      "left": "91.3%"
+    },
+    "8_clientBusiness_13_15": {
+      "top": "67.585%",
+      "left": "48.3%"
+    },
+    "8_clientBusiness_14_16": {
+      "top": "67.5332%",
+      "left": "91.4%"
+    },
+    "8_clientBusiness_15_17": {
+      "top": "69.1086%",
+      "left": "48.6%"
+    },
+    "8_clientBusiness_16_18": {
+      "top": "69.1983%",
+      "left": "91.6%"
+    },
+    "8_clientBusiness_17_19": {
+      "top": "70.5615%",
+      "left": "48.3%"
+    },
+    "8_clientBusiness_18_20": {
+      "top": "70.7926%",
+      "left": "91.1%"
+    },
+    "8_clientBusiness_19_21": {
+      "top": "72.9341%",
+      "left": "48.6%"
+    },
+    "8_clientBusiness_20_22": {
+      "top": "72.8115%",
+      "left": "91.3%"
+    },
+    "8_clientBusiness_21_23": {
+      "top": "75.7784%",
+      "left": "48.5%"
+    },
+    "8_clientBusiness_22_24": {
+      "top": "75.5661%",
+      "left": "91.6%"
+    },
+    "8_clientBusiness_23_25": {
+      "top": "78.6086%",
+      "left": "48.4%"
+    },
+    "8_clientBusiness_24_26": {
+      "top": "78.3256%",
+      "left": "91.2%"
+    },
+    "8_clientBusiness_25_27": {
+      "top": "81.5803%",
+      "left": "48.3%"
+    },
+    "8_clientBusiness_26_28": {
+      "top": "81.6508%",
+      "left": "91%"
+    },
+    "8_clientBusiness_27_29": {
+      "top": "83.7923%",
+      "left": "48.5%"
+    },
+    "8_clientBusiness_28_30": {
+      "top": "83.5989%",
+      "left": "91.4%"
+    },
+    "8_clientBusiness_29_31": {
+      "top": "85.3159%",
+      "left": "48%"
+    },
+    "8_clientBusiness_30_32": {
+      "top": "85.264%",
+      "left": "91.2%"
+    },
+    "8_clientBusiness_31_33": {
+      "top": "86.839%",
+      "left": "48%"
+    },
+    "8_clientBusiness_32_34": {
+      "top": "86.9287%",
+      "left": "90.9%"
+    },
+    "8_clientBusiness_33_35": {
+      "top": "89.0701%",
+      "left": "48.4%"
+    },
+    "8_clientBusiness_34_36": {
+      "top": "88.8061%",
+      "left": "91%"
+    },
+    "9_clientBusiness_35_0": {
+      "top": "8.44818%",
+      "left": "48.3%"
+    },
+    "9_clientBusiness_36_1": {
+      "top": "8.39631%",
+      "left": "91.3%"
+    },
+    "9_clientBusiness_37_2": {
+      "top": "9.83028%",
+      "left": "48.3%"
+    },
+    "9_clientBusiness_38_3": {
+      "top": "9.84916%",
+      "left": "91.2%"
+    },
+    "9_clientBusiness_39_4": {
+      "top": "11.9907%",
+      "left": "48.7%"
+    },
+    "9_clientBusiness_40_5": {
+      "top": "12.1511%",
+      "left": "91.3%"
+    },
+    "9_clientBusiness_41_6": {
+      "top": "14.2926%",
+      "left": "48%"
+    },
+    "9_clientBusiness_42_7": {
+      "top": "14.3822%",
+      "left": "91.4%"
+    },
+    "9_clientBusiness_43_8": {
+      "top": "15.7454%",
+      "left": "48.2%"
+    },
+    "9_clientBusiness_44_9": {
+      "top": "15.7643%",
+      "left": "91.4%"
+    },
+    "9_clientBusiness_45_10": {
+      "top": "17.4813%",
+      "left": "48.4%"
+    },
+    "9_clientBusiness_46_11": {
+      "top": "17.2171%",
+      "left": "91.4%"
+    },
+    "9_clientBusiness_47_12": {
+      "top": "19.5002%",
+      "left": "48.2%"
+    },
+    "9_clientBusiness_48_13": {
+      "top": "19.1653%",
+      "left": "91.2%"
+    },
+    "9_clientBusiness_49_14": {
+      "top": "21.7313%",
+      "left": "48.2%"
+    },
+    "9_clientBusiness_50_15": {
+      "top": "21.6794%",
+      "left": "91.3%"
+    },
+    "9_clientBusiness_51_16": {
+      "top": "23.2549%",
+      "left": "92.5%"
+    },
+    "9_clientProfession_1_17": {
+      "top": "32.9002%",
+      "left": "46.6%"
+    },
+    "9_clientProfession_2_18": {
+      "top": "43.0353%",
+      "left": "46.5%"
+    },
+    "9_clientProfession_3_19": {
+      "top": "34.9902%",
+      "left": "46.6%"
+    },
+    "9_clientProfession_4_20": {
+      "top": "45.3375%",
+      "left": "46.5%"
+    },
+    "9_clientProfession_5_21": {
+      "top": "37.151%",
+      "left": "46.7%"
+    },
+    "9_clientProfession_6_22": {
+      "top": "47.569%",
+      "left": "46.8%"
+    },
+    "9_clientProfession_7_23": {
+      "top": "40.0898%",
+      "left": "46.6%"
+    },
+    "9_clientProfession_8_24": {
+      "top": "50.5079%",
+      "left": "46.7%"
+    },
+    "9_clientProfession_9_25": {
+      "top": "52.7909%",
+      "left": "46.7%"
+    },
+    "9_clientProfession_10_26": {
+      "top": "39.9354%",
+      "left": "92%"
+    },
+    "9_clientProfession_11_27": {
+      "top": "32.9198%",
+      "left": "92%"
+    },
+    "9_clientProfession_12_28": {
+      "top": "42.772%",
+      "left": "92.1%"
+    },
+    "9_clientProfession_13_29": {
+      "top": "35.0098%",
+      "left": "92.1%"
+    },
+    "9_clientProfession_14_30": {
+      "top": "45.2864%",
+      "left": "92.1%"
+    },
+    "9_clientProfession_15_31": {
+      "top": "37.1705%",
+      "left": "92.3%"
+    },
+    "9_clientProfession_16_32": {
+      "top": "47.7301%",
+      "left": "92%"
+    },
+    "9_clientProfession_17_33": {
+      "top": "50.0084%",
+      "left": "91.5167%"
+    },
+    "9_clientProfession_17_34": {
+      "top": "49.9375%",
+      "left": "91.445%"
+    },
+    "9_clientProfession_18_35": {
+      "top": "52.7205%",
+      "left": "91.9%"
+    },
+    "9_clientProfession_19_36": {
+      "top": "54.1546%",
+      "left": "93.9%"
+    },
+    "9_typeOfOnboarding_1_37": {
+      "top": "59.2841%",
+      "left": "88.6%"
+    },
+    "9_typeOfOnboarding_2_38": {
+      "top": "61.0034%",
+      "left": "88.4%"
+    },
+    "9_typeOfOnboarding_3_39": {
+      "top": "62.7205%",
+      "left": "88.2%"
+    },
+    "9_typeOfOnboarding_4_40": {
+      "top": "64.2253%",
+      "left": "88.2%"
+    },
+    "9_pepIpCeo_1_41": {
+      "top": "72.0968%",
+      "left": "88.3%"
+    },
+    "9_pepIpCeo_2_42": {
+      "top": "74.9456%",
+      "left": "87.8%"
+    },
+    "9_closeAssociate_1_43": {
+      "top": "77.936%",
+      "left": "88.8%"
+    },
+    "9_closeAssociate_2_44": {
+      "top": "81.2801%",
+      "left": "88.1%"
+    },
+    "10_accountType_1_0": {
+      "top": "37.7229%",
+      "left": "88.64%"
+    },
+    "10_accountType_2_1": {
+      "top": "7%",
+      "left": "85%"
+    },
+    "10_avgYearlyTransaction_1_2": {
+      "top": "56.9588%",
+      "left": "89.0401%"
+    },
+    "10_avgYearlyTransaction_2_3": {
+      "top": "58.83%",
+      "left": "89%"
+    },
+    "10_avgYearlyTransaction_3_4": {
+      "top": "60.5469%",
+      "left": "89%"
+    },
+    "10_avgYearlyTransaction_4_5": {
+      "top": "62.4055%",
+      "left": "89.2%"
+    },
+    "10_credibleSourceOfFunds_1_6": {
+      "top": "71.0756%",
+      "left": "88.5884%"
+    },
+    "10_credibleSourceOfFunds_2_7": {
+      "top": "72.7722%",
+      "left": "88.7%"
+    },
+    "10_clientBusinessScore_8": {
+      "top": "80.1773%",
+      "left": "86.9%"
+    },
+    "10_clientProfessionScore_9": {
+      "top": "83.6628%",
+      "left": "85.8%"
+    },
+    "10_totalScoreWithBonus_10": {
+      "top": "89.3413%",
+      "left": "38.5%"
+    },
+    "10_tick1_11": {
+      "top": "90%",
+      "left": "14%"
+    },
+    "10_tick3_12": {
+      "top": "12.7649%",
+      "left": "89.3124%"
+    },
+    "10_tick2_13": {
+      "top": "12.6942%",
+      "left": "89.2457%"
+    },
+    "11_riskAssessment_0": {
+      "top": "24.9969%",
+      "left": "44.2%"
+    },
+    "11_riskLowTick_1": {
+      "top": "16.5981%",
+      "left": "66.8%"
+    },
+    "11_riskHighTick_2": {
+      "top": "14.0707%",
+      "left": "66.8%"
+    },
+    "11_officer1Seal_3": {
+      "top": "39.3244%",
+      "left": "24.4%"
+    },
+    "11_officer2Seal_4": {
+      "top": "67.6912%",
+      "left": "69.4%"
+    },
+    "11_officer3Seal_5": {
+      "top": "39.2536%",
+      "left": "66.9%"
+    },
+    "13_todayDate_0": {
+      "top": "13.2896%",
+      "left": "74.7%"
+    },
+    "13_cif_1": {
+      "top": "13.2803%",
+      "left": "25%"
+    },
+    "13_accountNumber_2": {
+      "top": "14.7943%",
+      "left": "21%"
+    },
+    "13_accountTitle_3": {
+      "top": "16.1309%",
+      "left": "23%"
+    },
+    "13_occupation_4": {
+      "top": "17.6089%",
+      "left": "27%"
+    },
+    "13_monthlyIncome_5": {
+      "top": "23.062%",
+      "left": "31.3%"
+    },
+    "13_monthlyEquivalent_6": {
+      "top": "24.4546%",
+      "left": "32.6%"
+    },
+    "13_sourceOfFundInDetails_7": {
+      "top": "20.2945%",
+      "left": "23.2%"
+    },
+    "13_depositCashCount_8": {
+      "top": "31.5279%",
+      "left": "44.2%"
+    },
+    "13_depositCashAmount_9": {
+      "top": "31.5279%",
+      "left": "59.2%"
+    },
+    "13_depositCashTotal_10": {
+      "top": "31.6494%",
+      "left": "77.6%"
+    },
+    "13_depositTransferCount_11": {
+      "top": "33.1261%",
+      "left": "44.3%"
+    },
+    "13_depositTransferAmount_12": {
+      "top": "32.9439%",
+      "left": "59.4%"
+    },
+    "13_depositTransferTotal_13": {
+      "top": "33.1261%",
+      "left": "77.4%"
+    },
+    "13_depositRemittanceCount_14": {
+      "top": "34.3784%",
+      "left": "44.1%"
+    },
+    "13_depositRemittanceAmount_15": {
+      "top": "34.3176%",
+      "left": "59.3%"
+    },
+    "13_depositRemittanceTotal_16": {
+      "top": "34.3784%",
+      "left": "77.7%"
+    },
+    "13_depositTotalProbable_17": {
+      "top": "41.2242%",
+      "left": "77.5%"
+    },
+    "13_depositMaxSingleCombined_18": {
+      "top": "41.3037%",
+      "left": "60.8%"
+    },
+    "13_withdrawalCashCount_19": {
+      "top": "51.5135%",
+      "left": "42.7%"
+    },
+    "13_withdrawalCashAmount_20": {
+      "top": "51.392%",
+      "left": "60.9%"
+    },
+    "13_withdrawalCashTotal_21": {
+      "top": "51.2705%",
+      "left": "76.7%"
+    },
+    "13_withdrawalTransferCount_22": {
+      "top": "54.0835%",
+      "left": "42.9%"
+    },
+    "13_withdrawalTransferAmount_23": {
+      "top": "54.1444%",
+      "left": "60.6%"
+    },
+    "13_withdrawalTransferTotal_24": {
+      "top": "54.3874%",
+      "left": "77%"
+    },
+    "13_withdrawalRemittanceCount_25": {
+      "top": "56.1863%",
+      "left": "42.7%"
+    },
+    "13_withdrawalRemittanceAmount_26": {
+      "top": "56.1863%",
+      "left": "61%"
+    },
+    "13_withdrawalRemittanceTotal_27": {
+      "top": "56.3686%",
+      "left": "77.1%"
+    },
+    "13_withdrawalTotalProbable_28": {
+      "top": "63.093%",
+      "left": "76.9%"
+    },
+    "13_officer1Seal_29": {
+      "top": "66.2106%",
+      "left": "11.9%"
+    },
+    "13_officer3Seal_30": {
+      "top": "66.818%",
+      "left": "62.2%"
+    },
+    "13_withdrawalMaxSingleCombined_31": {
+      "top": "63.234%",
+      "left": "61%"
+    },
+    "13_officer3Seal_32": {
+      "top": "83.7055%",
+      "left": "15.9%"
+    },
+    "15_branchName_0": {
+      "top": "6%",
+      "left": "43.9%"
+    },
+    "15_accountNumber_1": {
+      "top": "14.7106%",
+      "left": "21.8%"
+    },
+    "15_accountTitle_2": {
+      "top": "27.2888%",
+      "left": "29%"
+    },
+    "15_accountTypeName_3": {
+      "top": "32.5776%",
+      "left": "25.6%"
+    },
+    "15_accountTypeCode_4": {
+      "top": "32.9492%",
+      "left": "84.1%"
+    },
+    "15_occupationProfession_5": {
+      "top": "25%",
+      "left": "22%"
+    },
+    "15_sectorCode_6": {
+      "top": "30.5371%",
+      "left": "76.2%"
+    },
+    "15_organizationType_7": {
+      "top": "30.3207%",
+      "left": "27.3%"
+    },
+    "15_officer1Seal_8": {
+      "top": "76.3859%",
+      "left": "8.1%"
+    },
+    "15_officer2Seal_9": {
+      "top": "76.4681%",
+      "left": "36.9%"
+    },
+    "15_officer3Seal_10": {
+      "top": "76.8787%",
+      "left": "68.4%"
+    },
+    "17_accountNumberNoSpace_0": {
+      "top": "11.7171%",
+      "left": "23.2%"
+    },
+    "17_accountTitle_1": {
+      "top": "13.4079%",
+      "left": "23.2%"
+    },
+    "17_tick3_2": {
+      "top": "36.0381%",
+      "left": "79.9%"
+    },
+    "17_tick3_3": {
+      "top": "22.6005%",
+      "left": "80.4%"
+    },
+    "17_tick3_4": {
+      "top": "32.7847%",
+      "left": "80.1%"
+    },
+    "17_tick3_5": {
+      "top": "27.6927%",
+      "left": "80.2%"
+    },
+    "17_tick3_6": {
+      "top": "31.0167%",
+      "left": "80.4%"
+    },
+    "17_tick3_7": {
+      "top": "29.4607%",
+      "left": "80.2%"
+    },
+    "17_tick3_8": {
+      "top": "24.4394%",
+      "left": "80.5%"
+    },
+    "17_tick3_9": {
+      "top": "34.3407%",
+      "left": "79.9%"
+    },
+    "17_officer1Seal_10": {
+      "top": "82.4753%",
+      "left": "11.5%"
+    },
+    "41_nomineeName_0": {
+      "top": "21.4785%",
+      "left": "19.4%"
+    },
+    "41_nomineeRelation_1": {
+      "top": "26.0621%",
+      "left": "46.2%"
+    },
+    "41_nomineeDob_2": {
+      "top": "21.7198%",
+      "left": "59.6%"
+    },
+    "41_nomineeShare_3": {
+      "top": "26.1595%",
+      "left": "22.9%"
+    },
+    "41_nomineeNid_4": {
+      "top": "28.3677%",
+      "left": "37.7%"
+    },
+    "41_nomineeAddress_5": {
+      "top": "23.6655%",
+      "left": "12.9%"
+    },
+    "41_nomineeMobile_6": {
+      "top": "30.0974%",
+      "left": "17.3%"
+    },
+    "41_nomineeEmail_7": {
+      "top": "30.1461%",
+      "left": "43.6%"
+    },
+    "41_accountNumber_8": {
+      "top": "44.3923%",
+      "left": "52.8%"
+    },
+    "41_accountNumber_9": {
+      "top": "15.4552%",
+      "left": "53%"
+    },
+    "41_secondApplicantName_10": {
+      "top": "70.4276%",
+      "left": "40.2%"
+    },
+    "41_thirdApplicantName_11": {
+      "top": "70.5483%",
+      "left": "71.1%"
+    },
+    "41_fullNameEn_12": {
+      "top": "70.5708%",
+      "left": "10.1%"
+    },
+    "41_digit7_13": {
+      "top": "93.5991%",
+      "left": "11.4%"
+    },
+    "41_digit7_14": {
+      "top": "93.9591%",
+      "left": "18.1%"
+    },
+    "41_ownership_single_15": {
+      "top": "46.7383%",
+      "left": "23.9%"
+    },
+    "41_ownership_joint_16": {
+      "top": "47.0262%",
+      "left": "32.2%"
+    },
+    "41_tick3_17": {
+      "top": "88.1284%",
+      "left": "41.6%"
+    },
+    "41_officer1Seal_18": {
+      "top": "77.3366%",
+      "left": "7.6%"
+    },
+    "41_officer2Seal_19": {
+      "top": "77.2646%",
+      "left": "38.5%"
+    },
+    "41_officer3Seal_20": {
+      "top": "77.0487%",
+      "left": "69.3%"
+    },
+    "50_branchName_0": {
+      "top": "6.99036%",
+      "left": "44.2%"
+    },
+    "50_accountNumber_1": {
+      "top": "13.2026%",
+      "left": "23%"
+    },
+    "50_accountTitleNoSpace_2": {
+      "top": "40.5661%",
+      "left": "37.5%"
+    },
+    "50_fullNameEn_3": {
+      "top": "45.4182%",
+      "left": "37.4%"
+    },
+    "50_todayDate_4": {
+      "top": "9.89071%",
+      "left": "81.5%"
+    },
+    "50_tradeLicenceNo_5": {
+      "top": "50.0194%",
+      "left": "37.3%"
+    },
+    "50_businessPhone_6": {
+      "top": "52.7525%",
+      "left": "38%"
+    },
+    "50_businessAddress_7": {
+      "top": "58.1802%",
+      "left": "37.3%"
+    },
+    "50_natureOfBusiness_8": {
+      "top": "67.9487%",
+      "left": "37.2%"
+    },
+    "50_nearestLandmark_9": {
+      "top": "65.0808%",
+      "left": "37.4%"
+    },
+    "50_tick3_10": {
+      "top": "9.21472%",
+      "left": "37.3%"
+    },
+    "50_tick3_11": {
+      "top": "71.1832%",
+      "left": "5.9%"
+    },
+    "50_officer1Seal_12": {
+      "top": "80.8489%",
+      "left": "40.4%"
+    },
+    "50_officer2Seal_13": {
+      "top": "80.4244%",
+      "left": "11.6%"
+    },
+    "50_officer3Seal_14": {
+      "top": "80.9904%",
+      "left": "71.1%"
+    },
+    "50_cif_15": {
+      "top": "12.9711%",
+      "left": "77.1%"
+    }
+  }
+}

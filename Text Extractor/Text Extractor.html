@@ -7,8 +7,10 @@
     <link rel="stylesheet" href="../css/fontawesome.min.css">
     <link rel="stylesheet" href="../css/fontawesome-fix.css">
     <link rel="stylesheet" href="../css/poppins.css">
-    <!-- Tesseract.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <!-- Tesseract.js for Image OCR - Local source -->
+    <script src="../lib/tesseract/tesseract.min.js"></script>
+    <!-- PDF.js for PDF text extraction - Local source -->
+    <script src="../lib/pdf.js/pdf.min.js"></script>
     <style>
         /* Unified Modern Design System */
         :root {
@@ -491,27 +493,32 @@
     <header class="app-header">
         <div class="header-content">
             <div class="header-icon">
-                <i class="fas fa-file-image" style="font-size: 1.8rem; color: white;"></i>
+                <i class="fas fa-file-alt" style="font-size: 1.8rem; color: white;"></i>
             </div>
             <h1 class="header-title">Text Extractor</h1>
-            <p class="header-subtitle">Extract text from images with Bangla & English support</p>
+            <p class="header-subtitle">Extract text from PDFs & images with Bangla & English support</p>
         </div>
     </header>
 
     <div class="container">
         <!-- Upload Section -->
         <div class="card">
-            <h3 class="section-title"><i class="fas fa-upload"></i> Upload Image</h3>
+            <h3 class="section-title"><i class="fas fa-upload"></i> Upload File</h3>
             
             <div class="file-input-wrapper" id="dropZone">
-                <input type="file" id="imageInput" accept="image/*">
+                <input type="file" id="imageInput" accept="image/*,.pdf">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <span>Drop image here or click to browse</span>
-                <small>Supports JPG, PNG, GIF, BMP, WebP</small>
+                <span>Drop file here or click to browse</span>
+                <small>Images (JPG, PNG, GIF, BMP, WebP) or PDF files</small>
             </div>
 
             <div class="image-preview" id="imagePreview">
-                <img id="previewImg" src="" alt="Preview">
+                <img id="previewImg" src="" alt="Preview" style="display: none;">
+                <div id="pdfPreview" style="display: none; padding: 20px; background: #f0f4f9; border-radius: 12px; text-align: center;">
+                    <i class="fas fa-file-pdf" style="font-size: 3rem; color: #ef4444; margin-bottom: 10px;"></i>
+                    <p id="pdfFileName" style="font-weight: 600; color: var(--text-primary);"></p>
+                    <p id="pdfPageCount" style="color: var(--text-secondary); font-size: 0.9rem;"></p>
+                </div>
             </div>
 
             <button class="primary-btn" id="ocrBtn" onclick="runOCR()">
@@ -557,10 +564,19 @@
     </footer>
 
     <script>
+        // Configure PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '../lib/pdf.js/pdf.worker.min.js';
+        
+        // Configure Tesseract.js worker
+        if (typeof Tesseract !== 'undefined') {
+            Tesseract.setLogging(false);
+        }
+
         const dropZone = document.getElementById('dropZone');
         const imageInput = document.getElementById('imageInput');
         const imagePreview = document.getElementById('imagePreview');
         const previewImg = document.getElementById('previewImg');
+        const pdfPreview = document.getElementById('pdfPreview');
         const statusCard = document.getElementById('statusCard');
         const resultsCard = document.getElementById('resultsCard');
         const statusBadge = document.getElementById('statusBadge');
@@ -570,6 +586,8 @@
         const output = document.getElementById('output');
         const ocrBtn = document.getElementById('ocrBtn');
         const btnText = document.getElementById('btnText');
+
+        let currentFileType = null; // 'image' or 'pdf'
 
         // Drag and drop handlers
         dropZone.addEventListener('dragover', (e) => {
@@ -598,12 +616,38 @@
         });
 
         function showPreview(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                previewImg.src = e.target.result;
-                imagePreview.classList.add('active');
-            };
-            reader.readAsDataURL(file);
+            const fileName = file.name.toLowerCase();
+            
+            if (fileName.endsWith('.pdf')) {
+                // Handle PDF preview
+                currentFileType = 'pdf';
+                previewImg.style.display = 'none';
+                pdfPreview.style.display = 'block';
+                document.getElementById('pdfFileName').textContent = file.name;
+                
+                // Get page count
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    try {
+                        const pdf = await pdfjsLib.getDocument({ data: e.target.result }).promise;
+                        document.getElementById('pdfPageCount').textContent = `${pdf.numPages} page${pdf.numPages > 1 ? 's' : ''}`;
+                    } catch (err) {
+                        document.getElementById('pdfPageCount').textContent = 'Unable to read page count';
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                // Handle image preview
+                currentFileType = 'image';
+                pdfPreview.style.display = 'none';
+                previewImg.style.display = 'block';
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImg.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+            imagePreview.classList.add('active');
         }
 
         function updateStatus(message, type = 'processing') {
@@ -624,15 +668,66 @@
             }
         }
 
-        function runOCR() {
+        async function extractTextFromPDF(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                let fullText = '';
+                
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    updateStatus(`Extracting text from page ${i}/${pdf.numPages}...`, 'processing');
+                    const progress = Math.round((i / pdf.numPages) * 100);
+                    progressFill.style.width = progress + '%';
+                    
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map(item => item.str).join(' ');
+                    fullText += pageText + '\n\n';
+                }
+                
+                return fullText;
+            } catch (err) {
+                throw new Error(`PDF extraction failed: ${err.message}`);
+            }
+        }
+
+        async function extractTextFromImage(file) {
+            return new Promise((resolve, reject) => {
+                const lang = 'eng+ben';
+                
+                Tesseract.recognize(
+                    file,
+                    lang,
+                    {
+                        logger: m => {
+                            if (m.status === "recognizing text") {
+                                const progress = Math.round(m.progress * 100);
+                                progressFill.style.width = progress + '%';
+                                updateStatus(`Recognizing text... ${progress}%`, 'processing');
+                            } else if (m.status === "loading language traineddata") {
+                                updateStatus('Loading language data...', 'processing');
+                            }
+                        }
+                    }
+                ).then(({ data: { text } }) => {
+                    progressFill.style.width = '100%';
+                    resolve(text);
+                }).catch(err => {
+                    reject(new Error(`Image OCR failed: ${err.message}`));
+                });
+            });
+        }
+
+        async function runOCR() {
             const fileInput = document.getElementById('imageInput');
-            const lang = 'eng+ben';
 
             if (!fileInput.files.length) {
-                alert("Please select an image file first.");
+                alert("Please select a file first.");
                 return;
             }
 
+            const file = fileInput.files[0];
+            
             // Show status and disable button
             updateStatus('Initializing extraction engine...', 'processing');
             progressWrapper.classList.add('active');
@@ -642,34 +737,27 @@
             ocrBtn.disabled = true;
             btnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
-            Tesseract.recognize(
-                fileInput.files[0],
-                lang,
-                {
-                    logger: m => {
-                        if (m.status === "recognizing text") {
-                            const progress = Math.round(m.progress * 100);
-                            progressFill.style.width = progress + '%';
-                            updateStatus(`Recognizing text... ${progress}%`, 'processing');
-                        } else if (m.status === "loading language traineddata") {
-                            updateStatus('Loading language data...', 'processing');
-                        }
-                    }
+            try {
+                let extractedText;
+                
+                if (currentFileType === 'pdf') {
+                    extractedText = await extractTextFromPDF(file);
+                } else {
+                    extractedText = await extractTextFromImage(file);
                 }
-            ).then(({ data: { text } }) => {
-                output.value = text;
+                
+                output.value = extractedText;
                 progressFill.style.width = '100%';
                 updateStatus('Extraction Completed Successfully!', 'success');
                 progressWrapper.classList.remove('active');
-                ocrBtn.disabled = false;
-                btnText.innerHTML = 'Extract Text';
-            }).catch(err => {
-                updateStatus('Extraction Failed - Please try again', 'error');
+            } catch (err) {
+                updateStatus('Extraction Failed - ' + err.message, 'error');
                 progressWrapper.classList.remove('active');
-                ocrBtn.disabled = false;
-                btnText.innerHTML = 'Extract Text';
                 console.error(err);
-            });
+            } finally {
+                ocrBtn.disabled = false;
+                btnText.innerHTML = '<i class="fas fa-search"></i> Extract Text';
+            }
         }
 
         function copyText() {
@@ -692,10 +780,13 @@
             imageInput.value = '';
             imagePreview.classList.remove('active');
             previewImg.src = '';
+            previewImg.style.display = 'none';
+            pdfPreview.style.display = 'none';
             output.value = '';
             statusCard.style.display = 'none';
             resultsCard.style.display = 'none';
             progressFill.style.width = '0%';
+            currentFileType = null;
         }
     </script>
 </body>

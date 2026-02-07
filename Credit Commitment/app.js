@@ -911,7 +911,7 @@
     el('cust_addr').value = '';
     el('cust_email').value = '';
     customerEditIndex = -1;
-    el('custAddBtn').textContent = 'Add / Save';
+    el('custAddBtn').innerHTML = '<i class="fas fa-save"></i> Add / Save';
   }
 
   function addOrUpdateCustomer(){
@@ -941,7 +941,7 @@
     el('cust_addr').value = c.address || '';
     el('cust_email').value = c.email || '';
     customerEditIndex = i;
-    el('custAddBtn').textContent = 'Save';
+    el('custAddBtn').innerHTML = '<i class="fas fa-save"></i> Save';
   }
 
   function deleteCustomer(i){
@@ -1215,10 +1215,10 @@
     if (el('modal_branch_address')) el('modal_branch_address').value = parts[1] || '';
     if (el('modal_branch_contact')) el('modal_branch_contact').value = parts[2] || '';
     if (el('modal_branch_website')) el('modal_branch_website').value = parts[3] || '';
-    const m = el('branchModal'); if (m) m.style.display = 'flex';
+    const m = el('branchModal'); if (m) { m.classList.remove('hidden'); m.style.display = 'flex'; }
   }
 
-  function closeBranchModal(){ const m = el('branchModal'); if (m) m.style.display = 'none'; }
+  function closeBranchModal(){ const m = el('branchModal'); if (m) { m.classList.add('hidden'); m.style.display = ''; } }
 
   // Helper function to close Branch Modal when clicking on backdrop (outside the modal content)
   function closeBranchModalOnBackdrop(event){
@@ -1247,7 +1247,7 @@
         el('footerText').value = f;
       }
     }catch(e){}
-    const m = el('signModal'); if (m) m.style.display = 'flex';
+    const m = el('signModal'); if (m) { m.classList.remove('hidden'); m.style.display = 'flex'; }
     // Allow clicking outside the modal content (on the overlay) to close it,
     // and also allow Escape key to close. Wire handlers once and store them
     // on the element so they can be removed cleanly by closeSignModal().
@@ -1274,7 +1274,7 @@
   function closeSignModal(){
     const m = el('signModal');
     if (m){
-      m.style.display = 'none';
+      m.classList.add('hidden'); m.style.display = '';
       try{
         if (m._outsideHandler){ m.removeEventListener('click', m._outsideHandler); m._outsideHandler = null; }
         if (m._escHandler){ document.removeEventListener('keydown', m._escHandler); m._escHandler = null; }

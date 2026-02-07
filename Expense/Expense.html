@@ -8,1788 +8,1625 @@
     <link rel="stylesheet" href="assets/css/datepicker.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap-icons.min.css">
     <style>
-        /* Bootstrap Icons Font Path Fix */
         @font-face {
             font-family: "bootstrap-icons";
             src: url("assets/fonts/bootstrap-icons.woff2") format("woff2"),
                  url("assets/fonts/bootstrap-icons.woff") format("woff");
         }
 
-        /* Modern Unified Design System */
         :root {
             --primary: #6366f1;
             --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
             --accent: #ec4899;
-            --bg-primary: #f0f4f9;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --border-color: #e2e8f0;
+            --success: #10b981;
+            --success-dark: #059669;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f1f5f9;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 25px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-xs: 8px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideIn {
-            from { transform: translateX(-10px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        /* Unified primary button */
-        .primary-btn{ position:relative; overflow:hidden; padding:10px 18px; border-radius:10px; color:#fff; background:linear-gradient(135deg,var(--primary),var(--primary-dark)); border:0; font-weight:700; box-shadow:0 10px 30px rgba(99,102,241,0.2); cursor:pointer; transition:all .22s; animation:floatButton 3.6s ease-in-out infinite }
-        .primary-btn::after{ content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(255,255,255,0) 0%, rgba(255,255,255,.12) 50%, rgba(255,255,255,0) 100%); transform:translateX(-120%); transition:transform .6s; pointer-events:none }
-        .primary-btn:hover::after{ transform:translateX(120%) }
-        .primary-btn:hover{ transform:translateY(-4px); box-shadow:0 15px 40px rgba(99,102,241,0.28)}
-        @keyframes floatButton{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-4px);} }
-
-        /* Title gradient and shift animation for consistency */
-        .display-4 { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradientShift 6s linear infinite; }
-        /* Bootstrap overrides to match the theme */
-        .btn-primary{ background: linear-gradient(135deg,var(--primary),var(--primary-dark)) !important; border: none !important; color: #fff !important; box-shadow:0 10px 30px rgba(99,102,241,0.18); }
-        .btn-primary:hover{ transform: translateY(-3px); box-shadow:0 16px 40px rgba(99,102,241,0.22); }
-        .btn-outline-secondary{ border-color: var(--border-color); color: var(--text-primary); }
-        @keyframes scaleIn {
-            from { transform: scale(0.95); }
-            to { transform: scale(1); }
-        }
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        @keyframes shimmer {
-            0% { background-position: 0% 0%, 0 0; }
-            100% { background-position: 200% 0%, 0 0; }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
+            background: var(--bg);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            margin: 0;
-            padding: 0;
-            overflow-y: auto;
-            font-family: 'Poppins', 'Inter', 'Segoe UI', sans-serif;
+            line-height: 1.6;
         }
 
-        .display-4 {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
-            animation: fadeIn 0.8s ease-out, gradientShift 8s ease infinite;
+        /* Animations */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes gradientMove { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideOutRight { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(20px); } }
+
+        /* Layout */
+        .app-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
         }
-        .lead {
-            color: #4b94e6;
-            animation: fadeIn 1s ease-out;
-        }
-        .container {
-            max-width: 1140px;
-            margin: 0 auto !important;
-            padding: 5px 15px 0 15px !important;
-            animation: fadeIn 0.6s ease-out;
-            height: auto !important;
-            min-height: 0 !important;
-        }
-        #expense-ledger .container {
-            padding-top: 0 !important;
-        }
-        /* Ultra-compact spacing throughout */
-        .mb-4 {
-            margin-bottom: 0.25rem !important;
-        }
-        .card {
-            margin-bottom: 0.25rem !important;
-            border-width: 1px !important;
-        }
-        /* Super compact card styling */
-        .row {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-        [class^="col-"] {
-            padding: 0 5px !important;
-        }
-        
-        /* Section toggle buttons */
-        .section-toggle {
-            padding: 0 0.5rem !important;
-            font-size: 1.1rem !important;
-            line-height: 1 !important;
-            background: none !important;
-            border: none !important;
-            color: white !important;
-            opacity: 0.8 !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            cursor: pointer !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            transform-origin: center !important;
-        }
-        .section-toggle:hover {
-            opacity: 1 !important;
-            transform: scale(1.1) !important;
-        }
-        .section-toggle i {
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            display: block !important;
-            font-size: 1.2rem !important;
-            transform-origin: center !important;
-        }
-        .section-toggle.collapsed i {
-            transform: rotate(-180deg) !important;
-        }
-        .collapse {
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            overflow: hidden !important;
-            transform-origin: top !important;
-            max-height: 2000px !important;
-            opacity: 1 !important;
-        }
-        .collapse:not(.show) {
-            max-height: 0 !important;
-            opacity: 0 !important;
-            display: block !important;
-        }
-        .collapsing {
-            position: relative !important;
-            height: 0 !important;
-            overflow: hidden !important;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            opacity: 0 !important;
-        }
-        /* Add smooth scale animation for content */
-        #glBudgetsContent, #expenseLedgerContent {
-            transform-origin: top !important;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-                        opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        }
-        #glBudgetsContent.show, #expenseLedgerContent.show {
-            transform: scaleY(1) !important;
-            opacity: 1 !important;
-        }
-        #glBudgetsContent.collapse:not(.show), 
-        #expenseLedgerContent.collapse:not(.show) {
-            transform: scaleY(0.95) !important;
-            opacity: 0 !important;
-        }
-        .card-header {
-            padding: 0.35rem 0.75rem !important;
-            min-height: 0 !important;
-        }
-        .card-body {
-            padding: 0.5rem !important;
-        }
-        /* Minimize form spacing */
-        .form-label {
-            margin-bottom: 0.1rem !important;
-            font-size: 0.9rem !important;
-        }
-        .form-control {
-            padding: 0.25rem 0.5rem !important;
-            font-size: 0.9rem !important;
-        }
-        .mb-3 {
-            margin-bottom: 0.25rem !important;
-        }
-        /* Ultra compact table */
-        .table {
-            margin-bottom: 0 !important;
-        }
-        .table > :not(caption) > * > * {
-            padding: 0.35rem !important;
-        }
-        /* Progress bar container and table cell alignment */
-        #gl-budgets-tbody td {
-            vertical-align: middle !important;
-        }
-        .progress {
-            height: 1.25rem !important;
-            margin: 0.25rem 0 !important;
-            border-radius: 0.625rem !important;
-            background-color: rgba(13, 110, 253, 0.1) !important;
-            position: relative !important;
-            display: flex !important;
-            align-items: center !important;
-            overflow: hidden !important;
-        }
-        .progress-bar {
-            border-radius: 0.625rem !important;
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2) !important;
-            background-image: linear-gradient(45deg, 
-                rgba(255,255,255,0.15) 25%, 
-                transparent 25%, 
-                transparent 50%, 
-                rgba(255,255,255,0.15) 50%, 
-                rgba(255,255,255,0.15) 75%, 
-                transparent 75%, 
-                transparent) !important;
-            background-size: 1.25rem 1.25rem !important;
-            animation: progress-bar-stripes 1s linear infinite !important;
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            height: 100% !important;
-        }
-        @keyframes progress-bar-stripes {
-            from { background-position: 1.25rem 0; }
-            to { background-position: 0 0; }
-        }
-        .card {
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.1);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            animation: scaleIn 0.3s ease-out;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(13, 110, 253, 0.15);
-        }
-        .card-header {
-            background-color: #0d6efd;
-            background: linear-gradient(135deg, #0d6efd, #4b94e6);
-            color: white;
-        }
-        #total-expenses {
-            font-size: 1.75rem;
-            font-weight: bold;
-            color: #0d6efd;
-            animation: fadeIn 1s ease-out;
-        }
-        .expense-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1.25rem;
-            border-bottom: 1px solid #dee2e6;
-            animation: slideIn 0.3s ease-out;
-            transition: background-color 0.2s ease;
-        }
-        .expense-item:hover {
-            background-color: #f8f9fa;
-        }
-        .expense-item:last-child {
-            border-bottom: none;
-        }
-        .expense-item .description {
-            flex-grow: 1;
-            margin-right: 1rem;
-        }
-        .expense-item .amount {
-            font-weight: bold;
-            color: #dc3545;
-            min-width: 80px;
-            text-align: right;
-        }
-        .btn-close {
-            margin-left: 1rem;
-            transition: opacity 0.2s ease;
-        }
-        .gl-description-cell {
-            white-space: normal;
-            word-wrap: break-word;
-        }
-        .btn-primary {
+
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 60%, #7c3aed 100%);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.25);
             position: relative;
             overflow: hidden;
-            background-color: #0d6efd;
-            border-color: #0d6efd;
-            transition: all 0.3s ease;
-            animation: floatSlow 3.6s ease-in-out infinite;
-            box-shadow: 0 10px 36px rgba(13, 110, 253, 0.12);
+            animation: fadeUp 0.5s ease-out;
         }
-        .btn-primary::after {
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+        }
+        .app-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.04);
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        .header-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            flex-shrink: 0;
+        }
+        .header-text h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.02em;
+            margin-bottom: 2px;
+        }
+        .header-text p {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+            animation: fadeUp 0.5s ease-out backwards;
+            transition: var(--transition);
+        }
+        .section-card:nth-child(2) { animation-delay: 0.1s; }
+        .section-card:nth-child(3) { animation-delay: 0.15s; }
+        .section-card:nth-child(4) { animation-delay: 0.2s; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            background: linear-gradient(135deg, rgba(99,102,241,0.03) 0%, rgba(236,72,153,0.02) 100%);
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .section-title .icon-badge {
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .icon-badge.purple { background: rgba(99,102,241,0.1); color: var(--primary); }
+        .icon-badge.green { background: rgba(16,185,129,0.1); color: var(--success); }
+        .icon-badge.blue { background: rgba(59,130,246,0.1); color: #3b82f6; }
+
+        .section-toggle-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .section-toggle-btn:hover {
+            background: var(--bg);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        .section-toggle-btn i {
+            transition: transform 0.3s ease;
+            font-size: 0.85rem;
+        }
+        .section-toggle-btn.collapsed i {
+            transform: rotate(-180deg);
+        }
+
+        .section-body { padding: 20px; }
+        .collapse { transition: all 0.35s ease; }
+
+        /* Form Styles */
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .form-label i { color: var(--primary); font-size: 0.85rem; }
+
+        .form-control, .form-select {
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-xs);
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            color: var(--text);
+            background: var(--bg-card);
+            transition: var(--transition);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+            outline: none;
+        }
+        .form-control::placeholder { color: var(--text-light); }
+        textarea.form-control { resize: vertical; min-height: 42px; }
+
+        .input-group-text {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            border: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 10px 14px;
+            border-radius: var(--radius-xs) 0 0 var(--radius-xs);
+        }
+
+        /* Buttons */
+        .btn-action {
+            padding: 10px 20px;
+            border-radius: var(--radius-xs);
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-action::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(90deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.08) 45%, rgba(255,255,255,0.0) 80%);
-            transform: translateX(-110%);
-            transition: transform 0.5s ease;
-            pointer-events: none;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
         }
-        .btn-primary:hover::after {
-            transform: translateX(120%);
+        .btn-action:hover::after { transform: translateX(100%); }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(99,102,241,0.3);
         }
-        .btn-primary:hover {
-            background-color: #0b5ed7;
-            border-color: #0a58ca;
-            transform: translateY(-3px);
-        }
-        @keyframes floatSlow {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
-            100% { transform: translateY(0); }
-        }
-        .progress-bar {
-            transition: width 0.6s ease;
-            background: linear-gradient(135deg, #0d6efd, #4b94e6);
-        }
-        .table {
-            animation: fadeIn 0.8s ease-out;
-        }
-        .nav-tabs {
-            border-bottom-color: #4b94e6;
-        }
-        .nav-tabs .nav-link {
-            color: #4b94e6;
-            transition: all 0.3s ease;
-        }
-        .nav-tabs .nav-link:hover {
-            border-color: #e9ecef #e9ecef #4b94e6;
-        }
-        .nav-tabs .nav-link.active {
-            color: #0d6efd;
-            font-weight: 500;
-            background-color: #fff;
-            border-color: #4b94e6 #4b94e6 #fff;
-            animation: scaleIn 0.3s ease-out;
-        }
-        
-        /* Modal Styling */
-        @keyframes modalScale {
-            from { 
-                transform: scale(0.95) translateY(10px);
-                opacity: 0;
-            }
-            to { 
-                transform: scale(1) translateY(0);
-                opacity: 1;
-            }
+        .btn-primary-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99,102,241,0.35);
         }
 
-        @keyframes modalBackground {
-            from { background-color: rgba(13, 110, 253, 0); }
-            to { background-color: rgba(13, 110, 253, 0.1); }
+        .btn-success-action {
+            background: linear-gradient(135deg, var(--success), var(--success-dark));
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(16,185,129,0.3);
+        }
+        .btn-success-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16,185,129,0.35);
         }
 
-        .modal-backdrop {
-            animation: modalBackground 0.3s ease-out;
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0;
+            font-size: 0.85rem;
+        }
+        .btn-icon:hover { background: var(--bg); }
+        .btn-icon.edit:hover { color: var(--primary); border-color: var(--primary); }
+        .btn-icon.delete:hover { color: var(--danger); border-color: var(--danger); }
+
+        /* Table Styles */
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .modern-table thead th {
+            background: var(--bg);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 10px 14px;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+        .modern-table thead th:first-child { border-radius: var(--radius-xs) 0 0 0; }
+        .modern-table thead th:last-child { border-radius: 0 var(--radius-xs) 0 0; }
+
+        .modern-table tbody td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.88rem;
+            vertical-align: middle;
+        }
+        .modern-table tbody tr { transition: var(--transition); }
+        .modern-table tbody tr:hover { background: rgba(99,102,241,0.02); }
+        .modern-table tbody tr:last-child td { border-bottom: none; }
+
+        .gl-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .gl-link:hover { color: var(--primary-dark); text-decoration: underline; }
+        .gl-sub { color: var(--text-light); font-size: 0.78rem; margin-top: 1px; }
+        .amount-cell { font-weight: 600; font-variant-numeric: tabular-nums; }
+        .amount-positive { color: var(--success); }
+        .amount-negative { color: var(--danger); }
+
+        /* Progress Bar */
+        .progress-modern {
+            height: 24px;
+            border-radius: 12px;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .progress-fill.safe { background: linear-gradient(135deg, var(--success), #34d399); }
+        .progress-fill.danger { background: linear-gradient(135deg, var(--danger), #f87171); }
+        .progress-label {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text);
+            z-index: 1;
+            line-height: 24px;
+            top: 0;
+            left: 0;
         }
 
-        .modal-content {
-            border: none !important;
-            border-radius: 1rem !important;
-            box-shadow: 0 20px 40px rgba(13, 110, 253, 0.2) !important;
-            animation: modalScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-            background: white !important;
-            overflow: hidden !important;
+        /* Total Expenses Badge */
+        .total-badge {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(236,72,153,0.04));
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(99,102,241,0.1);
+        }
+        .total-badge .label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .total-badge .value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+            font-variant-numeric: tabular-nums;
         }
 
-        .modal-header {
-            background: linear-gradient(135deg, #0d6efd, #4b94e6) !important;
-            color: white !important;
-            border: none !important;
-            padding: 1.25rem 1.5rem !important;
-            position: relative !important;
-            z-index: 1 !important;
+        /* Filter Bar */
+        .filter-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+        }
+        .filter-bar .form-label { margin-bottom: 4px; }
+
+        .input-group .btn-outline-secondary {
+            border: 1.5px solid var(--border);
+            border-left: none;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .input-group .btn-outline-secondary:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
         }
 
-        .modal-header::before {
-            content: '' !important;
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0)) !important;
-            z-index: -1 !important;
+        /* Budget Form */
+        .budget-form-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+        }
+        .budget-form-grid .span-3 { grid-column: span 3; }
+        .budget-form-grid .span-1 { grid-column: span 1; display: flex; align-items: flex-end; }
+
+        @media (max-width: 768px) {
+            .budget-form-grid { grid-template-columns: 1fr 1fr; }
+            .budget-form-grid .span-3 { grid-column: span 2; }
+            .budget-form-grid .span-1 { grid-column: span 2; }
+            .filter-bar { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .budget-form-grid { grid-template-columns: 1fr; }
+            .budget-form-grid .span-3 { grid-column: span 1; }
+            .budget-form-grid .span-1 { grid-column: span 1; }
         }
 
-        .modal-title {
-            font-weight: 500 !important;
-            font-size: 1.2rem !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 0.75rem !important;
-            letter-spacing: 0.3px !important;
+        /* Searchable Dropdown */
+        .search-select { position: relative; }
+        .search-select .form-control { padding-right: 60px; }
+        .search-select .toggle-btn,
+        .search-select .clear-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            padding: 4px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: var(--transition);
         }
-
-        .modal-title i {
-            font-size: 1.1em !important;
-            margin-right: 0.25rem !important;
-        }
-
-        .btn-close-white {
-            filter: brightness(0) invert(1) !important;
-            opacity: 0.8 !important;
-            transition: all 0.2s ease !important;
-            transform: scale(0.9) !important;
-        }
-
-        .btn-close-white:hover {
-            opacity: 1 !important;
-            transform: scale(1) !important;
-        }
-
-        .modal-body {
-            padding: 1.75rem !important;
-            font-size: 0.95rem !important;
-            line-height: 1.6 !important;
-        }
-
-        .modal-footer {
-            border-top: 1px solid rgba(13, 110, 253, 0.1) !important;
-            padding: 1.25rem !important;
-            background: rgba(13, 110, 253, 0.02) !important;
-        }
-
-        .modal-dialog {
-            margin: 1.75rem auto !important;
-            pointer-events: none !important;
-        }
-
-        .modal-dialog-centered {
-            display: flex !important;
-            align-items: center !important;
-            min-height: calc(100% - 3.5rem) !important;
-        }
-        /* Match RTGS searchable dropdown styling */
-        .search-select{position:relative}
-    .search-select input{width:100%;padding:.4rem;border:1px solid #d6d9dd;border-radius:4px}
-    .search-select .toggle-btn, .search-select .clear-btn { cursor: pointer; }
-    .search-select .clear-btn i { opacity: 0.85; }
-        /* rotate caret when open */
+        .search-select .clear-btn { right: 32px; }
+        .search-select .clear-btn:hover { color: var(--danger); }
+        .search-select .toggle-btn { right: 8px; }
+        .search-select .toggle-btn:hover { color: var(--primary); }
         .search-select .toggle-btn .bi {
-            transition: transform 0.18s ease;
+            transition: transform 0.2s ease;
             display: inline-block;
         }
-        .search-select .toggle-btn.open .bi {
-            transform: rotate(180deg);
-        }
-        .search-list{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid #e6e6e6;border-radius:6px;max-height:220px;overflow:auto;z-index:2200;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
-        .search-list .item{padding:8px;border-bottom:1px solid #f1f1f1;cursor:pointer}
-        .search-list .item:last-child{border-bottom:0}
-        .search-list .item:hover{background:#f7f7f7}
+        .search-select .toggle-btn.open .bi { transform: rotate(180deg); }
 
+        .search-list {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 6px);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
+            max-height: 240px;
+            overflow: auto;
+            z-index: 2200;
+            box-shadow: var(--shadow-lg);
+        }
+        .search-list .item {
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            color: var(--text);
+            transition: var(--transition);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .search-list .item:last-child { border-bottom: 0; }
+        .search-list .item:hover { background: rgba(99,102,241,0.05); color: var(--primary); }
+
+        /* Modal */
         .modal-content {
-            pointer-events: auto !important;
+            border: none;
+            border-radius: var(--radius);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            border: none;
+            padding: 20px 24px;
+        }
+        .modal-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-close-white {
+            filter: brightness(0) invert(1);
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+        .btn-close-white:hover { opacity: 1; }
+        .modal-body { padding: 24px; }
+        .modal-body p { margin-bottom: 8px; font-size: 0.9rem; }
+        .modal-body strong { color: var(--text); }
+        .modal-footer {
+            border-top: 1px solid var(--border-light);
+            padding: 16px 24px;
+            background: var(--bg);
         }
 
-        .modal.fade .modal-dialog {
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        /* Pagination */
+        .pagination-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 12px 0 4px;
+        }
+        .pagination-info { font-size: 0.8rem; color: var(--text-muted); }
+        .pagination .page-link {
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin: 0 2px;
+            transition: var(--transition);
+        }
+        .pagination .page-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .pagination .page-item.active .page-link { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .pagination .page-item.disabled .page-link { color: var(--text-light); background: var(--bg); }
+
+        /* Footer */
+        .app-footer { text-align: center; padding: 16px 0; margin-top: 8px; }
+        .footer-text {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.82rem;
+            background: linear-gradient(90deg, #6366f1, #ec4899, #f59e0b, #10b981, #3b82f6, #6366f1);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 6s linear infinite;
         }
 
-        /* Modal form controls */
-        .modal .form-control {
-            border-color: rgba(13, 110, 253, 0.2) !important;
-            transition: all 0.2s ease !important;
+        /* Expense Form Layout */
+        .expense-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .expense-form-grid .full-width { grid-column: 1 / -1; }
+
+        @media (max-width: 768px) {
+            .expense-form-grid { grid-template-columns: 1fr; }
+            .app-header { padding: 20px; }
+            .header-text h1 { font-size: 1.25rem; }
+            .section-body { padding: 14px; }
         }
 
-        .modal .form-control:focus {
-            border-color: #0d6efd !important;
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15) !important;
-        }
-
-        .modal .form-label {
-            color: #495057 !important;
-            font-weight: 500 !important;
-            margin-bottom: 0.4rem !important;
-        }
-        
-        /* RGB Animation for footer */
-        @keyframes rgbText {
-            0% { color: #ff0000; }
-            20% { color: #ff00ff; }
-            40% { color: #0000ff; }
-            60% { color: #00ffff; }
-            80% { color: #00ff00; }
-            100% { color: #ff0000; }
-        }
-        
-        .footer-credit {
+        /* Empty State */
+        .empty-state {
             text-align: center;
-            padding: 20px 0;
-            font-size: 0.9rem;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            color: #0d6efd;
-            animation: rgbText 10s linear infinite;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(5px);
-            border-radius: 8px;
-            margin: 20px 0;
-            box-shadow: 0 2px 10px rgba(13, 110, 253, 0.1);
-            transition: all 0.3s ease;
+            padding: 32px 16px;
+            color: var(--text-light);
         }
-        
-        .footer-credit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
-        }
-        /* Hideable sections (used to remove sections from home but keep them accessible via hash) */
-        .hidden-section {
-            display: none !important;
-        }
-        /* Reduce unwanted bottom gap on the Home tab */
-        body, html {
-            margin-bottom: 0;
-        }
-        /* Remove extra bottom spacing only on the Home tab to avoid large blank areas there */
-        #home {
-            padding-bottom: 0 !important;
-            margin-bottom: 0 !important;
-        }
-        #home .row {
-            margin-bottom: 0 !important;
-            padding-bottom: 0 !important;
-        }
-        /* DEBUG: outlines inside Home to help identify elements creating gaps.
-           Remove or comment out after inspection. This does NOT affect Expense Ledger. */
-        #home.debug-outlines * {
-            outline: 1px dashed rgba(255,0,0,0.08) !important;
-        }
-        .tab-content {
-            padding-bottom: 0 !important;
-        }
-        /* Ultra-compact tabs */
-        .tab-pane#home,
-        .tab-pane#expense-ledger {
-            padding: 0 !important;
-            margin: 0 !important;
-            min-height: 0 !important;
-            height: auto !important;
-            max-height: fit-content !important;
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 0.25rem !important;
-        }
-        .tab-content {
-            height: auto !important;
-            min-height: 0 !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-        /* Super compact nav tabs */
-        .nav-tabs {
-            margin-bottom: 0.25rem !important;
-            border-bottom-width: 1px !important;
-        }
-        .nav-link {
-            padding: 0.25rem 0.75rem !important;
-            margin-bottom: -1px !important;
-        }
-        .tab-content {
-            margin-bottom: 0 !important;
-            padding-bottom: 0 !important;
-        }
-        .tab-content > .tab-pane {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-        /* Aggressively remove all potential sources of bottom spacing in Home tab */
-        .tab-pane#home > .row:last-child,
-        .tab-pane#home > div:last-child {
-            margin-bottom: 0 !important;
-            padding-bottom: 0 !important;
-            min-height: 0 !important;
-        }
-        /* Reduce spacing specifically below the GL Budgets card on the Home tab */
-        #gl-budgets-card {
-            margin-bottom: 0 !important;
-            padding-bottom: 0 !important;
-            min-height: 0 !important;
-        }
-        /* Ensure card body doesn't create extra space */
-        #gl-budgets-card .card-body {
-            padding-bottom: 1rem !important;
-            margin-bottom: 0 !important;
-            min-height: 0 !important;
-        }
-        #gl-budgets-card .card-body {
-            padding-bottom: 0 !important;
-        }
-        #gl-budgets-card .table-responsive {
-            margin-bottom: 0 !important;
-        }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 8px; display: block; opacity: 0.4; }
+        .empty-state p { font-size: 0.88rem; }
+
+        /* Responsive table */
+        .table-responsive { overflow-x: auto; }
+        .table-responsive::-webkit-scrollbar { height: 6px; }
+        .table-responsive::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Professional App Header -->
-        <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem !important; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);">
-            <div style="display: flex; align-items: center; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                <div style="background: rgba(255, 255, 255, 0.15); padding: 12px; border-radius: 10px; backdrop-filter: blur(10px); border: 3px solid transparent; background-image: linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15)), linear-gradient(135deg, #ec4899, #6366f1, #10b981); background-origin: border-box; background-clip: padding-box, border-box; animation: shimmer 3s linear infinite;">
-                    <i class="bi bi-graph-up" style="font-size: 1.8rem; color: #fff;"></i>
+    <div class="app-wrapper">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="header-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
                 </div>
-                <div style="text-align: center;">
-                    <h1 style="font-size: 1.8rem; font-weight: 900; color: #fff; margin: 0 0 0.25rem 0 !important; letter-spacing: 0.5px;">Expense Tracker</h1>
-                    <p style="color: rgba(255, 255, 255, 0.9); font-size: 0.9rem; margin: 0 !important;">Budget Management System for GL Accounts</p>
+                <div class="header-text">
+                    <h1>Expense Tracker</h1>
+                    <p>Budget Management System for GL Accounts</p>
                 </div>
+            </div>
+        </header>
+
+        <!-- Add New Expense -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="icon-badge green"><i class="bi bi-plus-circle-fill"></i></span>
+                    Add New Expense
+                </div>
+            </div>
+            <div class="section-body">
+                <form id="form">
+                    <div class="expense-form-grid">
+                        <div>
+                            <label for="gl-number-search" class="form-label"><i class="bi bi-hash"></i> GL Number</label>
+                            <div class="search-select" id="gl-number-select">
+                                <input id="gl-number-search" type="text" class="form-control" placeholder="Search GL accounts..." autocomplete="off">
+                                <button id="gl-number-clear" type="button" class="clear-btn" aria-label="Clear" style="display:none">
+                                    <i class="bi bi-x-lg" style="font-size:0.85rem"></i>
+                                </button>
+                                <button id="gl-number-toggle" type="button" class="toggle-btn" aria-label="Open">
+                                    <i class="bi bi-chevron-down" style="font-size:0.9rem"></i>
+                                </button>
+                                <div id="gl-number-list" class="search-list" style="display:none"></div>
+                            </div>
+                            <select id="gl-number" class="form-select" style="display:none">
+                                <option value="">Select a GL</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="amount" class="form-label"><i class="bi bi-currency-dollar"></i> Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">&#x09F3;</span>
+                                <input type="number" class="form-control" id="amount" placeholder="0.00" style="border-radius: 0 var(--radius-xs) var(--radius-xs) 0;">
+                            </div>
+                        </div>
+                        <div class="full-width" style="display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: end;">
+                            <div>
+                                <label for="gl-description" class="form-label"><i class="bi bi-card-text"></i> Narration</label>
+                                <textarea class="form-control" id="gl-description" rows="2" placeholder="Describe the expense..."></textarea>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn-action btn-success-action" style="height: 100%; min-height: 52px; padding: 10px 28px;"><i class="bi bi-plus-lg"></i> Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-                <!-- Content for Home tab (Add New Expense and GL Budgets) -->
-        <!-- Top Centered Form -->
-        <div class="row justify-content-center mb-4">
-            <div class="col-lg-10">
-                <div class="card" style="border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.2); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);">
-                    <div class="card-header text-center" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 12px 12px 0 0; padding: 1rem !important;">
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                            <i class="bi bi-plus-circle" style="color: white; font-size: 1.3rem;"></i>
-                            <h1 class="h5 mb-0" style="color: white; font-weight: 700;">Add New Expense</h1>
-                        </div>
-                    </div>
-                    <div class="card-body" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.02) 0%, rgba(236, 72, 153, 0.02) 100%);">
-                        <form id="form">
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-6">
-                                    <label for="gl-number-search" class="form-label" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;"><i class="bi bi-hash" style="color: #6366f1;"></i>GL Number</label>
-                                    <div class="search-select" id="gl-number-select" style="position:relative">
-                                        <input id="gl-number-search" type="text" class="form-control" placeholder="Search GLs..." autocomplete="off" style="margin-bottom:.25rem;padding-right:3.5rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                        <button id="gl-number-clear" type="button" class="clear-btn" aria-label="Clear" style="display:none; position:absolute; right:2.6rem; top:6px; border:none; background:transparent; padding:0.25rem;">
-                                            <i class="bi bi-x-lg" style="font-size:0.9rem;color:#6c757d"></i>
-                                        </button>
-                                        <button id="gl-number-toggle" type="button" class="toggle-btn" aria-label="Open" style="position:absolute; right:0.5rem; top:6px; border:none; background:transparent; padding:0.25rem;">
-                                            <i class="bi bi-chevron-down" style="font-size:1rem;color:#6c757d"></i>
-                                        </button>
-                                        <div id="gl-number-list" class="search-list" style="display:none;position:absolute;left:0;right:0;max-height:220px;overflow:auto;border:1px solid rgba(0,0,0,0.08);background:white;z-index:1050"></div>
-                                    </div>
-                                    <!-- Keep actual select for form compatibility (hidden) -->
-                                    <select id="gl-number" class="form-select visually-hidden" style="display:none">
-                                        <option value="">Select a GL</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="amount" class="form-label" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;"><i class="bi bi-currency-dollar" style="color: #6366f1;"></i>Amount</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; border: none; font-weight: 700;">৳</span>
-                                        <input type="number" class="form-control" id="amount" placeholder="0.00" style="border: 2px solid #e2e8f0; border-left: none; border-radius: 0 8px 8px 0;">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row g-3 align-items-end mb-3">
-                                <div class="col-md-9">
-                                    <label for="gl-description" class="form-label" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;"><i class="bi bi-card-text" style="color: #6366f1;"></i>GL Narration</label>
-                                    <textarea class="form-control" id="gl-description" rows="2" placeholder="Describe the expense..." style="border: 2px solid #e2e8f0; border-radius: 8px;"></textarea>
-                                </div>
-                                <div class="col-md-3">
-                                    <button type="submit" class="btn btn-primary w-100 mt-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; border: none !important; padding: 0.6rem !important; font-weight: 700; border-radius: 10px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: center; gap: 0.5rem;"><i class="bi bi-plus-lg"></i>Add Expense</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+        <!-- GL Budgets -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="icon-badge purple"><i class="bi bi-wallet2"></i></span>
+                    GL Budgets
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="btn-icon" onclick="exportBudgets()" title="Export Budget Data">
+                        <i class="bi bi-download"></i>
+                    </button>
+                    <button class="btn-icon" id="budgetImportBtn" onclick="document.getElementById('budgetImportFile').click()" title="Import Budget Data">
+                        <i class="bi bi-upload"></i>
+                    </button>
+                    <input type="file" id="budgetImportFile" accept=".json" style="display:none;" onchange="importBudgets(event)">
+                    <button class="section-toggle-btn" type="button" data-bs-toggle="collapse" data-bs-target="#glBudgetsContent" aria-expanded="true" aria-controls="glBudgetsContent">
+                        <i class="bi bi-chevron-up"></i>
+                    </button>
                 </div>
             </div>
-        </div>
-
-        <div class="row">
-            <!-- GL Budgets Section -->
-            <div class="col-lg-12">
-                <div id="gl-budgets-card" class="card mb-3" style="border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.2); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);">
-                    <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%); border-bottom: 1px solid rgba(99, 102, 241, 0.1); border-radius: 12px 12px 0 0;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="bi bi-wallet2" style="color: #6366f1; font-size: 1.2rem;"></i>
-                            <h3 class="h5 mb-0" style="color: #1e293b; font-weight: 700;">GL Budgets</h3>
-                        </div>
-                        <button class="section-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#glBudgetsContent" aria-expanded="true" aria-controls="glBudgetsContent">
-                            <i class="bi bi-chevron-up"></i>
-                        </button>
-                    </div>
-                    <div id="glBudgetsContent" class="collapse show">
-                        <div class="card-body">
-                            <form id="budget-form" class="row gx-3 gy-2 align-items-end mb-4" style="background: white; padding: 1rem; border-radius: 10px; border: 1px solid #e2e8f0;">
-                            <div class="col-md-3">
-                                <label for="budget-gl-number" class="form-label" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;"><i class="bi bi-hash" style="color: #6366f1; font-size: 0.9rem;"></i>GL Number</label>
-                                <input type="text" id="budget-gl-number" class="form-control" placeholder="GL Number" style="border: 2px solid #e2e8f0; border-radius: 8px;">
+            <div id="glBudgetsContent" class="collapse show">
+                <div class="section-body">
+                    <form id="budget-form">
+                        <div class="budget-form-grid">
+                            <div>
+                                <label for="budget-gl-number" class="form-label"><i class="bi bi-hash"></i> GL Number</label>
+                                <input type="text" id="budget-gl-number" class="form-control" placeholder="e.g., 70101">
                             </div>
-                            <div class="col-md-3">
-                                <label for="budget-gl-name" class="form-label" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;"><i class="bi bi-tag" style="color: #6366f1; font-size: 0.9rem;"></i>GL Name</label>
-                                <input type="text" id="budget-gl-name" class="form-control" placeholder="GL Name" style="border: 2px solid #e2e8f0; border-radius: 8px;">
+                            <div>
+                                <label for="budget-gl-name" class="form-label"><i class="bi bi-tag"></i> GL Name</label>
+                                <input type="text" id="budget-gl-name" class="form-control" placeholder="e.g., Office Supplies">
                             </div>
-                            <div class="col-md-3">
-                                <label for="budget-module" class="form-label">Module</label>
+                            <div>
+                                <label for="budget-module" class="form-label"><i class="bi bi-grid-3x3"></i> Module</label>
                                 <input type="text" id="budget-module" class="form-control" placeholder="e.g., XNTV">
                             </div>
-                            <div class="col-md-3">
-                                <label for="budget-amount" class="form-label">Yearly Budget Amount</label>
+                            <div>
+                                <label for="budget-amount" class="form-label"><i class="bi bi-cash-stack"></i> Yearly Budget</label>
                                 <input type="number" id="budget-amount" class="form-control" placeholder="1200">
                             </div>
-
-                            <div class="col-md-9">
-                                <label for="budget-description" class="form-label">Details</label>
+                            <div class="span-3">
+                                <label for="budget-description" class="form-label"><i class="bi bi-card-text"></i> Details</label>
                                 <textarea id="budget-description" class="form-control" rows="2" placeholder="Add details for this GL..."></textarea>
                             </div>
+                            <div class="span-1">
+                                <button type="submit" class="btn-action btn-primary-action w-100"><i class="bi bi-check-lg"></i> Set Budget</button>
+                            </div>
+                        </div>
+                    </form>
 
-                            <div class="col-md-3">
-                                <button type="submit" class="btn btn-primary w-100 mt-4">Set</button>
-                            </div>
-                        </form>
-                        <div id="gl-budget-status-container" class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>GL Account</th>
-                                        <th>Module</th>
-                                        <th>Budget / Spent</th>
-                                        <th>Monthly / Remaining</th>
-                                        <th style="width: 25%;">Monthly Status</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="gl-budgets-tbody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Expense Ledger Section -->
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card mb-3">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="h5 mb-0">Expense Ledger</h3>
-                        <button class="section-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#expenseLedgerContent" aria-expanded="true" aria-controls="expenseLedgerContent">
-                            <i class="bi bi-chevron-up"></i>
-                        </button>
-                    </div>
-                    <div id="expenseLedgerContent" class="collapse show">
-                        <div class="card-body pb-0">
-                        <div class="row g-2 mb-2">
-                            <div class="col-md-6">
-                                <label for="filter-start-date" class="form-label small mb-1">Start Date</label>
-                                <div class="input-group input-group-sm">
-                                    <input type="text" id="filter-start-date" class="form-control" placeholder="dd/mm/yyyy" aria-label="Start date">
-                                    <button class="btn btn-outline-secondary" type="button" id="startDateBtn" aria-label="Open start date calendar"><i class="bi bi-calendar-date"></i></button>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="filter-end-date" class="form-label">End Date</label>
-                                <div class="input-group">
-                                    <input type="text" id="filter-end-date" class="form-control" placeholder="dd/mm/yyyy" aria-label="End date">
-                                    <button class="btn btn-outline-secondary" type="button" id="endDateBtn" aria-label="Open end date calendar"><i class="bi bi-calendar-date"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label for="filter-gl" class="form-label">Filter by GL</label>
-                                <select id="filter-gl" class="form-select">
-                                    <option value="">All GLs</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="search-input" class="form-label">Search</label>
-                                <div class="input-group">
-                                     <input type="text" id="search-input" class="form-control" placeholder="Search within results...">
-                                     <button class="btn btn-outline-secondary" type="button" id="search-button">Search</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <h2 class="h6 text-uppercase">Total Expenses</h2>
-                            <p id="total-expenses" class="h4">৳0.00</p>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">GL Name</th>
-                                        <th scope="col">Narration</th>
-                                        <th scope="col" class="text-end">Amount</th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="expense-table-body">
-                                    <!-- Expenses will be listed here -->
-                                </tbody>
-                            </table>
-                            <div id="expense-pagination" class="d-flex justify-content-end mt-2"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- GL Details Modal -->
-    <div class="modal fade" id="glDetailsModal" tabindex="-1" aria-labelledby="glDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="glDetailsModalLabel">
-                        <i class="bi bi-bank me-2"></i>GL Account Details
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>GL Number:</strong> <span id="modal-gl-number"></span></p>
-                    <p><strong>GL Name:</strong> <span id="modal-gl-name"></span></p>
-                    <p><strong>Details:</strong> <span id="modal-gl-description"></span></p>
-                    <p><strong>Module:</strong> <span id="modal-gl-module"></span></p>
-                    <p><strong>Yearly Budget:</strong> <span id="modal-yearly-budget"></span></p>
-                    <p><strong>Monthly Budget:</strong> <span id="modal-monthly-budget"></span></p>
-                    <p><strong>Monthly Remaining:</strong> <span id="modal-monthly-remaining"></span></p>
-                    <h6>Transactions:</h6>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-sm">
+                    <div id="gl-budget-status-container" class="table-responsive">
+                        <table class="modern-table">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Narration</th>
-                                    <th class="text-end">Amount</th>
+                                    <th>GL Account</th>
+                                    <th>Module</th>
+                                    <th>Budget / Spent</th>
+                                    <th>Monthly / Remaining</th>
+                                    <th style="width: 22%;">Monthly Status</th>
+                                    <th style="width: 80px;"></th>
                                 </tr>
                             </thead>
-                            <tbody id="modal-transactions-tbody"></tbody>
+                            <tbody id="gl-budgets-tbody"></tbody>
                         </table>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+        <!-- Expense Ledger -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="icon-badge blue"><i class="bi bi-journal-text"></i></span>
+                    Expense Ledger
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="btn-icon" onclick="exportExpenses()" title="Export Expense History">
+                        <i class="bi bi-download"></i>
+                    </button>
+                    <button class="btn-icon" id="expenseImportBtn" onclick="document.getElementById('expenseImportFile').click()" title="Import Expense History">
+                        <i class="bi bi-upload"></i>
+                    </button>
+                    <input type="file" id="expenseImportFile" accept=".json" style="display:none;" onchange="importExpenses(event)">
+                    <button class="btn-icon delete" onclick="clearExpenseHistory()" title="Clear All Expense History">
+                        <i class="bi bi-trash3"></i>
+                    </button>
+                    <button class="section-toggle-btn" type="button" data-bs-toggle="collapse" data-bs-target="#expenseLedgerContent" aria-expanded="true" aria-controls="expenseLedgerContent">
+                        <i class="bi bi-chevron-up"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="expenseLedgerContent" class="collapse show">
+                <div class="section-body">
+                    <!-- Filters -->
+                    <div class="filter-bar">
+                        <div>
+                            <label for="filter-start-date" class="form-label"><i class="bi bi-calendar-event"></i> Start Date</label>
+                            <div class="input-group">
+                                <input type="text" id="filter-start-date" class="form-control" placeholder="dd/mm/yyyy">
+                                <button class="btn btn-outline-secondary" type="button" id="startDateBtn"><i class="bi bi-calendar-date"></i></button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="filter-end-date" class="form-label"><i class="bi bi-calendar-event"></i> End Date</label>
+                            <div class="input-group">
+                                <input type="text" id="filter-end-date" class="form-control" placeholder="dd/mm/yyyy">
+                                <button class="btn btn-outline-secondary" type="button" id="endDateBtn"><i class="bi bi-calendar-date"></i></button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="filter-gl" class="form-label"><i class="bi bi-funnel"></i> Filter by GL</label>
+                            <select id="filter-gl" class="form-select">
+                                <option value="">All GLs</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="search-input" class="form-label"><i class="bi bi-search"></i> Search</label>
+                            <div class="input-group">
+                                <input type="text" id="search-input" class="form-control" placeholder="Search expenses...">
+                                <button class="btn btn-outline-secondary" type="button" id="search-button"><i class="bi bi-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="text-center" style="margin-bottom: 16px;">
+                        <div class="total-badge">
+                            <span class="label">Total Expenses</span>
+                            <span class="value" id="total-expenses">&#x09F3;0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>GL Name</th>
+                                    <th>Narration</th>
+                                    <th class="text-end">Amount</th>
+                                    <th style="width: 50px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="expense-table-body"></tbody>
+                        </table>
+                        <div id="expense-pagination" class="pagination-wrapper"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Footer Credits -->
-    <div class="container">
-        <div class="neon-footer">
-            <div class="footer-rgb" style="display:flex;align-items:center;justify-content:center;gap:10px;">
-                <span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span>
+        <!-- GL Details Modal -->
+        <div class="modal fade" id="glDetailsModal" tabindex="-1" aria-labelledby="glDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="glDetailsModalLabel">
+                            <i class="bi bi-bank"></i> GL Account Details
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>GL Number:</strong> <span id="modal-gl-number"></span></p>
+                        <p><strong>GL Name:</strong> <span id="modal-gl-name"></span></p>
+                        <p><strong>Details:</strong> <span id="modal-gl-description"></span></p>
+                        <p><strong>Module:</strong> <span id="modal-gl-module"></span></p>
+                        <p><strong>Yearly Budget:</strong> <span id="modal-yearly-budget"></span></p>
+                        <p><strong>Monthly Budget:</strong> <span id="modal-monthly-budget"></span></p>
+                        <p><strong>Monthly Remaining:</strong> <span id="modal-monthly-remaining"></span></p>
+                        <h6 style="margin-top: 16px; margin-bottom: 10px; font-weight: 700; color: var(--text);">Transactions</h6>
+                        <div class="table-responsive">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Narration</th>
+                                        <th class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modal-transactions-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-action btn-primary-action" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
             </div>
-            <style>
-            .neon-footer{padding:12px 18px;text-align:center}
-            .footer-rgb .rgb-text{
-                padding:8px 14px;
-                border-radius:999px;
-                font-weight:600;
-                background: linear-gradient(90deg,
-                    #5b21b6 0%,
-                    #7c3aed 12%,
-                    #ec4899 24%,
-                    #fb7185 36%,
-                    #f97316 48%,
-                    #f59e0b 60%,
-                    #06b6d4 72%,
-                    #0ea5a1 84%,
-                    #5b21b6 100%
-                );
-                background-size:300% 300%;
-                -webkit-background-clip:text;
-                background-clip:text;
-                color:transparent;
-                -webkit-text-fill-color:transparent;
-                animation: rgbShift 6s linear infinite;
-                text-align:center;
-            }
-            @keyframes rgbShift{
-                0%{background-position:0% 50%}
-                50%{background-position:100% 50%}
-                100%{background-position:0% 50%}
-            }
-            @media (max-width:520px){
-                .footer-rgb .rgb-text{font-size:0.92rem}
-            }
-            </style>
         </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <span class="footer-text">Developed by Tanzil Ahmed &#8212; EID 7966</span>
+        </footer>
+
     </div>
 
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/datepicker-full.min.js"></script>
     <script>
-        // Auto-detect and (optionally) remove large empty blocks under the GL Budgets card on Home.
-        // This is scoped to #home only and does not touch the Expense Ledger.
-        (function removeHomeGap() {
-            function detectAndHideEmptyBlocks() {
-                try {
-                    const home = document.getElementById('home');
-                    if (!home) return;
-                    const glCard = document.getElementById('gl-budgets-card');
-                    if (!glCard) return;
-                    const glBottom = glCard.offsetTop + glCard.offsetHeight;
-                    const candidates = Array.from(home.querySelectorAll('div, section, .row, .container'));
-                    const hidden = [];
-                    candidates.forEach(el => {
-                        // only consider blocks below the GL card
-                        if (el.offsetTop >= glBottom) {
-                            const h = el.offsetHeight;
-                            if (h >= 80) { // lowered threshold to catch more blocks
-                                // compute trimmed inner text length
-                                const innerText = (el.innerText || '').trim();
-                                const textLen = innerText.replace(/\s+/g, '').length;
-                                const interactive = el.querySelector('input, textarea, select, button, table, img, svg, iframe');
-                                const hasVisibleChildren = Array.from(el.children).some(c => c.offsetHeight > 0 && c.offsetWidth > 0);
-                                // If element contains little/no text and no interactive or visible children, it's likely an empty spacer
-                                if (textLen < 10 && !interactive && !hasVisibleChildren) {
-                                    console.info('Hiding empty block:', el.tagName, el.className || el.id, 'height=', h);
-                                    el.style.display = 'none';
-                                    hidden.push(el);
-                                } else {
-                                    // log possible culprit for manual inspection
-                                    if (h > 200 && textLen < 30) {
-                                        console.info('Large block (possible gap) found:', el.tagName, el.className || el.id, 'height=', h, 'textLen=', textLen);
-                                    }
-                                }
-                            }
-                        }
-                    });
-                    if (hidden.length) {
-                        console.info('Removed', hidden.length, 'empty block(s) under GL Budgets to eliminate gap.');
-                        // store global reference for undo
-                        window.__hiddenHomeGapBlocks = hidden;
-                        showUndoWidget();
-                    } else {
-                        console.info('No large empty blocks found under GL Budgets.');
-                    }
-                } catch (err) {
-                    console.error('Error detecting/hiding home gap:', err);
-                }
-            }
+    // ══════════════════════════════════════════
+    //  Expense Tracker — Application Logic
+    // ══════════════════════════════════════════
 
-            // Add a manual control in Home to trigger gap removal (non-destructive)
-            function insertManualRemoveButton() {
-                try {
-                    const home = document.getElementById('home');
-                    if (!home) return;
-                    if (document.getElementById('manual-remove-gap-btn')) return;
-                    const btn = document.createElement('div');
-                    btn.id = 'manual-remove-gap-btn';
-                    btn.style.position = 'absolute';
-                    btn.style.right = '18px';
-                    btn.style.top = '12px';
-                    btn.style.zIndex = 2147483646;
-                    btn.innerHTML = '<button class="btn btn-sm btn-outline-secondary">Remove Home Gap</button>';
-                    btn.addEventListener('click', () => {
-                        detectAndHideEmptyBlocks();
-                    });
-                    // append to the first container inside home
-                    const first = home.querySelector('.container, .row, .col-lg-10, .card');
-                    (first || home).appendChild(btn);
-                } catch (e) { /* ignore */ }
-            }
-
-            function restoreHiddenBlocks() {
-                try {
-                    const arr = window.__hiddenHomeGapBlocks || [];
-                    arr.forEach(el => { if (el) el.style.display = ''; });
-                    window.__hiddenHomeGapBlocks = [];
-                    removeUndoWidget();
-                    console.info('Restored', arr.length, 'previously hidden blocks.');
-                } catch (err) {
-                    console.error('Error restoring hidden blocks:', err);
-                }
-            }
-
-            function showUndoWidget() {
-                removeUndoWidget();
-                const btn = document.createElement('div');
-                btn.id = 'home-gap-undo';
-                btn.style.position = 'fixed';
-                btn.style.right = '16px';
-                btn.style.bottom = '16px';
-                btn.style.zIndex = 2147483647;
-                btn.innerHTML = '<button class="btn btn-sm btn-outline-primary">Undo remove gap</button>';
-                btn.addEventListener('click', restoreHiddenBlocks);
-                document.body.appendChild(btn);
-                // auto-remove widget after 12s
-                setTimeout(() => removeUndoWidget(), 12000);
-            }
-
-            function removeUndoWidget() {
-                const w = document.getElementById('home-gap-undo');
-                if (w && w.parentNode) w.parentNode.removeChild(w);
-            }
-
-            // Run shortly after load to allow layout to settle
-            document.addEventListener('DOMContentLoaded', () => {
-                setTimeout(detectAndHideEmptyBlocks, 150);
-            });
-            // Also run if Home tab becomes active
-            try {
-                const homeTab = document.getElementById('home-tab');
-                if (homeTab) homeTab.addEventListener('shown.bs.tab', () => setTimeout(detectAndHideEmptyBlocks, 150));
-            } catch (e) { /* ignore */ }
-
-            // expose restore for manual use
-            window.restoreHomeGap = restoreHiddenBlocks;
-        })();
-        // Initialize the application
-
-    // Expense Form
+    // DOM References
     const expenseForm = document.getElementById('form');
     const glNumberInput = document.getElementById('gl-number');
     const glDescriptionInput = document.getElementById('gl-description');
     const amountInput = document.getElementById('amount');
-    // expense-date input may not exist on the form (you asked not to add a field).
-    // Fall back to the ledger's filter start date input if available so users can
-    // set a date without adding a new visible field. If neither exists, remain null.
     const expenseDateInput = document.getElementById('expense-date') || document.getElementById('filter-start-date') || null;
 
-        // Budget UI
-        const budgetForm = document.getElementById('budget-form');
-        const budgetGlNumberInput = document.getElementById('budget-gl-number');
-        const budgetGlNameInput = document.getElementById('budget-gl-name');
+    const budgetForm = document.getElementById('budget-form');
+    const budgetGlNumberInput = document.getElementById('budget-gl-number');
+    const budgetGlNameInput = document.getElementById('budget-gl-name');
     const budgetModuleInput = document.getElementById('budget-module');
     const budgetDescriptionInput = document.getElementById('budget-description');
     const budgetAmountInput = document.getElementById('budget-amount');
-        const glBudgetsTbody = document.getElementById('gl-budgets-tbody');
+    const glBudgetsTbody = document.getElementById('gl-budgets-tbody');
 
-        // Data from local storage
-        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-        let budgets = JSON.parse(localStorage.getItem('budgets')) || {};
+    const totalExpensesDisplay = document.getElementById('total-expenses');
+    const expenseTableBody = document.getElementById('expense-table-body');
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const filterStartDateInput = document.getElementById('filter-start-date');
+    const filterEndDateInput = document.getElementById('filter-end-date');
+    const filterGlInput = document.getElementById('filter-gl');
+    const expensePagination = document.getElementById('expense-pagination');
 
-        // --- Main Functions ---
-        function addExpense(e) {
-            e.preventDefault();
-            const glNumber = glNumberInput.value.trim();
-            const year = new Date().getFullYear();
-            const glName = (budgets[year] && budgets[year][glNumber]) ? budgets[year][glNumber].name : '';
+    // State
+    let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    let budgets = JSON.parse(localStorage.getItem('budgets')) || {};
+    let currentPage = 1;
+    const pageSize = 10;
+    let lastFilteredTransactions = [];
 
-            // Read selected date safely. If expenseDateInput isn't present, use today's date.
-            const selectedDate = (expenseDateInput && expenseDateInput.value) ? expenseDateInput.value : '';
-            let transactionDate;
-            if (selectedDate) {
-                // Expecting dd/mm/yyyy format
-                const parts = selectedDate.split('/');
-                if (parts.length === 3) {
-                    const [day, month, yearDate] = parts;
-                    transactionDate = new Date(yearDate, month - 1, day).toISOString();
-                } else {
-                    // Unable to parse supplied value; fallback to now
-                    transactionDate = new Date().toISOString();
-                }
+    // Utilities
+    function generateID() { return Math.floor(Math.random() * 100000000); }
+    function updateLocalStorage(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        const d = new Date(dateString);
+        return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
+    }
+
+    // Add Expense
+    function addExpense(e) {
+        e.preventDefault();
+        const glNumber = glNumberInput.value.trim();
+        const year = new Date().getFullYear();
+        const glName = (budgets[year] && budgets[year][glNumber]) ? budgets[year][glNumber].name : '';
+
+        const selectedDate = (expenseDateInput && expenseDateInput.value) ? expenseDateInput.value : '';
+        let transactionDate;
+        if (selectedDate) {
+            const parts = selectedDate.split('/');
+            if (parts.length === 3) {
+                const [day, month, yearDate] = parts;
+                transactionDate = new Date(yearDate, month - 1, day).toISOString();
             } else {
                 transactionDate = new Date().toISOString();
             }
-
-            const transaction = {
-                id: generateID(),
-                glNumber: glNumber,
-                glName: glName,
-                glDescription: glDescriptionInput.value.trim(),
-                amount: Math.abs(+amountInput.value.trim() || 0),
-                date: transactionDate
-            };
-
-            if (!transaction.glNumber || transaction.amount === 0) {
-                alert('GL Number and a valid Amount are required.');
-                return;
-            }
-
-            transactions.push(transaction);
-            updateLocalStorage('transactions', transactions);
-            init();
-            expenseForm.reset();
+        } else {
+            transactionDate = new Date().toISOString();
         }
 
-        function addOrUpdateBudget(e) {
-            e.preventDefault();
-            const year = new Date().getFullYear();
-            const glNumber = budgetGlNumberInput.value.trim();
-            const glName = budgetGlNameInput.value.trim();
-            const module = budgetModuleInput.value.trim();
-            const description = budgetDescriptionInput.value.trim();
-            let amount = +budgetAmountInput.value.trim();
+        const transaction = {
+            id: generateID(),
+            glNumber: glNumber,
+            glName: glName,
+            glDescription: glDescriptionInput.value.trim(),
+            amount: Math.abs(+amountInput.value.trim() || 0),
+            date: transactionDate
+        };
 
-            if (!glNumber || !glName || !module) {
-                alert('Please provide a valid GL Number, Name, and Module.');
-                return;
-            }
-
-            if (amount < 0) {
-                alert('Budget amount cannot be negative.');
-                return;
-            }
-
-            if (isNaN(amount)) {
-                amount = 0;
-            }
-
-            if (!budgets[year]) {
-                budgets[year] = {};
-            }
-
-            budgets[year][glNumber] = { name: glName, module: module, description: description, budget: amount };
-            updateLocalStorage('budgets', budgets);
-            init();
-            budgetForm.reset();
-            budgetGlNumberInput.readOnly = false;
+        if (!transaction.glNumber || transaction.amount === 0) {
+            alert('GL Number and a valid Amount are required.');
+            return;
         }
 
-        function removeBudget(glNumber) {
-            const year = new Date().getFullYear();
-            delete budgets[year][glNumber];
-            if (Object.keys(budgets[year]).length === 0) {
-                delete budgets[year];
-            }
-            updateLocalStorage('budgets', budgets);
-            init();
+        transactions.push(transaction);
+        updateLocalStorage('transactions', transactions);
+        init();
+        expenseForm.reset();
+    }
+
+    // Budget Management
+    function addOrUpdateBudget(e) {
+        e.preventDefault();
+        const year = new Date().getFullYear();
+        const glNumber = budgetGlNumberInput.value.trim();
+        const glName = budgetGlNameInput.value.trim();
+        const module = budgetModuleInput.value.trim();
+        const description = budgetDescriptionInput.value.trim();
+        let amount = +budgetAmountInput.value.trim();
+
+        if (!glNumber || !glName || !module) {
+            alert('Please provide a valid GL Number, Name, and Module.');
+            return;
         }
+        if (amount < 0) { alert('Budget amount cannot be negative.'); return; }
+        if (isNaN(amount)) amount = 0;
+        if (!budgets[year]) budgets[year] = {};
 
-        function editBudget(glNumber) {
-            const year = new Date().getFullYear();
-            const budgetToEdit = budgets[year][glNumber];
-            if (budgetToEdit) {
-                budgetGlNumberInput.value = glNumber;
-                budgetGlNameInput.value = budgetToEdit.name;
-                budgetModuleInput.value = budgetToEdit.module;
-                budgetDescriptionInput.value = budgetToEdit.description || '';
-                budgetAmountInput.value = budgetToEdit.budget;
-                budgetGlNumberInput.readOnly = true; // Prevent changing GL Number during edit
-            }
+        budgets[year][glNumber] = { name: glName, module: module, description: description, budget: amount };
+        updateLocalStorage('budgets', budgets);
+        init();
+        budgetForm.reset();
+        budgetGlNumberInput.readOnly = false;
+    }
+
+    function removeBudget(glNumber) {
+        const year = new Date().getFullYear();
+        delete budgets[year][glNumber];
+        if (Object.keys(budgets[year]).length === 0) delete budgets[year];
+        updateLocalStorage('budgets', budgets);
+        init();
+    }
+
+    function editBudget(glNumber) {
+        const year = new Date().getFullYear();
+        const b = budgets[year][glNumber];
+        if (b) {
+            budgetGlNumberInput.value = glNumber;
+            budgetGlNameInput.value = b.name;
+            budgetModuleInput.value = b.module;
+            budgetDescriptionInput.value = b.description || '';
+            budgetAmountInput.value = b.budget;
+            budgetGlNumberInput.readOnly = true;
         }
+    }
 
-        function renderGLBudgets() {
-            const year = new Date().getFullYear();
-            glBudgetsTbody.innerHTML = '';
-            if (!budgets[year]) {
-                return;
-            }
+    // Render GL Budget Table
+    function renderGLBudgets() {
+        const year = new Date().getFullYear();
+        glBudgetsTbody.innerHTML = '';
+        if (!budgets[year]) return;
 
-            // If a GL is selected in the Add Expense form, show only that GL's budget row
-            const selectedGl = (document.getElementById('gl-number') && document.getElementById('gl-number').value) ? document.getElementById('gl-number').value : '';
+        const selectedGl = (glNumberInput && glNumberInput.value) ? glNumberInput.value : '';
+        const glKeys = selectedGl ? [selectedGl] : Object.keys(budgets[year]);
 
-            const glKeys = selectedGl ? [selectedGl] : Object.keys(budgets[year]);
-
-            for (const glNumber of glKeys) {
-                // If the selected GL does not exist in budgets for the year, skip
-                if (!budgets[year][glNumber]) continue;
-                const budgetInfo = budgets[year][glNumber];
-                const spent = transactions
-                    .filter(t => new Date(t.date).getFullYear() == year && t.glNumber === glNumber)
-                    .reduce((acc, t) => acc + t.amount, 0);
-                const monthlyAmount = budgetInfo.budget / 12;
-
-                const monthlySpent = transactions
-                    .filter(t => {
-                        const transactionDate = new Date(t.date);
-                        return transactionDate.getFullYear() == year && 
-                               transactionDate.getMonth() == new Date().getMonth() && 
-                               t.glNumber === glNumber;
-                    })
-                    .reduce((acc, t) => acc + t.amount, 0);
-                const monthlyPercentage = monthlyAmount > 0 ? (monthlySpent / monthlyAmount) * 100 : 0;
-
-                const remaining = monthlyAmount - monthlySpent;
-
-                // Use theme primary blue for Budget / Spent values
-                const budgetDisplay = budgetInfo.budget > 0 ? `<span class="text-primary">৳${budgetInfo.budget.toFixed(2)}</span>` : 'No Budget';
-                const spentDisplay = `<span class="text-primary">৳${spent.toFixed(2)}</span>`;
-                const textColor = monthlyPercentage > 100 ? 'text-danger' : 'text-success';
-                const monthlyAmountDisplay = budgetInfo.budget > 0 ? `৳${monthlyAmount.toFixed(2)}` : 'N/A';
-                const remainingDisplay = budgetInfo.budget > 0 ? `<span class="${textColor}">৳${remaining.toFixed(2)}</span>` : 'N/A';
-                const monthlyStatusProgressBar = budgetInfo.budget > 0 ? `
-                        <div class="progress" role="progressbar" aria-valuenow="${Math.min(monthlyPercentage, 100)}" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar ${monthlyPercentage > 100 ? 'bg-danger' : 'bg-success'}" style="width: ${Math.min(monthlyPercentage, 100)}%">
-                                <span style="position: absolute; width: 100%; text-align: center; color: ${monthlyPercentage > 80 ? 'white' : '#495057'}; font-weight: 500; text-shadow: 0 0 2px rgba(0,0,0,0.1);">
-                                    ${Math.round(monthlyPercentage)}%
-                                </span>
-                            </div>
-                        </div>` : 'N/A';
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><a href="#" onclick="showGlDetails(event, '${glNumber}')" role="button" aria-label="View GL ${glNumber}"><strong>${budgetInfo.name}</strong></a><div class="text-muted small">${glNumber}</div></td>
-                    <td>${budgetInfo.module}</td>
-                    <td>${budgetDisplay} / ${spentDisplay}</td>
-                    <td><span class="${textColor}">${monthlyAmountDisplay}</span> / ${remainingDisplay}</td>
-                    <td>${monthlyStatusProgressBar}</td>
-                    <td class="text-center">
-                        <button class="btn btn-sm btn-info me-1" onclick="editBudget('${glNumber}')"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="removeBudget('${glNumber}')">X</button>
-                    </td>
-                `;
-                glBudgetsTbody.appendChild(row);
-            }
-        }
-
-        function renderGlNumberDropdown() {
-            const year = new Date().getFullYear();
-            const glNumberDropdown = document.getElementById('gl-number');
-            const glNumberSearch = document.getElementById('gl-number-search');
-            const glNumberList = document.getElementById('gl-number-list');
-
-            // Ensure base select exists
-            if (glNumberDropdown) {
-                glNumberDropdown.innerHTML = '<option value="">Select a GL</option>';
-            }
-
-            // Clear list UI
-            if (glNumberList) {
-                glNumberList.innerHTML = '';
-            }
-
-            if (!budgets[year]) return;
-
-            // Populate both hidden select and visible search list
-            for (const glNumber in budgets[year]) {
-                const label = `${glNumber} - ${budgets[year][glNumber].name}`;
-
-                if (glNumberDropdown) {
-                    const option = document.createElement('option');
-                    option.value = glNumber;
-                    option.textContent = label;
-                    glNumberDropdown.appendChild(option);
-                }
-
-                if (glNumberList) {
-                    const item = document.createElement('div');
-                    item.className = 'item';
-                    item.textContent = label;
-                    item.dataset.value = glNumber;
-                    item.addEventListener('click', () => {
-                        // set both the hidden select and the visible search input
-                        if (glNumberDropdown) glNumberDropdown.value = glNumber;
-                        if (glNumberSearch) glNumberSearch.value = label;
-                        // show clear button when item selected
-                        try { const cb = document.getElementById('gl-number-clear'); if (cb) cb.style.display = 'inline-flex'; } catch (e) {}
-                        // hide the list
-                        glNumberList.style.display = 'none';
-                        try { const tbtn = document.getElementById('gl-number-toggle'); if (tbtn) tbtn.classList.remove('open'); } catch (e) {}
-                        // trigger change so other code updates
-                        try { glNumberDropdown.dispatchEvent(new Event('change')); } catch (e) {}
-                    });
-                    glNumberList.appendChild(item);
-                }
-            }
-
-            // Attach filtering behavior if search input exists
-            try {
-                if (glNumberSearch && glNumberList) {
-                    // Move the list to document.body so it's not clipped by parent overflow
-                    if (glNumberList.parentElement !== document.body) {
-                        document.body.appendChild(glNumberList);
-                        glNumberList.style.position = 'absolute';
-                    }
-                    // Ensure list appears above other content and matches styling
-                    glNumberList.style.zIndex = '2200';
-                    glNumberList.style.background = '#fff';
-                    glNumberList.style.border = '1px solid #e6e6e6';
-                    glNumberList.style.borderRadius = '6px';
-                    glNumberList.style.boxShadow = '0 6px 18px rgba(0,0,0,0.08)';
-
-                    const positionList = () => {
-                        const rect = glNumberSearch.getBoundingClientRect();
-                        glNumberList.style.left = (rect.left + window.scrollX) + 'px';
-                        glNumberList.style.top = (rect.bottom + window.scrollY + 6) + 'px';
-                        glNumberList.style.width = rect.width + 'px';
-                    };
-
-                    const filterItems = () => {
-                        const q = glNumberSearch.value.trim().toLowerCase();
-                        let any = false;
-                        Array.from(glNumberList.children).forEach(child => {
-                            const txt = (child.textContent || '').toLowerCase();
-                            const show = txt.indexOf(q) !== -1;
-                            child.style.display = show ? '' : 'none';
-                            if (show) any = true;
-                        });
-                        if (any) {
-                            positionList();
-                            glNumberList.style.display = 'block';
-                            try { if (toggleBtn) toggleBtn.classList.add('open'); } catch (e) {}
-                        } else {
-                            glNumberList.style.display = 'none';
-                            try { if (toggleBtn) toggleBtn.classList.remove('open'); } catch (e) {}
-                        }
-                    };
-
-                    const toggleBtn = document.getElementById('gl-number-toggle');
-                    const clearBtn = document.getElementById('gl-number-clear');
-
-                    // ensure clear button visibility initial state
-                    try { if (clearBtn) clearBtn.style.display = (glNumberSearch.value && glNumberSearch.value.trim()) ? 'inline-flex' : 'none'; } catch (e) {}
-
-                    glNumberSearch.addEventListener('input', (e) => {
-                        try { if (clearBtn) clearBtn.style.display = (glNumberSearch.value && glNumberSearch.value.trim()) ? 'inline-flex' : 'none'; } catch (e) {}
-                        filterItems();
-                    });
-                    glNumberSearch.addEventListener('focus', () => { positionList(); glNumberList.style.display = 'block'; filterItems(); });
-                    // reposition on scroll/resize to keep aligned
-                    window.addEventListener('resize', positionList);
-                    window.addEventListener('scroll', positionList, true);
-
-                    // toggle button: open/close list
-                    if (toggleBtn) {
-                        toggleBtn.addEventListener('click', () => {
-                            if (glNumberList.style.display === 'block') {
-                                glNumberList.style.display = 'none';
-                                try { toggleBtn.classList.remove('open'); } catch (e) {}
-                            } else {
-                                positionList();
-                                filterItems();
-                                glNumberList.style.display = 'block';
-                                try { glNumberSearch.focus(); } catch (e) {}
-                                try { toggleBtn.classList.add('open'); } catch (e) {}
-                            }
-                        });
-                    }
-
-                    // clear button: clear input and selection
-                    if (clearBtn) {
-                        clearBtn.addEventListener('click', () => {
-                            if (glNumberSearch) glNumberSearch.value = '';
-                            if (glNumberDropdown) {
-                                glNumberDropdown.value = '';
-                                try { glNumberDropdown.dispatchEvent(new Event('change')); } catch (e) {}
-                            }
-                            glNumberList.style.display = 'none';
-                            try { if (toggleBtn) toggleBtn.classList.remove('open'); } catch (e) {}
-                            try { glNumberSearch.focus(); } catch (e) {}
-                            clearBtn.style.display = 'none';
-                        });
-                    }
-
-                    // small delay on blur to allow click to register
-                    glNumberSearch.addEventListener('blur', () => setTimeout(() => { if (glNumberList) glNumberList.style.display = 'none'; try { if (toggleBtn) toggleBtn.classList.remove('open'); } catch (e) {} }, 150));
-                }
-            } catch (err) {
-                console.error('Error attaching GL search handlers:', err);
-            }
-        }
-
-        // --- Utility & Init ---
-        function autoFetchGlName() {
-            const year = new Date().getFullYear();
-            const glNumber = glNumberInput.value.trim();
-            if (budgets[year] && budgets[year][glNumber]) {
-                glNameInput.value = budgets[year][glNumber].name;
-                glNameInput.readOnly = true;
-            } else {
-                glNameInput.value = '';
-                glNameInput.readOnly = false;
-            }
-        }
-
-        function generateID() {
-            return Math.floor(Math.random() * 100000000);
-        }
-
-        function updateLocalStorage(key, data) {
-            localStorage.setItem(key, JSON.stringify(data));
-        }
-
-        // Function to format date as dd/mm/yyyy
-        function formatDate(dateString) {
-            if (!dateString) {
-                return 'N/A';
-            }
-            const date = new Date(dateString);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
-        }
-
-        function init() {
-            renderGLBudgets();
-            renderGlNumberDropdown();
-        }
-
-        function showGlDetails(e, glNumber) {
-            try { if (e && e.preventDefault) e.preventDefault(); } catch (err) { /* ignore */ }
-            const year = new Date().getFullYear();
-            const budgetInfo = budgets[year][glNumber];
-
-            if (!budgetInfo) {
-                console.error('Budget information not found for GL Number:', glNumber);
-                return;
-            }
-
+        for (const glNumber of glKeys) {
+            if (!budgets[year][glNumber]) continue;
+            const info = budgets[year][glNumber];
+            const spent = transactions
+                .filter(function(t) { return new Date(t.date).getFullYear() == year && t.glNumber === glNumber; })
+                .reduce(function(acc, t) { return acc + t.amount; }, 0);
+            const monthlyAmount = info.budget / 12;
             const monthlySpent = transactions
-                .filter(t => {
-                    const transactionDate = new Date(t.date);
-                    return transactionDate.getFullYear() == year && 
-                           transactionDate.getMonth() == new Date().getMonth() && 
-                           t.glNumber === glNumber;
+                .filter(function(t) {
+                    const d = new Date(t.date);
+                    return d.getFullYear() == year && d.getMonth() == new Date().getMonth() && t.glNumber === glNumber;
                 })
-                .reduce((acc, t) => acc + t.amount, 0);
+                .reduce(function(acc, t) { return acc + t.amount; }, 0);
+            const pct = monthlyAmount > 0 ? (monthlySpent / monthlyAmount) * 100 : 0;
+            const remaining = monthlyAmount - monthlySpent;
+            const isOver = pct > 100;
+            const textColor = isOver ? 'amount-negative' : 'amount-positive';
 
-            document.getElementById('modal-gl-number').textContent = glNumber;
-            document.getElementById('modal-gl-name').textContent = budgetInfo.name;
-            document.getElementById('modal-gl-description').textContent = budgetInfo.description || '';
-            document.getElementById('modal-gl-module').textContent = budgetInfo.module;
+            const budgetDisplay = info.budget > 0
+                ? '<span style="color:var(--primary);font-weight:600;">\u09F3' + info.budget.toFixed(2) + '</span>'
+                : '<span style="color:var(--text-light)">No Budget</span>';
+            const spentDisplay = '<span style="color:var(--text);font-weight:600;">\u09F3' + spent.toFixed(2) + '</span>';
+            const monthlyAmountDisplay = info.budget > 0 ? '\u09F3' + monthlyAmount.toFixed(2) : 'N/A';
+            const remainingDisplay = info.budget > 0
+                ? '<span class="' + textColor + '">\u09F3' + remaining.toFixed(2) + '</span>'
+                : 'N/A';
 
-            const yearlyBudgetElement = document.getElementById('modal-yearly-budget').closest('p');
-            const monthlyBudgetElement = document.getElementById('modal-monthly-budget').closest('p');
-            const monthlyRemainingElement = document.getElementById('modal-monthly-remaining').closest('p');
+            const progressBar = info.budget > 0 ? '<div class="progress-modern"><span class="progress-label">' + Math.round(pct) + '%</span><div class="progress-fill ' + (isOver ? 'danger' : 'safe') + '" style="width:' + Math.min(pct, 100) + '%"></div></div>' : '<span style="color:var(--text-light)">N/A</span>';
 
-            const budgetAmount = parseFloat(budgetInfo.budget) || 0;
-
-            if (budgetAmount > 0) {
-                yearlyBudgetElement.style.display = 'block';
-                monthlyBudgetElement.style.display = 'block';
-                monthlyRemainingElement.style.display = 'block';
-
-                document.getElementById('modal-yearly-budget').textContent = `৳${budgetAmount.toFixed(2)}`;
-
-                const monthlyAmount = budgetAmount / 12;
-                document.getElementById('modal-monthly-budget').textContent = `৳${monthlyAmount.toFixed(2)}`;
-
-                const remaining = monthlyAmount - monthlySpent;
-                document.getElementById('modal-monthly-remaining').textContent = `৳${remaining.toFixed(2)}`;
-            } else {
-                yearlyBudgetElement.style.display = 'none';
-                monthlyBudgetElement.style.display = 'none';
-                monthlyRemainingElement.style.display = 'none';
-            }
-
-            const modalTransactionsTbody = document.getElementById('modal-transactions-tbody');
-            modalTransactionsTbody.innerHTML = '';
-            const glTransactions = transactions.filter(t => t.glNumber === glNumber).sort((a, b) => new Date(b.date) - new Date(a.date));
-            glTransactions.forEach(t => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${formatDate(t.date)}</td>
-                    <td>${t.glDescription}</td>
-                    <td class="text-end">৳${t.amount.toFixed(2)}</td>
-                `;
-                modalTransactionsTbody.appendChild(row);
-            });
-
-            try {
-                const glDetailsModal = new bootstrap.Modal(document.getElementById('glDetailsModal'));
-                glDetailsModal.show();
-            } catch (error) {
-                console.error('Error opening GL Details Modal:', error);
-            }
+            const row = document.createElement('tr');
+            row.innerHTML =
+                '<td><a href="#" onclick="showGlDetails(event,\'' + glNumber + '\')" class="gl-link">' + info.name + '</a><div class="gl-sub">' + glNumber + '</div></td>' +
+                '<td>' + info.module + '</td>' +
+                '<td>' + budgetDisplay + ' / ' + spentDisplay + '</td>' +
+                '<td>' + monthlyAmountDisplay + ' / ' + remainingDisplay + '</td>' +
+                '<td>' + progressBar + '</td>' +
+                '<td><div style="display:flex;gap:6px;justify-content:center;">' +
+                    '<button class="btn-icon edit" onclick="editBudget(\'' + glNumber + '\')" title="Edit"><i class="bi bi-pencil"></i></button>' +
+                    '<button class="btn-icon delete" onclick="removeBudget(\'' + glNumber + '\')" title="Remove"><i class="bi bi-trash3"></i></button>' +
+                '</div></td>';
+            glBudgetsTbody.appendChild(row);
         }
+    }
 
-        expenseForm.addEventListener('submit', addExpense);
-        budgetForm.addEventListener('submit', addOrUpdateBudget);
+    // Render GL Dropdown
+    function renderGlNumberDropdown() {
+        const year = new Date().getFullYear();
+        const glNumberDropdown = document.getElementById('gl-number');
+        const glNumberSearch = document.getElementById('gl-number-search');
+        const glNumberList = document.getElementById('gl-number-list');
 
-        // UI Elements for Ledger
-        const totalExpensesDisplay = document.getElementById('total-expenses');
-        const expenseTableBody = document.getElementById('expense-table-body');
-    // pagination controls for Expense Ledger (in-page, no new HTML file)
-    let currentPage = 1;
-    const pageSize = 10; // items per page
-    const expensePagination = document.getElementById('expense-pagination');
-    let lastFilteredTransactions = [];
-        const searchInput = document.getElementById('search-input');
-        const searchButton = document.getElementById('search-button');
-        const filterStartDateInput = document.getElementById('filter-start-date');
-        const filterEndDateInput = document.getElementById('filter-end-date');
-        const filterGlInput = document.getElementById('filter-gl');
+        if (glNumberDropdown) glNumberDropdown.innerHTML = '<option value="">Select a GL</option>';
+        if (glNumberList) glNumberList.innerHTML = '';
+        if (!budgets[year]) return;
 
-        // --- Main Functions for Ledger ---
-        function removeTransaction(id) {
-            transactions = transactions.filter(t => t.id !== id);
-            updateLocalStorage('transactions', transactions);
-            applyFilters();
-        }
+        for (const glNumber in budgets[year]) {
+            const label = glNumber + ' - ' + budgets[year][glNumber].name;
 
-        // --- Render & Filter Functions for Ledger ---
-    function applyFilters() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const filterStartDateValue = filterStartDateInput.value;
-            let filterStartDate = null;
-            if (filterStartDateValue) {
-                filterStartDate = new Date(filterStartDateValue.split('/').reverse().join('-'));
-                filterStartDate.setHours(0, 0, 0, 0);
-            }
-
-            const filterEndDateValue = filterEndDateInput.value;
-            let filterEndDate = null;
-            if (filterEndDateValue) {
-                filterEndDate = new Date(filterEndDateValue.split('/').reverse().join('-'));
-                filterEndDate.setHours(23, 59, 59, 999);
-            }
-            const filterGl = filterGlInput.value;
-
-            let filteredTransactions = transactions;
-
-            if (filterStartDate && filterEndDate) {
-                filteredTransactions = filteredTransactions.filter(t => {
-                    const transactionDate = new Date(t.date);
-                    return transactionDate >= filterStartDate && transactionDate <= filterEndDate;
-                });
-            } else if (filterStartDate) {
-                filteredTransactions = filteredTransactions.filter(t => new Date(t.date) >= filterStartDate);
-            } else if (filterEndDate) {
-                filteredTransactions = filteredTransactions.filter(t => new Date(t.date) <= filterEndDate);
-            }
-
-            if (filterGl) {
-                filteredTransactions = filteredTransactions.filter(t => t.glNumber === filterGl);
-            }
-
-            if (searchTerm) {
-                filteredTransactions = filteredTransactions.filter(t =>
-                    (t.glName || '').toLowerCase().includes(searchTerm) ||
-                    (t.glNumber || '').toLowerCase().includes(searchTerm) ||
-                    (t.glDescription || '').toLowerCase().includes(searchTerm)
-                );
-            }
-
-            // store filtered results for pagination and reset to first page
-            lastFilteredTransactions = filteredTransactions;
-            currentPage = 1;
-            renderExpenseTable(); // use the global filtered list
-            updateTotal(filteredTransactions);
-        }
-        function renderExpenseTable(transactionsToRender = null) {
-            // default to the last filtered transactions when no explicit list is provided
-            if (!transactionsToRender) transactionsToRender = lastFilteredTransactions || [];
-            expenseTableBody.innerHTML = '';
-            const sortedTransactions = transactionsToRender.slice().sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
-            const totalItems = sortedTransactions.length;
-            const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
-            if (currentPage > totalPages) currentPage = totalPages;
-
-            // if no items, clear pagination and return
-            if (totalItems === 0) {
-                expensePagination.innerHTML = '';
-                return;
-            }
-
-            const start = (currentPage - 1) * pageSize;
-            const pageItems = sortedTransactions.slice(start, start + pageSize);
-
-            pageItems.forEach(transaction => {
-                const row = document.createElement('tr');
-                const formattedDate = formatDate(transaction.date);
-                row.innerHTML = `
-                    <td>${formattedDate}</td>
-                    <td><strong>${transaction.glName}</strong><div class="text-muted small">${transaction.glNumber}</div></td>
-                    <td>${transaction.glDescription}</td>
-                    <td class="text-end">৳${transaction.amount.toFixed(2)}</td>
-                    <td class="text-center"><button class="btn btn-sm btn-danger" onclick="removeTransaction(${transaction.id})">X</button></td>
-                `;
-                expenseTableBody.appendChild(row);
-            });
-
-            renderPagination(totalPages, totalItems, start, pageItems.length);
-        }
-
-        function renderPagination(totalPages, totalItems, startIndex, pageCount) {
-            if (!expensePagination) return;
-            expensePagination.innerHTML = '';
-
-            // If there's only one page, still show a small range indicator but no page buttons
-            const wrapper = document.createElement('div');
-            wrapper.className = 'd-flex align-items-center';
-
-            const rangeSpan = document.createElement('span');
-            rangeSpan.className = 'me-3 text-muted small';
-            const showingFrom = totalItems === 0 ? 0 : startIndex + 1;
-            const showingTo = totalItems === 0 ? 0 : startIndex + pageCount;
-            rangeSpan.textContent = `Showing ${showingFrom}–${showingTo} of ${totalItems}`;
-            wrapper.appendChild(rangeSpan);
-
-            if (totalPages <= 1) {
-                expensePagination.appendChild(wrapper);
-                return; // no pagination buttons needed
-            }
-
-            const ul = document.createElement('ul');
-            ul.className = 'pagination mb-0';
-
-            const makePageItem = (label, page, disabled = false, active = false) => {
-                const li = document.createElement('li');
-                li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
-                const btn = document.createElement('button');
-                btn.className = 'page-link';
-                btn.type = 'button';
-                btn.textContent = label;
-                btn.addEventListener('click', () => {
-                    if (disabled) return;
-                    currentPage = page;
-                    renderExpenseTable(); // render using the global filtered list
-                    // after rendering, scroll to the table top (optional)
-                    // document.getElementById('expense-table-body').scrollIntoView({behavior: 'smooth'});
-                });
-                li.appendChild(btn);
-                return li;
-            };
-
-            // Prev
-            ul.appendChild(makePageItem('Previous', Math.max(1, currentPage - 1), currentPage === 1));
-
-            // page numbers (limit long lists to a window)
-            const maxButtons = 7;
-            let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
-            let endPage = Math.min(totalPages, startPage + maxButtons - 1);
-            if (endPage - startPage + 1 < maxButtons) {
-                startPage = Math.max(1, endPage - maxButtons + 1);
-            }
-
-            for (let p = startPage; p <= endPage; p++) {
-                ul.appendChild(makePageItem(p.toString(), p, false, p === currentPage));
-            }
-
-            // Next
-            ul.appendChild(makePageItem('Next', Math.min(totalPages, currentPage + 1), currentPage === totalPages));
-
-            wrapper.appendChild(ul);
-            expensePagination.appendChild(wrapper);
-        }
-
-        function renderGlFilterOptions() {
-            const year = new Date().getFullYear();
-            filterGlInput.innerHTML = '<option value="">All GLs</option>';
-            if (!budgets[year]) return;
-            for (const glNumber in budgets[year]) {
+            if (glNumberDropdown) {
                 const option = document.createElement('option');
                 option.value = glNumber;
-                option.textContent = `${glNumber} - ${budgets[year][glNumber].name}`;
-                filterGlInput.appendChild(option);
+                option.textContent = label;
+                glNumberDropdown.appendChild(option);
+            }
+
+            if (glNumberList) {
+                const item = document.createElement('div');
+                item.className = 'item';
+                item.textContent = label;
+                item.dataset.value = glNumber;
+                item.addEventListener('click', (function(gl, lbl) {
+                    return function() {
+                        if (glNumberDropdown) glNumberDropdown.value = gl;
+                        if (glNumberSearch) glNumberSearch.value = lbl;
+                        try { document.getElementById('gl-number-clear').style.display = 'inline-flex'; } catch(ex){}
+                        glNumberList.style.display = 'none';
+                        try { document.getElementById('gl-number-toggle').classList.remove('open'); } catch(ex){}
+                        try { glNumberDropdown.dispatchEvent(new Event('change')); } catch(ex){}
+                    };
+                })(glNumber, label));
+                glNumberList.appendChild(item);
             }
         }
 
-        function updateTotal(transactionsToTotal) {
-            const total = transactionsToTotal.reduce((acc, t) => (acc + t.amount), 0).toFixed(2);
-            totalExpensesDisplay.innerText = `৳${total}`;
-        }
-
-        // --- Combined Init ---
-        function init() {
-            renderGLBudgets();
-            renderGlNumberDropdown();
-            // When GL dropdown changes, re-render budgets to show only selected GL (or all if empty)
-            try {
-                if (glNumberInput) glNumberInput.addEventListener('change', renderGLBudgets);
-            } catch (err) {
-                console.error('Error attaching GL change listener:', err);
-            }
-
-            applyFilters(); // Initialize ledger filters and display
-            renderGlFilterOptions(); // Populate GL filter dropdown
-        }
-
-        searchButton.addEventListener('click', applyFilters);
-        filterStartDateInput.addEventListener('change', applyFilters);
-        filterEndDateInput.addEventListener('change', applyFilters);
-        filterGlInput.addEventListener('change', applyFilters);
-
-        // Call init() after all functions are defined
-        init();
-
-        // Initialize datepickers and ensure calendar shows on focus/click
-        let datepicker, datepicker2, datepicker3;
+        // Attach search behavior
         try {
-            datepicker = new Datepicker(filterStartDateInput, {
-                format: 'dd/mm/yyyy',
-                autohide: true,
-            });
-        } catch (error) {
-            console.error('Error initializing Start Date Datepicker:', error);
-        }
-        try {
-            datepicker2 = new Datepicker(filterEndDateInput, {
-                format: 'dd/mm/yyyy',
-                autohide: true,
-            });
-        } catch (error) {
-            console.error('Error initializing End Date Datepicker:', error);
-        }
-        try {
-            const expenseDateInput = document.getElementById('expense-date');
-            datepicker3 = new Datepicker(expenseDateInput, {
-                format: 'dd/mm/yyyy',
-                autohide: true,
-            });
-        } catch (error) {
-            console.error('Error initializing Expense Date Datepicker:', error);
-        }
+            if (glNumberSearch && glNumberList) {
+                if (glNumberList.parentElement !== document.body) {
+                    document.body.appendChild(glNumberList);
+                    glNumberList.style.position = 'absolute';
+                }
+                glNumberList.style.zIndex = '2200';
 
-        // Show calendar when inputs receive focus or are clicked (works even if some browsers don't auto-open)
-        try {
-            if (datepicker) {
-                filterStartDateInput.addEventListener('focus', () => datepicker.show());
-                filterStartDateInput.addEventListener('click', () => datepicker.show());
-            }
-            if (datepicker2) {
-                filterEndDateInput.addEventListener('focus', () => datepicker2.show());
-                filterEndDateInput.addEventListener('click', () => datepicker2.show());
-            }
-            if (datepicker3) {
-                expenseDateInput.addEventListener('focus', () => datepicker3.show());
-                expenseDateInput.addEventListener('click', () => datepicker3.show());
-            }
-        } catch (err) {
-            console.error('Error attaching datepicker show handlers:', err);
-        }
+                var positionList = function() {
+                    var rect = glNumberSearch.getBoundingClientRect();
+                    glNumberList.style.left = (rect.left + window.scrollX) + 'px';
+                    glNumberList.style.top = (rect.bottom + window.scrollY + 6) + 'px';
+                    glNumberList.style.width = rect.width + 'px';
+                };
 
-        // When a date is picked from the calendar, ensure the input is populated and filters run
-        function formatDateForInput(d) {
-            if (!d) return '';
-            const day = String(d.getDate()).padStart(2, '0');
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const year = d.getFullYear();
-            return `${day}/${month}/${year}`;
-        }
+                var toggleBtn = document.getElementById('gl-number-toggle');
+                var clearBtn = document.getElementById('gl-number-clear');
 
-        try {
-            if (filterStartDateInput) {
-                filterStartDateInput.addEventListener('changeDate', (e) => {
-                    try {
-                        const picked = e.detail && e.detail.date ? e.detail.date : null;
-                        if (picked) filterStartDateInput.value = formatDateForInput(picked);
-                        applyFilters();
-                    } catch (err) {
-                        console.error('Error handling start date changeDate event:', err);
+                var filterItems = function() {
+                    var q = glNumberSearch.value.trim().toLowerCase();
+                    var any = false;
+                    Array.from(glNumberList.children).forEach(function(child) {
+                        var show = (child.textContent || '').toLowerCase().indexOf(q) !== -1;
+                        child.style.display = show ? '' : 'none';
+                        if (show) any = true;
+                    });
+                    if (any) {
+                        positionList();
+                        glNumberList.style.display = 'block';
+                        if (toggleBtn) toggleBtn.classList.add('open');
+                    } else {
+                        glNumberList.style.display = 'none';
+                        if (toggleBtn) toggleBtn.classList.remove('open');
                     }
+                };
+
+                if (clearBtn) clearBtn.style.display = (glNumberSearch.value && glNumberSearch.value.trim()) ? 'inline-flex' : 'none';
+
+                glNumberSearch.addEventListener('input', function() {
+                    if (clearBtn) clearBtn.style.display = glNumberSearch.value.trim() ? 'inline-flex' : 'none';
+                    filterItems();
+                });
+                glNumberSearch.addEventListener('focus', function() { positionList(); glNumberList.style.display = 'block'; filterItems(); });
+                window.addEventListener('resize', positionList);
+                window.addEventListener('scroll', positionList, true);
+
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', function() {
+                        if (glNumberList.style.display === 'block') {
+                            glNumberList.style.display = 'none';
+                            toggleBtn.classList.remove('open');
+                        } else {
+                            positionList(); filterItems();
+                            glNumberList.style.display = 'block';
+                            glNumberSearch.focus();
+                            toggleBtn.classList.add('open');
+                        }
+                    });
+                }
+
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', function() {
+                        glNumberSearch.value = '';
+                        if (glNumberDropdown) {
+                            glNumberDropdown.value = '';
+                            try { glNumberDropdown.dispatchEvent(new Event('change')); } catch(ex){}
+                        }
+                        glNumberList.style.display = 'none';
+                        if (toggleBtn) toggleBtn.classList.remove('open');
+                        glNumberSearch.focus();
+                        clearBtn.style.display = 'none';
+                    });
+                }
+
+                glNumberSearch.addEventListener('blur', function() {
+                    setTimeout(function() {
+                        if (glNumberList) glNumberList.style.display = 'none';
+                        if (toggleBtn) toggleBtn.classList.remove('open');
+                    }, 150);
                 });
             }
-            if (filterEndDateInput) {
-                filterEndDateInput.addEventListener('changeDate', (e) => {
-                    try {
-                        const picked = e.detail && e.detail.date ? e.detail.date : null;
-                        if (picked) filterEndDateInput.value = formatDateForInput(picked);
-                        applyFilters();
-                    } catch (err) {
-                        console.error('Error handling end date changeDate event:', err);
-                    }
-                });
-            }
-            // calendar icon buttons (open datepicker when clicked)
-            const startDateBtn = document.getElementById('startDateBtn');
-            const endDateBtn = document.getElementById('endDateBtn');
-            if (startDateBtn && datepicker) startDateBtn.addEventListener('click', () => datepicker.show());
-            if (endDateBtn && datepicker2) endDateBtn.addEventListener('click', () => datepicker2.show());
-        } catch (err) {
-            console.error('Error attaching changeDate handlers:', err);
+        } catch (err) { console.error('GL search init error:', err); }
+    }
+
+    // Expense Ledger
+    function removeTransaction(id) {
+        transactions = transactions.filter(function(t) { return t.id !== id; });
+        updateLocalStorage('transactions', transactions);
+        applyFilters();
+    }
+
+    function applyFilters() {
+        var searchTerm = searchInput.value.toLowerCase();
+        var filterStartDate = null, filterEndDate = null;
+
+        if (filterStartDateInput.value) {
+            filterStartDate = new Date(filterStartDateInput.value.split('/').reverse().join('-'));
+            filterStartDate.setHours(0, 0, 0, 0);
         }
-        // Save and restore collapse states
-        function saveCollapseStates() {
-            const glBudgetsCollapsed = !document.getElementById('glBudgetsContent').classList.contains('show');
-            const expenseLedgerCollapsed = !document.getElementById('expenseLedgerContent').classList.contains('show');
-            localStorage.setItem('glBudgetsCollapsed', glBudgetsCollapsed);
-            localStorage.setItem('expenseLedgerCollapsed', expenseLedgerCollapsed);
+        if (filterEndDateInput.value) {
+            filterEndDate = new Date(filterEndDateInput.value.split('/').reverse().join('-'));
+            filterEndDate.setHours(23, 59, 59, 999);
         }
+        var filterGl = filterGlInput.value;
 
-        function restoreCollapseStates() {
-            const glBudgetsCollapsed = localStorage.getItem('glBudgetsCollapsed') === 'true';
-            const expenseLedgerCollapsed = localStorage.getItem('expenseLedgerCollapsed') === 'true';
-
-            if (glBudgetsCollapsed) {
-                const glBudgetsContent = document.getElementById('glBudgetsContent');
-                glBudgetsContent.classList.remove('show');
-                const glBudgetsToggle = document.querySelector('[data-bs-target="#glBudgetsContent"]');
-                glBudgetsToggle.classList.add('collapsed');
-            }
-
-            if (expenseLedgerCollapsed) {
-                const expenseLedgerContent = document.getElementById('expenseLedgerContent');
-                expenseLedgerContent.classList.remove('show');
-                const expenseLedgerToggle = document.querySelector('[data-bs-target="#expenseLedgerContent"]');
-                expenseLedgerToggle.classList.add('collapsed');
-            }
+        var filtered = transactions;
+        if (filterStartDate && filterEndDate) {
+            filtered = filtered.filter(function(t) { var d = new Date(t.date); return d >= filterStartDate && d <= filterEndDate; });
+        } else if (filterStartDate) {
+            filtered = filtered.filter(function(t) { return new Date(t.date) >= filterStartDate; });
+        } else if (filterEndDate) {
+            filtered = filtered.filter(function(t) { return new Date(t.date) <= filterEndDate; });
+        }
+        if (filterGl) filtered = filtered.filter(function(t) { return t.glNumber === filterGl; });
+        if (searchTerm) {
+            filtered = filtered.filter(function(t) {
+                return (t.glName || '').toLowerCase().indexOf(searchTerm) !== -1 ||
+                    (t.glNumber || '').toLowerCase().indexOf(searchTerm) !== -1 ||
+                    (t.glDescription || '').toLowerCase().indexOf(searchTerm) !== -1;
+            });
         }
 
-        // Add collapse event listeners
-        document.getElementById('glBudgetsContent').addEventListener('hidden.bs.collapse', saveCollapseStates);
-        document.getElementById('glBudgetsContent').addEventListener('shown.bs.collapse', saveCollapseStates);
-        document.getElementById('expenseLedgerContent').addEventListener('hidden.bs.collapse', saveCollapseStates);
-        document.getElementById('expenseLedgerContent').addEventListener('shown.bs.collapse', saveCollapseStates);
+        lastFilteredTransactions = filtered;
+        currentPage = 1;
+        renderExpenseTable();
+        updateTotal(filtered);
+    }
 
-        // Restore states on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            restoreCollapseStates();
+    function renderExpenseTable(list) {
+        if (!list) list = lastFilteredTransactions || [];
+        expenseTableBody.innerHTML = '';
+        var sorted = list.slice().sort(function(a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
+        var total = sorted.length;
+        var totalPages = Math.max(1, Math.ceil(total / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        if (total === 0) {
+            expensePagination.innerHTML = '';
+            expenseTableBody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="bi bi-inbox"></i><p>No expenses found</p></div></td></tr>';
+            return;
+        }
+
+        var start = (currentPage - 1) * pageSize;
+        var pageItems = sorted.slice(start, start + pageSize);
+        pageItems.forEach(function(t) {
+            var row = document.createElement('tr');
+            row.innerHTML =
+                '<td>' + formatDate(t.date) + '</td>' +
+                '<td><strong>' + t.glName + '</strong><div class="gl-sub">' + t.glNumber + '</div></td>' +
+                '<td style="color:var(--text-muted)">' + t.glDescription + '</td>' +
+                '<td class="text-end amount-cell amount-negative">\u09F3' + t.amount.toFixed(2) + '</td>' +
+                '<td class="text-center"><button class="btn-icon delete" onclick="removeTransaction(' + t.id + ')" title="Delete"><i class="bi bi-trash3"></i></button></td>';
+            expenseTableBody.appendChild(row);
         });
+
+        renderPagination(totalPages, total, start, pageItems.length);
+    }
+
+    function renderPagination(totalPages, totalItems, startIndex, pageCount) {
+        if (!expensePagination) return;
+        expensePagination.innerHTML = '';
+
+        var info = document.createElement('span');
+        info.className = 'pagination-info';
+        var showFrom = totalItems === 0 ? 0 : startIndex + 1;
+        var showTo = totalItems === 0 ? 0 : startIndex + pageCount;
+        info.textContent = showFrom + '\u2013' + showTo + ' of ' + totalItems;
+        expensePagination.appendChild(info);
+
+        if (totalPages <= 1) return;
+
+        var ul = document.createElement('ul');
+        ul.className = 'pagination mb-0';
+
+        function makePage(label, page, disabled, active) {
+            var li = document.createElement('li');
+            li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
+            var btn = document.createElement('button');
+            btn.className = 'page-link';
+            btn.type = 'button';
+            btn.textContent = label;
+            btn.addEventListener('click', function() { if (!disabled) { currentPage = page; renderExpenseTable(); } });
+            li.appendChild(btn);
+            return li;
+        }
+
+        ul.appendChild(makePage('\u2039', Math.max(1, currentPage - 1), currentPage === 1, false));
+        var maxBtns = 7;
+        var startP = Math.max(1, currentPage - Math.floor(maxBtns / 2));
+        var endP = Math.min(totalPages, startP + maxBtns - 1);
+        if (endP - startP + 1 < maxBtns) startP = Math.max(1, endP - maxBtns + 1);
+        for (var p = startP; p <= endP; p++) ul.appendChild(makePage(p.toString(), p, false, p === currentPage));
+        ul.appendChild(makePage('\u203A', Math.min(totalPages, currentPage + 1), currentPage === totalPages, false));
+
+        expensePagination.appendChild(ul);
+    }
+
+    function renderGlFilterOptions() {
+        var year = new Date().getFullYear();
+        filterGlInput.innerHTML = '<option value="">All GLs</option>';
+        if (!budgets[year]) return;
+        for (var glNumber in budgets[year]) {
+            var option = document.createElement('option');
+            option.value = glNumber;
+            option.textContent = glNumber + ' - ' + budgets[year][glNumber].name;
+            filterGlInput.appendChild(option);
+        }
+    }
+
+    function updateTotal(list) {
+        totalExpensesDisplay.textContent = '\u09F3' + list.reduce(function(acc, t) { return acc + t.amount; }, 0).toFixed(2);
+    }
+
+    // GL Details Modal
+    function showGlDetails(e, glNumber) {
+        if (e && e.preventDefault) e.preventDefault();
+        var year = new Date().getFullYear();
+        var info = budgets[year][glNumber];
+        if (!info) return;
+
+        var monthlySpent = transactions
+            .filter(function(t) { var d = new Date(t.date); return d.getFullYear() == year && d.getMonth() == new Date().getMonth() && t.glNumber === glNumber; })
+            .reduce(function(acc, t) { return acc + t.amount; }, 0);
+
+        document.getElementById('modal-gl-number').textContent = glNumber;
+        document.getElementById('modal-gl-name').textContent = info.name;
+        document.getElementById('modal-gl-description').textContent = info.description || '';
+        document.getElementById('modal-gl-module').textContent = info.module;
+
+        var budgetAmount = parseFloat(info.budget) || 0;
+        var yearlyEl = document.getElementById('modal-yearly-budget').closest('p');
+        var monthlyEl = document.getElementById('modal-monthly-budget').closest('p');
+        var remainEl = document.getElementById('modal-monthly-remaining').closest('p');
+
+        if (budgetAmount > 0) {
+            yearlyEl.style.display = ''; monthlyEl.style.display = ''; remainEl.style.display = '';
+            document.getElementById('modal-yearly-budget').textContent = '\u09F3' + budgetAmount.toFixed(2);
+            var monthly = budgetAmount / 12;
+            document.getElementById('modal-monthly-budget').textContent = '\u09F3' + monthly.toFixed(2);
+            document.getElementById('modal-monthly-remaining').textContent = '\u09F3' + (monthly - monthlySpent).toFixed(2);
+        } else {
+            yearlyEl.style.display = 'none'; monthlyEl.style.display = 'none'; remainEl.style.display = 'none';
+        }
+
+        var tbody = document.getElementById('modal-transactions-tbody');
+        tbody.innerHTML = '';
+        transactions.filter(function(t) { return t.glNumber === glNumber; })
+            .sort(function(a, b) { return new Date(b.date) - new Date(a.date); })
+            .forEach(function(t) {
+                var row = document.createElement('tr');
+                row.innerHTML = '<td>' + formatDate(t.date) + '</td><td>' + t.glDescription + '</td><td class="text-end amount-cell">\u09F3' + t.amount.toFixed(2) + '</td>';
+                tbody.appendChild(row);
+            });
+
+        new bootstrap.Modal(document.getElementById('glDetailsModal')).show();
+    }
+
+    // Combined Init
+    function init() {
+        renderGLBudgets();
+        renderGlNumberDropdown();
+        try { glNumberInput.addEventListener('change', renderGLBudgets); } catch(e){}
+        applyFilters();
+        renderGlFilterOptions();
+    }
+
+    // ══════════════════════════════════════════
+    //  Import/Export Functions
+    // ══════════════════════════════════════════
+
+    // Export Expenses
+    function exportExpenses() {
+        const data = {
+            version: '1.0',
+            exportDate: new Date().toISOString(),
+            transactions: transactions
+        };
+
+        const dataStr = JSON.stringify(data, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'expense-history-' + new Date().toISOString().split('T')[0] + '.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        showNotification('✓ Expense history exported successfully!', 'success');
+    }
+
+    // Import Expenses
+    function importExpenses(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                const importedTransactions = data.transactions || [];
+
+                if (!Array.isArray(importedTransactions)) {
+                    throw new Error('Invalid format: transactions must be array');
+                }
+
+                const confirmImport = confirm(
+                    'Import ' + importedTransactions.length + ' transaction(s)?\n\n' +
+                    'Note: Duplicate transactions will be added. Choose "Cancel" to abort.'
+                );
+
+                if (!confirmImport) {
+                    showNotification('Import cancelled', 'info');
+                    event.target.value = '';
+                    return;
+                }
+
+                transactions = transactions.concat(importedTransactions);
+                updateLocalStorage('transactions', transactions);
+                init();
+                event.target.value = '';
+
+                showNotification('✓ ' + importedTransactions.length + ' transaction(s) imported successfully!', 'success');
+            } catch (error) {
+                showNotification('✗ Error importing file: ' + error.message, 'error');
+                event.target.value = '';
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // Clear Expense History
+    function clearExpenseHistory() {
+        const count = transactions.length;
+        
+        if (count === 0) {
+            showNotification('No expense history to clear', 'info');
+            return;
+        }
+
+        const confirmClear = confirm(
+            '⚠ Warning: This will delete ALL ' + count + ' transaction(s)!\n\n' +
+            'This action cannot be undone. Are you sure?'
+        );
+
+        if (!confirmClear) {
+            showNotification('Clear operation cancelled', 'info');
+            return;
+        }
+
+        transactions = [];
+        updateLocalStorage('transactions', transactions);
+        init();
+        showNotification('✓ Expense history cleared (' + count + ' transaction(s) deleted)', 'success');
+    }
+
+    // Export Budgets
+    function exportBudgets() {
+        const data = {
+            version: '1.0',
+            exportDate: new Date().toISOString(),
+            budgets: budgets
+        };
+
+        const dataStr = JSON.stringify(data, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'budget-data-' + new Date().toISOString().split('T')[0] + '.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        showNotification('✓ Budget data exported successfully!', 'success');
+    }
+
+    // Import Budgets
+    function importBudgets(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                const importedBudgets = data.budgets || {};
+
+                if (typeof importedBudgets !== 'object') {
+                    throw new Error('Invalid format: budgets must be object');
+                }
+
+                const confirmImport = confirm(
+                    'Import budget data?\n\n' +
+                    '⚠ Warning: This will REPLACE existing budget data for imported years.\n' +
+                    'Existing budgets will be overwritten.'
+                );
+
+                if (!confirmImport) {
+                    showNotification('Import cancelled', 'info');
+                    event.target.value = '';
+                    return;
+                }
+
+                // Merge imported budgets with existing ones
+                for (const year in importedBudgets) {
+                    if (!budgets[year]) {
+                        budgets[year] = {};
+                    }
+                    for (const glNumber in importedBudgets[year]) {
+                        budgets[year][glNumber] = importedBudgets[year][glNumber];
+                    }
+                }
+
+                updateLocalStorage('budgets', budgets);
+                init();
+                event.target.value = '';
+
+                const totalBudgets = Object.keys(importedBudgets).reduce((sum, year) => {
+                    return sum + Object.keys(importedBudgets[year]).length;
+                }, 0);
+
+                showNotification('✓ Budget data imported successfully! (' + totalBudgets + ' GL account(s))', 'success');
+            } catch (error) {
+                showNotification('✗ Error importing file: ' + error.message, 'error');
+                event.target.value = '';
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // Notification System
+    function showNotification(message, type) {
+        const notificationDiv = document.createElement('div');
+        notificationDiv.className = 'notification notification-' + type;
+        notificationDiv.innerHTML = message;
+        notificationDiv.style.cssText = `
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            z-index: 9999;
+            max-width: 400px;
+            word-wrap: break-word;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideInRight 0.3s ease-out;
+        `;
+
+        if (type === 'success') {
+            notificationDiv.style.background = 'linear-gradient(135deg, var(--success), var(--success-dark))';
+            notificationDiv.style.color = '#fff';
+        } else if (type === 'error') {
+            notificationDiv.style.background = 'linear-gradient(135deg, var(--danger), #dc2626)';
+            notificationDiv.style.color = '#fff';
+        } else if (type === 'info') {
+            notificationDiv.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
+            notificationDiv.style.color = '#fff';
+        }
+
+        document.body.appendChild(notificationDiv);
+        setTimeout(() => {
+            notificationDiv.style.animation = 'slideOutRight 0.3s ease-in';
+            setTimeout(() => notificationDiv.remove(), 300);
+        }, 3000);
+    }
+
+    // Event Listeners
+    expenseForm.addEventListener('submit', addExpense);
+    budgetForm.addEventListener('submit', addOrUpdateBudget);
+    searchButton.addEventListener('click', applyFilters);
+    filterStartDateInput.addEventListener('change', applyFilters);
+    filterEndDateInput.addEventListener('change', applyFilters);
+    filterGlInput.addEventListener('change', applyFilters);
+
+    // Initialize
+    init();
+
+    // Datepickers
+    var datepicker, datepicker2, datepicker3;
+    try { datepicker = new Datepicker(filterStartDateInput, { format: 'dd/mm/yyyy', autohide: true }); } catch(e){}
+    try { datepicker2 = new Datepicker(filterEndDateInput, { format: 'dd/mm/yyyy', autohide: true }); } catch(e){}
+    try {
+        var expDateInput = document.getElementById('expense-date');
+        if (expDateInput) datepicker3 = new Datepicker(expDateInput, { format: 'dd/mm/yyyy', autohide: true });
+    } catch(e){}
+
+    try {
+        if (datepicker) { filterStartDateInput.addEventListener('focus', function() { datepicker.show(); }); filterStartDateInput.addEventListener('click', function() { datepicker.show(); }); }
+        if (datepicker2) { filterEndDateInput.addEventListener('focus', function() { datepicker2.show(); }); filterEndDateInput.addEventListener('click', function() { datepicker2.show(); }); }
+    } catch(e){}
+
+    function formatDateForInput(d) {
+        if (!d) return '';
+        return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
+    }
+
+    try {
+        filterStartDateInput.addEventListener('changeDate', function(e) { var p = e.detail && e.detail.date; if (p) filterStartDateInput.value = formatDateForInput(p); applyFilters(); });
+        filterEndDateInput.addEventListener('changeDate', function(e) { var p = e.detail && e.detail.date; if (p) filterEndDateInput.value = formatDateForInput(p); applyFilters(); });
+        var startDateBtn = document.getElementById('startDateBtn');
+        var endDateBtn = document.getElementById('endDateBtn');
+        if (startDateBtn && datepicker) startDateBtn.addEventListener('click', function() { datepicker.show(); });
+        if (endDateBtn && datepicker2) endDateBtn.addEventListener('click', function() { datepicker2.show(); });
+    } catch(e){}
+
+    // Collapse State Persistence
+    function saveCollapseStates() {
+        localStorage.setItem('glBudgetsCollapsed', !document.getElementById('glBudgetsContent').classList.contains('show'));
+        localStorage.setItem('expenseLedgerCollapsed', !document.getElementById('expenseLedgerContent').classList.contains('show'));
+    }
+
+    function restoreCollapseStates() {
+        if (localStorage.getItem('glBudgetsCollapsed') === 'true') {
+            document.getElementById('glBudgetsContent').classList.remove('show');
+            document.querySelector('[data-bs-target="#glBudgetsContent"]').classList.add('collapsed');
+        }
+        if (localStorage.getItem('expenseLedgerCollapsed') === 'true') {
+            document.getElementById('expenseLedgerContent').classList.remove('show');
+            document.querySelector('[data-bs-target="#expenseLedgerContent"]').classList.add('collapsed');
+        }
+    }
+
+    document.getElementById('glBudgetsContent').addEventListener('hidden.bs.collapse', saveCollapseStates);
+    document.getElementById('glBudgetsContent').addEventListener('shown.bs.collapse', saveCollapseStates);
+    document.getElementById('expenseLedgerContent').addEventListener('hidden.bs.collapse', saveCollapseStates);
+    document.getElementById('expenseLedgerContent').addEventListener('shown.bs.collapse', saveCollapseStates);
+    document.addEventListener('DOMContentLoaded', restoreCollapseStates);
     </script>
 </body>
 </html>

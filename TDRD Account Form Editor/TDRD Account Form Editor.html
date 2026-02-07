@@ -1465,9 +1465,373 @@ body::after {
   }
 }
 
+/* Others Popup - KYC, TP, SBS Information */
+.others-popup-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  padding: 0;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.others-popup-backdrop.open {
+  display: flex;
+}
+
+.others-popup {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  animation: scaleIn 0.3s ease-out;
+}
+
+.others-popup-header {
+  padding: 24px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.others-popup-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+  animation: float 6s ease-in-out infinite;
+}
+
+.others-popup-header h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.others-popup-header i {
+  font-size: 1.4rem;
+}
+
+.others-popup-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-normal);
+  position: relative;
+  z-index: 1;
+}
+
+.others-popup-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.others-popup-body {
+  padding: 28px;
+}
+
+.others-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 0;
+}
+
+.others-input,
+.others-popup select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: #fff;
+  color: var(--text-primary);
+  box-shadow: none;
+}
+
+.others-input:focus,
+.others-popup select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(99,102,241,0.06);
+}
+
+.others-info-item {
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  padding: 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  transition: var(--transition-normal);
+}
+
+.others-info-item:hover,
+.kyc-field:hover {
+  background: #f8fafc;
+}
+
+.others-info-item label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+.others-info-item label i {
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.others-info-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-word;
+  padding: 8px 0;
+}
+
+.others-popup .others-info-item,
+.others-popup .kyc-field {
+  padding: 8px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid #e0e7f1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.others-popup .others-info-item label,
+.others-popup .kyc-field label {
+  margin: 0 0 4px 0;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.others-popup .others-info-value,
+.others-popup .kyc-value {
+  padding: 0;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #1e293b;
+}
+
+.others-popup input.others-input,
+.others-popup textarea.others-input,
+.others-popup select.others-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  background: #fff;
+  border: 1px solid #e0e7f1;
+  border-radius: 4px;
+  font-family: inherit;
+  color: #1e293b;
+}
+
+.others-popup textarea,
+.others-popup textarea.others-input,
+.others-popup .others-info-item textarea,
+.others-popup .kyc-field textarea {
+  resize: none;
+}
+
+.others-kyc-section {
+  margin-top: 18px;
+}
+
+.kyc-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.kyc-field {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #bae6fd;
+}
+
+.kyc-field label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.kyc-value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+@media (max-width: 1024px) {
+  .others-info-grid,
+  .kyc-fields-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .others-popup {
+    max-width: 90%;
+  }
+  .others-info-grid {
+    grid-template-columns: 1fr;
+  }
+  .kyc-fields-grid {
+    grid-template-columns: 1fr;
+  }
+  .others-popup-body {
+    padding: 20px;
+  }
+}
+
   </style>
 </head>
 <body>
+
+  <!-- Others Popup - KYC, TP, SBS Information -->
+  <div class="others-popup-backdrop" id="othersBackdrop">
+    <div class="others-popup">
+        <div class="others-popup-header">
+          <h3><i class="fas fa-clipboard-check"></i> Stand Alone KYC Information</h3>
+          <button class="others-popup-close" id="othersClose"><i class="fas fa-times"></i></button>
+        </div>
+      <div class="others-popup-body">
+        <div class="others-info-grid">
+          <div class="others-info-item">
+            <label>Account Number</label>
+            <div class="others-info-value" id="othersAccountNumber">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>CIF Number</label>
+            <div class="others-info-value" id="othersCifNumber">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Full Name (English)</label>
+            <div class="others-info-value" id="othersFullName">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Identity Document</label>
+            <div id="othersIdentityDocumentType">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Document Number</label>
+            <div class="others-info-value" id="othersIdentityDocumentNumber">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Profession (In details)</label>
+            <div class="others-info-value" id="othersProfessionDetails">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Probable Monthly Income</label>
+            <div class="others-info-value" id="othersProbableMonthlyIncome">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Source of Fund (In details)</label>
+            <div class="others-info-value" id="othersSourceOfFundDetails">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Account Type</label>
+            <div id="othersAccountType">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Sector Code</label>
+            <div class="others-info-value" id="othersSectorCode">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Client's Business</label>
+            <div class="others-info-value" id="kycClientBusiness">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Client's Profession</label>
+            <div class="others-info-value" id="kycClientProfession">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Type of On-boarding Score</label>
+            <div class="others-info-value" id="kycTypeOfOnboarding">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>PEP/IP/CEO</label>
+            <div class="others-info-value" id="othersPepIpCeo">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Close Associate of PEP/IP/CEO</label>
+            <div class="others-info-value" id="othersCloseAssociatePep">—</div>
+          </div>
+        </div>
+        <div class="others-kyc-section">
+          <div class="kyc-fields-grid">
+            <div class="kyc-field">
+              <label>Customer's Avg Yearly Transaction</label>
+              <div class="kyc-value" id="kycAvgYearlyTransaction">—</div>
+            </div>
+            <div class="kyc-field">
+              <label>Credible Source of Funds?</label>
+              <div class="kyc-value" id="kycCredibleSourceOfFunds">—</div>
+            </div>
+            <div class="kyc-field">
+              <label>Source(s) of Funds Verify</label>
+              <div class="kyc-value" id="kycSourceOfFundsVerify">—</div>
+            </div>
+            <div class="kyc-field">
+              <label>Address Verification</label>
+              <div class="kyc-value" id="kycAddressVerification">—</div>
+            </div>
+            <div class="kyc-field">
+              <label>Deposit Code</label>
+              <div class="kyc-value" id="kycDepositCode">—</div>
+            </div>
+            <div class="kyc-field" style="display:flex; align-items:center; justify-content:center; padding:12px; gap:8px;">
+              <button type="button" id="popupPrintOthersBtn" class="btn btn-info" style="padding:10px 16px; font-size:0.9rem;"><i class="fas fa-print"></i> Print KYC</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Page Navigation -->
   <nav class="page-nav">
@@ -1475,6 +1839,9 @@ body::after {
     <div class="nav-buttons">
       <button class="nav-btn active" data-page="info"><i class="fas fa-edit"></i> <span>Information Input</span></button>
       <button class="nav-btn" data-page="form"><i class="fas fa-file-image"></i> <span>Form Preview</span></button>
+      <div class="header-actions">
+        <button class="btn btn-info" id="othersBtn" title="View KYC, TP, SBS Information"><i class="fas fa-info-circle"></i> <span>Stand Alone KYC Information</span></button>
+      </div>
     </div>
   </nav>
 
@@ -2304,12 +2671,11 @@ body::after {
                 <input type="text" name="kycSourceOfFundsVerify" value="FACE TO FACE CONVERSATION" placeholder="Source(s) of Funds Verify">
               </div>
               <div class="form-group">
-                <label>Source of Fund document</label>
-                <input type="text" name="kycSourceOfFundDocument" placeholder="Source of Fund document">
+                <label>Address Verification</label>
+                <input type="text" name="kycAddressVerification" value="THROUGH NID" placeholder="Address Verification">
               </div>
-              <div class="form-group">
-                <label>Face to Face Conversation</label>
-                <input type="text" name="kycFaceToFaceConversation" value="FACE TO FACE CONVERSATION" placeholder="Face to Face Conversation">
+              <div style="display:none;">
+                <input type="text" name="depositCode" placeholder="Deposit Code">
               </div>
               <!-- Row 4 -->
               <div class="form-group">
@@ -2691,6 +3057,23 @@ body::after {
 
       if (page === 'form') {
         updateOverlays();
+        // Update all tick overlays instantly when switching to form preview
+        try { updateRegistrationAndVatTicks(); } catch (e) {}
+        try { updateIdentityDocumentNumbers(); } catch (e) {}
+        try { updateIdentityIdTicks(); } catch (e) {}
+        try { updateOrgTypeTicks(); } catch (e) {}
+        try { updateBusinessTypeTicks(); } catch (e) {}
+        try { updateGenderTicks(); } catch (e) {}
+        try { updateNomineeIdTicks(); } catch (e) {}
+        try { updateMaturityTicks(); } catch (e) {}
+        try { updateModeTicks(); } catch (e) {}
+        try { updateSourceOfFundDocumentTick(); } catch (e) {}
+        try { updateETinIndividualTicks(); } catch (e) {}
+        try { updateClientBusinessTicks(); } catch (e) {}
+        try { updateClientProfessionTicks(); } catch (e) {}
+        try { updateTypeOfOnboardingTicks(); } catch (e) {}
+        try { updatePepIpCeoTicks(); } catch (e) {}
+        try { updateCloseAssociatePepTicks(); } catch (e) {}
       }
     });
   });
@@ -2992,6 +3375,34 @@ body::after {
   
   // Initialize ISR fields visibility on page load
   try { updateISRFieldsVisibility(); } catch (e) {}
+
+  // Check if 4th digit of Account Number is 3 or 1/2 to show profession/orgType on page 15
+  function updatePage15FieldsVisibility() {
+    const accountNumber = (form.elements['accountNumber'] && form.elements['accountNumber'].value) || '';
+    const fourthDigit = accountNumber.charAt(3); // 0-indexed, so 3 is the 4th position
+    
+    // Find the form groups containing profession and orgType
+    const professionGroup = form.elements['profession'] ? form.elements['profession'].closest('.form-group') : null;
+    const orgTypeGroup = form.elements['orgType'] ? form.elements['orgType'].closest('.form-group') : null;
+    
+    // Show profession if 4th digit is 3
+    if (professionGroup) {
+      professionGroup.style.display = (fourthDigit === '3') ? '' : 'none';
+    }
+    
+    // Show orgType if 4th digit is 1 or 2
+    if (orgTypeGroup) {
+      orgTypeGroup.style.display = (fourthDigit === '1' || fourthDigit === '2') ? '' : 'none';
+    }
+  }
+  
+  // Add event listener to account number field for page 15 visibility
+  if (accountNumberField) {
+    accountNumberField.addEventListener('input', updatePage15FieldsVisibility);
+  }
+  
+  // Initialize page 15 fields visibility on page load
+  try { updatePage15FieldsVisibility(); } catch (e) {}
 
   // --- Update Combined Applicants (fullNameEn + secondApplicant + thirdApplicant joined with "and") ---
   function updateCombinedApplicants() {
@@ -3471,10 +3882,11 @@ body::after {
     nomineeDob: 0.80,
     presentPostCode: 1.10,
     permanentPostCode: 1.10,
+    depositTypeCode: 1.08,
+    depositTypeCodeIfFullNameEn: 1.08,
+    depositTypeCodeIfOrgNameEn: 1.08,
     sectorCodeIfFullNameEn: 1.08,
-    sectorCodeIfOrgNameEn: 1.08,
-    nineNineEightIfFullNameEn: 1.08,
-    nineNineEightIfOrgNameEn: 1.08
+    sectorCodeIfOrgNameEn: 1.08
   };
 
   // Helper function to apply letter spacing to overlay elements
@@ -3654,7 +4066,7 @@ body::after {
     }
     
     // Apply NBSP spacing for specific fields (but NOT accountNumber/cifNumber/eTinIndividual on page 9, NOT accountNumber on page 15)
-    const fieldsWithNBSPSpacing = ['accountNumber', 'accountNumber1', 'cifNumber', 'interestAccountNumber', 'eTin', 'eTinIndividual', 'presentPostCode', 'permanentPostCode', 'tradeLicenceDate', 'registrationDate', 'sectorCodeIfFullNameEn', 'sectorCodeIfOrgNameEn', 'nineNineEightIfFullNameEn', 'nineNineEightIfOrgNameEn'];
+    const fieldsWithNBSPSpacing = ['accountNumber', 'accountNumber1', 'cifNumber', 'interestAccountNumber', 'eTin', 'eTinIndividual', 'presentPostCode', 'permanentPostCode', 'tradeLicenceDate', 'registrationDate', 'depositTypeCode', 'depositTypeCodeIfFullNameEn', 'depositTypeCodeIfOrgNameEn', 'sectorCodeIfFullNameEn', 'sectorCodeIfOrgNameEn', 'depositCode'];
     if (fieldsWithNBSPSpacing.includes(data.field)) {
       // Skip NBSP spacing for accountNumber, cifNumber, and eTinIndividual on page 9; accountNumber on page 15
       if (((data.field === 'accountNumber' || data.field === 'cifNumber' || data.field === 'eTinIndividual') && data.page === '9') || (data.field === 'accountNumber' && data.page === '15')) {
@@ -3694,8 +4106,8 @@ body::after {
     if (data.field === 'debitMyAccount') {
       applyLetterSpacing(overlay, data.field, data.page);
     }
-    // Apply letter-spacing for sector code fields on page 15
-    if (data.field === 'sectorCodeIfFullNameEn' || data.field === 'sectorCodeIfOrgNameEn' || data.field === 'nineNineEightIfFullNameEn' || data.field === 'nineNineEightIfOrgNameEn') {
+    // Apply letter-spacing for sector code and deposit code fields on page 15
+    if (data.field === 'sectorCodeIfFullNameEn' || data.field === 'sectorCodeIfOrgNameEn' || data.field === 'depositTypeCodeIfFullNameEn' || data.field === 'depositTypeCodeIfOrgNameEn') {
       applyLetterSpacing(overlay, data.field, data.page);
     }
 
@@ -3785,7 +4197,7 @@ body::after {
   // Helper: set overlay text for a given field name
   function setOverlayText(fieldName, text) {
     // Apply NBSP spacing for specific fields (but NOT accountNumber/cifNumber on page 9)
-    const fieldsWithNBSPSpacing = ['accountNumber', 'accountNumber1', 'cifNumber', 'interestAccountNumber', 'eTin', 'eTinIndividual', 'presentPostCode', 'permanentPostCode', 'tradeLicenceDate', 'registrationDate'];
+    const fieldsWithNBSPSpacing = ['accountNumber', 'accountNumber1', 'cifNumber', 'interestAccountNumber', 'eTin', 'eTinIndividual', 'presentPostCode', 'permanentPostCode', 'tradeLicenceDate', 'registrationDate', 'depositTypeCode'];
     if (fieldsWithNBSPSpacing.includes(fieldName) && text) {
       // Skip initial NBSP spacing for accountNumber and cifNumber - will handle per overlay below
       if (!((fieldName === 'accountNumber' || fieldName === 'cifNumber'))) {
@@ -4284,7 +4696,7 @@ body::after {
       // Update overlay - show only if value exists and field is not hidden by account type
       if (value !== undefined && value !== null && value !== '') {
         // Apply NBSP spacing for specific fields (but NOT accountNumber/cifNumber/eTinIndividual on page 9, NOT accountNumber on page 15)
-        const fieldsWithNBSPSpacing = ['accountNumber', 'accountNumber1', 'cifNumber', 'interestAccountNumber', 'eTin', 'eTinIndividual', 'tradeLicenceDate', 'registrationDate', 'sectorCodeIfFullNameEn', 'sectorCodeIfOrgNameEn', 'nineNineEightIfFullNameEn', 'nineNineEightIfOrgNameEn'];
+        const fieldsWithNBSPSpacing = ['accountNumber', 'accountNumber1', 'cifNumber', 'interestAccountNumber', 'eTin', 'eTinIndividual', 'tradeLicenceDate', 'registrationDate', 'sectorCodeIfFullNameEn', 'sectorCodeIfOrgNameEn'];
         if (fieldsWithNBSPSpacing.includes(field)) {
           // Skip NBSP spacing for accountNumber, cifNumber, and eTinIndividual on page 9; accountNumber on page 15
           if (((field === 'accountNumber' || field === 'cifNumber' || field === 'eTinIndividual') && page === '9') || (field === 'accountNumber' && page === '15')) {
@@ -4321,7 +4733,7 @@ body::after {
           }
         }
         // Apply letter-spacing for fields (but NOT accountNumber/cifNumber on page 9)
-        if (field === 'debitMyAccount' || field === 'accountNumber' || field === 'accountNumber1' || field === 'cifNumber' || field === 'sectorCodeIfFullNameEn' || field === 'sectorCodeIfOrgNameEn' || field === 'nineNineEightIfFullNameEn' || field === 'nineNineEightIfOrgNameEn') {
+        if (field === 'debitMyAccount' || field === 'accountNumber' || field === 'accountNumber1' || field === 'cifNumber' || field === 'sectorCodeIfFullNameEn' || field === 'sectorCodeIfOrgNameEn' || field === 'depositTypeCodeIfFullNameEn' || field === 'depositTypeCodeIfOrgNameEn') {
           applyLetterSpacing(overlay, field, page);
         }
         overlay.textContent = value;
@@ -4376,12 +4788,16 @@ body::after {
       }
     });
     
-    // Handle conditional sector code textboxes on page 15
+    // Handle conditional sector code textboxes on page 15 based on account number 4th digit
+    const accountNumberValue = form.elements['accountNumber']?.value || '';
+    const fourthDigit = accountNumberValue.charAt(3);
+    const sectorCodeValue = form.elements['sectorCode']?.value || '';
+    
+    // Personal sector code (show when 4th digit is 3)
     const sectorCodeIfFullNameEnElements = document.querySelectorAll('.overlay[data-field="sectorCodeIfFullNameEn"]');
     sectorCodeIfFullNameEnElements.forEach(el => {
       const fullNameEnValue = form.elements['fullNameEn']?.value || '';
-      const sectorCodeValue = form.elements['sectorCode']?.value || '';
-      if (fullNameEnValue !== '' && sectorCodeValue !== '') {
+      if (fourthDigit === '3' && fullNameEnValue !== '' && sectorCodeValue !== '') {
         el.textContent = sectorCodeValue;
         el.style.display = '';
       } else {
@@ -4390,11 +4806,11 @@ body::after {
       }
     });
     
+    // Org sector code (show when 4th digit is 1 or 2)
     const sectorCodeIfOrgNameEnElements = document.querySelectorAll('.overlay[data-field="sectorCodeIfOrgNameEn"]');
     sectorCodeIfOrgNameEnElements.forEach(el => {
       const orgNameEnValue = form.elements['orgNameEn']?.value || '';
-      const sectorCodeValue = form.elements['sectorCode']?.value || '';
-      if (orgNameEnValue !== '' && sectorCodeValue !== '') {
+      if ((fourthDigit === '1' || fourthDigit === '2') && orgNameEnValue !== '' && sectorCodeValue !== '') {
         el.textContent = sectorCodeValue;
         el.style.display = '';
       } else {
@@ -4403,12 +4819,14 @@ body::after {
       }
     });
     
-    // Handle conditional 998 textboxes on page 15
-    const nineNineEightIfFullNameEnElements = document.querySelectorAll('.overlay[data-field="nineNineEightIfFullNameEn"]');
-    nineNineEightIfFullNameEnElements.forEach(el => {
+    // Handle conditional deposit type code on page 15 based on account number 4th digit
+    // Personal deposit code (show when 4th digit is 3)
+    const depositTypeCodeIfFullNameEnElements = document.querySelectorAll('.overlay[data-field="depositTypeCodeIfFullNameEn"]');
+    depositTypeCodeIfFullNameEnElements.forEach(el => {
       const fullNameEnValue = form.elements['fullNameEn']?.value || '';
-      if (fullNameEnValue !== '') {
-        el.textContent = '998';
+      const depositTypeCodeValue = form.elements['depositTypeCode']?.value || '';
+      if (fourthDigit === '3' && fullNameEnValue !== '' && depositTypeCodeValue !== '') {
+        el.textContent = depositTypeCodeValue;
         el.style.display = '';
       } else {
         el.textContent = '';
@@ -4416,11 +4834,13 @@ body::after {
       }
     });
     
-    const nineNineEightIfOrgNameEnElements = document.querySelectorAll('.overlay[data-field="nineNineEightIfOrgNameEn"]');
-    nineNineEightIfOrgNameEnElements.forEach(el => {
+    // Org deposit code (show when 4th digit is 1 or 2)
+    const depositTypeCodeIfOrgNameEnElements = document.querySelectorAll('.overlay[data-field="depositTypeCodeIfOrgNameEn"]');
+    depositTypeCodeIfOrgNameEnElements.forEach(el => {
       const orgNameEnValue = form.elements['orgNameEn']?.value || '';
-      if (orgNameEnValue !== '') {
-        el.textContent = '998';
+      const depositTypeCodeValue = form.elements['depositTypeCode']?.value || '';
+      if ((fourthDigit === '1' || fourthDigit === '2') && orgNameEnValue !== '' && depositTypeCodeValue !== '') {
+        el.textContent = depositTypeCodeValue;
         el.style.display = '';
       } else {
         el.textContent = '';
@@ -4803,6 +5223,7 @@ body::after {
       { field: 'kycSourceOfFundDocument', top: '37%', left: '10%', label: 'Source of Fund document', page: '9' },
       { field: 'tickSourceOfFundDocument', top: '37%', left: '65%', label: '', page: '9' },
       { field: 'kycFaceToFaceConversation', top: '38.5%', left: '10%', label: 'Face to Face Conversation', page: '9' },
+      { field: 'kycAddressVerification', top: '40%', left: '10%', label: 'Address Verification', page: '9' },
       { field: 'tickStaticPage9', top: '40%', left: '65%', label: '✓', page: '9' },
       { field: 'nationalIdNumber', top: '42%', left: '10%', label: 'National ID Number', page: '9' },
       { field: 'tickNationalId1', top: '42%', left: '65%', label: '', page: '9' },
@@ -4819,6 +5240,8 @@ body::after {
       { field: 'vatBin', top: '48%', left: '10%', label: 'VAT Registration No./BIN', page: '9' },
       { field: 'tickVatBin1', top: '48%', left: '65%', label: '', page: '9' },
       { field: 'tickVatBin2', top: '48%', left: '72%', label: '', page: '9' },
+      { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (EN)', page: '9' },
+      { field: 'kycSourceOfFundsVerify', top: '31%', left: '10%', label: 'Source(s) of Funds Verify', page: '9' },
       // Page 10 (KYC Stand Alone FD Page 2)
       { field: 'tickPage10_1', top: '50%', left: '10%', label: '✓', page: '10' },
       { field: 'tickPage10_2', top: '52%', left: '10%', label: '✓', page: '10' },
@@ -4933,14 +5356,18 @@ body::after {
       { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (EN)', page: '15' },
       { field: 'fdrIfFullNameEn', top: '18.5%', left: '75%', label: 'FDR', page: '15' },
       { field: 'sectorCodeIfFullNameEn', top: '21%', left: '75%', label: 'Sector Code', page: '15' },
-      { field: 'nineNineEightIfFullNameEn', top: '24%', left: '75%', label: '998', page: '15' },
+      { field: 'depositTypeCodeIfFullNameEn', top: '24%', left: '75%', label: 'Deposit Type Code', page: '15' },
       { field: 'orgNameEn', top: '6%', left: '10%', label: 'Organization Name (EN)', page: '15' },
       { field: 'fdrIfOrgNameEn', top: '6%', left: '75%', label: 'FDR', page: '15' },
       { field: 'sectorCodeIfOrgNameEn', top: '9%', left: '75%', label: 'Sector Code', page: '15' },
-      { field: 'nineNineEightIfOrgNameEn', top: '12%', left: '75%', label: '998', page: '15' },
+      { field: 'depositTypeCodeIfOrgNameEn', top: '12%', left: '75%', label: 'Deposit Type Code', page: '15' },
       { field: 'orgType', top: '24%', left: '10%', label: 'Type of Organization', page: '15' },
       { field: 'profession', top: '28%', left: '10%', label: 'Profession (In details)', page: '15' },
-      { field: 'branchName', top: '4%', left: '10%', label: 'Branch Name', page: '15' }
+      { field: 'depositCode', top: '31%', left: '10%', label: 'Deposit Code', page: '15' },
+      { field: 'branchName', top: '4%', left: '10%', label: 'Branch Name', page: '15' },
+      { field: 'officerSeal1', top: '85%', left: '10%', label: 'Officer Seal 1', page: '15' },
+      { field: 'officerSeal2', top: '85%', left: '35%', label: 'Officer Seal 2', page: '15' },
+      { field: 'officerSeal3', top: '85%', left: '60%', label: 'Officer Seal 3', page: '15' }
     ]
   };
 
@@ -5712,6 +6139,35 @@ body::after {
       saveFormData();
     });
   }
+  // Calculate Deposit Type Code for Fixed Deposits based on tenor
+  // 171: Less than 6 Months
+  // 172: 6 Months to less than 1 Year
+  // 173: 1 year to less than 2 Years
+  // 174: 2 years to less than 3 Years
+  // 175: 3 years and above
+  function calculateDepositTypeCode(years, months, days) {
+    const y = parseInt(years, 10) || 0;
+    const m = parseInt(months, 10) || 0;
+    const d = parseInt(days, 10) || 0;
+    
+    // Convert everything to total months for easier comparison
+    const totalMonths = (y * 12) + m + (d / 30);
+    
+    if (totalMonths <= 0) return ''; // No tenor specified
+    
+    if (totalMonths < 6) {
+      return '171'; // Less than 6 Months
+    } else if (totalMonths < 12) {
+      return '172'; // 6 Months to less than 1 Year
+    } else if (totalMonths < 24) {
+      return '173'; // 1 year to less than 2 Years
+    } else if (totalMonths < 36) {
+      return '174'; // 2 years to less than 3 Years
+    } else {
+      return '175'; // 3 years and above
+    }
+  }
+
   // Keep FDR overlays in sync with hidden inputs
   function updateFdrOverlayValues() {
     const pn = form.elements['productName'] ? form.elements['productName'].value : '';
@@ -5726,6 +6182,16 @@ body::after {
 
     // Get current account type
     const acct = mainAccountType ? mainAccountType.value : (form.elements['accountType'] ? form.elements['accountType'].value : '');
+
+    // Calculate and update deposit type code (FDR: 171-175 based on tenor, DPS: 180)
+    let depositTypeCode = '';
+    if (acct === 'FDR') {
+      depositTypeCode = calculateDepositTypeCode(y, m, d);
+    } else if (acct === 'DPS') {
+      depositTypeCode = '180';
+    }
+    setHiddenInput('depositTypeCode', depositTypeCode);
+    setOverlayText('depositTypeCode', depositTypeCode);
 
     // Product name, interest rate, and tenor fields are only for FDR - hide if DPS is selected
     if (acct === 'DPS') {
@@ -6742,6 +7208,34 @@ body::after {
     } catch (e) {}
   }
 
+  // Wire event listeners for registration and VAT fields to update ticks instantly
+  try {
+    const registrationField = form.elements['registrationNo'];
+    const vatField = form.elements['vatBin'];
+    if (registrationField) {
+      registrationField.addEventListener('input', function() {
+        try { setOverlayText('registrationNo', registrationField.value || ''); } catch (e) {}
+        try { updateRegistrationAndVatTicks(); } catch (e) {}
+      });
+      registrationField.addEventListener('change', function() {
+        try { setOverlayText('registrationNo', registrationField.value || ''); } catch (e) {}
+        try { updateRegistrationAndVatTicks(); } catch (e) {}
+        try { saveFormData(); } catch (e) {}
+      });
+    }
+    if (vatField) {
+      vatField.addEventListener('input', function() {
+        try { setOverlayText('vatBin', vatField.value || ''); } catch (e) {}
+        try { updateRegistrationAndVatTicks(); } catch (e) {}
+      });
+      vatField.addEventListener('change', function() {
+        try { setOverlayText('vatBin', vatField.value || ''); } catch (e) {}
+        try { updateRegistrationAndVatTicks(); } catch (e) {}
+        try { saveFormData(); } catch (e) {}
+      });
+    }
+  } catch (e) {}
+
   function updateClientBusinessTicks() {
     const businessField = form.elements['kycClientBusiness'];
     const businessVal = businessField ? businessField.value : '';
@@ -7161,6 +7655,11 @@ body::after {
   try {
     const idSelect = form.elements['identityDocumentType'];
     if (idSelect) {
+      idSelect.addEventListener('input', function() {
+        try { setOverlayText('identityDocumentType', idSelect.value || ''); } catch (e) {}
+        try { updateIdentityIdTicks(); } catch (e) {}
+        try { updateIdentityDocumentNumbers(); } catch (e) {}
+      });
       idSelect.addEventListener('change', function() {
         try { setOverlayText('identityDocumentType', idSelect.value || ''); } catch (e) {}
         try { updateIdentityIdTicks(); } catch (e) {}
@@ -7175,9 +7674,11 @@ body::after {
     const idNumberInput = form.elements['identityDocumentNumber'];
     if (idNumberInput) {
       idNumberInput.addEventListener('input', function() {
+        try { setOverlayText('identityDocumentNumber', idNumberInput.value || ''); } catch (e) {}
         try { updateIdentityDocumentNumbers(); } catch (e) {}
       });
       idNumberInput.addEventListener('change', function() {
+        try { setOverlayText('identityDocumentNumber', idNumberInput.value || ''); } catch (e) {}
         try { updateIdentityDocumentNumbers(); } catch (e) {}
         try { saveFormData(); } catch (e) {}
       });
@@ -7617,6 +8118,293 @@ body::after {
       section.classList.add('collapsed');
     }
   });
+
+  // ========== Others Popup (KYC, TP, SBS Information) ==========
+  const othersBtn = document.getElementById('othersBtn');
+  const othersBackdrop = document.getElementById('othersBackdrop');
+  const othersClose = document.getElementById('othersClose');
+  const popupPrintOthersBtn = document.getElementById('popupPrintOthersBtn');
+
+  function openOthersPopup() {
+    if (!othersBackdrop) return;
+    othersBackdrop.classList.add('open');
+    updateOthersPopupData();
+  }
+
+  function closeOthersPopup() {
+    if (!othersBackdrop) return;
+    othersBackdrop.classList.remove('open');
+  }
+
+  // Create or update a text input inside a popup container and sync with form
+  function makeEditableInput(containerId, formFieldName, value) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    let input = container.querySelector('input');
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'others-input';
+      container.innerHTML = '';
+      container.appendChild(input);
+    }
+    if (input.value !== value) input.value = value;
+    input.addEventListener('input', () => {
+      try {
+        const formEls = form.elements[formFieldName];
+        if (formEls) {
+          if (formEls.length) {
+            for (let i = 0; i < formEls.length; i++) {
+              formEls[i].value = input.value;
+            }
+          } else {
+            formEls.value = input.value;
+          }
+        }
+      } catch (e) {}
+      try { if (typeof updateFdrOverlayValues === 'function') updateFdrOverlayValues(); } catch (e) {}
+    });
+  }
+
+  // Create or update a select inside a popup container by cloning options from a source select
+  function makeEditableSelect(containerId, formFieldName, sourceSelectName) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    let select = container.querySelector('select');
+    const source = form ? form.elements[sourceSelectName] : null;
+    if (!select) {
+      select = document.createElement('select');
+      select.className = 'others-input';
+      container.innerHTML = '';
+      container.appendChild(select);
+    }
+    if (source && source.options) {
+      if (select.options.length !== source.options.length) {
+        select.innerHTML = '';
+        Array.from(source.options).forEach(opt => {
+          const o = document.createElement('option');
+          o.value = opt.value;
+          o.textContent = opt.textContent;
+          select.appendChild(o);
+        });
+      }
+      select.value = source.value || '';
+    } else {
+      const fallbackVal = form && form.elements[formFieldName] ? form.elements[formFieldName].value : '';
+      if (select.options.length === 0) {
+        select.innerHTML = '';
+        const o = document.createElement('option');
+        o.value = fallbackVal || '';
+        o.textContent = fallbackVal || '—';
+        select.appendChild(o);
+      }
+      select.value = fallbackVal || '';
+    }
+
+    select.addEventListener('change', () => {
+      try { if (form && form.elements[formFieldName]) form.elements[formFieldName].value = select.value; } catch (e) {}
+      try { if (typeof updateFdrOverlayValues === 'function') updateFdrOverlayValues(); } catch (e) {}
+      try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
+    });
+  }
+
+  function updateOthersPopupData() {
+    // Basic fields
+    const accountNumber = form.elements['accountNumber']?.value || '';
+    const cifNumber = form.elements['cifNumber']?.value || '';
+    const fullName = form.elements['fullNameEn']?.value || '';
+    const nid = form.elements['nid']?.value || '';
+    const dob = form.elements['dob']?.value || '';
+    const accountType = form.elements['accountTypeSelectPopup']?.value || '';
+    const product = form.elements['product']?.value || '';
+    const sectorCode = form.elements['sectorCode']?.value || '';
+
+    // KYC fields
+    const clientBusiness = form.elements['kycClientBusiness']?.value || '';
+    const clientProfession = form.elements['kycClientProfession']?.value || '';
+    const typeOfOnboarding = form.elements['kycTypeOfOnboarding']?.value || '';
+    const pepIpCeo = form.elements['kycPepIpCeo']?.value || '';
+    const closeAssociatePep = form.elements['kycCloseAssociatePep']?.value || '';
+    const avgYearlyTransaction = form.elements['kycAvgYearlyTransaction']?.value || '';
+    const credibleSourceOfFunds = form.elements['kycCredibleSourceOfFunds']?.value || '';
+    const sourceOfFundsVerify = form.elements['kycSourceOfFundsVerify']?.value || '';
+    const sourceOfFundDocument = form.elements['kycSourceOfFundDocument']?.value || '';
+    const faceToFaceConversation = form.elements['kycFaceToFaceConversation']?.value || '';
+    const amlTrackingNumber = form.elements['kycAmlTrackingNumber']?.value || '';
+    const profession = form.elements['profession']?.value || '';
+    const probableMonthlyIncome = form.elements['probableMonthlyIncome']?.value || '';
+    const sourceOfFund = form.elements['sourceOfFund']?.value || '';
+    const addressVerification = form.elements['kycAddressVerification']?.value || '';
+    const identityDocumentType = form.elements['identityDocumentType']?.value || '';
+    const identityDocumentNumber = form.elements['identityDocumentNumber']?.value || '';
+    const depositCode = form.elements['depositCode']?.value || '';
+
+    // Build editable fields in the popup and sync
+    makeEditableInput('othersAccountNumber', 'accountNumber', accountNumber);
+    makeEditableInput('othersCifNumber', 'cifNumber', cifNumber);
+    makeEditableInput('othersFullName', 'fullNameEn', fullName);
+    makeEditableInput('othersNID', 'nid', nid);
+    makeEditableInput('othersDob', 'dob', dob);
+
+    // Sync Full Name between Account Information and popup
+    const fullNameInput = form.elements['fullNameEn'];
+    if (fullNameInput) {
+      fullNameInput.addEventListener('change', updateOthersPopupData);
+      fullNameInput.addEventListener('input', updateOthersPopupData);
+    }
+
+    // Special handling for Account Type dropdown from popup element
+    const accountTypeContainer = document.getElementById('othersAccountType');
+    if (accountTypeContainer) {
+      const sourceSelect = document.getElementById('accountTypeSelectPopup');
+      const mainAccountType = document.getElementById('mainAccountType');
+      let select = accountTypeContainer.querySelector('select');
+      if (!select) {
+        select = document.createElement('select');
+        select.className = 'others-input';
+        accountTypeContainer.innerHTML = '';
+        accountTypeContainer.appendChild(select);
+      }
+      if (sourceSelect && sourceSelect.options) {
+        if (select.options.length !== sourceSelect.options.length) {
+          select.innerHTML = '';
+          Array.from(sourceSelect.options).forEach(opt => {
+            const o = document.createElement('option');
+            o.value = opt.value;
+            o.textContent = opt.textContent;
+            select.appendChild(o);
+          });
+        }
+        select.value = sourceSelect.value || '';
+      }
+      select.addEventListener('change', () => {
+        if (sourceSelect) sourceSelect.value = select.value;
+        if (mainAccountType) mainAccountType.value = select.value;
+        try { if (typeof updateFdrOverlayValues === 'function') updateFdrOverlayValues(); } catch (e) {}
+        try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
+      });
+    }
+
+    // Sync main account type with popup selects
+    const mainAccountType = document.getElementById('mainAccountType');
+    const accountTypeSelectPopup = document.getElementById('accountTypeSelectPopup');
+    if (mainAccountType) {
+      mainAccountType.addEventListener('change', () => {
+        if (accountTypeSelectPopup) accountTypeSelectPopup.value = mainAccountType.value;
+        const popupSelect = document.querySelector('#othersAccountType select');
+        if (popupSelect) popupSelect.value = mainAccountType.value;
+        try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
+      });
+    }
+
+    makeEditableInput('othersProduct', 'product', product);
+    makeEditableInput('othersSectorCode', 'sectorCode', sectorCode);
+
+    // KYC editable fields (clone selects where appropriate)
+    makeEditableSelect('kycClientBusiness', 'kycClientBusiness', 'kycClientBusiness');
+    makeEditableSelect('kycClientProfession', 'kycClientProfession', 'kycClientProfession');
+    
+    // Add mutual reset functionality for Client's Business and Client's Profession
+    setTimeout(() => {
+      const kycClientBusinessSelect = document.querySelector('#kycClientBusiness select');
+      const kycClientProfessionSelect = document.querySelector('#kycClientProfession select');
+      
+      if (kycClientBusinessSelect) {
+        kycClientBusinessSelect.addEventListener('change', () => {
+          if (kycClientProfessionSelect) {
+            kycClientProfessionSelect.value = '';
+          }
+          if (form && form.elements['kycClientProfession']) {
+            form.elements['kycClientProfession'].value = '';
+          }
+        });
+      }
+      
+      if (kycClientProfessionSelect) {
+        kycClientProfessionSelect.addEventListener('change', () => {
+          if (kycClientBusinessSelect) {
+            kycClientBusinessSelect.value = '';
+          }
+          if (form && form.elements['kycClientBusiness']) {
+            form.elements['kycClientBusiness'].value = '';
+          }
+        });
+      }
+    }, 0);
+    
+    makeEditableSelect('kycTypeOfOnboarding', 'kycTypeOfOnboarding', 'kycTypeOfOnboarding');
+    makeEditableSelect('othersPepIpCeo', 'kycPepIpCeo', 'kycPepIpCeo');
+    makeEditableSelect('othersCloseAssociatePep', 'kycCloseAssociatePep', 'kycCloseAssociatePep');
+    makeEditableSelect('kycAvgYearlyTransaction', 'kycAvgYearlyTransaction', 'kycAvgYearlyTransaction');
+    makeEditableSelect('kycCredibleSourceOfFunds', 'kycCredibleSourceOfFunds', 'kycCredibleSourceOfFunds');
+    makeEditableInput('kycSourceOfFundsVerify', 'kycSourceOfFundsVerify', sourceOfFundsVerify);
+    makeEditableInput('kycSourceOfFundDocument', 'kycSourceOfFundDocument', sourceOfFundDocument);
+    makeEditableInput('kycFaceToFaceConversation', 'kycFaceToFaceConversation', faceToFaceConversation);
+    makeEditableInput('othersProfessionDetails', 'profession', profession);
+    makeEditableInput('othersSourceOfFundDetails', 'sourceOfFund', sourceOfFund);
+    makeEditableInput('othersProbableMonthlyIncome', 'probableMonthlyIncome', probableMonthlyIncome);
+    makeEditableInput('kycAddressVerification', 'kycAddressVerification', addressVerification);
+    makeEditableInput('kycDepositCode', 'depositCode', depositCode);
+    makeEditableSelect('othersIdentityDocumentType', 'identityDocumentType', 'identityDocumentType');
+    makeEditableSelect('kycIdentityDocumentType', 'identityDocumentType', 'identityDocumentType');
+    makeEditableInput('othersIdentityDocumentNumber', 'identityDocumentNumber', identityDocumentNumber);
+    makeEditableInput('kycIdentityDocumentNumber', 'identityDocumentNumber', identityDocumentNumber);
+  }
+
+  // Print KYC popup content
+  function printKYCPopup() {
+    // Close the popup first
+    closeOthersPopup();
+    
+    // Switch to KYC Stand Alone FD form type
+    const formTypeSelect = document.getElementById('formTypeSelect');
+    formTypeSelect.value = 'others';
+    formTypeSelect.dispatchEvent(new Event('change'));
+    
+    // Switch to form preview before printing
+    const formPageBtn = document.querySelector('.nav-btn[data-page="form"]');
+    if (formPageBtn) formPageBtn.click();
+    
+    // Small delay to ensure the form preview is rendered
+    setTimeout(function() {
+      window.print();
+      // After print dialog closes, return to information input page
+      const infoPageBtn = document.querySelector('.nav-btn[data-page="info"]');
+      if (infoPageBtn) infoPageBtn.click();
+    }, 200);
+  }
+
+  if (othersBtn) {
+    othersBtn.addEventListener('click', openOthersPopup);
+  }
+
+  if (othersClose) {
+    othersClose.addEventListener('click', closeOthersPopup);
+  }
+
+  if (othersBackdrop) {
+    othersBackdrop.addEventListener('click', (e) => {
+      if (e.target === othersBackdrop) closeOthersPopup();
+    });
+  }
+
+  if (popupPrintOthersBtn) {
+    popupPrintOthersBtn.addEventListener('click', printKYCPopup);
+  }
+
+  // Update Others popup when form data changes
+  if (form) {
+    form.addEventListener('change', updateOthersPopupData);
+    form.addEventListener('input', updateOthersPopupData);
+  }
+
+  // Close popup on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && othersBackdrop && othersBackdrop.classList.contains('open')) {
+      closeOthersPopup();
+    }
+  });
+
 })();
   </script>
 </body>

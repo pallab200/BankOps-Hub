@@ -5,7 +5,6 @@ const thumb1 = document.getElementById('thumb1');
 const thumb2 = document.getElementById('thumb2');
 const combineBtn = document.getElementById('combine');
 const clearBtn = document.getElementById('clear');
-const downloadLink = document.getElementById('download');
 const previewCanvas = document.getElementById('previewCanvas');
 const spacingInput = document.getElementById('spacing');
 const bgcolorInput = document.getElementById('bgcolor');
@@ -53,6 +52,8 @@ file1.addEventListener('change', async (e)=>{
   readFileToImg(f, (img)=>{
     img1 = img;
     thumb1.src = img ? img.src : '';
+    document.getElementById('preview1').src = img ? img.src : '';
+    document.getElementById('preview1-container').style.display = img ? 'block' : 'none';
     cropRects[1] = null;
     cropInfo1.textContent = '';
     setProgress(30);
@@ -66,6 +67,8 @@ file2.addEventListener('change', async (e)=>{
   readFileToImg(f, (img)=>{
     img2 = img;
     thumb2.src = img ? img.src : '';
+    document.getElementById('preview2').src = img ? img.src : '';
+    document.getElementById('preview2-container').style.display = img ? 'block' : 'none';
     cropRects[2] = null;
     cropInfo2.textContent = '';
     setProgress(30);
@@ -307,11 +310,15 @@ clearBtn.addEventListener('click', ()=>{
   if(file2) file2.value = '';
   thumb1.src = '';
   thumb2.src = '';
+  document.getElementById('preview1').src = '';
+  document.getElementById('preview2').src = '';
+  document.getElementById('preview1-container').style.display = 'none';
+  document.getElementById('preview2-container').style.display = 'none';
   img1 = img2 = null;
   cropRects = {1:null,2:null};
   cropInfo1.textContent = '';
   cropInfo2.textContent = '';
-  downloadLink.classList.add('hidden');
+  if(downloadPdfBtn) downloadPdfBtn.classList.add('hidden');
   const ctx = previewCanvas.getContext('2d');
   ctx && ctx.clearRect(0,0,previewCanvas.width, previewCanvas.height);
 });
@@ -462,15 +469,10 @@ combineBtn.addEventListener('click', async ()=>{
   const quality = DEFAULT_QUALITY;
   previewCanvas.toBlob((blob)=>{
     if(!blob){ alert('Failed to generate image.'); setProgress(0); return; }
-    const url = URL.createObjectURL(blob);
-    const ext = 'jpg';
-    downloadLink.href = url;
-    downloadLink.download = `combined.${ext}`;
-    downloadLink.textContent = `Download combined (${ext.toUpperCase()})`;
-    downloadLink.classList.remove('hidden');
-    // subtle preview animation and download pulse
+    // Show PDF download button
+    if(downloadPdfBtn) downloadPdfBtn.classList.remove('hidden');
+    // subtle preview animation
     try{ previewCanvas.classList.add('fade-in'); setTimeout(()=>previewCanvas.classList.remove('fade-in'), 700); }catch(e){}
-    try{ downloadLink.classList.add('download-pulse'); setTimeout(()=>downloadLink.classList.remove('download-pulse'), 1600); }catch(e){}
     setProgress(100);
   }, fmt, quality);
 });
@@ -487,7 +489,7 @@ const adjContrastVal = document.getElementById('adjContrastVal');
 const adjSatVal = document.getElementById('adjSatVal');
 const adjSharpVal = document.getElementById('adjSharpVal');
 const applyAdjBtn = document.getElementById('applyAdj');
-const downloadAdj = document.getElementById('downloadAdj');
+const downloadAdjPdf = document.getElementById('downloadAdjPdf');
 const adjustedCanvas = document.getElementById('adjustedCanvas');
 
 // filter controls
@@ -574,11 +576,7 @@ async function renderAdjusted(applySharpen){
   const outQuality = DEFAULT_QUALITY;
     adjustedCanvas.toBlob((blob)=>{
       if(!blob) return;
-      const url = URL.createObjectURL(blob);
-      downloadAdj.href = url;
-      downloadAdj.download = `combined_adjusted.jpg`;
-      downloadAdj.textContent = 'Download adjusted image';
-      downloadAdj.classList.remove('hidden');
+      if(downloadAdjPdf) downloadAdjPdf.classList.remove('hidden');
     }, 'image/jpeg', outQuality);
   } else {
     // quick preview without expensive convolution
@@ -591,19 +589,15 @@ async function renderAdjusted(applySharpen){
     baseAdjustedCtx.clearRect(0,0,baseAdjustedCanvas.width, baseAdjustedCanvas.height);
     baseAdjustedCtx.drawImage(adjustedCanvas, 0, 0);
     if(applySharpen){
-      // User requested Apply Adjustments but sharp === 0 — create a downloadable adjusted image (JPEG)
+      // User requested Apply Adjustments but sharp === 0 — create a downloadable adjusted image (PDF)
   const outQuality = DEFAULT_QUALITY;
       adjustedCanvas.toBlob((blob)=>{
         if(!blob) return;
-        const url = URL.createObjectURL(blob);
-        downloadAdj.href = url;
-        downloadAdj.download = `combined_adjusted.jpg`;
-        downloadAdj.textContent = 'Download adjusted image';
-        downloadAdj.classList.remove('hidden');
+        if(downloadAdjPdf) downloadAdjPdf.classList.remove('hidden');
       }, 'image/jpeg', outQuality);
     } else {
       // normal live-preview path — hide download link until user explicitly applies adjustments
-      downloadAdj.classList.add('hidden');
+      if(downloadAdjPdf) downloadAdjPdf.classList.add('hidden');
     }
   }
 
@@ -670,16 +664,11 @@ async function applyFilterToCanvas(previewOnly = true){
   }
 
   if(!previewOnly){
-    // Create JPEG blob as download
+    // Show PDF download button
   const outQuality = DEFAULT_QUALITY;
     adjustedCanvas.toBlob((blob)=>{
       if(!blob) return;
-      const url = URL.createObjectURL(blob);
-      downloadAdj.href = url;
-      downloadAdj.download = `combined_adjusted.jpg`;
-      downloadAdj.textContent = 'Download adjusted image';
-      downloadAdj.classList.remove('hidden');
-      try{ downloadAdj.classList.add('download-pulse'); setTimeout(()=>downloadAdj.classList.remove('download-pulse'), 1400); }catch(e){}
+      if(downloadAdjPdf) downloadAdjPdf.classList.remove('hidden');
     }, 'image/jpeg', outQuality);
   }
 }
@@ -694,12 +683,7 @@ async function resetFilter(){
   const outQuality = DEFAULT_QUALITY;
   adjustedCanvas.toBlob((blob)=>{
     if(!blob) return;
-    const url = URL.createObjectURL(blob);
-    downloadAdj.href = url;
-    downloadAdj.download = `combined_adjusted.jpg`;
-    downloadAdj.textContent = 'Download adjusted image';
-    downloadAdj.classList.remove('hidden');
-    try{ downloadAdj.classList.add('download-pulse'); setTimeout(()=>downloadAdj.classList.remove('download-pulse'), 1400); }catch(e){}
+    if(downloadAdjPdf) downloadAdjPdf.classList.remove('hidden');
   }, 'image/jpeg', outQuality);
 }
 
@@ -708,3 +692,154 @@ filterSelect && filterSelect.addEventListener('change', ()=>{ applyFilterToCanva
 // keep Apply/Reset buttons functional
 applyFilterBtn && applyFilterBtn.addEventListener('click', ()=>{ applyFilterToCanvas(false).catch(()=>{}); });
 resetFilterBtn && resetFilterBtn.addEventListener('click', ()=>{ resetFilter().catch(()=>{}); });
+// PDF Download functionality
+const downloadPdfBtn = document.getElementById('downloadPdf');
+let currentCanvasBlob = null;
+let currentAdjustedCanvasBlob = null;
+
+// Helper function to get jsPDF with retry
+function getJsPDF() {
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+    const checkLibrary = setInterval(() => {
+      if (window.jspdf && window.jspdf.jsPDF) {
+        clearInterval(checkLibrary);
+        resolve(window.jspdf.jsPDF);
+      } else if (attempts++ > 20) {
+        clearInterval(checkLibrary);
+        reject(new Error('jsPDF library failed to load'));
+      }
+    }, 100);
+  });
+}
+
+// Store the combined canvas when it's created for PDF export
+const originalToBlob = previewCanvas.toBlob;
+previewCanvas.toBlob = function(callback, type, quality) {
+  originalToBlob.call(this, (blob) => {
+    if (type === 'image/jpeg') {
+      currentCanvasBlob = blob;
+    }
+    callback(blob);
+  }, type, quality);
+};
+
+// Store the adjusted canvas when it's created for PDF export
+const originalAdjustedToBlob = adjustedCanvas.toBlob;
+adjustedCanvas.toBlob = function(callback, type, quality) {
+  originalAdjustedToBlob.call(this, (blob) => {
+    if (type === 'image/jpeg') {
+      currentAdjustedCanvasBlob = blob;
+    }
+    callback(blob);
+  }, type, quality);
+};
+
+downloadPdfBtn && downloadPdfBtn.addEventListener('click', async ()=>{
+  if (!currentCanvasBlob) {
+    alert('Please generate combined image first.');
+    return;
+  }
+
+  try {
+    // Convert canvas directly to data URL for PDF
+    const imgData = previewCanvas.toDataURL('image/jpeg', 0.95);
+    
+    // Get jsPDF library with retry
+    const JsPDF = await getJsPDF();
+    
+    const pdf = new JsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    // Get canvas dimensions and calculate scaling
+    const canvasWidth = previewCanvas.width;
+    const canvasHeight = previewCanvas.height;
+    const ratio = canvasWidth / canvasHeight;
+    
+    // A4 dimensions in mm (with custom margins)
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    // Margins in millimeters (1 inch = 25.4mm)
+    const marginTop = 15.4;      // 1"
+    const marginBottom = 87;    // 5"
+    const marginLeft = 56.2;     // 3"
+    const marginRight = 56.2;    // 3"
+    
+    const maxWidth = pageWidth - marginLeft - marginRight;
+    const maxHeight = pageHeight - marginTop - marginBottom;
+    
+    let imgWidth = maxWidth;
+    let imgHeight = maxWidth / ratio;
+    
+    if (imgHeight > maxHeight) {
+      imgHeight = maxHeight;
+      imgWidth = maxHeight * ratio;
+    }
+    
+    const x = marginLeft + ((maxWidth - imgWidth) / 2);
+    const y = marginTop + ((maxHeight - imgHeight) / 2);
+    
+    pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
+    pdf.save('combined.pdf');
+  } catch(e) {
+    alert('Error generating PDF: ' + e.message);
+  }
+});
+
+// Adjusted image PDF download
+downloadAdjPdf && downloadAdjPdf.addEventListener('click', async ()=>{
+  if (!currentAdjustedCanvasBlob) {
+    alert('Please apply adjustments first.');
+    return;
+  }
+
+  try {
+    // Convert canvas directly to data URL for PDF
+    const imgData = adjustedCanvas.toDataURL('image/jpeg', 0.95);
+    
+    // Get jsPDF library with retry
+    const JsPDF = await getJsPDF();
+    
+    const pdf = new JsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    // Get canvas dimensions and calculate scaling
+    const canvasWidth = adjustedCanvas.width;
+    const canvasHeight = adjustedCanvas.height;
+    const ratio = canvasWidth / canvasHeight;
+    
+    // A4 dimensions in mm (with custom margins)
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    // Margins in millimeters (1 inch = 25.4mm)
+    const marginTop = 15.4;      // 1"
+    const marginBottom = 87;    // 5"
+    const marginLeft = 56.2;     // 3"
+    const marginRight = 56.2;    // 3"
+    
+    const maxWidth = pageWidth - marginLeft - marginRight;
+    const maxHeight = pageHeight - marginTop - marginBottom;
+    
+    let imgWidth = maxWidth;
+    let imgHeight = maxWidth / ratio;
+    
+    if (imgHeight > maxHeight) {
+      imgHeight = maxHeight;
+      imgWidth = maxHeight * ratio;
+    }
+    
+    const x = marginLeft + ((maxWidth - imgWidth) / 2);
+    const y = marginTop + ((maxHeight - imgHeight) / 2);
+    
+    pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
+    pdf.save('combined_adjusted.pdf');
+  } catch(e) {
+    alert('Error generating PDF: ' + e.message);
+  }
+});

@@ -1,26 +1,24 @@
 {
-  "exportedAt": "2026-01-07T18:47:09.347Z",
+  "exportedAt": "2026-02-06T14:49:23.952Z",
   "form": {
-    "accountNumber": "",
-    "cifNumber": "",
-    "rmCode": "",
-    "debitMyAccount": "",
+    "accountNumber": "0953202000030622",
+    "cifNumber": "095029869",
+    "rmCode": "xxxx",
+    "debitMyAccount": "0953202000030623",
     "isrBank": "",
     "isrCustomer": "",
-    "fullNameEn": "",
-    "fullNameBn": "",
+    "fullNameEn": "tanzil ahmed",
+    "fullNameBn": "তানজিল আহমেদ",
     "orgNameEn": "",
     "orgNameBn": "",
     "accountType": "FDR",
-    "productSelect": "",
-    "depositAmount": "",
-    "modeOfOperation": "",
+    "productSelect": "Retail Ayma Fixed Deposit -Exclusive- 180 Days",
+    "depositAmount": "100000",
+    "modeOfOperation": "Single",
     "secondApplicant": "",
     "thirdApplicant": "",
-    "maturityInstruction": "",
-    "interestAccountNumber": "",
-    "sameAsLinkedAccountPersonal": "on",
-    "sameAsLinkedAccountNominee": "on",
+    "maturityInstruction": "RenewPrincipal",
+    "interestAccountNumber": "0953202000030624",
     "tradeLicenceNo": "",
     "tradeLicenceDate": "",
     "tradeLicenceAuthority": "",
@@ -37,23 +35,23 @@
     "businessType": "",
     "businessTypeOther": "",
     "businessNature": "",
-    "dateOfBirth": "",
-    "identityDocumentType": "",
-    "identityDocumentNumber": "",
-    "gender": "",
-    "nationality": "",
-    "nationalIdNumber": "",
+    "dateOfBirth": "2025-12-26",
+    "identityDocumentType": "NID",
+    "identityDocumentNumber": "1234567890",
+    "gender": "Male",
+    "nationality": "bangladeshi",
+    "nationalIdNumber": "1234567890",
     "passportNumber": "",
     "birthCertificateNumber": "",
-    "fatherName": "",
-    "motherName": "",
-    "spouseName": "",
-    "profession": "",
-    "probableMonthlyIncome": "",
-    "sourceOfFund": "",
-    "eTinIndividual": "",
-    "mobileNumber": "",
-    "email": "",
+    "fatherName": "Father's Name",
+    "motherName": "Mother's Name",
+    "spouseName": "Spouse's Name",
+    "profession": "Profession (In details)",
+    "probableMonthlyIncome": "Probable Monthly Income",
+    "sourceOfFund": "Source of Fund (In details)",
+    "eTinIndividual": "123456789012",
+    "mobileNumber": "Mobile Number",
+    "email": "Email Address",
     "presentHouse": "",
     "presentArea": "",
     "presentPostOffice": "",
@@ -70,15 +68,16 @@
     "permanentDistrict": "",
     "permanentCountry": "",
     "permanentAddress": "",
-    "nomineeName": "",
-    "nomineeRelation": "",
-    "nomineeDob": "",
-    "nomineeShare": "",
-    "nomineeIdentityDocumentType": "",
-    "nomineeIdentityDocumentNumber": "",
+    "nomineeName": "Nominee Name",
+    "nomineeRelation": "Relationship with Applicant",
+    "nomineeDob": "2025-12-26",
+    "nomineeShare": "100",
+    "nomineeIdentityDocumentType": "NID",
+    "nomineeIdentityDocumentNumber": "Identity Document",
+    "sameAsAccountHolderAddress": "on",
     "nomineeAddress": "",
-    "nomineePhone": "",
-    "nomineeEmail": "",
+    "nomineePhone": "Phone/Mobile No.",
+    "nomineeEmail": "E-mail",
     "kycClientBusiness": "",
     "kycClientProfession": "",
     "kycTypeOfOnboarding": "Branch/Relationship Manager|2",
@@ -87,18 +86,20 @@
     "kycAvgYearlyTransaction": "",
     "kycCredibleSourceOfFunds": "",
     "kycSourceOfFundsVerify": "FACE TO FACE CONVERSATION",
-    "kycSourceOfFundDocument": "",
-    "kycFaceToFaceConversation": "FACE TO FACE CONVERSATION",
-    "sectorCode": "",
-    "combinedApplicants": "",
-    "combinedApplicantsBn": "",
+    "kycAddressVerification": "THROUGH NID",
+    "depositCode": "",
+    "kycAmlTrackingNumber": "",
+    "sectorCode": "123456",
+    "combinedApplicants": "tanzil ahmed",
+    "combinedApplicantsBn": "তানজিল আহমেদ",
     "branchName": "serajgonj",
-    "todayDate": "08      01      2026",
+    "todayDate": "26      12      2025",
     "staticOne": "1",
     "staticFour": "4",
     "staticThreePage3": "3",
     "staticFourPage3": "4",
     "frequency": "Monthly",
+    "depositTypeCode": "172",
     "productName": "Retail Ayma Fixed Deposit -Exclusive- 180 Days",
     "productInterestRate": "10.75",
     "tenorYears": "",
@@ -910,6 +911,12 @@
         "field": "officerSeal3",
         "leftPercent": 67.7333,
         "topPercent": 71.3271
+      },
+      {
+        "page": "3",
+        "field": "kycAmlTrackingNumber",
+        "leftPercent": 19.2667,
+        "topPercent": 70.0003
       },
       {
         "page": "4",
@@ -1916,6 +1923,12 @@
         "topPercent": 6.62527
       },
       {
+        "page": "7",
+        "field": "kycAmlTrackingNumber",
+        "leftPercent": 18.4,
+        "topPercent": 72.4486
+      },
+      {
         "page": "8",
         "field": "staticFourPage4",
         "leftPercent": 10.8666,
@@ -2056,6 +2069,18 @@
         "topPercent": 20
       },
       {
+        "page": "1",
+        "field": "orgNameEn2",
+        "leftPercent": 10,
+        "topPercent": 20
+      },
+      {
+        "page": "1",
+        "field": "orgNameBn2",
+        "leftPercent": 10,
+        "topPercent": 22
+      },
+      {
         "page": "2",
         "field": "businessAddress",
         "leftPercent": 10,
@@ -2114,6 +2139,24 @@
         "field": "thirdApplicant",
         "leftPercent": 35,
         "topPercent": 43
+      },
+      {
+        "page": "7",
+        "field": "officerSeal1",
+        "leftPercent": 10,
+        "topPercent": 85
+      },
+      {
+        "page": "7",
+        "field": "officerSeal2",
+        "leftPercent": 35,
+        "topPercent": 85
+      },
+      {
+        "page": "7",
+        "field": "officerSeal3",
+        "leftPercent": 60,
+        "topPercent": 85
       },
       {
         "page": "9",
@@ -2318,6 +2361,24 @@
         "field": "tickETin2",
         "leftPercent": 74.4667,
         "topPercent": 84.1403
+      },
+      {
+        "page": "9",
+        "field": "fullNameEn",
+        "leftPercent": 36.3333,
+        "topPercent": 25.7155
+      },
+      {
+        "page": "9",
+        "field": "kycSourceOfFundsVerify",
+        "leftPercent": 31.8,
+        "topPercent": 47.6003
+      },
+      {
+        "page": "9",
+        "field": "kycAddressVerification",
+        "leftPercent": 14.2,
+        "topPercent": 57.4492
       },
       {
         "page": "10",
@@ -3000,8 +3061,8 @@
       {
         "page": "15",
         "field": "profession",
-        "leftPercent": 6.8,
-        "topPercent": 21.824
+        "leftPercent": 19.2,
+        "topPercent": 20.6741
       },
       {
         "page": "15",
@@ -3012,8 +3073,8 @@
       {
         "page": "15",
         "field": "orgType",
-        "leftPercent": 10,
-        "topPercent": 24
+        "leftPercent": 27.2667,
+        "topPercent": 30.1877
       },
       {
         "page": "15",
@@ -3042,26 +3103,50 @@
       {
         "page": "15",
         "field": "nineNineEightIfFullNameEn",
-        "leftPercent": 84.1333,
-        "topPercent": 23.3976
+        "leftPercent": 75,
+        "topPercent": 24
       },
       {
         "page": "15",
         "field": "nineNineEightIfOrgNameEn",
-        "leftPercent": 84.2667,
+        "leftPercent": 75,
+        "topPercent": 12
+      },
+      {
+        "page": "15",
+        "field": "depositTypeCodeIfFullNameEn",
+        "leftPercent": 84.1333,
+        "topPercent": 23.2881
+      },
+      {
+        "page": "15",
+        "field": "depositTypeCodeIfOrgNameEn",
+        "leftPercent": 84.0667,
         "topPercent": 32.9727
       },
       {
-        "page": "1",
-        "field": "orgNameEn2",
-        "leftPercent": 10,
-        "topPercent": 20
+        "page": "15",
+        "field": "depositCode",
+        "leftPercent": 84.2667,
+        "topPercent": 23.2242
       },
       {
-        "page": "1",
-        "field": "orgNameBn2",
-        "leftPercent": 10,
-        "topPercent": 22
+        "page": "15",
+        "field": "officerSeal1",
+        "leftPercent": 8.06666,
+        "topPercent": 79.3051
+      },
+      {
+        "page": "15",
+        "field": "officerSeal2",
+        "leftPercent": 38.7333,
+        "topPercent": 79.0312
+      },
+      {
+        "page": "15",
+        "field": "officerSeal3",
+        "leftPercent": 68.7333,
+        "topPercent": 79.6336
       }
     ]
   },
