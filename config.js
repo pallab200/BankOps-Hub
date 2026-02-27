@@ -10,19 +10,14 @@ const BankOpsConfig = {
      * In development, falls back to localStorage or prompt
      */
     init: function() {
-        // Check localStorage for user-provided key
+        // Check localStorage for user-overridden key
         if (localStorage.getItem('gemini_api_key')) {
             this.GEMINI_API_KEY = localStorage.getItem('gemini_api_key');
         }
-        // Check environment variable if available
-        else if (typeof process !== 'undefined' && process.env.GEMINI_API_KEY) {
-            this.GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-            localStorage.setItem('gemini_api_key', this.GEMINI_API_KEY);
-        }
-        // No default - require user to configure
+        // Default API key for the application
         else {
-            this.GEMINI_API_KEY = '';
-            console.warn('[BankOpsConfig] No API key configured. Please provide your Gemini API key via settings or environment variable.');
+            this.GEMINI_API_KEY = 'AIzaSyCZ4VuWrAwpNpoLdcWjWEQp6ZXRkbBX2O4';
+            localStorage.setItem('gemini_api_key', this.GEMINI_API_KEY);
         }
 
         console.log('[BankOpsConfig] Configuration initialized');
