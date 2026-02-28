@@ -6,6 +6,10 @@
   <title>Organizational Account Opening Form Editor</title>
   <link href="assets/poppins.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/font-awesome.min.css">
+  <!-- Auto-import: load saved form data from ucb_auto_import.js (works with file:// protocol) -->
+  <script src="ucb_auto_import.js"></script>
+  <!-- Auto-import: load saved form data from ucb_auto_import.js (works with file:// protocol) -->
+  <script src="ucb_auto_import.js"></script>
   <style>
 /* Modern Unified Design System with Animations */
 :root {
@@ -1428,6 +1432,28 @@ body::after {
   font-weight: 400;
 }
 
+/* Registration Authority - smaller font and 2-line wrap */
+.overlay[data-field="registrationAuthority"] {
+  font-size: 10px;
+  font-weight: 400;
+  white-space: normal;
+  max-width: 300px;
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Trade Licence Authority - smaller font and 2-line wrap */
+.overlay[data-field="tradeLicenceAuthority"] {
+  font-size: 10px;
+  font-weight: 400;
+  white-space: normal;
+  max-width: 300px;
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
 .toast {
   position: fixed;
   bottom: 140px;
@@ -2757,6 +2783,73 @@ body::after {
     color: #000 !important;
   }
 }
+
+/* Hide export, import, information input, and form preview buttons (when developer mode is OFF) */
+body:not(.developer-mode) #slideMenuExport,
+body:not(.developer-mode) #slideMenuImport,
+body:not(.developer-mode) .nav-btn[data-page="info"],
+body:not(.developer-mode) .nav-btn[data-page="form"] {
+  display: none !important;
+}
+
+/* Developer toggle in slide menu */
+.dev-toggle-wrapper {
+  padding: 10px 14px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.dev-toggle-wrapper label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.dev-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+.dev-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: var(--primary);
+}
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
   </style>
 </head>
 <body>
@@ -2783,6 +2876,13 @@ body::after {
         <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuExport"><i class="fas fa-file-export"></i> Export</a></li>
         <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuImport"><i class="fas fa-file-import"></i> Import</a></li>
       </ul>
+      <div class="dev-toggle-wrapper">
+        <label for="devModeToggle"><i class="fas fa-code"></i> Developer</label>
+        <div class="dev-toggle-switch">
+          <input type="checkbox" id="devModeToggle">
+          <span class="slider"></span>
+        </div>
+      </div>
       <div style="padding:6px;border-top:1px solid var(--border-color); margin-top:4px; display:flex; justify-content:center;">
         <div class="developer-credit small footer-rgb" style="margin:0;"><span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span></div>
       </div>
@@ -4811,6 +4911,7 @@ body::after {
       { field: 'thirdApplicantDate', top: '6%', left: '85%', label: 'Date' },
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' }, 
+      { field: 'officer1Seal', top: '85%', left: '78%', label: 'Officer 1 Seal', sealType: 'officer1' },
     ],
     // Nominee Form Page 41
     41: [
@@ -5100,14 +5201,19 @@ body::after {
       const acctNum = (data.accountNumber || '').toString();
       const derivedName = getAccountTypeFromNumber(acctNum) || (data.accountTypeName || '');
       data.accountTypeName = derivedName;
-      // If account type contains 'current' (case-insensitive) use code 100, otherwise 130
-      if (String(derivedName).toLowerCase().includes('current')) {
+      
+      // Determine account type code based on accountType field value
+      const accountTypeValue = (data.accountType || '').toString().toLowerCase();
+      if (accountTypeValue.includes('current')) {
         data.accountTypeCode = '100';
+      } else if (accountTypeValue.includes('snd')) {
+        data.accountTypeCode = '160';
       } else {
-        data.accountTypeCode = '130';
+        // Default for other types
+        data.accountTypeCode = '';
       }
     } catch (e) {
-      data.accountTypeCode = '130';
+      data.accountTypeCode = '';
     }
 
     // Add today's date (for preview only) in format DD<NBSP*3>MM<NBSP*3>YYYY
@@ -6586,67 +6692,88 @@ body::after {
         positions: positions
       };
 
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const ts = new Date().toISOString().replace(/[:.]/g, '-');
-      const filename = `ucb_form_export_${ts}.json`;
-
+      // Export as JS file in ucb_auto_import.js format
+      const jsContent = 'window.UCB_AUTO_IMPORT_DATA = ' + JSON.stringify(payload, null, 2) + ';\n';
+      const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
+      a.href = URL.createObjectURL(jsBlob);
+      a.download = 'ucb_auto_import.js';
       document.body.appendChild(a);
       a.click();
       a.remove();
-      showToast('Data exported: ' + filename);
+
+      showToast('Data exported: ucb_auto_import.js');
     } catch (e) {
       console.error('Export failed', e);
       showToast('Export failed');
     }
   }
 
-  // Import form data and positions from a JSON file (File object)
+  // Auto-import JSON data from ucb_auto_import.js (loaded via <script> tag, works with file://)
+  function autoImportJSON() {
+    if (typeof window.UCB_AUTO_IMPORT_DATA === 'undefined') {
+      console.log('No ucb_auto_import.js found — skipping auto-import.');
+      return;
+    }
+    try {
+      applyImportedJSON(window.UCB_AUTO_IMPORT_DATA);
+      console.log('Auto-imported data from ucb_auto_import.js');
+    } catch (err) {
+      console.error('Auto-import error', err);
+    }
+  }
+
+  function applyImportedJSON(obj) {
+    const imported = obj && obj.form ? obj.form : obj;
+
+    // Apply form values
+    Object.keys(imported).forEach(function (key) {
+      const el = form.elements[key];
+      if (!el) return;
+      if (el.type === 'checkbox') {
+        el.checked = !!imported[key];
+      } else {
+        el.value = imported[key] == null ? '' : imported[key];
+      }
+    });
+
+    // If positions present, store them
+    if (obj && obj.positions) {
+      try { localStorage.setItem(POSITIONS_KEY, JSON.stringify(obj.positions)); } catch (e) {}
+    }
+
+    // Persist form data and update overlays
+    const formDataObj = {};
+    Array.from(new FormData(form).entries()).forEach(function (pair) { formDataObj[pair[0]] = pair[1]; });
+    document.querySelectorAll('input[type="checkbox"]').forEach(function (cb) { if (cb.name) formDataObj[cb.name] = cb.checked; });
+    try { localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formDataObj)); } catch (e) {}
+    if (typeof updateOverlays === 'function') updateOverlays();
+  }
+
+  // Import form data and positions from a JS or JSON file (File object)
   function importDataFromFile(file) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
       try {
-        const obj = JSON.parse(e.target.result);
-        const imported = obj && obj.form ? obj.form : obj;
-
-        // Apply form values
-        Object.keys(imported).forEach(key => {
-          const el = form.elements[key];
-          if (!el) return;
-          if (el.type === 'checkbox') {
-            el.checked = !!imported[key];
+        let obj;
+        const content = e.target.result;
+        
+        // Handle both JS and JSON formats
+        if (file.name.endsWith('.js')) {
+          // Extract data from window.UCB_AUTO_IMPORT_DATA = {...}; format
+          const match = content.match(/window\.UCB_AUTO_IMPORT_DATA\s*=\s*({[\s\S]*});/);
+          if (match && match[1]) {
+            obj = JSON.parse(match[1]);
           } else {
-            el.value = imported[key] == null ? '' : imported[key];
+            throw new Error('Invalid JS file format');
           }
-        });
-
-        // If positions present, store them
-        if (obj && obj.positions) {
-          try { localStorage.setItem(POSITIONS_KEY, JSON.stringify(obj.positions)); } catch (e) {}
+        } else {
+          // Parse as JSON
+          obj = JSON.parse(content);
         }
-
-        // Persist form data and update overlays
-        const formDataObj = {};
-        Array.from(new FormData(form).entries()).forEach(([k,v]) => formDataObj[k]=v);
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => { if (cb.name) formDataObj[cb.name] = cb.checked; });
-        saveFormData(formDataObj);
-
-        // Apply loaded positions to overlays
-        const saved = loadPositions();
-        if (saved && Object.keys(saved).length) {
-          document.querySelectorAll('.overlay').forEach(overlay => {
-            const key = `${overlay.dataset.page}_${overlay.dataset.field}_${overlay.dataset.index}`;
-            if (saved[key]) {
-              overlay.style.top = saved[key].top;
-              overlay.style.left = saved[key].left;
-            }
-          });
-        }
-
-        updateOverlays();
+        
+        applyImportedJSON(obj);
         showToast('Data imported successfully');
       } catch (err) {
         console.error('Import error', err);
@@ -7113,6 +7240,39 @@ body::after {
 
   editModeCheckbox.addEventListener('change', () => enableEditMode(editModeCheckbox.checked));
 
+  // Developer mode toggle — show/hide Import, Export, Information Input, Form Preview
+  const devModeToggle = document.getElementById('devModeToggle');
+  if (devModeToggle) {
+    // Restore saved state
+    try {
+      const savedDev = localStorage.getItem('UCB_DEV_MODE');
+      if (savedDev === 'true') {
+        devModeToggle.checked = true;
+        document.body.classList.add('developer-mode');
+      }
+    } catch (e) {}
+    
+    // Make the slider span clickable (since input is hidden)
+    const sliderEl = devModeToggle.nextElementSibling;
+    if (sliderEl && sliderEl.classList.contains('slider')) {
+      sliderEl.addEventListener('click', (e) => {
+        e.preventDefault();
+        devModeToggle.checked = !devModeToggle.checked;
+        devModeToggle.dispatchEvent(new Event('change'));
+      });
+    }
+    
+    // Handle checkbox change event
+    devModeToggle.addEventListener('change', () => {
+      if (devModeToggle.checked) {
+        document.body.classList.add('developer-mode');
+      } else {
+        document.body.classList.remove('developer-mode');
+      }
+      try { localStorage.setItem('UCB_DEV_MODE', devModeToggle.checked); } catch (e) {}
+    });
+  }
+
   const savePresetBtnEl = document.getElementById('savePresetBtn');
   if (savePresetBtnEl) savePresetBtnEl.addEventListener('click', savePreset);
   const viewPresetsBtnEl = document.getElementById('viewPresetsBtn');
@@ -7207,6 +7367,7 @@ body::after {
       const v = e.target.value || '';
       slideBranchInput.value = v;
       try { localStorage.setItem(BRANCH_KEY, v); } catch (err) {}
+      updateOverlays();
     });
   }
 
@@ -7222,6 +7383,9 @@ body::after {
     if (file) importDataFromFile(file);
     importFileInputEl.value = '';
   });
+
+  // Auto-import JSON data on page load
+  autoImportJSON();
 
   // Form input listeners
   // --- Auto-translate Full Name (English) -> Full Name (Bangla) ---
@@ -7246,6 +7410,119 @@ body::after {
       console.error('Translation fetch error:', e);
       return '';
     }
+  }
+
+  // Phonetic transliteration: English text to Bangla script (for proper nouns, brand names, etc.)
+  // Uses Google Input Tools API for accurate transliteration, with rule-based fallback
+  async function transliterateText(text) {
+    if (!text || text.trim() === '') return '';
+    const words = text.trim().split(/\s+/);
+    const results = [];
+
+    for (const word of words) {
+      const cleanWord = word.replace(/[^a-zA-Z]/g, '');
+      if (!cleanWord) { results.push(word); continue; }
+
+      try {
+        const apiUrl = `https://inputtools.google.com/request?text=${encodeURIComponent(cleanWord.toLowerCase())}&itc=bn-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage`;
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        if (data[0] === 'SUCCESS' && data[1] && data[1][0] && data[1][0][1] && data[1][0][1][0]) {
+          results.push(data[1][0][1][0]);
+          console.log('Transliterated:', cleanWord, '=>', data[1][0][1][0]);
+          continue;
+        }
+      } catch (e) {
+        console.warn('Input Tools API failed for word:', cleanWord, e);
+      }
+
+      // Fallback: rule-based phonetic transliteration
+      results.push(transliterateWordFallback(cleanWord));
+    }
+
+    return results.join(' ');
+  }
+
+  // Rule-based English to Bangla phonetic transliteration (fallback when API is unavailable)
+  function transliterateWordFallback(word) {
+    if (!word) return '';
+    const w = word.toLowerCase();
+    let result = '';
+    let i = 0;
+    const len = w.length;
+
+    const isVowelChar = (ch) => 'aeiou'.includes(ch);
+    const isConsonantChar = (ch) => ch && /[a-z]/.test(ch) && !isVowelChar(ch);
+
+    // Detect silent-e at end (e.g., hope, globe, prime) for short words
+    const hasSilentE = len >= 3 && len <= 7 && w[len - 1] === 'e' && isConsonantChar(w[len - 2]);
+    const effectiveLen = hasSilentE ? len - 1 : len;
+
+    // Find the magic-e vowel position (the vowel made long by silent-e)
+    let magicEVowelPos = -1;
+    if (hasSilentE) {
+      for (let j = effectiveLen - 2; j >= 0; j--) {
+        if (isVowelChar(w[j])) { magicEVowelPos = j; break; }
+      }
+    }
+
+    // Long vowel mappings (when affected by magic-e)
+    const longVowelStart = { 'a': 'এ', 'e': 'ঈ', 'i': 'আই', 'o': 'ও', 'u': 'ইউ' };
+    const longVowelMid = { 'a': 'ে', 'e': 'ী', 'i': 'াই', 'o': 'ো', 'u': 'ইউ' };
+
+    while (i < effectiveLen) {
+      const ch = w[i];
+      const isStart = (i === 0);
+      let matched = false;
+
+      // Try 4-char patterns
+      if (!matched && i + 4 <= effectiveLen) {
+        const p = w.substring(i, i + 4);
+        const map4 = { 'tion': 'শন', 'sion': 'শন', 'ight': 'াইট', 'ious': 'িয়াস', 'eous': 'িয়াস', 'ness': 'নেস', 'ment': 'মেন্ট', 'able': 'এবল', 'ence': 'েন্স', 'ance': 'অ্যান্স', 'less': 'লেস' };
+        if (map4[p]) { result += map4[p]; i += 4; matched = true; }
+      }
+
+      // Try 3-char patterns
+      if (!matched && i + 3 <= effectiveLen) {
+        const p = w.substring(i, i + 3);
+        const map3 = { 'str': 'স্ট্র', 'tch': 'চ', 'dge': 'জ', 'sch': 'স্ক', 'nch': 'ঞ্চ', 'ing': 'িং', 'ous': 'আস', 'ess': 'েস', 'all': 'অল', 'ful': 'ফুল', 'ure': 'ুর', 'ize': 'াইজ', 'ise': 'াইজ', 'age': 'েজ', 'ive': 'িভ', 'ble': 'বল', 'ple': 'পল', 'tle': 'টল' };
+        if (map3[p]) { result += map3[p]; i += 3; matched = true; }
+      }
+
+      // Try 2-char patterns
+      if (!matched && i + 2 <= effectiveLen) {
+        const p = w.substring(i, i + 2);
+        const map2 = {
+          'ch': 'চ', 'sh': 'শ', 'th': 'থ', 'ph': 'ফ', 'wh': 'হোয়', 'ck': 'ক', 'gh': 'গ', 'kh': 'খ', 'ng': 'ং', 'nk': 'ংক', 'qu': 'কোয়', 'wr': 'র', 'kn': 'ন',
+          'bl': 'ব্ল', 'br': 'ব্র', 'cl': 'ক্ল', 'cr': 'ক্র', 'dr': 'ড্র', 'fl': 'ফ্ল', 'fr': 'ফ্র', 'gl': 'গ্ল', 'gr': 'গ্র', 'pl': 'প্ল', 'pr': 'প্র', 'sc': 'স্ক', 'sk': 'স্ক', 'sl': 'স্ল', 'sm': 'স্ম', 'sn': 'স্ন', 'sp': 'স্প', 'st': 'স্ট', 'sw': 'সোয়', 'tr': 'ট্র', 'tw': 'টোয়',
+          'nd': 'ন্ড', 'nt': 'ন্ট', 'ld': 'ল্ড', 'lk': 'ল্ক', 'lt': 'ল্ট', 'mp': 'ম্প', 'ft': 'ফ্ট', 'ct': 'ক্ট', 'pt': 'প্ট',
+          'ai': 'েই', 'ay': 'েই', 'au': 'অ', 'aw': 'অ', 'ea': 'ী', 'ee': 'ী', 'ei': 'েই', 'ey': 'েই', 'eu': 'ইউ', 'ew': 'ইউ', 'ie': 'াই', 'oa': 'ো', 'oi': 'য়', 'oy': 'য়', 'oo': 'ু', 'ou': 'াউ', 'ow': 'ো', 'ue': 'ু',
+          'er': 'ার', 'ar': 'ার', 'ir': 'ার', 'ur': 'ার', 'or': 'র', 'al': 'াল', 'el': 'েল', 'il': 'িল', 'ul': 'ুল', 'le': 'ল', 'ly': 'লি', 'ty': 'টি', 'ry': 'রি', 'ny': 'নি',
+          'ss': 'স', 'ff': 'ফ', 'll': 'ল', 'tt': 'ট', 'dd': 'ড', 'pp': 'প', 'bb': 'ব', 'gg': 'গ', 'mm': 'ম', 'nn': 'ন', 'rr': 'র', 'cc': 'ক'
+        };
+        if (map2[p]) { result += map2[p]; i += 2; matched = true; }
+      }
+
+      // Single character
+      if (!matched) {
+        if (isVowelChar(ch)) {
+          if (i === magicEVowelPos) {
+            // Long vowel due to silent-e
+            result += isStart ? (longVowelStart[ch] || ch) : (longVowelMid[ch] || ch);
+          } else {
+            const vowelStart = { 'a': 'আ', 'e': 'এ', 'i': 'ই', 'o': 'ও', 'u': 'উ' };
+            const vowelMid = { 'a': 'া', 'e': 'ে', 'i': 'ি', 'o': 'ো', 'u': 'ু' };
+            result += isStart ? (vowelStart[ch] || ch) : (vowelMid[ch] || ch);
+          }
+        } else {
+          const cons = { 'b': 'ব', 'c': 'ক', 'd': 'ড', 'f': 'ফ', 'g': 'গ', 'h': 'হ', 'j': 'জ', 'k': 'ক', 'l': 'ল', 'm': 'ম', 'n': 'ন', 'p': 'প', 'q': 'ক', 'r': 'র', 's': 'স', 't': 'ট', 'v': 'ভ', 'w': 'ওয়', 'x': 'ক্স', 'y': 'ই', 'z': 'জ' };
+          result += cons[ch] || ch;
+        }
+        i++;
+      }
+    }
+
+    return result;
   }
 
   const translateDebounced = debounce(async (text) => {
@@ -7352,9 +7629,9 @@ body::after {
       return wordMap.map(w => w.value).join(' ');
     }
 
-    // Translate unknown words together via API
+    // Transliterate unknown words (phonetic, not semantic translation)
     const apiText = unknownWords.join(' ');
-    const apiTranslated = await translateText(apiText);
+    const apiTranslated = await transliterateText(apiText);
     const translatedParts = apiTranslated ? apiTranslated.split(/\s+/) : unknownWords;
 
     // Rebuild the full string
@@ -7757,7 +8034,7 @@ body::after {
     const branchInputMain = form.elements['branchName'];
     if (slideBranchInput && branchInputMain) {
       // If FORM_KEY load cleared branch but we have a separately saved branch, restore it
-      const savedBranch = (() => { try { return localStorage.getItem('ucb_branch_name_v1'); } catch (e) { return null; } })();
+      const savedBranch = (() => { try { return localStorage.getItem(BRANCH_KEY); } catch (e) { return null; } })();
       if ((!branchInputMain.value || String(branchInputMain.value).trim() === '') && savedBranch) {
         branchInputMain.value = savedBranch;
         slideBranchInput.value = savedBranch;

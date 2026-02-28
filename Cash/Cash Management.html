@@ -1782,10 +1782,63 @@
             </div>
         </div>
         <div class="text-right" style="font-size: 0.7rem; flex-shrink: 0;">
-            <p class="font-bold text-gray-700"><span class="rgb-text" style="font-size: 0.72rem;">Tanzil Ahmed</span></p>
-            <p class="font-bold text-gray-700"><span class="rgb-text" style="font-size: 0.72rem;">EID: 7966</span></p>
+            <p class="font-bold text-gray-700" style="margin: 0;"><span class="rgb-text" style="font-size: 0.72rem;" id="greeting-display">Good Day</span></p>
+            <p class="font-bold text-gray-700" style="margin: 0;"><span class="rgb-text" style="font-size: 0.72rem;" id="username-display">Loading...</span></p>
         </div>
     </header>
+    <script>
+        // Auto-detect and display PC username with greeting
+        (function() {
+            const usernameDisplay = document.getElementById('username-display');
+            const greetingDisplay = document.getElementById('greeting-display');
+            
+            // Get time-based greeting
+            const hour = new Date().getHours();
+            let greeting = 'Good Day';
+            
+            if (hour >= 5 && hour < 12) {
+                greeting = 'Good Morning';
+            } else if (hour >= 12 && hour < 17) {
+                greeting = 'Good Afternoon';
+            } else if (hour >= 17 && hour < 21) {
+                greeting = 'Good Evening';
+            } else {
+                greeting = 'Good Night';
+            }
+            
+            greetingDisplay.textContent = greeting;
+            
+            // Get username
+            let username = localStorage.getItem('pcUsername');
+            
+            if (!username) {
+                // Try to get username from environment
+                username = window.location.pathname.split('/')[2] || 
+                          (typeof process !== 'undefined' && process.env && process.env.USERNAME) ||
+                          (typeof process !== 'undefined' && process.env && process.env.USER) ||
+                          navigator.userAgent.match(/Windows NT .+?; ([^;)]+)/)?.[1] ||
+                          null;
+                
+                // If still no username, extract from file path or use default
+                if (!username || username === 'Users') {
+                    const pathMatch = window.location.pathname.match(/[\/\\]Users[\/\\]([^\/\\]+)/i);
+                    username = pathMatch ? pathMatch[1] : null;
+                }
+                
+                // If we got a username, save it
+                if (username && username !== 'Users') {
+                    localStorage.setItem('pcUsername', username);
+                }
+            }
+            
+            // Display the username
+            if (username && username !== 'Users') {
+                usernameDisplay.textContent = username.charAt(0).toUpperCase() + username.slice(1).toLowerCase();
+            } else {
+                usernameDisplay.textContent = 'USER';
+            }
+        })();
+    </script>
 
     <!-- Main Container -->
     <main id="main-content" class="flex-1 flex p-6 gap-6 overflow-hidden mt-[24px]">
@@ -1815,7 +1868,11 @@
 
                 <!-- 6. Electricity Bill -->
                 <button id="electricityBtn" class="sidebar-button"><i class="fas fa-file-invoice-dollar" style="margin-right: 10px; width: 18px; text-align: center;"></i>Electricity Bill</button>
+
                 
+            </div>
+            <div style="padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.2); margin-top: 16px; text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.7); font-weight: 500; width: 100%;">
+                Developed by Tanzil Ahmed — EID 7966.
             </div>
         </aside>
 
@@ -2019,7 +2076,7 @@
                 <div class="w-full flex justify-end mb-3">
                                         <button id="toggle-recv-pay-btn" class="main-button flex items-center gap-2" aria-pressed="false" title="Show or hide Received and Payment panels">
                                             <span class="toggle-recv-pay-label">Hide Received & Payment</span>
-                                            <svg class="toggle-chevron w-5 h-5 transition-transform duration-300" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                            <svg class="toggle-chevron w-5 h-5 transition-transform duration-300" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         </button>
                 </div>
 
@@ -3544,7 +3601,7 @@
                             <div>
                                 <span class="${idx === 0 ? 'text-xl font-extrabold' : 'font-extrabold'} ${amountColor}">${amountSign} ${formatNumber(tx.totalAmount)}</span>
                             </div>
-                            <svg class="recent-chevron w-4 h-4 transition-transform duration-200" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <svg class="recent-chevron w-4 h-4 transition-transform duration-200" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </div>

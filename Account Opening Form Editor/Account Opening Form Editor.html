@@ -6,6 +6,8 @@
   <title>Account Opening Form Editor</title>
   <link href="assets/poppins.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/font-awesome.min.css">
+  <!-- Auto-import: load saved form data from ucb_auto_import.js (works with file:// protocol) -->
+  <script src="ucb_auto_import.js"></script>
   <style>
 /* Modern Unified Design System with Animations */
 :root {
@@ -1944,6 +1946,80 @@ body::after {
   color: var(--primary);
 }
 
+/* Hide export, import, information input, and form preview buttons (when developer mode is OFF) */
+body:not(.developer-mode) #slideMenuExport,
+body:not(.developer-mode) #slideMenuImport,
+body:not(.developer-mode) .nav-btn[data-page="info"],
+body:not(.developer-mode) .nav-btn[data-page="form"] {
+  display: none !important;
+}
+
+/* Developer toggle in slide menu */
+.dev-toggle-wrapper {
+  padding: 10px 14px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.dev-toggle-wrapper label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dev-toggle-wrapper label i {
+  color: var(--primary);
+}
+.dev-toggle-switch {
+  position: relative;
+  width: 42px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.dev-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.dev-toggle-switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #ccc;
+  border-radius: 22px;
+  transition: 0.3s;
+  user-select: none;
+}
+.dev-toggle-switch .slider:hover {
+  background: #aaa;
+}
+.dev-toggle-switch .slider::before {
+  content: '';
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.dev-toggle-switch input:checked + .slider {
+  background: var(--primary);
+}
+.dev-toggle-switch input:checked + .slider:hover {
+  background: var(--primary-dark);
+}
+.dev-toggle-switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
 /* Print styles */
 @media print {
   @page {
@@ -2725,6 +2801,13 @@ body::after {
         <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuExport"><i class="fas fa-file-export"></i> Export</a></li>
         <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuImport"><i class="fas fa-file-import"></i> Import</a></li>
       </ul>
+      <div class="dev-toggle-wrapper">
+        <label for="devModeToggle"><i class="fas fa-code"></i> Developer</label>
+        <div class="dev-toggle-switch">
+          <input type="checkbox" id="devModeToggle">
+          <span class="slider"></span>
+        </div>
+      </div>
       <div style="padding:6px;border-top:1px solid var(--border-color); margin-top:4px; display:flex; justify-content:center;">
         <div class="developer-credit small footer-rgb" style="margin:0;"><span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span></div>
       </div>
@@ -4128,7 +4211,7 @@ body::after {
   <!-- Toast -->
   <div class="toast" id="toast"></div>
   <!-- Hidden file input for importing JSON data -->
-  <input type="file" id="importFileInput" accept=".json,application/json" style="display:none">
+  <input type="file" id="importFileInput" accept=".js,.json,application/json,text/javascript" style="display:none">
 
   <script>
 (function() {
@@ -6788,21 +6871,69 @@ body::after {
         positions: positions
       };
 
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const ts = new Date().toISOString().replace(/[:.]/g, '-');
-      const filename = `ucb_form_export_${ts}.json`;
-
+      // Export as JS file in ucb_auto_import.js format
+      const jsContent = 'window.UCB_AUTO_IMPORT_DATA = ' + JSON.stringify(payload, null, 2) + ';\n';
+      const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
+      a.href = URL.createObjectURL(jsBlob);
+      a.download = 'ucb_auto_import.js';
       document.body.appendChild(a);
       a.click();
       a.remove();
-      showToast('Data exported: ' + filename);
+
+      showToast('Data exported: ucb_auto_import.js');
     } catch (e) {
       console.error('Export failed', e);
       showToast('Export failed');
     }
+  }
+
+  // Auto-sync in-memory JS data when form changes (updates window.UCB_AUTO_IMPORT_DATA and localStorage)
+  let autoSyncTimeout;
+  function autoSyncJsData() {
+    try {
+      const formData = new FormData(form);
+      const data = {};
+      for (let [key, value] of formData.entries()) data[key] = value;
+      // include checkboxes explicitly
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => { if (cb.name) data[cb.name] = cb.checked; });
+
+      const positions = loadPositions();
+
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        form: data,
+        positions: positions
+      };
+
+      // Update in-memory global variable
+      window.UCB_AUTO_IMPORT_DATA = payload;
+      
+      // Also sync to localStorage for persistence
+      try {
+        localStorage.setItem('UCB_AUTO_IMPORT_DATA_BACKUP', JSON.stringify(payload));
+      } catch (e) {}
+      
+      // Also persist branch name separately in BRANCH_KEY
+      try {
+        const branchVal = data['branchName'] || '';
+        if (branchVal) {
+          localStorage.setItem('ucb_branch_name_v1', branchVal);
+        }
+      } catch (e) {}
+      
+      console.log('[AUTO-SYNC] Data synced to memory at ' + new Date().toLocaleTimeString());
+    } catch (e) {
+      console.error('Auto-sync failed', e);
+    }
+  }
+
+  // Debounced auto-sync trigger (waits 2 seconds after last change)
+  function triggerAutoSync() {
+    clearTimeout(autoSyncTimeout);
+    autoSyncTimeout = setTimeout(() => {
+      autoSyncJsData();
+    }, 2000); // Wait 2 seconds after last form change
   }
 
   // Import form data and positions from a JSON file (File object)
@@ -6811,7 +6942,23 @@ body::after {
     const reader = new FileReader();
     reader.onload = function(e) {
       try {
-        const obj = JSON.parse(e.target.result);
+        let obj;
+        const content = e.target.result;
+        
+        // Handle both JS and JSON formats
+        if (file.name.endsWith('.js')) {
+          // Extract data from window.UCB_AUTO_IMPORT_DATA = {...}; format
+          const match = content.match(/window\.UCB_AUTO_IMPORT_DATA\s*=\s*({[\s\S]*});/);
+          if (match && match[1]) {
+            obj = JSON.parse(match[1]);
+          } else {
+            throw new Error('Invalid JS file format');
+          }
+        } else {
+          // Parse as JSON
+          obj = JSON.parse(content);
+        }
+        
         const imported = obj && obj.form ? obj.form : obj;
 
         // Apply form values
@@ -6856,6 +7003,85 @@ body::after {
       }
     };
     reader.readAsText(file);
+  }
+
+  // Auto-import JSON data from ucb_auto_import.js (loaded via <script> tag, works with file://)
+  function autoImportJSON() {
+    if (typeof window.UCB_AUTO_IMPORT_DATA === 'undefined') {
+      console.log('No ucb_auto_import.js found — skipping auto-import.');
+      return;
+    }
+    try {
+      applyImportedJSON(window.UCB_AUTO_IMPORT_DATA);
+      console.log('Auto-imported data from ucb_auto_import.js');
+    } catch (err) {
+      console.error('Auto-import error', err);
+    }
+  }
+
+  function applyImportedJSON(obj) {
+    const imported = obj && obj.form ? obj.form : obj;
+
+    // Preserve existing branch name before applying import
+    const existingBranchName = (form.elements['branchName'] ? form.elements['branchName'].value : '') || 
+                               (localStorage.getItem(BRANCH_KEY) || '');
+
+    // Apply form values
+    Object.keys(imported).forEach(function (key) {
+      const el = form.elements[key];
+      if (!el) return;
+      if (el.type === 'checkbox') {
+        el.checked = !!imported[key];
+      } else {
+        el.value = imported[key] == null ? '' : imported[key];
+      }
+    });
+
+    // Restore branch name if it was cleared by import
+    if (form.elements['branchName']) {
+      if (!form.elements['branchName'].value && existingBranchName) {
+        form.elements['branchName'].value = existingBranchName;
+      }
+    }
+
+    // If positions present, store them
+    if (obj && obj.positions) {
+      try { localStorage.setItem(POSITIONS_KEY, JSON.stringify(obj.positions)); } catch (e) {}
+    }
+
+    // Persist form data and update overlays
+    const formDataObj = {};
+    Array.from(new FormData(form).entries()).forEach(function (pair) { formDataObj[pair[0]] = pair[1]; });
+    document.querySelectorAll('input[type="checkbox"]').forEach(function (cb) { if (cb.name) formDataObj[cb.name] = cb.checked; });
+    saveFormData(formDataObj);
+
+    // Apply loaded positions to overlays
+    const saved = loadPositions();
+    if (saved && Object.keys(saved).length) {
+      document.querySelectorAll('.overlay').forEach(function (overlay) {
+        const key = overlay.dataset.page + '_' + overlay.dataset.field + '_' + overlay.dataset.index;
+        if (saved[key]) {
+          overlay.style.top = saved[key].top;
+          overlay.style.left = saved[key].left;
+        }
+      });
+    }
+
+    // Sync branch name to slide input and localStorage after import
+    try {
+      const branchVal = form.elements['branchName'].value || '';
+      const slideInput = document.getElementById('slideBranchInput');
+      if (slideInput) slideInput.value = branchVal;
+      if (branchVal) {
+        try { localStorage.setItem('ucb_branch_name_v1', branchVal); } catch (e2) {}
+      }
+    } catch (e) {}
+
+    // Re-apply visibility handlers & overlays
+    try { handleOwnershipChange(); } catch (e) {}
+    try { handleNomineeSameAddress(); } catch (e) {}
+    try { handleGuardianSameAddress(); } catch (e) {}
+    updateOverlays();
   }
 
   function loadPresets() {
@@ -7371,6 +7597,52 @@ body::after {
 
   editModeCheckbox.addEventListener('change', () => enableEditMode(editModeCheckbox.checked));
 
+  // Developer mode toggle — show/hide Import, Export, Information Input, Form Preview
+  const devModeToggle = document.getElementById('devModeToggle');
+  if (devModeToggle) {
+    // Restore saved state from localStorage
+    try {
+      const savedDev = localStorage.getItem('UCB_DEV_MODE');
+      if (savedDev === 'true') {
+        devModeToggle.checked = true;
+        document.body.classList.add('developer-mode');
+      } else {
+        devModeToggle.checked = false;
+        document.body.classList.remove('developer-mode');
+      }
+    } catch (e) {}
+    
+    // Listen for toggle changes on the checkbox itself
+    devModeToggle.addEventListener('change', function(e) {
+      console.log('[DEV MODE] Toggle changed:', this.checked);
+      if (this.checked) {
+        document.body.classList.add('developer-mode');
+        console.log('[DEV MODE] Developer mode ON');
+      } else {
+        document.body.classList.remove('developer-mode');
+        console.log('[DEV MODE] Developer mode OFF');
+      }
+      try { 
+        localStorage.setItem('UCB_DEV_MODE', this.checked ? 'true' : 'false'); 
+        console.log('[DEV MODE] Saved state:', this.checked ? 'true' : 'false');
+      } catch (e) {}
+    });
+    
+    // Make the slider clickable - clicking slider toggles the checkbox
+    const sliderEl = devModeToggle.nextElementSibling;
+    if (sliderEl && sliderEl.classList.contains('slider')) {
+      sliderEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('[DEV MODE] Slider clicked');
+        devModeToggle.checked = !devModeToggle.checked;
+        devModeToggle.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    }
+  } else {
+    console.error('[DEV MODE] devModeToggle element not found');
+  }
+
   const savePresetBtnEl = document.getElementById('savePresetBtn');
   if (savePresetBtnEl) savePresetBtnEl.addEventListener('click', savePreset);
   const viewPresetsBtnEl = document.getElementById('viewPresetsBtn');
@@ -7460,6 +7732,17 @@ body::after {
     const file = ev.target.files && ev.target.files[0];
     if (file) importDataFromFile(file);
     importFileInputEl.value = '';
+  });
+
+  // Auto-sync form data to memory and localStorage on any field change
+  // This keeps the in-memory window.UCB_AUTO_IMPORT_DATA and localStorage backup in sync
+  Array.from(form.elements).forEach(el => {
+    el.addEventListener('input', triggerAutoSync);
+    el.addEventListener('change', triggerAutoSync);
+  });
+  // Also sync checkboxes explicitly
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', triggerAutoSync);
   });
 
   // Form input listeners
@@ -7907,6 +8190,25 @@ body::after {
 
   // Ensure all pages are visible in the preview (user requested "show all pages")
   formPages.forEach(page => page.classList.add('active'));
+
+  // Auto-import JSON data file from the same folder on every page load / refresh
+  autoImportJSON();
+
+  // After auto-import, restore branch name from persistent storage (BRANCH_KEY has priority)
+  try {
+    const branchInputMain = form.elements['branchName'];
+    const slideBranchInput = document.getElementById('slideBranchInput');
+    const savedBranch = localStorage.getItem('ucb_branch_name_v1');
+    
+    if (savedBranch && String(savedBranch).trim() !== '') {
+      // Restore saved branch name
+      if (branchInputMain) branchInputMain.value = savedBranch;
+      if (slideBranchInput) slideBranchInput.value = savedBranch;
+      console.log('[BRANCH] Restored branch name from storage:', savedBranch);
+    }
+  } catch (e) {
+    console.error('[BRANCH] Error restoring branch name:', e);
+  }
 
   // Apply form type visibility
   try { handleFormTypeChange(); } catch (e) {}

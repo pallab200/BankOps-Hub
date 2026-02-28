@@ -220,7 +220,9 @@
           <i class="fas fa-sliders-h" style="color: var(--primary); font-size: 1.2rem;"></i>Adjust Combined Image
         </h2>
         
-        <div class="adjustment-controls-card">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+          <div>
+            <div class="adjustment-controls-card">
           <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0 0 16px 0; color: var(--text-primary);">Image Adjustments</h3>
           <div class="adj-controls">
             <div class="control-group">
@@ -282,13 +284,17 @@
             <button id="downloadAdjPdf" class="hidden primary-btn"><i class="fas fa-file-pdf"></i>Download as PDF</button>
           </div>
         </div>
-        
-        <div class="adj-preview">
+          </div>
+          
+          <div>
+            <div class="adj-preview">
           <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0 0 16px 0; color: var(--text-primary); display: flex; align-items: center; gap: 10px;">
             <i class="fas fa-check-circle" style="color: var(--primary);"></i>Adjusted Preview
           </h3>
           <div class="canvas-wrapper">
             <canvas id="adjustedCanvas"></canvas>
+          </div>
+        </div>
           </div>
         </div>
       </section>

@@ -8,6 +8,8 @@
   <title>TD/RD Account Form Editor</title>
   <link href="assets/poppins.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/font-awesome.min.css">
+  <!-- Auto-import: load saved form data from tdrd_auto_import.js (works with file:// protocol) -->
+  <script src="tdrd_auto_import.js"></script>
   <style>
 /* Modern Unified Design System */
 :root {
@@ -1726,7 +1728,85 @@ body::after {
   .others-popup-body {
     padding: 20px;
   }
-}
+  }
+
+  }
+  
+  .edit-toggle label i {
+    color: var(--primary);
+  }
+  
+  body:not(.developer-mode) #slideMenuExport,
+  body:not(.developer-mode) #slideMenuImport,
+  body:not(.developer-mode) .nav-btn[data-page="info"],
+  body:not(.developer-mode) .nav-btn[data-page="form"] {
+    display: none !important;
+  }
+  
+  .dev-toggle-wrapper {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .dev-toggle-wrapper label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dev-toggle-wrapper label i {
+    color: var(--primary);
+  }
+  .dev-toggle-switch {
+    position: relative;
+    width: 42px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  .dev-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .dev-toggle-switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #ccc;
+    border-radius: 22px;
+    transition: 0.3s;
+    user-select: none;
+  }
+  .dev-toggle-switch .slider:hover {
+    background: #aaa;
+  }
+  .dev-toggle-switch .slider::before {
+    content: '';
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .dev-toggle-switch input:checked + .slider {
+    background: var(--primary);
+  }
+  .dev-toggle-switch input:checked + .slider:hover {
+    background: var(--primary-dark);
+  }
+  .dev-toggle-switch input:checked + .slider::before {
+    transform: translateX(20px);
+  }
 
   </style>
 </head>
@@ -1869,6 +1949,13 @@ body::after {
         <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuImport"><i class="fas fa-file-import"></i> Import</a></li>
         <li style="margin-bottom:2.5px;"><a href="https://www.ucb.com.bd/rates/interest-rates/" target="_blank"><i class="fas fa-chart-line"></i> Interest Rates</a></li>
       </ul>
+      <div class="dev-toggle-wrapper">
+        <label for="devModeToggle"><i class="fas fa-code"></i> Developer</label>
+        <div class="dev-toggle-switch">
+          <input type="checkbox" id="devModeToggle">
+          <span class="slider"></span>
+        </div>
+      </div>
       <div style="padding:6px;border-top:1px solid var(--border-color); margin-top:4px; display:flex; justify-content:center;">
         <div class="developer-credit small footer-rgb" style="margin:0;"><span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span></div>
       </div>
@@ -8011,17 +8098,17 @@ body::after {
         presets: presets
       };
 
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const ts = new Date().toISOString().replace(/[:.]/g, '-');
-      const filename = `deposit_form_export_${ts}.json`;
-
+      // Export as JS file (tdrd_auto_import.js) — primary format
+      const jsContent = 'window.TDRD_AUTO_IMPORT_DATA = ' + JSON.stringify(payload, null, 2) + ';\n';
+      const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
+      a.href = URL.createObjectURL(jsBlob);
+      a.download = 'tdrd_auto_import.js';
       document.body.appendChild(a);
       a.click();
       a.remove();
-      showToast('Data exported: ' + filename);
+
+      showToast('Data exported: tdrd_auto_import.js');
     } catch (e) {
       console.error('Export failed', e);
       showToast('Export failed');
@@ -8073,6 +8160,54 @@ body::after {
     };
     reader.readAsText(file);
   }
+
+  // Auto-import JSON data from tdrd_auto_import.js (loaded via <script> tag, works with file://)
+  function autoImportJSON() {
+    if (typeof window.TDRD_AUTO_IMPORT_DATA === 'undefined') {
+      console.log('No tdrd_auto_import.js found — skipping auto-import.');
+      return;
+    }
+    try {
+      const obj = window.TDRD_AUTO_IMPORT_DATA;
+      const imported = obj && obj.form ? obj.form : obj;
+
+      // Apply form values
+      Object.keys(imported).forEach(key => {
+        const el = form.elements[key];
+        if (!el) return;
+        if (el.type === 'checkbox') {
+          el.checked = !!imported[key];
+        } else {
+          el.value = imported[key] == null ? '' : imported[key];
+        }
+      });
+
+      // If overlay positions present, store them
+      if (obj && obj.overlayPositions) {
+        try { localStorage.setItem(OVERLAY_KEY, JSON.stringify(obj.overlayPositions)); } catch (e) {}
+      }
+
+      // If presets present, store them
+      if (obj && obj.presets) {
+        try { localStorage.setItem(PRESETS_KEY, JSON.stringify(obj.presets)); } catch (e) {}
+      }
+
+      saveFormData();
+      renderOverlaysForCurrentType();
+      renderPresets();
+      updateProductDropdown();
+      updateProductDisplay();
+      updateFdrOverlayValues();
+      try { if (typeof updateMaturityTicks === 'function') updateMaturityTicks(); } catch (e) {}
+
+      console.log('Auto-imported data from tdrd_auto_import.js');
+    } catch (err) {
+      console.error('Auto-import error', err);
+    }
+  }
+
+  // Auto-import JSON data file from the same folder on every page load / refresh
+  autoImportJSON();
 
   // Wire up import/export buttons
   const slideMenuExportBtn = document.getElementById('slideMenuExport');
@@ -8404,6 +8539,47 @@ body::after {
       closeOthersPopup();
     }
   });
+
+  // Developer mode toggle — show/hide Import, Export, Information Input, Form Preview
+  const devModeToggle = document.getElementById('devModeToggle');
+  if (devModeToggle) {
+    try {
+      const savedDev = localStorage.getItem('TDRD_DEV_MODE');
+      if (savedDev === 'true') {
+        devModeToggle.checked = true;
+        document.body.classList.add('developer-mode');
+      } else {
+        devModeToggle.checked = false;
+        document.body.classList.remove('developer-mode');
+      }
+    } catch (e) {}
+    
+    devModeToggle.addEventListener('change', function(e) {
+      console.log('[DEV MODE] Toggle changed:', this.checked);
+      if (this.checked) {
+        document.body.classList.add('developer-mode');
+        console.log('[DEV MODE] Developer mode ON');
+      } else {
+        document.body.classList.remove('developer-mode');
+        console.log('[DEV MODE] Developer mode OFF');
+      }
+      try { 
+        localStorage.setItem('TDRD_DEV_MODE', this.checked ? 'true' : 'false'); 
+        console.log('[DEV MODE] Saved state:', this.checked ? 'true' : 'false');
+      } catch (e) {}
+    });
+    
+    const sliderEl = devModeToggle.nextElementSibling;
+    if (sliderEl && sliderEl.classList.contains('slider')) {
+      sliderEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('[DEV MODE] Slider clicked');
+        devModeToggle.checked = !devModeToggle.checked;
+        devModeToggle.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    }
+  }
 
 })();
   </script>

@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>RTGS/BEFTN Form Editor — Preview & Print</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg viewBox='0 0 24 24' fill='%236366f1'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-8-6z'/><path d='M9 12h6M9 16h6' stroke='white' stroke-width='1.5' stroke-linecap='round'/></svg>" />
+  <link rel="stylesheet" href="assets/font-awesome.min.css">
+  <link href="assets/poppins.css" rel="stylesheet">
   <style>
 /* Modern Design System v2 */
 :root {
@@ -33,8 +35,13 @@
   --radius-xs: 6px;
   --radius-sm: 8px;
   --radius: 12px;
+  --radius-md: 12px;
   --radius-lg: 16px;
   --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --card-bg: rgba(255, 255, 255, 0.98);
+  --bg-secondary: #f1f5f9;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -425,9 +432,374 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
   .site-footer .site-credit{ display:inline-block; padding:8px 14px; border-radius:999px; font-weight:600; background: linear-gradient(90deg, #5b21b6 0%, #7c3aed 12%, #ec4899 24%, #fb7185 36%, #f97316 48%, #f59e0b 60%, #06b6d4 72%, #0ea5a1 84%, #5b21b6 100%); background-size:300% 300%; -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; animation: rgbShift 6s linear infinite; text-align:center; font-size:0.8rem }
   @keyframes rgbShift{ 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
   @media (prefers-reduced-motion: reduce){ .site-footer .site-credit{ animation: none; } }
+  .developer-credit {
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .developer-credit.small {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 14px;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(139,92,246,0.06) 50%, rgba(236,72,153,0.05) 100%);
+    color: #0f172a;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+    border: 1px solid rgba(99,102,241,0.1);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-transform: none;
+  }
+  .footer-rgb .rgb-text {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: linear-gradient(90deg, #5b21b6 0%, #7c3aed 12%, #ec4899 24%, #fb7185 36%, #f97316 48%, #f59e0b 60%, #06b6d4 72%, #0ea5a1 84%, #5b21b6 100%);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: rgbShift 6s linear infinite;
+    text-align: center;
+  }
+  @media (max-width:520px){ .footer-rgb .rgb-text{ font-size:0.92rem } }
+  
+  /* Slide Menu & Developer Mode Styles */
+.slide-menu-toggle {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1001;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
+  border: none;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 14px 9px;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.slide-menu-toggle:hover {
+  padding-left: 14px;
+  background: linear-gradient(135deg, #4f46e5, #ec4899);
+}
+.slide-menu-toggle i {
+  font-size: 1.2rem;
+}
+
+.slide-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  z-index: 1002;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition-normal);
+}
+.slide-menu-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.slide-menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 252px;
+  max-width: 85vw;
+  background: var(--card-bg);
+  z-index: 1003;
+  box-shadow: var(--shadow-lg);
+  transform: translateX(-100%);
+  transition: var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+}
+.slide-menu.open {
+  transform: translateX(0);
+}
+.slide-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--primary);
+  color: white;
+}
+.slide-menu-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.slide-menu-close {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+.slide-menu-close:hover {
+  background: rgba(255,255,255,0.3);
+}
+.slide-menu-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+.slide-menu-nav {
+  list-style: none;
+}
+.slide-menu-nav li {
+  margin-bottom: 4px;
+}
+.slide-menu-nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition-fast);
+}
+.slide-menu-nav a:hover {
+  background: var(--bg-secondary);
+  color: #6366f1;
+}
+.slide-menu-nav a i {
+  width: 20px;
+  text-align: center;
+  color: #6366f1;
+}
+  
+  /* Developer Mode Toggle Styles */
+  .dev-toggle-wrapper {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .dev-toggle-wrapper label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dev-toggle-wrapper label i {
+    color: var(--primary);
+  }
+  .dev-toggle-switch {
+    position: relative;
+    width: 42px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  .dev-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .dev-toggle-switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #ccc;
+    border-radius: 22px;
+    transition: 0.3s;
+  }
+  .dev-toggle-switch .slider::before {
+    content: '';
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+  }
+  .dev-toggle-switch input:checked + .slider {
+    background: var(--primary);
+  }
+  .dev-toggle-switch input:checked + .slider::before {
+    transform: translateX(20px);
+  }
+  
+  /* Hide export, import, and preview buttons (when developer mode is OFF) */
+  body:not(.developer-mode) #export-data-btn,
+  body:not(.developer-mode) #import-data-btn,
+  body:not(.developer-mode) #preview-page-btn,
+  body:not(.developer-mode) #slideMenuExport,
+  body:not(.developer-mode) #slideMenuImport {
+    display: none !important;
+  }
+
+  /* Officer Seal Popup */
+  .officer-seal-popup-backdrop {
+    position:fixed; top:0; left:0; right:0; bottom:0;
+    background:rgba(15,23,42,0.6); backdrop-filter:blur(4px);
+    z-index:2000; opacity:0; visibility:hidden;
+    transition:opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .officer-seal-popup-backdrop.show { opacity:1; visibility:visible; }
+  .officer-seal-popup {
+    position:fixed; top:50%; left:50%;
+    transform:translate(-50%,-50%) scale(0.9);
+    background:var(--card-bg); border-radius:var(--radius-xl);
+    box-shadow:var(--shadow-lg); width:90%; max-width:500px;
+    overflow:hidden; z-index:2001; opacity:0; visibility:hidden;
+    transition:transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .officer-seal-popup-backdrop.show .officer-seal-popup { opacity:1; visibility:visible; transform:translate(-50%,-50%) scale(1); }
+  .officer-seal-popup-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 16px; background:linear-gradient(135deg,#059669 0%,#047857 100%); color:white;
+  }
+  .officer-seal-popup-header h3 { font-size:0.88rem; font-weight:600; display:flex; align-items:center; gap:8px; }
+  .officer-seal-popup-close {
+    background:rgba(255,255,255,0.2); border:none; color:white;
+    width:28px; height:28px; border-radius:50%; cursor:pointer; transition:var(--transition-fast);
+  }
+  .officer-seal-popup-close:hover { background:rgba(255,255,255,0.3); }
+  .officer-seal-popup-body { padding:18px; display:flex; flex-direction:column; gap:14px; }
+  .officer-seal-fields { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:14px; padding-bottom:14px; border-bottom:2px solid var(--border-color); }
+  .officer-seal-field { display:flex; flex-direction:column; gap:8px; }
+  .officer-seal-field label { font-weight:700; color:var(--primary); font-size:0.78rem; display:flex; align-items:center; gap:6px; }
+  .officer-seal-field textarea {
+    padding:10px 11px; border:2px solid var(--border-color); border-radius:6px;
+    font-size:0.70rem; font-family:inherit; resize:vertical; min-height:100px; line-height:1.3;
+    transition:var(--transition-fast);
+  }
+  .officer-seal-field textarea:focus { outline:none; border-color:#059669; box-shadow:0 0 0 3px rgba(5,150,105,0.15); }
+  .seal-controls-row { display:flex; align-items:center; gap:12px; }
+  .seal-controls-row label { font-weight:600; color:var(--text-secondary); font-size:0.82rem; white-space:nowrap; }
+  .seal-controls-row input[type=range] { flex:1; }
+  .seal-size-val { min-width:46px; font-size:0.82rem; color:var(--text-secondary); }
+  .seal-preview-section { text-align:center; }
+  .seal-preview-title { font-weight:700; color:var(--text-secondary); margin-bottom:10px; font-size:0.78rem; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .rtgs-seal-preview { display:flex; justify-content:center; gap:20px; margin-bottom:14px; flex-wrap:nowrap; }
+  .seal-item {
+    width:100px; height:100px; border:none; border-radius:0; display:flex; align-items:center; justify-content:center;
+    text-align:center; font-size:0.5rem; font-weight:800; color:#000; padding:8px;
+    word-break:break-word; background:rgba(0,0,0,0.02); line-height:1.2; overflow:hidden; position:relative;
+  }
+  .seal-item-text { position:relative; z-index:1; white-space:normal; word-break:break-word; }
+  .officer-seal-save-btn {
+    width:100%; padding:10px 16px; background:linear-gradient(135deg,#059669 0%,#047857 100%);
+    color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:600;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+    transition:var(--transition-fast);
+  }
+  .officer-seal-save-btn:hover { background:linear-gradient(135deg,#047857 0%,#065f46 100%); transform:translateY(-1px); }
+  @media print {
+    .overlay[data-field="officer1Seal"], .overlay[data-field="officer2Seal"] {
+      display:block !important; opacity:1 !important; visibility:visible !important;
+      -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;
+      background:rgba(0,0,0,0.02) !important; color:#000 !important;
+    }
+  }
   </style>
+  <!-- Auto-import: load saved form data from rtgs_auto_import.js (works with file:// protocol) -->
+  <script src="rtgs_auto_import.js"></script>
 </head>
 <body>
+  <!-- Left Slide Menu Toggle -->
+  <button class="slide-menu-toggle" id="slideMenuToggle" title="Open Menu"><i class="fas fa-bars"></i></button>
+  <!-- Slide Menu Backdrop -->
+  <div class="slide-menu-backdrop" id="slideMenuBackdrop"></div>
+  <!-- Slide Menu Panel -->
+  <div class="slide-menu" id="slideMenu">
+    <div class="slide-menu-header">
+      <h3><i class="fas fa-list"></i> Quick Navigation</h3>
+      <button class="slide-menu-close" id="slideMenuClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="slide-menu-body">
+      <div class="slide-quick-field" style="padding:5px 7px; border-bottom:1px solid var(--border-color);">
+        <label for="slideBranchInput" style="display:block; font-weight:600; color:var(--text-secondary); margin-bottom:3px; font-size:0.95rem;">Branch Name</label>
+        <input id="slideBranchInput" type="text" placeholder="Branch name" style="width:100%; padding:6px 8px; border-radius:4px; border:1px solid var(--border-color); font-size:0.95rem;">
+      </div>
+      <ul class="slide-menu-nav" style="padding:7px; display:flex; flex-direction:column; gap:5px;">
+        <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuOfficerSeal"><i class="fas fa-stamp"></i> Officer Seal</a></li>
+        <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuExport"><i class="fas fa-file-export"></i> Export</a></li>
+        <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuImport"><i class="fas fa-file-import"></i> Import</a></li>
+      </ul>
+      <div class="dev-toggle-wrapper">
+        <label for="devModeToggle"><i class="fas fa-code"></i> Developer</label>
+        <div class="dev-toggle-switch">
+          <input type="checkbox" id="devModeToggle">
+          <span class="slider"></span>
+        </div>
+      </div>
+      <div style="padding:6px;border-top:1px solid var(--border-color); margin-top:4px; display:flex; justify-content:center;">
+        <div class="developer-credit small footer-rgb" style="margin:0;"><span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Officer Seal Popup -->
+  <div class="officer-seal-popup-backdrop" id="officerSealBackdrop">
+    <div class="officer-seal-popup">
+      <div class="officer-seal-popup-header">
+        <h3><i class="fas fa-stamp"></i> Officer Seal</h3>
+        <button class="officer-seal-popup-close" id="officerSealClose"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="officer-seal-popup-body">
+        <div class="officer-seal-fields">
+          <div class="officer-seal-field">
+            <label for="rtgsOfficer1Name"><i class="fas fa-user-tie"></i> Officer 1 (shown 2× on page)</label>
+            <textarea id="rtgsOfficer1Name" rows="5" placeholder="Name&#10;Designation&#10;Bank Name&#10;Branch&#10;EID/Reference"></textarea>
+          </div>
+          <div class="officer-seal-field">
+            <label for="rtgsOfficer2Name"><i class="fas fa-user-tie"></i> Officer 2 (shown 1× on page)</label>
+            <textarea id="rtgsOfficer2Name" rows="5" placeholder="Name&#10;Designation&#10;Bank Name&#10;Branch&#10;EID/Reference"></textarea>
+          </div>
+        </div>
+        <div class="seal-controls-row">
+          <label for="rtgsOfficerSealSize">Seal Size</label>
+          <input id="rtgsOfficerSealSize" type="range" min="60" max="200" value="100" />
+          <span class="seal-size-val" id="rtgsOfficerSealSizeValue">100px</span>
+        </div>
+        <div class="seal-preview-section">
+          <div class="seal-preview-title"><i class="fas fa-eye"></i> Preview</div>
+          <div class="rtgs-seal-preview">
+            <div class="seal-item" id="rtgsSealPreview1"><div class="seal-item-text">Officer 1</div></div>
+            <div class="seal-item" id="rtgsSealPreview2"><div class="seal-item-text">Officer 2</div></div>
+          </div>
+        </div>
+        <button type="button" class="officer-seal-save-btn" id="rtgsSaveOfficerSealBtn"><i class="fas fa-save"></i> Save Officer Seals</button>
+      </div>
+    </div>
+  </div>
+
   <header>
     <h1>
       <svg style="display:inline-block;width:22px;height:22px;margin-right:8px;vertical-align:middle" viewBox="0 0 24 24" fill="white">
@@ -437,26 +809,9 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
       RTGS / BEFTN Form Editor
     </h1>
     <p>Manage sender &amp; receiver presets, generate print-ready RTGS &amp; BEFTN forms</p>
-    <div class="header-left-controls">
-      <button id="export-data-btn" class="ie-btn" title="Export Data">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M12 3v10" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M7 8l5 5 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M21 21H3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span>Export Data</span>
-      </button>
-      <button id="import-data-btn" class="ie-btn" title="Import Data">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M12 21V11" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M17 14l-5-5-5 5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M21 3H3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span>Import Data</span>
-      </button>
-      <input id="import-file" type="file" accept="application/json" style="display:none">
-    </div>
   </header>
+
+  <input id="import-file" type="file" accept="application/json" style="display:none">
 
   <main>
     <div class="two-col">
@@ -464,7 +819,7 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
         <h2>Quick Entry</h2>
   <div class="form-top-right"><button type="button" id="preview-page-btn" class="btn-float" style="font-size:0.76rem;padding:5px 10px;border-radius:6px"><svg style="display:inline;width:14px;height:14px;margin-right:4px;vertical-align:middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Preview</button></div>
         <form id="rtgs-form">
-          <div class="form-section">
+          <div class="form-section" style="display:none;">
             <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/></svg>Branch</div>
           <label>Name of Branch
             <input name="branchName" type="text" placeholder="Branch name">
@@ -678,6 +1033,10 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
             <div class="overlay tpl-beftn" data-field="tick3" style="top:200px;left:100px"></div>
             <div class="overlay tpl-beftn" data-field="tick4" style="top:250px;left:100px"></div>
             <div class="overlay tpl-beftn" data-field="tick5" style="top:300px;left:100px"></div>
+            <!-- Officer Seal overlays: seal 1 appears 2× (both RTGS and BEFTN), seal 2 appears 1× -->
+            <div class="overlay" data-field="officer1Seal" style="top:570px;left:40px"></div>
+            <div class="overlay" data-field="officer1Seal" style="top:570px;left:280px"></div>
+            <div class="overlay" data-field="officer2Seal" style="top:570px;left:540px"></div>
           </div>
 
           <div class="page active" data-page="2">
@@ -1147,6 +1506,34 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
         }catch(e){}
       });
     });
+    // Render officer seal overlays with stamp styling
+    try{
+      const _seals = (()=>{ try{ return JSON.parse(localStorage.getItem('rtgs_officer_seals_v1') || '{}'); }catch(e){ return {}; } })();
+      const _sealMap = { officer1Seal: 'officer1', officer2Seal: 'officer2' };
+      Object.keys(_sealMap).forEach(field => {
+        if(!overlays[field]) return;
+        const sealText = _seals[_sealMap[field]] || '';
+        const sealSize = parseInt(_seals.size || 100, 10) || 100;
+        overlays[field].forEach(el => {
+          if(sealText && sealText.trim()){
+            const w = Math.round(sealSize * 1.6);
+            el.style.width = w + 'px'; el.style.height = sealSize + 'px';
+            el.style.display = 'flex'; el.style.alignItems = 'center';
+            el.style.justifyContent = 'center'; el.style.textAlign = 'center';
+            el.style.fontSize = (0.65 * (sealSize / 100)) + 'rem';
+            el.style.fontWeight = '800'; el.style.color = '#000';
+            el.style.padding = Math.max(6, Math.round(sealSize * 0.06)) + 'px';
+            el.style.wordBreak = 'break-word'; el.style.background = 'rgba(0,0,0,0.02)';
+            el.style.lineHeight = '1.35'; el.style.whiteSpace = 'normal';
+            el.style.overflow = 'visible'; el.style.boxSizing = 'border-box';
+            el.innerHTML = sealText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+            el.classList.remove('overlay-empty');
+          }
+        });
+      });
+      // Expose so slide menu IIFE can trigger a refresh
+      window.rtgsRenderSealOverlays = function(){ try{ update(); }catch(e){} };
+    }catch(e){}
     // persist current form values to localStorage
     saveFormValues(values);
     // update right-side data panel inputs — pass the source of the change so
@@ -1438,6 +1825,7 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
       setTimeout(()=>{ try{ el.classList.remove('show'); }catch(e){} }, timeout);
     }catch(e){ console.warn('Toast failed', e); }
   }
+  window.showToast = showToast;
 
   // Numeric-only enforcement for specific fields (form inputs and quick-inputs)
   (function(){
@@ -1883,6 +2271,8 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
 
   function applySavedPositions(){
     console.log('Attempting to apply saved positions...'); // Added for debugging
+    // Re-read positions from localStorage every time so imported data is picked up
+    try{ positions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }catch(e){ positions = {}; }
     overlays.forEach(o=>{
       // Template-aware keys: prefer template-specific saved positions, but
       // fall back to legacy keys (without template) for backward compatibility.
@@ -1900,6 +2290,8 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
       }
     });
   }
+  // Expose globally so import can trigger position refresh
+  window.applySavedPositions = applySavedPositions;
   // Apply saved positions after images/layout have loaded. Some browsers (notably Edge with file://)
   // may finish layout after script runs, so attempt application on several hooks:
   // - window load
@@ -2138,7 +2530,8 @@ async function renderPagesToImage(pages){
       // If overlay has the 'overlay-empty' marker (placeholder shown in-editor), treat it as empty for printing
       try{ if(o.classList && o.classList.contains('overlay-empty')) return; }catch(e){}
       const field = o.dataset.field;
-      const rawText = (o.textContent || '').toString().trim();
+      const isSealField = (field === 'officer1Seal' || field === 'officer2Seal');
+      const rawText = isSealField ? (o.innerText || o.textContent || '').toString().trim() : (o.textContent || '').toString().trim();
       if(!rawText) return;
       // compute position: overlay.style.left/top are percentages if saved, otherwise computed from CSS
       const leftStr = o.style.left || getComputedStyle(o).left || '0px';
@@ -2247,6 +2640,30 @@ async function renderPagesToImage(pages){
           }
           return;
         }
+      }
+      // Officer seal fields: draw each line separately on canvas
+      if(isSealField){
+        try{
+          const savedSeals = JSON.parse(localStorage.getItem('rtgs_officer_seals_v1') || '{}');
+          const sealKey = field.replace('Seal',''); // officer1 or officer2
+          const sealText = savedSeals[sealKey] || rawText;
+          const sealSize = parseInt(savedSeals.size || 100, 10) || 100;
+          const sealFontSize = Math.round(cw * 0.009 * (sealSize / 100));
+          ctx.font = '800 ' + sealFontSize + 'px sans-serif';
+          ctx.fillStyle = '#000000';
+          ctx.textBaseline = 'top';
+          ctx.textAlign = 'center';
+          const lines = sealText.split('\n').map(l => l.trim().toUpperCase());
+          const lineHeight = Math.round(sealFontSize * 1.15);
+          // Calculate horizontal center of the seal area (assume seal width ~1.6x height)
+          const sealWidth = Math.round(sealSize * 1.6);
+          const centerX = left + (sealWidth / 2);
+          for(let li = 0; li < lines.length; li++){
+            if(lines[li]) ctx.fillText(lines[li], centerX, top + (li * lineHeight));
+          }
+        }catch(e){ ctx.fillText(txt, left, top); }
+        ctx.shadowColor = 'transparent';
+        return;
       }
       // draw text (transparent background by request)
       // optional small black shadow for contrast
@@ -2457,6 +2874,21 @@ function fallbackPrintHTML(pages){
     displayText = displayText.split('').join(' ');
     extraStyle = `letter-spacing:${CONFIG.CIF_LETTER_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
     pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+  } else if (o.dataset && (o.dataset.field === 'officer1Seal' || o.dataset.field === 'officer2Seal')){
+    // Officer seal: read from localStorage for proper multi-line breaks
+    try{
+      const savedSeals = JSON.parse(localStorage.getItem('rtgs_officer_seals_v1') || '{}');
+      const sealKey = o.dataset.field.replace('Seal','');
+      const sealText = (savedSeals[sealKey] || '').trim().toUpperCase();
+      if(sealText){
+        const sealSize = parseInt(savedSeals.size || 100, 10) || 100;
+        const sealFontSize = Math.max(8, Math.round(0.50 * (sealSize / 100) * 16));
+        const sealHtml = sealText.split('\n').map(l => escapeHtml(l.trim())).filter(Boolean).join('<br>');
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-weight:800;text-align:center;white-space:normal;line-height:1.15;font-size:${sealFontSize}px;">${sealHtml}</div>`;
+      }
+    }catch(e){
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-weight:800;text-align:center;">${escapeHtml(displayText)}</div>`;
+    }
   } else {
     // Special-case: split long inWords into two lines for printable HTML
       if((o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')) && displayText.length > 60){
@@ -2578,6 +3010,21 @@ function fallbackPrintToIframe(pages, template){
         displayText = displayText.split('').join(' ');
         extraStyle = `letter-spacing:${CONFIG.CIF_LETTER_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
         pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+      } else if (o.dataset && (o.dataset.field === 'officer1Seal' || o.dataset.field === 'officer2Seal')){
+        // Officer seal: read from localStorage for proper multi-line breaks
+        try{
+          const savedSeals = JSON.parse(localStorage.getItem('rtgs_officer_seals_v1') || '{}');
+          const sealKey = o.dataset.field.replace('Seal','');
+          const sealText = (savedSeals[sealKey] || '').trim().toUpperCase();
+          if(sealText){
+            const sealSize = parseInt(savedSeals.size || 100, 10) || 100;
+            const sealFontSize = Math.max(8, Math.round(0.50 * (sealSize / 100) * 16));
+            const sealHtml = sealText.split('\n').map(l => escapeHtml(l.trim())).filter(Boolean).join('<br>');
+            pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-weight:800;text-align:center;white-space:normal;line-height:1.15;font-size:${sealFontSize}px;">${sealHtml}</div>`;
+          }
+        }catch(e){
+          pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-weight:800;text-align:center;">${escapeHtml(displayText)}</div>`;
+        }
       } else {
         if((o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')) && displayText.length > 60){
           const mid = Math.floor(displayText.length/2);
@@ -2728,6 +3175,21 @@ function openPreviewWindow(pages){
     displayText = displayText.split('').join(' ');
     extraStyle = `letter-spacing:${CONFIG.CIF_LETTER_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
     pageHtml += `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtml(displayText)}</div>`;
+  } else if (o.dataset && (o.dataset.field === 'officer1Seal' || o.dataset.field === 'officer2Seal')){
+    // Officer seal: read from localStorage for proper multi-line breaks
+    try{
+      const savedSeals = JSON.parse(localStorage.getItem('rtgs_officer_seals_v1') || '{}');
+      const sealKey = o.dataset.field.replace('Seal','');
+      const sealText = (savedSeals[sealKey] || '').trim().toUpperCase();
+      if(sealText){
+        const sealSize = parseInt(savedSeals.size || 100, 10) || 100;
+        const sealFontSize = Math.max(8, Math.round(0.50 * (sealSize / 100) * 16));
+        const sealHtml = sealText.split('\n').map(l => escapeHtml(l.trim())).filter(Boolean).join('<br>');
+        pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-weight:800;text-align:center;white-space:normal;line-height:1.15;font-size:${sealFontSize}px;">${sealHtml}</div>`;
+      }
+    }catch(e){
+      pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-weight:800;text-align:center;">${escapeHtml(displayText)}</div>`;
+    }
   } else {
     // Special-case: split long inWords into two lines for preview
     if((o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')) && displayText.length > 60){
@@ -2784,21 +3246,25 @@ function openPreviewWindow(pages){
   function exportData(){
     try{
       const payload = {
-        meta: { exportedAt: new Date().toISOString(), app: 'RTGS/BEFTN Form Editor', version: 1 },
+        exportedAt: new Date().toISOString(),
         formValues: gatherFormValues(),
         positions: JSON.parse(localStorage.getItem('rtgs_positions_v1') || '{}'),
         senders: JSON.parse(localStorage.getItem('rtgs_senders_v1') || '[]'),
         receivers: JSON.parse(localStorage.getItem('rtgs_receivers_v1') || '[]')
       };
-      const text = JSON.stringify(payload, null, 2);
-      const blob = new Blob([text], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
+
+      // Export as JS file in rtgs_auto_import.js format
+      const jsContent = 'window.RTGS_AUTO_IMPORT_DATA = ' + JSON.stringify(payload, null, 2) + ';\n';
+      const jsBlob = new Blob([jsContent], { type: 'application/javascript' });
       const a = document.createElement('a');
-      const ts = new Date().toISOString().replace(/[:.]/g,'-');
-      a.href = url; a.download = `rtgs_beftn_export_${ts}.json`;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(()=> URL.revokeObjectURL(url), 3000);
-    }catch(e){ console.error('Export failed', e); alert('Export failed: ' + (e && e.message)); }
+      a.href = URL.createObjectURL(jsBlob);
+      a.download = 'rtgs_auto_import.js';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      showToast('Data exported: rtgs_auto_import.js');
+    }catch(e){ console.error('Export failed', e); showToast('Export failed'); }
   }
 
   function importFile(file){
@@ -2806,9 +3272,26 @@ function openPreviewWindow(pages){
     const reader = new FileReader();
     reader.onload = ()=>{
       try{
-        const obj = JSON.parse(String(reader.result || '{}'));
+        let obj;
+        const content = String(reader.result || '{}');
+        
+        // Handle both JS and JSON formats
+        if(file.name.endsWith('.js')){
+          // Extract data from window.RTGS_AUTO_IMPORT_DATA = {...}; format
+          const match = content.match(/window\.RTGS_AUTO_IMPORT_DATA\s*=\s*({[\s\S]*});/);
+          if(match && match[1]){
+            obj = JSON.parse(match[1]);
+          } else {
+            throw new Error('Invalid JS file format');
+          }
+        } else {
+          // Parse as JSON
+          obj = JSON.parse(content);
+        }
+        
         // basic validation
         if(!obj || typeof obj !== 'object'){ throw new Error('Invalid file format'); }
+        
         // Merge positions instead of overwriting to avoid removing existing saved positions
         try{
           if(obj.positions){
@@ -2868,12 +3351,88 @@ function openPreviewWindow(pages){
         }
         // Refresh UI to reflect merged presets and updated form values. Do not remove existing saved data.
         try{ renderSendersList(); renderReceiversList(); populateEntryDropdowns(); update(); }catch(e){}
-        alert('Import complete. Saved data merged and applied.');
-      }catch(err){ console.error('Import failed', err); alert('Import failed: ' + (err && err.message)); }
+        // Re-apply overlay positions so imported positions are reflected immediately
+        try{ if(typeof window.applySavedPositions === 'function') window.applySavedPositions(); }catch(e){}
+        showToast('Data imported successfully');
+      }catch(err){ console.error('Import failed', err); showToast('Import failed: invalid file'); }
     };
-    reader.onerror = ()=>{ alert('Failed to read file'); };
+    reader.onerror = ()=>{ showToast('Failed to read file'); };
     reader.readAsText(file);
   }
+
+  // Auto-import JSON data from rtgs_auto_import.js (loaded via <script> tag, works with file://)
+  function autoImportJSON(){
+    if(typeof window.RTGS_AUTO_IMPORT_DATA === 'undefined'){
+      console.log('No rtgs_auto_import.js found — skipping auto-import.');
+      return;
+    }
+    try{
+      const obj = window.RTGS_AUTO_IMPORT_DATA;
+      if(!obj || typeof obj !== 'object') return;
+      // Merge positions
+      try{
+        if(obj.positions){
+          const existingPos = JSON.parse(localStorage.getItem('rtgs_positions_v1') || '{}');
+          Object.keys(obj.positions).forEach(k=>{ existingPos[k] = obj.positions[k]; });
+          localStorage.setItem('rtgs_positions_v1', JSON.stringify(existingPos));
+        }
+      }catch(e){ console.warn('Auto-import: failed to merge positions', e); }
+      // Merge sender presets
+      try{
+        if(Array.isArray(obj.senders)){
+          const existing = loadList(SENDERS_LIST_KEY) || [];
+          obj.senders.forEach(it => {
+            try{
+              const acc = it && it.data && (it.data.accountNumber || '');
+              const found = existing.find(e => (it.id && e.id === it.id) || (acc && e.data && e.data.accountNumber === acc));
+              if(found){
+                found.data = Object.assign({}, found.data || {}, it.data || {});
+                found.name = it.name || found.name;
+              } else {
+                if(!it.id) it.id = makeId();
+                existing.push(it);
+              }
+            }catch(err){}
+          });
+          saveList(SENDERS_LIST_KEY, existing);
+        }
+      }catch(e){ console.warn('Auto-import: failed to merge senders', e); }
+      // Merge receiver presets
+      try{
+        if(Array.isArray(obj.receivers)){
+          const existing = loadList(RECEIVERS_LIST_KEY) || [];
+          obj.receivers.forEach(it => {
+            try{
+              const acc = it && it.data && (it.data.recvAccount || '');
+              const found = existing.find(e => (it.id && e.id === it.id) || (acc && e.data && e.data.recvAccount === acc));
+              if(found){
+                found.data = Object.assign({}, found.data || {}, it.data || {});
+                found.name = it.name || found.name;
+              } else {
+                if(!it.id) it.id = makeId();
+                existing.push(it);
+              }
+            }catch(err){}
+          });
+          saveList(RECEIVERS_LIST_KEY, existing);
+        }
+      }catch(e){ console.warn('Auto-import: failed to merge receivers', e); }
+      // Apply form values
+      if(obj.formValues){
+        const form = document.getElementById('rtgs-form');
+        if(form){ Object.keys(obj.formValues).forEach(k=>{ try{ if(form.elements[k]) form.elements[k].value = obj.formValues[k]; }catch(e){} }); }
+      }
+      // Refresh UI
+      try{ renderSendersList(); renderReceiversList(); populateEntryDropdowns(); update(); }catch(e){}
+      try{ if(typeof window.applySavedPositions === 'function') window.applySavedPositions(); }catch(e){}
+      console.log('Auto-imported data from rtgs_auto_import.js');
+    }catch(err){
+      console.error('Auto-import error', err);
+    }
+  }
+
+  // Run auto-import on load
+  autoImportJSON();
 
   if(exportBtn) exportBtn.addEventListener('click', exportData);
   if(importBtn && fileInput){
@@ -2885,6 +3444,207 @@ function openPreviewWindow(pages){
       try{ fileInput.value = ''; }catch(e){}
     });
   }
+
+  /* ============= SLIDE MENU & DEVELOPER MODE ============= */
+
+  // Slide Menu Functionality
+  const slideMenuToggle = document.getElementById('slideMenuToggle');
+  const slideMenu = document.getElementById('slideMenu');
+  const slideMenuBackdrop = document.getElementById('slideMenuBackdrop');
+  const slideMenuClose = document.getElementById('slideMenuClose');
+
+  function openSlideMenu() {
+    slideMenu.classList.add('open');
+    slideMenuBackdrop.classList.add('show');
+  }
+
+  function closeSlideMenu() {
+    slideMenu.classList.remove('open');
+    slideMenuBackdrop.classList.remove('show');
+  }
+
+  if (slideMenuToggle) slideMenuToggle.addEventListener('click', openSlideMenu);
+  if (slideMenuClose) slideMenuClose.addEventListener('click', closeSlideMenu);
+  if (slideMenuBackdrop) slideMenuBackdrop.addEventListener('click', closeSlideMenu);
+
+  // Branch Name Sync between Slide Menu and Form (with localStorage persistence)
+  const BRANCH_NAME_KEY = 'rtgs_branchName_v1';
+  const slideBranchInput = document.getElementById('slideBranchInput');
+  const formBranchInput = document.querySelector('input[name="branchName"]');
+
+  function saveBranchName(value) {
+    try {
+      localStorage.setItem(BRANCH_NAME_KEY, value);
+    } catch (e) {
+      console.warn('Failed to save branch name', e);
+    }
+  }
+
+  function loadBranchName() {
+    try {
+      return localStorage.getItem(BRANCH_NAME_KEY) || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  if (slideBranchInput && formBranchInput) {
+    // Load saved branch name from localStorage on page load
+    const savedBranchName = loadBranchName();
+    if (savedBranchName) {
+      slideBranchInput.value = savedBranchName;
+      formBranchInput.value = savedBranchName;
+      if (typeof update === 'function') update();
+    }
+
+    // Sync from slide menu to form
+    slideBranchInput.addEventListener('input', (e) => {
+      formBranchInput.value = e.target.value;
+      saveBranchName(e.target.value);
+      // Trigger update to refresh overlays
+      if (typeof update === 'function') update();
+    });
+
+    // Sync from form to slide menu
+    formBranchInput.addEventListener('input', (e) => {
+      slideBranchInput.value = e.target.value;
+      saveBranchName(e.target.value);
+    });
+
+    // Load initial value from form to slide menu if form already has value
+    if (formBranchInput.value && !savedBranchName) {
+      slideBranchInput.value = formBranchInput.value;
+      saveBranchName(formBranchInput.value);
+    }
+  }
+
+  // Slide Menu Export/Import Buttons
+  const slideMenuExportBtn = document.getElementById('slideMenuExport');
+  const slideMenuImportBtn = document.getElementById('slideMenuImport');
+
+  if (slideMenuExportBtn) {
+    slideMenuExportBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      exportData();
+      closeSlideMenu();
+    });
+  }
+
+  if (slideMenuImportBtn) {
+    slideMenuImportBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (fileInput) fileInput.click();
+      closeSlideMenu();
+    });
+  }
+
+  // Navigation links in slide menu (menu stays open)
+
+  // Developer Mode Toggle
+  const devModeToggle = document.getElementById('devModeToggle');
+  if (devModeToggle) {
+    // Restore saved state
+    try {
+      const savedDev = localStorage.getItem('RTGS_DEV_MODE');
+      if (savedDev === 'true') {
+        devModeToggle.checked = true;
+        document.body.classList.add('developer-mode');
+      }
+    } catch (e) {}
+
+    // Make the slider span clickable (since input is hidden)
+    const sliderEl = devModeToggle.nextElementSibling;
+    if (sliderEl && sliderEl.classList.contains('slider')) {
+      sliderEl.addEventListener('click', (e) => {
+        e.preventDefault();
+        devModeToggle.checked = !devModeToggle.checked;
+        devModeToggle.dispatchEvent(new Event('change'));
+      });
+    }
+
+    // Handle checkbox change event
+    devModeToggle.addEventListener('change', () => {
+      if (devModeToggle.checked) {
+        document.body.classList.add('developer-mode');
+      } else {
+        document.body.classList.remove('developer-mode');
+      }
+      try { localStorage.setItem('RTGS_DEV_MODE', devModeToggle.checked); } catch (e) {}
+    });
+  }
+
+  // Officer Seal Popup
+  const officerSealBackdrop = document.getElementById('officerSealBackdrop');
+  const officerSealClose = document.getElementById('officerSealClose');
+  const slideMenuOfficerSeal = document.getElementById('slideMenuOfficerSeal');
+  const rtgsOfficer1Input = document.getElementById('rtgsOfficer1Name');
+  const rtgsOfficer2Input = document.getElementById('rtgsOfficer2Name');
+  const rtgsSealPreview1 = document.getElementById('rtgsSealPreview1');
+  const rtgsSealPreview2 = document.getElementById('rtgsSealPreview2');
+  const rtgsSaveOfficerSealBtn = document.getElementById('rtgsSaveOfficerSealBtn');
+  const rtgsSealSizeInput = document.getElementById('rtgsOfficerSealSize');
+  const rtgsSealSizeValue = document.getElementById('rtgsOfficerSealSizeValue');
+  const RTGS_OFFICER_SEALS_KEY = 'rtgs_officer_seals_v1';
+
+  function openOfficerSealPopup() {
+    const saved = JSON.parse(localStorage.getItem(RTGS_OFFICER_SEALS_KEY) || '{}');
+    if (rtgsOfficer1Input) rtgsOfficer1Input.value = saved.officer1 || '';
+    if (rtgsOfficer2Input) rtgsOfficer2Input.value = saved.officer2 || '';
+    const sz = parseInt(saved.size || 100, 10) || 100;
+    if (rtgsSealSizeInput) rtgsSealSizeInput.value = sz;
+    if (rtgsSealSizeValue) rtgsSealSizeValue.textContent = sz + 'px';
+    rtgsUpdateSealPreviews();
+    if (officerSealBackdrop) officerSealBackdrop.classList.add('show');
+  }
+  function closeOfficerSealPopup() {
+    if (officerSealBackdrop) officerSealBackdrop.classList.remove('show');
+  }
+  function rtgsUpdateSealPreviews() {
+    const text1 = rtgsOfficer1Input ? (rtgsOfficer1Input.value || 'Officer 1') : 'Officer 1';
+    const text2 = rtgsOfficer2Input ? (rtgsOfficer2Input.value || 'Officer 2') : 'Officer 2';
+    const sz = rtgsSealSizeInput ? parseInt(rtgsSealSizeInput.value || 100, 10) : 100;
+    const w = Math.round(sz * 1.6);
+    const fs = 0.65 * (sz / 100);
+    [{ el: rtgsSealPreview1, text: text1 }, { el: rtgsSealPreview2, text: text2 }].forEach(({ el, text }) => {
+      if (!el) return;
+      const t = el.querySelector('.seal-item-text');
+      if (t) t.innerHTML = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+      el.style.width = w + 'px'; el.style.height = sz + 'px';
+      el.style.fontSize = fs + 'rem';
+      el.style.padding = Math.max(6, Math.round(sz * 0.06)) + 'px';
+    });
+    if (rtgsSealSizeValue) rtgsSealSizeValue.textContent = sz + 'px';
+  }
+  function saveOfficerSeals() {
+    const seals = {
+      officer1: rtgsOfficer1Input ? rtgsOfficer1Input.value : '',
+      officer2: rtgsOfficer2Input ? rtgsOfficer2Input.value : '',
+      size: rtgsSealSizeInput ? parseInt(rtgsSealSizeInput.value || 100, 10) : 100
+    };
+    localStorage.setItem(RTGS_OFFICER_SEALS_KEY, JSON.stringify(seals));
+    showToast('Officer seals saved!');
+    closeOfficerSealPopup();
+    try { if (typeof window.rtgsRenderSealOverlays === 'function') window.rtgsRenderSealOverlays(); } catch (e) {}
+  }
+
+  if (slideMenuOfficerSeal) {
+    slideMenuOfficerSeal.addEventListener('click', (e) => {
+      e.preventDefault();
+      openOfficerSealPopup();
+      closeSlideMenu();
+    });
+  }
+  if (officerSealClose) officerSealClose.addEventListener('click', closeOfficerSealPopup);
+  if (officerSealBackdrop) {
+    officerSealBackdrop.addEventListener('click', (e) => {
+      if (e.target === officerSealBackdrop) closeOfficerSealPopup();
+    });
+  }
+  if (rtgsOfficer1Input) rtgsOfficer1Input.addEventListener('input', rtgsUpdateSealPreviews);
+  if (rtgsOfficer2Input) rtgsOfficer2Input.addEventListener('input', rtgsUpdateSealPreviews);
+  if (rtgsSealSizeInput) rtgsSealSizeInput.addEventListener('input', rtgsUpdateSealPreviews);
+  if (rtgsSaveOfficerSealBtn) rtgsSaveOfficerSealBtn.addEventListener('click', saveOfficerSeals);
+
 })();
   </script>
   <footer class="site-footer">
