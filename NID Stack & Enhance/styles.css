@@ -563,3 +563,179 @@ canvas {
   50%{transform:scale(1.02); box-shadow:0 8px 20px rgba(3,102,214,0.08)}
   100%{transform:scale(1); box-shadow:0 0 0 rgba(0,0,0,0)}
 }
+/* ===================== Animated Empty-State Placeholders ===================== */
+
+/* Canvas placeholder (Combined Preview & Adjusted Preview) */
+.canvas-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 200px;
+  width: 100%;
+  padding: 36px 20px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: linear-gradient(135deg,
+    rgba(99,102,241,0.05) 0%,
+    rgba(236,72,153,0.05) 100%);
+  animation: phFadeIn 0.5s ease both;
+}
+
+.canvas-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 25%,
+    rgba(255,255,255,0.55) 50%,
+    transparent 75%
+  );
+  background-size: 250% 100%;
+  animation: phShimmer 2.8s linear infinite;
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+/* Floating glow ring around icon */
+.placeholder-glow-ring {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  animation: phPulse 2.2s ease-in-out infinite, phFloat 3.2s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.placeholder-glow-ring i {
+  font-size: 1.9rem;
+  color: #fff;
+}
+
+/* Text block */
+.placeholder-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 1;
+  text-align: center;
+}
+
+.placeholder-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.placeholder-sub {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+/* Bouncing dots row */
+.placeholder-dots {
+  display: flex;
+  gap: 8px;
+  z-index: 1;
+}
+
+.placeholder-dots span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  animation: phDotBounce 1.5s ease-in-out infinite;
+}
+
+.placeholder-dots span:nth-child(1) { animation-delay: 0s; }
+.placeholder-dots span:nth-child(2) { animation-delay: 0.22s; }
+.placeholder-dots span:nth-child(3) { animation-delay: 0.44s; }
+
+/* Thumb placeholder (Image 1 preview & Image 2 preview) */
+.thumb-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  height: 120px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg,
+    rgba(99,102,241,0.07) 0%,
+    rgba(236,72,153,0.07) 100%);
+  border-radius: 8px 8px 0 0;
+}
+
+.thumb-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 25%,
+    rgba(255,255,255,0.6) 50%,
+    transparent 75%
+  );
+  background-size: 250% 100%;
+  animation: phShimmer 2.2s linear infinite;
+  pointer-events: none;
+}
+
+.thumb-placeholder i {
+  font-size: 2.1rem;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: phFloat 3.4s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+.thumb-placeholder span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  position: relative;
+  z-index: 1;
+  letter-spacing: 0.01em;
+}
+
+/* Shared keyframes */
+@keyframes phFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+@keyframes phShimmer {
+  0%   { background-position: 250% 0; }
+  100% { background-position: -250% 0; }
+}
+
+@keyframes phPulse {
+  0%   { box-shadow: 0 0 0 0   rgba(99,102,241,0.55); }
+  55%  { box-shadow: 0 0 0 18px rgba(99,102,241,0);   }
+  100% { box-shadow: 0 0 0 0   rgba(99,102,241,0);    }
+}
+
+@keyframes phFloat {
+  0%,100% { transform: translateY(0);    }
+  50%     { transform: translateY(-7px); }
+}
+
+@keyframes phDotBounce {
+  0%,80%,100% { transform: scale(0.55); opacity: 0.35; }
+  40%         { transform: scale(1.25); opacity: 1;    }
+}

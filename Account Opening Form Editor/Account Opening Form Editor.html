@@ -1889,6 +1889,36 @@ body::after {
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
 }
 
+.preset-btn.export {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.preset-btn.export:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.presets-import-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-normal);
+  position: relative;
+}
+
+.presets-import-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 /* Overlay for panel backdrop - Enhanced */
 .panel-backdrop {
   position: fixed;
@@ -4201,6 +4231,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   <div class="presets-panel" id="presetsPanel">
     <div class="presets-header">
       <h3><i class="fas fa-folder-open"></i> Saved Presets</h3>
+      <button class="presets-import-btn" id="presetsImportBtn" title="Import Preset"><i class="fas fa-file-import"></i> Import</button>
       <button class="presets-close" id="closePresetsBtn"><i class="fas fa-times"></i></button>
     </div>
     <div class="presets-list" id="presetsList">
@@ -4212,6 +4243,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   <div class="toast" id="toast"></div>
   <!-- Hidden file input for importing JSON data -->
   <input type="file" id="importFileInput" accept=".js,.json,application/json,text/javascript" style="display:none">
+  <!-- Hidden file input for importing preset JSON -->
+  <input type="file" id="presetImportInput" accept=".json,application/json" style="display:none">
 
   <script>
 (function() {
@@ -7143,14 +7176,66 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         <div class="preset-actions">
           <button class="preset-btn load" onclick="window.loadPreset(${preset.id})"><i class="fas fa-upload"></i> Load</button>
           <button class="preset-btn delete" onclick="window.deletePreset(${preset.id})"><i class="fas fa-trash"></i> Delete</button>
+          <button class="preset-btn export" onclick="window.exportPreset(${preset.id})"><i class="fas fa-file-export"></i> Export</button>
         </div>
       </div>
     `).join('');
   }
 
+  function exportPreset(id) {
+    const presets = loadPresets();
+    const preset = presets.find(p => p.id === id);
+    if (!preset) return;
+    const exportData = { name: preset.name, date: preset.date, data: preset.data };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (preset.name || 'preset').replace(/[^a-z0-9]/gi, '_') + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Preset exported: ' + preset.name);
+  }
+
   // Expose functions globally
   window.loadPreset = loadPreset;
   window.deletePreset = deletePreset;
+  window.exportPreset = exportPreset;
+
+  // Preset import wiring
+  const presetImportInput = document.getElementById('presetImportInput');
+  const presetsImportBtn = document.getElementById('presetsImportBtn');
+  if (presetsImportBtn) presetsImportBtn.addEventListener('click', () => presetImportInput && presetImportInput.click());
+  if (presetImportInput) {
+    presetImportInput.addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importData = JSON.parse(e.target.result);
+          if (!importData.data) { showToast('Invalid preset file'); return; }
+          const presets = loadPresets();
+          const newPreset = {
+            id: Date.now(),
+            name: importData.name || 'Imported Preset',
+            date: importData.date || new Date().toLocaleDateString(),
+            data: importData.data
+          };
+          presets.push(newPreset);
+          localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
+          renderPresets();
+          showToast('Preset imported: ' + newPreset.name);
+        } catch (err) {
+          showToast('Failed to import preset');
+        }
+      };
+      reader.readAsText(file);
+      this.value = '';
+    });
+  }
 
   function openPresetsPanel() {
     renderPresets();

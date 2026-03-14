@@ -74,7 +74,7 @@
         }
         
         body > main,
-        body > div:not(#welcomeScreen) {
+        body > div:not(#welcomeScreen):not(#interest-modal):not(#select-options-modal):not(#chatSettingsModal):not(#chatApiKeyInputModal):not(#chatPopup):not(#chatFab) {
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
@@ -712,6 +712,58 @@
             }
         }
 
+        /* ─── MacBook Window Popup Animations ─── */
+        @keyframes macWindowOpen {
+            0%   { opacity: 0; transform: scale(0.70) translateY(28px); filter: blur(4px); }
+            55%  { opacity: 1; transform: scale(1.045) translateY(-5px); filter: blur(0); }
+            78%  { transform: scale(0.978) translateY(2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes macWindowClose {
+            0%   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+            30%  { transform: scale(1.025) translateY(-4px); }
+            100% { opacity: 0; transform: scale(0.70) translateY(24px); filter: blur(4px); }
+        }
+        @keyframes macBackdropIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes macBackdropOut {
+            from { opacity: 1; }
+            to   { opacity: 0; }
+        }
+        .mac-modal-backdrop {
+            transition: none;
+        }
+        .mac-modal-backdrop.mac-bd-opening {
+            animation: macBackdropIn 0.38s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        .mac-modal-backdrop.mac-bd-closing {
+            animation: macBackdropOut 0.30s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        .mac-modal-inner {
+            transform-origin: center center;
+        }
+        .mac-modal-inner.mac-win-opening {
+            animation: macWindowOpen 0.52s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .mac-modal-inner.mac-win-closing {
+            animation: macWindowClose 0.30s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* ─── Chat popup MacBook animation ─── */
+        @keyframes chatMacOpen {
+            0%   { opacity: 0; transform: scale(0.70) translateY(30px) translateX(10px); filter: blur(4px); }
+            55%  { opacity: 1; transform: scale(1.04) translateY(-5px) translateX(0); filter: blur(0); }
+            78%  { transform: scale(0.978) translateY(2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0) translateX(0); }
+        }
+        @keyframes chatMacClose {
+            0%   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+            28%  { transform: scale(1.025) translateY(-4px); }
+            100% { opacity: 0; transform: scale(0.70) translateY(28px); filter: blur(4px); }
+        }
+
         /* Utility Button Hover Effects */
         .utility-btn:hover {
             transform: translateY(-4px) scale(1.02);
@@ -994,7 +1046,7 @@
             background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899, #f472b6);
             background-size: 300% 100%;
             border-radius: 20px;
-            animation: loadingProgress 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards, shimmerBar 1.2s linear infinite;
+            animation: loadingProgress 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards, shimmerBarLoad 1.2s linear infinite;
             box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
         }
 
@@ -1003,7 +1055,7 @@
             to { width: 100%; }
         }
 
-        @keyframes shimmerBar {
+        @keyframes shimmerBarLoad {
             0% { background-position: 0% 50%; }
             100% { background-position: 200% 50%; }
         }
@@ -1334,11 +1386,11 @@
                         </div>
                         <div class="app-card" id="app-expense">
                             <i class="app-icon fas fa-layer-group"></i>
-                            <div class="app-title">Expense</div>
+                            <div class="app-title">Expense Tracker</div>
                             <div class="app-description">
-                                Expense tracker with detailed reports.
+                                Track and analyze your expenses with detailed reports.
                             </div>
-                            <button class="open-btn" onclick="window.open('Expense/Expense.html', '_blank')">
+                            <button class="open-btn" onclick="window.open('Expense Tracker/Expense Tracker.html', '_blank')">
                                 <i class="fas fa-external-link-alt"></i>
                                 Open App
                             </button>
@@ -1459,11 +1511,11 @@
                         </div>
                         <div class="app-card" id="app-secure-vault">
                             <i class="app-icon fas fa-vault"></i>
-                            <div class="app-title">Secure Vault</div>
+                            <div class="app-title">Password Manager</div>
                             <div class="app-description">
                                 Local, encrypted password manager for your sensitive data.
                             </div>
-                            <button class="open-btn" onclick="window.open('Secure Vault/Secure Vault.html', '_blank')">
+                            <button class="open-btn" onclick="window.open('Password Manager/Password Manager.html', '_blank')">
                                 <i class="fas fa-external-link-alt"></i>
                                 Open App
                             </button>
@@ -1519,8 +1571,8 @@
     <input type="file" id="fileInput" style="display: none" accept=".json">
 
     <!-- Interest Calculator Modal -->
-    <div id="interest-modal" style="display:none; position:fixed; inset:0; background:rgba(30, 27, 75, 0.6); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); align-items:center; justify-content:center; z-index:9999;" onclick="closeModalOnBackdropClick(event, 'interest-modal')">
-    <div style="background:rgba(255,255,255,0.98); width:720px; max-width:96%; margin:auto; border-radius:20px; padding:20px; box-shadow:0 24px 60px rgba(124, 58, 237, 0.2); border: 1px solid rgba(124, 58, 237, 0.1);" onclick="event.stopPropagation()">
+    <div id="interest-modal" class="mac-modal-backdrop" style="display:none; position:fixed; inset:0; background:transparent; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); align-items:center; justify-content:center; z-index:9999;">
+    <div id="interest-modal-inner" class="mac-modal-inner" style="background:rgba(255,255,255,0.98); width:720px; max-width:96%; margin:auto; border-radius:20px; padding:20px; box-shadow:0 24px 60px rgba(124, 58, 237, 0.2); border: 1px solid rgba(124, 58, 237, 0.1);" onclick="event.stopPropagation()">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:12px; border-bottom: 1px solid rgba(124, 58, 237, 0.1);">
                 <div style="display:flex; align-items:center; gap:10px;">
                     <div style="width:36px; height:36px; background:linear-gradient(135deg, #7c3aed, #ec4899); border-radius:10px; display:flex; align-items:center; justify-content:center;">
@@ -1618,8 +1670,8 @@
     </div>
 
     <!-- Select Options Modal -->
-    <div id="select-options-modal" style="display:none; position:fixed; inset:0; background:rgba(30, 27, 75, 0.6); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); align-items:center; justify-content:center; z-index:9999;" onclick="closeModalOnBackdropClick(event, 'select-options-modal')">
-    <div style="background:rgba(255,255,255,0.98); width:520px; max-width:96%; max-height:85vh; margin:auto; border-radius:24px; padding:28px; box-shadow:0 32px 80px rgba(124, 58, 237, 0.25); overflow-y:auto; border: 1px solid rgba(124, 58, 237, 0.1);" onclick="event.stopPropagation()">
+    <div id="select-options-modal" class="mac-modal-backdrop" style="display:none; position:fixed; inset:0; background:transparent; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); align-items:center; justify-content:center; z-index:9999;">
+    <div id="select-options-modal-inner" class="mac-modal-inner" style="background:rgba(255,255,255,0.98); width:520px; max-width:96%; max-height:85vh; margin:auto; border-radius:24px; padding:28px; box-shadow:0 32px 80px rgba(124, 58, 237, 0.25); overflow-y:auto; border: 1px solid rgba(124, 58, 237, 0.1);" onclick="event.stopPropagation()">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:16px; border-bottom: 1px solid rgba(124, 58, 237, 0.1);">
                 <div style="display:flex; align-items:center; gap:12px;">
                     <div style="width:44px; height:44px; background:linear-gradient(135deg, #7c3aed, #ec4899); border-radius:12px; display:flex; align-items:center; justify-content:center;">
@@ -1675,7 +1727,7 @@
                             </label>
                             <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
                                 <input type="checkbox" id="toggle-app-expense" class="app-toggle" data-section="customer" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
-                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Expense</span>
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Expense Tracker</span>
                             </label>
                         </div>
                     </div>
@@ -1735,7 +1787,7 @@
                             </label>
                             <label style="display:flex; align-items:center; padding:10px 14px; cursor:pointer; border-radius:10px; transition:background 0.2s;">
                                 <input type="checkbox" id="toggle-app-secure-vault" class="app-toggle" data-section="misc" onchange="updateAppVisibility()" style="width:18px; height:18px; cursor:pointer; accent-color:#7c3aed;">
-                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Secure Vault</span>
+                                <span style="margin-left:12px; font-size:0.9rem; color:#4b5563; font-weight:500;">Password Manager</span>
                             </label>
                         </div>
                     </div>
@@ -1831,7 +1883,7 @@
             { id: 'app-org-account-opening', title: 'Organizational Account Opening Form Editor', section: 'customer', keywords: ['organization', 'org', 'company', 'business', 'corporate'], url: 'Organizational Account Opening Form Editor/Organizational Account Opening Form Editor.html', icon: 'fa-building' },
             { id: 'app-tdrd-form', title: 'TD/RD Account Form Editor', section: 'customer', keywords: ['td', 'rd', 'term', 'deposit', 'recurring', 'fixed'], url: 'TDRD Account Form Editor/TDRD Account Form Editor.html', icon: 'fa-hourglass-half' },
             { id: 'app-rtgs-beftn', title: 'RTGS BEFTN Form Editor', section: 'customer', keywords: ['rtgs', 'beftn', 'transfer', 'payment', 'remittance'], url: 'RTGS and BEFTN/RTGS BEFTN Form Editor.html', icon: 'fa-file-invoice-dollar' },
-            { id: 'app-expense', title: 'Expense', section: 'customer', keywords: ['expense', 'tracker', 'spending', 'budget'], url: 'Expense/Expense.html', icon: 'fa-layer-group' },
+            { id: 'app-expense', title: 'Expense Tracker', section: 'customer', keywords: ['expense', 'tracker', 'spending', 'budget'], url: 'Expense Tracker/Expense Tracker.html', icon: 'fa-layer-group' },
             { id: 'app-iss-analyzer', title: 'ISS Analyzer', section: 'credit', keywords: ['iss', 'analyzer', 'analysis', 'data', 'report'], url: 'ISS/ISS.html', icon: 'fa-chart-line' },
             { id: 'app-credit-commitment', title: 'Credit Commitment Editor', section: 'credit', keywords: ['credit', 'commitment', 'loan', 'lending', 'template'], url: 'Credit Commitment/Credit Commitment.html', icon: 'fa-file-contract' },
             { id: 'app-translator', title: 'Translator', section: 'misc', keywords: ['translate', 'language', 'bangla', 'english', 'text'], url: 'Translator/Translator.html', icon: 'fa-language' },
@@ -1839,7 +1891,7 @@
             { id: 'app-customer-prospectus', title: 'Customer Prospectus', section: 'misc', keywords: ['customer', 'prospectus', 'profile', 'document'], url: 'Customer Prospectus/Customer Prospectus.html', icon: 'fa-user-tie' },
             { id: 'app-pdf-compressor', title: 'PDF Compressor', section: 'misc', keywords: ['pdf', 'compress', 'reduce', 'size', 'file'], url: 'PDF Compressor/PDF Compressor.html', icon: 'fa-file-pdf' },
             { id: 'app-nid-stack', title: 'NID Stack & Enhance', section: 'misc', keywords: ['nid', 'id', 'card', 'image', 'stack', 'enhance'], url: 'NID Stack & Enhance/NID Stack & Enhance.html', icon: 'fa-id-card-alt' },
-            { id: 'app-secure-vault', title: 'Secure Vault', section: 'misc', keywords: ['password', 'vault', 'secure', 'encrypt', 'storage'], url: 'Secure Vault/Secure Vault.html', icon: 'fa-vault' }
+            { id: 'app-secure-vault', title: 'Password Manager', section: 'misc', keywords: ['password', 'vault', 'secure', 'encrypt', 'storage'], url: 'Password Manager/Password Manager.html', icon: 'fa-vault' }
         ];
 
         function filterApps(query) {
@@ -2001,11 +2053,45 @@
             }, 140);
         });
 
+        // ─── MacBook Modal Animation Helpers ───
+        function macOpenModal(backdropId, innerId) {
+            const bd = document.getElementById(backdropId);
+            const win = document.getElementById(innerId);
+            if (!bd) return;
+            // Clear any leftover closing classes
+            bd.classList.remove('mac-bd-closing');
+            if (win) win.classList.remove('mac-win-closing');
+            bd.style.display = 'flex';
+            // Force reflow so animation triggers fresh
+            void bd.offsetWidth;
+            bd.classList.add('mac-bd-opening');
+            if (win) win.classList.add('mac-win-opening');
+            const dur = 520;
+            setTimeout(() => {
+                bd.classList.remove('mac-bd-opening');
+                if (win) win.classList.remove('mac-win-opening');
+            }, dur);
+        }
+
+        function macCloseModal(backdropId, innerId, onDone) {
+            const bd = document.getElementById(backdropId);
+            const win = document.getElementById(innerId);
+            if (!bd) return;
+            bd.classList.remove('mac-bd-opening');
+            if (win) win.classList.remove('mac-win-opening');
+            bd.classList.add('mac-bd-closing');
+            if (win) win.classList.add('mac-win-closing');
+            const dur = 300;
+            setTimeout(() => {
+                bd.style.display = 'none';
+                bd.classList.remove('mac-bd-closing');
+                if (win) win.classList.remove('mac-win-closing');
+                if (typeof onDone === 'function') onDone();
+            }, dur);
+        }
+
         // Interest Calculator popup handlers
         function openInterestCalculator() {
-            const m = document.getElementById('interest-modal');
-            if (!m) return;
-            m.style.display = 'flex';
             // reset inputs and defaults
             selectCalcTab('td');
             document.getElementById('ic-principal').value = '';
@@ -2018,32 +2104,26 @@
             const taxSel = document.getElementById('ic-taxable');
             if (taxSel) { taxSel.value = 'no_tin'; }
             updateTaxFields();
-            // attempt a calculation (will quietly do nothing if inputs are empty)
             calculateInterest();
+            macOpenModal('interest-modal', 'interest-modal-inner');
         }
 
         function closeInterestCalculator() {
-            const m = document.getElementById('interest-modal');
-            if (!m) return;
-            m.style.display = 'none';
+            macCloseModal('interest-modal', 'interest-modal-inner');
         }
 
         // Select Options Modal Functions
         function openSelectOptions() {
-            const m = document.getElementById('select-options-modal');
-            if (!m) return;
             loadSectionPreferences();
             loadAppPreferences();
-            m.style.display = 'flex';
+            macOpenModal('select-options-modal', 'select-options-modal-inner');
         }
 
         function closeSelectOptions() {
-            const m = document.getElementById('select-options-modal');
-            if (!m) return;
             // Apply the current settings before closing
             updateSectionVisibility();
             updateAppVisibility();
-            m.style.display = 'none';
+            macCloseModal('select-options-modal', 'select-options-modal-inner');
         }
 
         function toggleSubOptions(section) {
@@ -2406,17 +2486,7 @@
             if (e.key === 'Escape') closeInterestCalculator();
         });
 
-        // Helper function to close modal when clicking on backdrop (outside the modal content)
-        function closeModalOnBackdropClick(event, modalId) {
-            // Only close if clicked on the backdrop (the outer container), not on the modal content
-            if (event.target.id === modalId) {
-                if (modalId === 'interest-modal') {
-                    closeInterestCalculator();
-                } else if (modalId === 'select-options-modal') {
-                    closeSelectOptions();
-                }
-            }
-        }
+
     </script>
 
     <!-- DocuChat Floating Chat Popup -->
@@ -2447,21 +2517,64 @@
             width: 28px;
             height: 28px;
             color: white;
-            transition: transform 0.3s ease;
         }
-        .chat-fab.open svg {
-            transform: rotate(180deg);
+        /* Smooth icon crossfade + spin */
+        .chat-fab .chat-icon {
+            position: absolute;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+            transition: opacity 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .chat-fab .chat-icon { display: block; }
-        .chat-fab .close-icon { display: none; position: absolute; }
-        .chat-fab.open .chat-icon { display: none; }
-        .chat-fab.open .close-icon { display: block; }
+        .chat-fab .close-icon {
+            position: absolute;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.3) rotate(-120deg);
+            transition: opacity 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .chat-fab.open .chat-icon {
+            opacity: 0;
+            transform: scale(0.3) rotate(120deg);
+        }
+        .chat-fab.open .close-icon {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+        /* FAB pulse ring on idle */
+        @keyframes fabIdlePulse {
+            0%, 100% { box-shadow: 0 4px 20px rgba(99,102,241,0.4), 0 0 0 0 rgba(99,102,241,0.35); }
+            50%       { box-shadow: 0 4px 20px rgba(99,102,241,0.4), 0 0 0 10px rgba(99,102,241,0); }
+        }
+        .chat-fab:not(.open) {
+            animation: fabIdlePulse 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .chat-fab.open {
+            animation: none;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+        }
+        /* FAB open bounce */
+        @keyframes fabOpenBounce {
+            0%   { transform: scale(1); }
+            40%  { transform: scale(1.18); }
+            70%  { transform: scale(0.92); }
+            100% { transform: scale(1); }
+        }
+        .chat-fab.fab-bounce {
+            animation: fabOpenBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+        }
 
         .chat-popup {
             position: fixed;
             bottom: 100px;
             right: 24px;
-            width: 360px;
+            width: 1080px;
             height: 450px;
             background: #ffffff;
             border-radius: 16px;
@@ -2470,20 +2583,15 @@
             flex-direction: column;
             z-index: 9998;
             overflow: hidden;
-            animation: popupSlideIn 0.3s ease;
+            transform-origin: bottom right;
         }
         .chat-popup.open {
             display: flex;
+            animation: chatMacOpen 0.52s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
-        @keyframes popupSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+        .chat-popup.chat-closing {
+            display: flex !important;
+            animation: chatMacClose 0.30s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
         .chat-popup-header {
@@ -2829,14 +2937,16 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: transparent;
             z-index: 10001;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
         }
-        .chat-settings-modal.open {
-            display: flex;
-        }
+        .chat-settings-modal.open { display: flex; }
+        .chat-settings-modal.s-bd-in  { animation: macBackdropIn  0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .chat-settings-modal.s-bd-out { animation: macBackdropOut 0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
         .chat-settings-panel {
             background: white;
             border-radius: 16px;
@@ -2845,18 +2955,10 @@
             max-width: 500px;
             max-height: 80vh;
             overflow-y: auto;
-            animation: settingsPanelSlideIn 0.3s ease;
+            transform-origin: center center;
         }
-        @keyframes settingsPanelSlideIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
+        .chat-settings-panel.s-win-in  { animation: macWindowOpen  0.52s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        .chat-settings-panel.s-win-out { animation: macWindowClose 0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
         .chat-settings-header {
             padding: 20px 24px;
             border-bottom: 1px solid #e5e7eb;
@@ -3004,14 +3106,16 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: transparent;
             z-index: 10002;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
         }
-        .chat-api-key-modal.open {
-            display: flex;
-        }
+        .chat-api-key-modal.open { display: flex; }
+        .chat-api-key-modal.ak-bd-in  { animation: macBackdropIn  0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .chat-api-key-modal.ak-bd-out { animation: macBackdropOut 0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
         .chat-api-key-input-panel {
             background: white;
             border-radius: 12px;
@@ -3019,7 +3123,10 @@
             width: 90%;
             max-width: 400px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform-origin: center center;
         }
+        .chat-api-key-input-panel.ak-win-in  { animation: macWindowOpen  0.52s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        .chat-api-key-input-panel.ak-win-out { animation: macWindowClose 0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
         .chat-api-key-input-panel h3 {
             margin: 0 0 16px 0;
             font-size: 1rem;
@@ -3309,12 +3416,34 @@
         };
 
         function chatOpenSettings() {
-            chatElements.settingsModal.classList.add('open');
+            const modal = chatElements.settingsModal;
+            const panel = modal && modal.querySelector('.chat-settings-panel');
+            if (!modal) return;
+            modal.classList.remove('s-bd-out');
+            if (panel) panel.classList.remove('s-win-out');
+            modal.classList.add('open');
+            void modal.offsetWidth;
+            modal.classList.add('s-bd-in');
+            if (panel) panel.classList.add('s-win-in');
+            setTimeout(() => {
+                modal.classList.remove('s-bd-in');
+                if (panel) panel.classList.remove('s-win-in');
+            }, 520);
             chatRefreshApiKeyList();
         }
 
         function chatCloseSettings() {
-            chatElements.settingsModal.classList.remove('open');
+            const modal = chatElements.settingsModal;
+            const panel = modal && modal.querySelector('.chat-settings-panel');
+            if (!modal) return;
+            modal.classList.remove('s-bd-in');
+            if (panel) panel.classList.remove('s-win-in');
+            modal.classList.add('s-bd-out');
+            if (panel) panel.classList.add('s-win-out');
+            setTimeout(() => {
+                modal.classList.remove('open', 's-bd-out');
+                if (panel) panel.classList.remove('s-win-out');
+            }, 300);
         }
 
         function chatRefreshApiKeyList() {
@@ -3343,6 +3472,22 @@
             });
         }
 
+        function _chatAnimOpenApiKeyModal() {
+            const modal = chatElements.apiKeyModal;
+            const panel = modal && modal.querySelector('.chat-api-key-input-panel');
+            if (!modal) return;
+            modal.classList.remove('ak-bd-out');
+            if (panel) panel.classList.remove('ak-win-out');
+            modal.classList.add('open');
+            void modal.offsetWidth;
+            modal.classList.add('ak-bd-in');
+            if (panel) panel.classList.add('ak-win-in');
+            setTimeout(() => {
+                modal.classList.remove('ak-bd-in');
+                if (panel) panel.classList.remove('ak-win-in');
+            }, 520);
+        }
+
         function chatOpenAddKeyModal() {
             if (chatState.apiKeys.length >= 5) {
                 alert('Maximum 5 API keys allowed');
@@ -3354,7 +3499,7 @@
             chatElements.apiKeyInput.type = 'password';
             chatElements.apiKeyName.value = '';
             chatElements.apiKeySaveBtn.textContent = 'Save Key';
-            chatElements.apiKeyModal.classList.add('open');
+            _chatAnimOpenApiKeyModal();
             chatElements.apiKeyInput.focus();
         }
 
@@ -3366,12 +3511,23 @@
             chatElements.apiKeyInput.type = 'text';
             chatElements.apiKeyName.value = apiKeyObj.nickname || '';
             chatElements.apiKeySaveBtn.textContent = 'Update Key';
-            chatElements.apiKeyModal.classList.add('open');
+            _chatAnimOpenApiKeyModal();
             chatElements.apiKeyInput.focus();
         }
 
         function chatCancelApiKeyInput() {
-            chatElements.apiKeyModal.classList.remove('open');
+            const modal = chatElements.apiKeyModal;
+            const panel = modal && modal.querySelector('.chat-api-key-input-panel');
+            if (modal) {
+                modal.classList.remove('ak-bd-in');
+                if (panel) panel.classList.remove('ak-win-in');
+                modal.classList.add('ak-bd-out');
+                if (panel) panel.classList.add('ak-win-out');
+                setTimeout(() => {
+                    modal.classList.remove('open', 'ak-bd-out');
+                    if (panel) panel.classList.remove('ak-win-out');
+                }, 300);
+            }
             chatApiKeyEditingIndex = -1;
             chatElements.apiKeyInput.value = '';
             chatElements.apiKeyName.value = '';
@@ -3424,26 +3580,31 @@
 
         function toggleChatPopup() {
             chatState.isOpen = !chatState.isOpen;
+            // FAB bounce + icon swap
+            chatElements.fab.classList.remove('fab-bounce');
+            void chatElements.fab.offsetWidth;
+            chatElements.fab.classList.add('fab-bounce');
+            chatElements.fab.addEventListener('animationend', () => {
+                chatElements.fab.classList.remove('fab-bounce');
+            }, { once: true });
             chatElements.fab.classList.toggle('open', chatState.isOpen);
-            chatElements.popup.classList.toggle('open', chatState.isOpen);
             if (chatState.isOpen) {
+                chatElements.popup.classList.remove('chat-closing');
+                chatElements.popup.classList.add('open');
                 chatCloseSettings();
+            } else {
+                chatElements.popup.classList.add('chat-closing');
+                setTimeout(() => {
+                    chatElements.popup.classList.remove('open', 'chat-closing');
+                }, 310);
             }
         }
 
-        // Close settings modal when clicking outside
-        chatElements.settingsModal?.addEventListener('click', function(e) {
-            if (e.target === this) {
-                chatCloseSettings();
-            }
-        });
+        // Close settings modal when clicking outside - DISABLED
+        // Only close via X button now
 
-        // Close API key input modal when clicking outside
-        chatElements.apiKeyModal?.addEventListener('click', function(e) {
-            if (e.target === this) {
-                chatCancelApiKeyInput();
-            }
-        });
+        // Close API key input modal when clicking outside - DISABLED
+        // Only close via X button now
 
         // Handle Escape key to close modals
         document.addEventListener('keydown', function(e) {

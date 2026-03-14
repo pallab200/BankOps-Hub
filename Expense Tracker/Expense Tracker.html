@@ -232,6 +232,17 @@
         .form-control::placeholder { color: var(--text-light); }
         textarea.form-control { resize: vertical; min-height: 42px; }
 
+        /* Hide number input spinners */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
         .input-group-text {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: #fff;
@@ -306,6 +317,16 @@
         .btn-icon:hover { background: var(--bg); }
         .btn-icon.edit:hover { color: var(--primary); border-color: var(--primary); }
         .btn-icon.delete:hover { color: var(--danger); border-color: var(--danger); }
+
+        .btn-secondary-action {
+            background: var(--bg);
+            color: var(--text-muted);
+            border: 1.5px solid var(--border);
+        }
+        .btn-secondary-action:hover {
+            background: var(--border);
+            color: var(--text);
+        }
 
         /* Table Styles */
         .modern-table {
@@ -400,6 +421,13 @@
             font-weight: 800;
             color: var(--primary);
             font-variant-numeric: tabular-nums;
+        }
+
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
         /* Filter Bar */
@@ -648,16 +676,20 @@
                             </select>
                         </div>
                         <div>
-                            <label for="amount" class="form-label"><i class="bi bi-currency-dollar"></i> Amount</label>
+                            <label for="amount" class="form-label"><span style="font-weight: 700; color: var(--primary);">৳</span> Amount</label>
                             <div class="input-group">
-                                <span class="input-group-text">&#x09F3;</span>
+                                <span class="input-group-text">৳</span>
                                 <input type="number" class="form-control" id="amount" placeholder="0.00" style="border-radius: 0 var(--radius-xs) var(--radius-xs) 0;">
                             </div>
                         </div>
-                        <div class="full-width" style="display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: end;">
+                        <div class="full-width" style="display: grid; grid-template-columns: 1fr auto auto; gap: 14px; align-items: end;">
                             <div>
                                 <label for="gl-description" class="form-label"><i class="bi bi-card-text"></i> Narration</label>
                                 <textarea class="form-control" id="gl-description" rows="2" placeholder="Describe the expense..."></textarea>
+                            </div>
+                            <div>
+                                <label for="reference-number" class="form-label"><i class="bi bi-bookmark"></i> Reference #</label>
+                                <input type="text" class="form-control" id="reference-number" placeholder="e.g., Reference">
                             </div>
                             <div>
                                 <button type="submit" class="btn-action btn-success-action" style="height: 100%; min-height: 52px; padding: 10px 28px;"><i class="bi bi-plus-lg"></i> Add</button>
@@ -708,6 +740,14 @@
                                 <label for="budget-amount" class="form-label"><i class="bi bi-cash-stack"></i> Yearly Budget</label>
                                 <input type="number" id="budget-amount" class="form-control" placeholder="1200">
                             </div>
+                            <div>
+                                <label for="budget-monthly-override" class="form-label"><i class="bi bi-calendar-month"></i> Monthly Override</label>
+                                <input type="number" id="budget-monthly-override" class="form-control" placeholder="Leave blank for auto (yearly/12)" step="0.01" min="0">
+                            </div>
+                            <div>
+                                <label for="budget-remaining-override" class="form-label"><i class="bi bi-subtract"></i> Remaining Override</label>
+                                <input type="number" id="budget-remaining-override" class="form-control" placeholder="Leave blank for auto" step="0.01">
+                            </div>
                             <div class="span-3">
                                 <label for="budget-description" class="form-label"><i class="bi bi-card-text"></i> Details</label>
                                 <textarea id="budget-description" class="form-control" rows="2" placeholder="Add details for this GL..."></textarea>
@@ -725,6 +765,7 @@
                                     <th>GL Account</th>
                                     <th>Module</th>
                                     <th>Budget / Spent</th>
+                                    <th>Total Remaining</th>
                                     <th>Monthly / Remaining</th>
                                     <th style="width: 22%;">Monthly Status</th>
                                     <th style="width: 80px;"></th>
@@ -786,18 +827,27 @@
                         </div>
                         <div>
                             <label for="search-input" class="form-label"><i class="bi bi-search"></i> Search</label>
-                            <div class="input-group">
-                                <input type="text" id="search-input" class="form-control" placeholder="Search expenses...">
-                                <button class="btn btn-outline-secondary" type="button" id="search-button"><i class="bi bi-search"></i></button>
-                            </div>
+                            <input type="text" id="search-input" class="form-control" placeholder="Search expenses...">
                         </div>
                     </div>
 
-                    <!-- Total -->
-                    <div class="text-center" style="margin-bottom: 16px;">
+                    <!-- Totals -->
+                    <div class="badge-grid">
                         <div class="total-badge">
                             <span class="label">Total Expenses</span>
                             <span class="value" id="total-expenses">&#x09F3;0.00</span>
+                        </div>
+                        <div class="total-badge">
+                            <span class="label">This Year</span>
+                            <span class="value" id="year-expenses">&#x09F3;0.00</span>
+                        </div>
+                        <div class="total-badge">
+                            <span class="label">This Month</span>
+                            <span class="value" id="month-expenses">&#x09F3;0.00</span>
+                        </div>
+                        <div class="total-badge">
+                            <span class="label">Today</span>
+                            <span class="value" id="today-expenses">&#x09F3;0.00</span>
                         </div>
                     </div>
 
@@ -809,6 +859,7 @@
                                     <th>Date</th>
                                     <th>GL Name</th>
                                     <th>Narration</th>
+                                    <th>Reference #</th>
                                     <th class="text-end">Amount</th>
                                     <th style="width: 50px;"></th>
                                 </tr>
@@ -837,6 +888,7 @@
                         <p><strong>Details:</strong> <span id="modal-gl-description"></span></p>
                         <p><strong>Module:</strong> <span id="modal-gl-module"></span></p>
                         <p><strong>Yearly Budget:</strong> <span id="modal-yearly-budget"></span></p>
+                        <p><strong>Total Remaining:</strong> <span id="modal-total-remaining"></span></p>
                         <p><strong>Monthly Budget:</strong> <span id="modal-monthly-budget"></span></p>
                         <p><strong>Monthly Remaining:</strong> <span id="modal-monthly-remaining"></span></p>
                         <h6 style="margin-top: 16px; margin-bottom: 10px; font-weight: 700; color: var(--text);">Transactions</h6>
@@ -846,6 +898,7 @@
                                     <tr>
                                         <th>Date</th>
                                         <th>Narration</th>
+                                        <th>Reference #</th>
                                         <th class="text-end">Amount</th>
                                     </tr>
                                 </thead>
@@ -855,6 +908,61 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-action btn-primary-action" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Expense Modal -->
+        <div class="modal fade" id="editExpenseModal" tabindex="-1" aria-labelledby="editExpenseModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editExpenseModalLabel">
+                            <i class="bi bi-pencil-square"></i> Edit Expense
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="edit-expense-form">
+                            <!-- GL Account Display (Not Editable) -->
+                            <div class="mb-3" style="background: linear-gradient(135deg, rgba(99,102,241,0.05) 0%, rgba(236,72,153,0.02) 100%); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-light);">
+                                <div style="display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;">
+                                    <span style="font-weight: 700; font-size: 0.95rem; color: var(--text);" id="edit-gl-name-display"></span>
+                                    <span style="color: var(--text-light); font-size: 0.85rem;">-</span>
+                                    <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;" id="edit-gl-number-display"></span>
+                                </div>
+                            </div>
+                            
+                            <!-- Date Field (Editable) -->
+                            <div class="mb-3">
+                                <label for="edit-expense-date" class="form-label"><i class="bi bi-calendar-event"></i> Date</label>
+                                <div class="input-group">
+                                    <input type="text" id="edit-expense-date" class="form-control" placeholder="dd/mm/yyyy">
+                                    <button class="btn btn-outline-secondary" type="button" id="editDateBtn"><i class="bi bi-calendar-date"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="edit-amount" class="form-label"><span style="font-weight: 700; color: var(--primary);">৳</span> Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">৳</span>
+                                    <input type="number" class="form-control" id="edit-amount" placeholder="0.00">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit-reference-number" class="form-label"><i class="bi bi-bookmark"></i> Reference #</label>
+                                <input type="text" class="form-control" id="edit-reference-number" placeholder="e.g., Reference">
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit-gl-description" class="form-label"><i class="bi bi-card-text"></i> Narration</label>
+                                <textarea class="form-control" id="edit-gl-description" rows="3" placeholder="Describe the expense..."></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-action btn-secondary-action" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn-action btn-primary-action" onclick="saveEditExpense()">Save Changes</button>
                     </div>
                 </div>
             </div>
@@ -879,7 +987,8 @@
     const glNumberInput = document.getElementById('gl-number');
     const glDescriptionInput = document.getElementById('gl-description');
     const amountInput = document.getElementById('amount');
-    const expenseDateInput = document.getElementById('expense-date') || document.getElementById('filter-start-date') || null;
+    const referenceNumberInput = document.getElementById('reference-number');
+    const expenseDateInput = document.getElementById('expense-date') || null;
 
     const budgetForm = document.getElementById('budget-form');
     const budgetGlNumberInput = document.getElementById('budget-gl-number');
@@ -887,12 +996,13 @@
     const budgetModuleInput = document.getElementById('budget-module');
     const budgetDescriptionInput = document.getElementById('budget-description');
     const budgetAmountInput = document.getElementById('budget-amount');
+    const budgetMonthlyOverrideInput = document.getElementById('budget-monthly-override');
+    const budgetRemainingOverrideInput = document.getElementById('budget-remaining-override');
     const glBudgetsTbody = document.getElementById('gl-budgets-tbody');
 
     const totalExpensesDisplay = document.getElementById('total-expenses');
     const expenseTableBody = document.getElementById('expense-table-body');
     const searchInput = document.getElementById('search-input');
-    const searchButton = document.getElementById('search-button');
     const filterStartDateInput = document.getElementById('filter-start-date');
     const filterEndDateInput = document.getElementById('filter-end-date');
     const filterGlInput = document.getElementById('filter-gl');
@@ -940,6 +1050,7 @@
             glNumber: glNumber,
             glName: glName,
             glDescription: glDescriptionInput.value.trim(),
+            referenceNumber: referenceNumberInput.value.trim(),
             amount: Math.abs(+amountInput.value.trim() || 0),
             date: transactionDate
         };
@@ -953,6 +1064,17 @@
         updateLocalStorage('transactions', transactions);
         init();
         expenseForm.reset();
+        
+        // Clear GL Number search UI
+        const glNumberSearch = document.getElementById('gl-number-search');
+        const glNumberList = document.getElementById('gl-number-list');
+        const glNumberClear = document.getElementById('gl-number-clear');
+        if (glNumberSearch) glNumberSearch.value = '';
+        if (glNumberList) glNumberList.style.display = 'none';
+        if (glNumberClear) glNumberClear.style.display = 'none';
+        
+        // Show success notification
+        showNotification('Expense added successfully', 'success', 'bi-check-circle');
     }
 
     // Budget Management
@@ -964,6 +1086,8 @@
         const module = budgetModuleInput.value.trim();
         const description = budgetDescriptionInput.value.trim();
         let amount = +budgetAmountInput.value.trim();
+        const monthlyOverride = budgetMonthlyOverrideInput.value.trim() ? parseFloat(budgetMonthlyOverrideInput.value.trim()) : null;
+        const remainingOverride = budgetRemainingOverrideInput.value.trim() ? parseFloat(budgetRemainingOverrideInput.value.trim()) : null;
 
         if (!glNumber || !glName || !module) {
             alert('Please provide a valid GL Number, Name, and Module.');
@@ -971,21 +1095,48 @@
         }
         if (amount < 0) { alert('Budget amount cannot be negative.'); return; }
         if (isNaN(amount)) amount = 0;
+        if (monthlyOverride !== null && monthlyOverride < 0) { alert('Monthly override cannot be negative.'); return; }
         if (!budgets[year]) budgets[year] = {};
 
-        budgets[year][glNumber] = { name: glName, module: module, description: description, budget: amount };
+        const now = new Date();
+        const monthYearKey = now.getFullYear() + '-' + (now.getMonth() + 1);
+
+        // Capture current monthly spent for this GL so new expenses can be deducted from the override
+        const currentMonthlySpent = remainingOverride !== null ? transactions
+            .filter(function(t) {
+                const d = new Date(t.date);
+                return d.getFullYear() == now.getFullYear() && d.getMonth() == now.getMonth() && t.glNumber === glNumber;
+            })
+            .reduce(function(acc, t) { return acc + t.amount; }, 0) : null;
+        
+        budgets[year][glNumber] = { 
+            name: glName, 
+            module: module, 
+            description: description, 
+            budget: amount,
+            monthlyOverride: monthlyOverride,
+            remainingOverride: remainingOverride,
+            spentAtOverrideSet: remainingOverride !== null ? currentMonthlySpent : null,
+            monthYearSet: monthlyOverride !== null || remainingOverride !== null ? monthYearKey : null
+        };
         updateLocalStorage('budgets', budgets);
         init();
         budgetForm.reset();
         budgetGlNumberInput.readOnly = false;
+        
+        // Show success notification
+        showNotification('Budget set successfully', 'success', 'bi-check-circle');
     }
-
+    
     function removeBudget(glNumber) {
         const year = new Date().getFullYear();
         delete budgets[year][glNumber];
         if (Object.keys(budgets[year]).length === 0) delete budgets[year];
         updateLocalStorage('budgets', budgets);
         init();
+        
+        // Show success notification
+        showNotification('Budget removed successfully', 'success', 'bi-trash');
     }
 
     function editBudget(glNumber) {
@@ -997,6 +1148,8 @@
             budgetModuleInput.value = b.module;
             budgetDescriptionInput.value = b.description || '';
             budgetAmountInput.value = b.budget;
+            budgetMonthlyOverrideInput.value = b.monthlyOverride !== undefined && b.monthlyOverride !== null ? b.monthlyOverride : '';
+            budgetRemainingOverrideInput.value = b.remainingOverride !== undefined && b.remainingOverride !== null ? b.remainingOverride : '';
             budgetGlNumberInput.readOnly = true;
         }
     }
@@ -1005,26 +1158,93 @@
     function renderGLBudgets() {
         const year = new Date().getFullYear();
         glBudgetsTbody.innerHTML = '';
+
+        // Carry forward GL entries from previous years that don't exist in current year
+        let hasChanges = false;
+        for (const y in budgets) {
+            if (parseInt(y) >= year) continue;
+            for (const gl in budgets[y]) {
+                if (!budgets[year]) budgets[year] = {};
+                if (!budgets[year][gl]) {
+                    // Copy budget entry, reset all overrides for fresh year
+                    budgets[year][gl] = Object.assign({}, budgets[y][gl], {
+                        monthlyOverride: null,
+                        remainingOverride: null,
+                        spentAtOverrideSet: null,
+                        monthYearSet: null
+                    });
+                    hasChanges = true;
+                }
+            }
+        }
+        if (hasChanges) updateLocalStorage('budgets', budgets);
+
         if (!budgets[year]) return;
 
         const selectedGl = (glNumberInput && glNumberInput.value) ? glNumberInput.value : '';
         const glKeys = selectedGl ? [selectedGl] : Object.keys(budgets[year]);
+        
+        hasChanges = false;
 
         for (const glNumber of glKeys) {
             if (!budgets[year][glNumber]) continue;
             const info = budgets[year][glNumber];
+            
+            // Check if we're in a different month than when overrides were set
+            const now = new Date();
+            const currentMonthYearKey = now.getFullYear() + '-' + (now.getMonth() + 1);
+            const overrideMonthMatches = info.monthYearSet === currentMonthYearKey;
+            
+            // Reset overrides if month has changed
+            if (info.monthYearSet && !overrideMonthMatches) {
+                info.monthlyOverride = null;
+                info.remainingOverride = null;
+                info.spentAtOverrideSet = null;
+                info.monthYearSet = null;
+                hasChanges = true;
+            }
+            
             const spent = transactions
                 .filter(function(t) { return new Date(t.date).getFullYear() == year && t.glNumber === glNumber; })
                 .reduce(function(acc, t) { return acc + t.amount; }, 0);
-            const monthlyAmount = info.budget / 12;
+            
+            // Use override if available, otherwise calculate from yearly budget
+            const monthlyAmount = overrideMonthMatches && info.monthlyOverride !== undefined && info.monthlyOverride !== null ? info.monthlyOverride : (info.budget / 12);
+            
             const monthlySpent = transactions
                 .filter(function(t) {
                     const d = new Date(t.date);
                     return d.getFullYear() == year && d.getMonth() == new Date().getMonth() && t.glNumber === glNumber;
                 })
                 .reduce(function(acc, t) { return acc + t.amount; }, 0);
-            const pct = monthlyAmount > 0 ? (monthlySpent / monthlyAmount) * 100 : 0;
-            const remaining = monthlyAmount - monthlySpent;
+            
+            // Use override if available, otherwise calculate as monthlyAmount - monthlySpent
+            // If remainingOverride is set, deduct any new expenses added after the override was set
+            let remaining;
+            if (overrideMonthMatches && info.remainingOverride !== undefined && info.remainingOverride !== null) {
+                const spentAfterOverride = monthlySpent - (info.spentAtOverrideSet || 0);
+                remaining = info.remainingOverride - Math.max(0, spentAfterOverride);
+            } else {
+                remaining = monthlyAmount - monthlySpent;
+            }
+            
+            // Calculate Total Remaining: sum of all monthly remaining from Jan to current month
+            let totalRemaining = 0;
+            if (info.budget > 0) {
+                for (let m = 0; m <= now.getMonth(); m++) {
+                    const monthlyBudget = info.budget / 12;
+                    const monthSpent = transactions
+                        .filter(function(t) {
+                            const d = new Date(t.date);
+                            return d.getFullYear() == year && d.getMonth() == m && t.glNumber === glNumber;
+                        })
+                        .reduce(function(acc, t) { return acc + t.amount; }, 0);
+                    const monthRemaining = monthlyBudget - monthSpent;
+                    totalRemaining += monthRemaining;
+                }
+            }
+            
+            const pct = monthlyAmount > 0 ? ((monthlyAmount - remaining) / monthlyAmount) * 100 : 0;
             const isOver = pct > 100;
             const textColor = isOver ? 'amount-negative' : 'amount-positive';
 
@@ -1032,6 +1252,10 @@
                 ? '<span style="color:var(--primary);font-weight:600;">\u09F3' + info.budget.toFixed(2) + '</span>'
                 : '<span style="color:var(--text-light)">No Budget</span>';
             const spentDisplay = '<span style="color:var(--text);font-weight:600;">\u09F3' + spent.toFixed(2) + '</span>';
+            const totalRemainingColor = totalRemaining <= 0 ? 'amount-negative' : 'amount-positive';
+            const totalRemainingDisplay = info.budget > 0
+                ? '<span class="' + totalRemainingColor + '">\u09F3' + totalRemaining.toFixed(2) + '</span>'
+                : 'N/A';
             const monthlyAmountDisplay = info.budget > 0 ? '\u09F3' + monthlyAmount.toFixed(2) : 'N/A';
             const remainingDisplay = info.budget > 0
                 ? '<span class="' + textColor + '">\u09F3' + remaining.toFixed(2) + '</span>'
@@ -1044,6 +1268,7 @@
                 '<td><a href="#" onclick="showGlDetails(event,\'' + glNumber + '\')" class="gl-link">' + info.name + '</a><div class="gl-sub">' + glNumber + '</div></td>' +
                 '<td>' + info.module + '</td>' +
                 '<td>' + budgetDisplay + ' / ' + spentDisplay + '</td>' +
+                '<td>' + totalRemainingDisplay + '</td>' +
                 '<td>' + monthlyAmountDisplay + ' / ' + remainingDisplay + '</td>' +
                 '<td>' + progressBar + '</td>' +
                 '<td><div style="display:flex;gap:6px;justify-content:center;">' +
@@ -1051,6 +1276,11 @@
                     '<button class="btn-icon delete" onclick="removeBudget(\'' + glNumber + '\')" title="Remove"><i class="bi bi-trash3"></i></button>' +
                 '</div></td>';
             glBudgetsTbody.appendChild(row);
+        }
+        
+        // Save any changes made from resetting overrides
+        if (hasChanges) {
+            updateLocalStorage('budgets', budgets);
         }
     }
 
@@ -1180,10 +1410,85 @@
     }
 
     // Expense Ledger
+    var currentEditingTransactionId = null;
+    
     function removeTransaction(id) {
         transactions = transactions.filter(function(t) { return t.id !== id; });
         updateLocalStorage('transactions', transactions);
+        renderGLBudgets();
         applyFilters();
+        
+        // Show success notification
+        showNotification('Expense deleted successfully', 'success', 'bi-trash');
+    }
+
+    function editExpense(id) {
+        var transaction = transactions.find(function(t) { return t.id === id; });
+        if (!transaction) return;
+        
+        currentEditingTransactionId = id;
+        document.getElementById('edit-gl-name-display').textContent = transaction.glName;
+        document.getElementById('edit-gl-number-display').textContent = transaction.glNumber;
+        document.getElementById('edit-amount').value = transaction.amount;
+        document.getElementById('edit-reference-number').value = transaction.referenceNumber || '';
+        document.getElementById('edit-gl-description').value = transaction.glDescription;
+        
+        // Set the date
+        if (transaction.date) {
+            var d = new Date(transaction.date);
+            var formattedDate = String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
+            document.getElementById('edit-expense-date').value = formattedDate;
+        } else {
+            document.getElementById('edit-expense-date').value = '';
+        }
+        
+        new bootstrap.Modal(document.getElementById('editExpenseModal')).show();
+    }
+
+    function saveEditExpense() {
+        if (currentEditingTransactionId === null) return;
+        
+        var transaction = transactions.find(function(t) { return t.id === currentEditingTransactionId; });
+        if (!transaction) return;
+        
+        var amount = Math.abs(+document.getElementById('edit-amount').value.trim() || 0);
+        if (amount === 0) {
+            alert('Please enter a valid amount.');
+            return;
+        }
+        
+        // Parse new date if provided
+        var dateStr = document.getElementById('edit-expense-date').value.trim();
+        if (dateStr) {
+            var parts = dateStr.split('/');
+            if (parts.length === 3) {
+                var day = parseInt(parts[0], 10);
+                var month = parseInt(parts[1], 10);
+                var year = parseInt(parts[2], 10);
+                if (day > 0 && day <= 31 && month > 0 && month <= 12 && year > 0) {
+                    transaction.date = new Date(year, month - 1, day).toISOString();
+                } else {
+                    alert('Please enter a valid date (dd/mm/yyyy).');
+                    return;
+                }
+            } else {
+                alert('Please enter a valid date (dd/mm/yyyy).');
+                return;
+            }
+        }
+        
+        transaction.amount = amount;
+        transaction.referenceNumber = document.getElementById('edit-reference-number').value.trim();
+        transaction.glDescription = document.getElementById('edit-gl-description').value.trim();
+        
+        updateLocalStorage('transactions', transactions);
+        bootstrap.Modal.getInstance(document.getElementById('editExpenseModal')).hide();
+        renderGLBudgets();
+        applyFilters();
+        currentEditingTransactionId = null;
+        
+        // Show success notification
+        showNotification('Expense updated successfully', 'success', 'bi-pencil-square');
     }
 
     function applyFilters() {
@@ -1213,7 +1518,8 @@
             filtered = filtered.filter(function(t) {
                 return (t.glName || '').toLowerCase().indexOf(searchTerm) !== -1 ||
                     (t.glNumber || '').toLowerCase().indexOf(searchTerm) !== -1 ||
-                    (t.glDescription || '').toLowerCase().indexOf(searchTerm) !== -1;
+                    (t.glDescription || '').toLowerCase().indexOf(searchTerm) !== -1 ||
+                    (t.referenceNumber || '').toLowerCase().indexOf(searchTerm) !== -1;
             });
         }
 
@@ -1233,7 +1539,7 @@
 
         if (total === 0) {
             expensePagination.innerHTML = '';
-            expenseTableBody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="bi bi-inbox"></i><p>No expenses found</p></div></td></tr>';
+            expenseTableBody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="bi bi-inbox"></i><p>No expenses found</p></div></td></tr>';
             return;
         }
 
@@ -1245,8 +1551,9 @@
                 '<td>' + formatDate(t.date) + '</td>' +
                 '<td><strong>' + t.glName + '</strong><div class="gl-sub">' + t.glNumber + '</div></td>' +
                 '<td style="color:var(--text-muted)">' + t.glDescription + '</td>' +
+                '<td><strong style="color:var(--primary)">' + (t.referenceNumber || '-') + '</strong></td>' +
                 '<td class="text-end amount-cell amount-negative">\u09F3' + t.amount.toFixed(2) + '</td>' +
-                '<td class="text-center"><button class="btn-icon delete" onclick="removeTransaction(' + t.id + ')" title="Delete"><i class="bi bi-trash3"></i></button></td>';
+                '<td class="text-center" style="display: flex; gap: 4px; justify-content: center;"><button class="btn-icon" onclick="editExpense(' + t.id + ')" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-icon delete" onclick="removeTransaction(' + t.id + ')" title="Delete"><i class="bi bi-trash3"></i></button></td>';
             expenseTableBody.appendChild(row);
         });
 
@@ -1305,7 +1612,31 @@
     }
 
     function updateTotal(list) {
-        totalExpensesDisplay.textContent = '\u09F3' + list.reduce(function(acc, t) { return acc + t.amount; }, 0).toFixed(2);
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth();
+        const today = new Date(currentYear, currentMonth, now.getDate());
+        
+        const totalSum = list.reduce(function(acc, t) { return acc + t.amount; }, 0);
+        
+        const yearSum = list.filter(function(t) {
+            return new Date(t.date).getFullYear() === currentYear;
+        }).reduce(function(acc, t) { return acc + t.amount; }, 0);
+        
+        const monthSum = list.filter(function(t) {
+            const d = new Date(t.date);
+            return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+        }).reduce(function(acc, t) { return acc + t.amount; }, 0);
+        
+        const todaySum = list.filter(function(t) {
+            const d = new Date(t.date);
+            return d.getFullYear() === currentYear && d.getMonth() === currentMonth && d.getDate() === now.getDate();
+        }).reduce(function(acc, t) { return acc + t.amount; }, 0);
+        
+        document.getElementById('total-expenses').textContent = '\u09F3' + totalSum.toFixed(2);
+        document.getElementById('year-expenses').textContent = '\u09F3' + yearSum.toFixed(2);
+        document.getElementById('month-expenses').textContent = '\u09F3' + monthSum.toFixed(2);
+        document.getElementById('today-expenses').textContent = '\u09F3' + todaySum.toFixed(2);
     }
 
     // GL Details Modal
@@ -1326,17 +1657,57 @@
 
         var budgetAmount = parseFloat(info.budget) || 0;
         var yearlyEl = document.getElementById('modal-yearly-budget').closest('p');
+        var totalRemainingEl = document.getElementById('modal-total-remaining').closest('p');
         var monthlyEl = document.getElementById('modal-monthly-budget').closest('p');
         var remainEl = document.getElementById('modal-monthly-remaining').closest('p');
+        var hasChanges = false;
 
         if (budgetAmount > 0) {
-            yearlyEl.style.display = ''; monthlyEl.style.display = ''; remainEl.style.display = '';
+            yearlyEl.style.display = ''; totalRemainingEl.style.display = ''; monthlyEl.style.display = ''; remainEl.style.display = '';
             document.getElementById('modal-yearly-budget').textContent = '\u09F3' + budgetAmount.toFixed(2);
-            var monthly = budgetAmount / 12;
+            
+            // Check if we're in the same month as when overrides were set
+            var now = new Date();
+            var currentMonthYearKey = now.getFullYear() + '-' + (now.getMonth() + 1);
+            var overrideMonthMatches = info.monthYearSet === currentMonthYearKey;
+            // Reset overrides if month has changed
+            if (info.monthYearSet && !overrideMonthMatches) {
+                info.monthlyOverride = null;
+                info.remainingOverride = null;
+                info.spentAtOverrideSet = null;
+                info.monthYearSet = null;
+                hasChanges = true;
+            }
+            
+            // Calculate Total Remaining: sum of all monthly remaining from Jan to current month
+            var totalRemaining = 0;
+            for (var m = 0; m <= now.getMonth(); m++) {
+                var monthlyBudget = budgetAmount / 12;
+                var monthSpent = transactions
+                    .filter(function(t) {
+                        var d = new Date(t.date);
+                        return d.getFullYear() == year && d.getMonth() == m && t.glNumber === glNumber;
+                    })
+                    .reduce(function(acc, t) { return acc + t.amount; }, 0);
+                var monthRemaining = monthlyBudget - monthSpent;
+                totalRemaining += monthRemaining;
+            }
+            
+            // Use override if available, otherwise calculate from yearly budget
+            var monthly = overrideMonthMatches && info.monthlyOverride !== undefined && info.monthlyOverride !== null ? info.monthlyOverride : (budgetAmount / 12);
+            var remaining;
+            if (overrideMonthMatches && info.remainingOverride !== undefined && info.remainingOverride !== null) {
+                var spentAfterOverride = monthlySpent - (info.spentAtOverrideSet || 0);
+                remaining = info.remainingOverride - Math.max(0, spentAfterOverride);
+            } else {
+                remaining = monthly - monthlySpent;
+            }
+            document.getElementById('modal-yearly-budget').textContent = '\u09F3' + budgetAmount.toFixed(2);
+            document.getElementById('modal-total-remaining').textContent = '\u09F3' + totalRemaining.toFixed(2);
             document.getElementById('modal-monthly-budget').textContent = '\u09F3' + monthly.toFixed(2);
-            document.getElementById('modal-monthly-remaining').textContent = '\u09F3' + (monthly - monthlySpent).toFixed(2);
+            document.getElementById('modal-monthly-remaining').textContent = '\u09F3' + remaining.toFixed(2);
         } else {
-            yearlyEl.style.display = 'none'; monthlyEl.style.display = 'none'; remainEl.style.display = 'none';
+            yearlyEl.style.display = 'none'; totalRemainingEl.style.display = 'none'; monthlyEl.style.display = 'none'; remainEl.style.display = 'none';
         }
 
         var tbody = document.getElementById('modal-transactions-tbody');
@@ -1345,9 +1716,14 @@
             .sort(function(a, b) { return new Date(b.date) - new Date(a.date); })
             .forEach(function(t) {
                 var row = document.createElement('tr');
-                row.innerHTML = '<td>' + formatDate(t.date) + '</td><td>' + t.glDescription + '</td><td class="text-end amount-cell">\u09F3' + t.amount.toFixed(2) + '</td>';
+                row.innerHTML = '<td>' + formatDate(t.date) + '</td><td>' + t.glDescription + '</td><td><strong style="color:var(--primary)">' + (t.referenceNumber || '-') + '</strong></td><td class="text-end amount-cell">\u09F3' + t.amount.toFixed(2) + '</td>';
                 tbody.appendChild(row);
             });
+
+        // Save any changes made from resetting overrides
+        if (hasChanges) {
+            updateLocalStorage('budgets', budgets);
+        }
 
         new bootstrap.Modal(document.getElementById('glDetailsModal')).show();
     }
@@ -1356,7 +1732,6 @@
     function init() {
         renderGLBudgets();
         renderGlNumberDropdown();
-        try { glNumberInput.addEventListener('change', renderGLBudgets); } catch(e){}
         applyFilters();
         renderGlFilterOptions();
     }
@@ -1384,7 +1759,7 @@
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
 
-        showNotification('✓ Expense history exported successfully!', 'success');
+        showNotification('Expense history exported successfully', 'success', 'bi-download');
     }
 
     // Import Expenses
@@ -1408,7 +1783,7 @@
                 );
 
                 if (!confirmImport) {
-                    showNotification('Import cancelled', 'info');
+                    showNotification('Import cancelled', 'info', 'bi-info-circle');
                     event.target.value = '';
                     return;
                 }
@@ -1418,9 +1793,9 @@
                 init();
                 event.target.value = '';
 
-                showNotification('✓ ' + importedTransactions.length + ' transaction(s) imported successfully!', 'success');
+                showNotification(importedTransactions.length + ' transaction(s) imported successfully', 'success', 'bi-upload');
             } catch (error) {
-                showNotification('✗ Error importing file: ' + error.message, 'error');
+                showNotification('Error importing file: ' + error.message, 'error', 'bi-exclamation-circle');
                 event.target.value = '';
             }
         };
@@ -1432,7 +1807,7 @@
         const count = transactions.length;
         
         if (count === 0) {
-            showNotification('No expense history to clear', 'info');
+            showNotification('No expense history to clear', 'info', 'bi-info-circle');
             return;
         }
 
@@ -1442,14 +1817,14 @@
         );
 
         if (!confirmClear) {
-            showNotification('Clear operation cancelled', 'info');
+            showNotification('Clear operation cancelled', 'info', 'bi-info-circle');
             return;
         }
 
         transactions = [];
         updateLocalStorage('transactions', transactions);
         init();
-        showNotification('✓ Expense history cleared (' + count + ' transaction(s) deleted)', 'success');
+        showNotification(count + ' transaction(s) deleted', 'success', 'bi-trash');
     }
 
     // Export Budgets
@@ -1471,7 +1846,7 @@
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
 
-        showNotification('✓ Budget data exported successfully!', 'success');
+        showNotification('Budget data exported successfully', 'success', 'bi-download');
     }
 
     // Import Budgets
@@ -1496,7 +1871,7 @@
                 );
 
                 if (!confirmImport) {
-                    showNotification('Import cancelled', 'info');
+                    showNotification('Import cancelled', 'info', 'bi-info-circle');
                     event.target.value = '';
                     return;
                 }
@@ -1519,9 +1894,9 @@
                     return sum + Object.keys(importedBudgets[year]).length;
                 }, 0);
 
-                showNotification('✓ Budget data imported successfully! (' + totalBudgets + ' GL account(s))', 'success');
+                showNotification(totalBudgets + ' GL account(s) imported successfully', 'success', 'bi-upload');
             } catch (error) {
-                showNotification('✗ Error importing file: ' + error.message, 'error');
+                showNotification('Error importing file: ' + error.message, 'error', 'bi-exclamation-circle');
                 event.target.value = '';
             }
         };
@@ -1529,74 +1904,106 @@
     }
 
     // Notification System
-    function showNotification(message, type) {
+    function showNotification(message, type, icon) {
         const notificationDiv = document.createElement('div');
         notificationDiv.className = 'notification notification-' + type;
-        notificationDiv.innerHTML = message;
+        
+        // Create icon element
+        let iconHtml = '';
+        if (icon) {
+            iconHtml = '<i class="bi ' + icon + '" style="margin-right: 10px; font-size: 1.1rem;"></i>';
+        }
+        
+        notificationDiv.innerHTML = iconHtml + message;
         notificationDiv.style.cssText = `
             position: fixed;
-            top: 16px;
-            right: 16px;
-            padding: 12px 20px;
-            border-radius: 8px;
+            top: 20px;
+            right: 20px;
+            padding: 14px 18px;
+            border-radius: 10px;
             font-size: 0.9rem;
             font-weight: 500;
             z-index: 9999;
-            max-width: 400px;
+            max-width: 380px;
             word-wrap: break-word;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            animation: slideInRight 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            backdrop-filter: blur(8px);
+            animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255,255,255,0.2);
         `;
 
         if (type === 'success') {
-            notificationDiv.style.background = 'linear-gradient(135deg, var(--success), var(--success-dark))';
+            notificationDiv.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
             notificationDiv.style.color = '#fff';
         } else if (type === 'error') {
-            notificationDiv.style.background = 'linear-gradient(135deg, var(--danger), #dc2626)';
+            notificationDiv.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
             notificationDiv.style.color = '#fff';
         } else if (type === 'info') {
-            notificationDiv.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
+            notificationDiv.style.background = 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)';
+            notificationDiv.style.color = '#fff';
+        } else if (type === 'warning') {
+            notificationDiv.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
             notificationDiv.style.color = '#fff';
         }
 
         document.body.appendChild(notificationDiv);
         setTimeout(() => {
-            notificationDiv.style.animation = 'slideOutRight 0.3s ease-in';
-            setTimeout(() => notificationDiv.remove(), 300);
-        }, 3000);
+            notificationDiv.style.animation = 'slideOutRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            setTimeout(() => notificationDiv.remove(), 400);
+        }, 3500);
     }
 
     // Event Listeners
     expenseForm.addEventListener('submit', addExpense);
     budgetForm.addEventListener('submit', addOrUpdateBudget);
-    searchButton.addEventListener('click', applyFilters);
+    searchInput.addEventListener('input', applyFilters);
     filterStartDateInput.addEventListener('change', applyFilters);
     filterEndDateInput.addEventListener('change', applyFilters);
     filterGlInput.addEventListener('change', applyFilters);
+    try { glNumberInput.addEventListener('change', renderGLBudgets); } catch(e){}
 
     // Initialize
     init();
 
     // Datepickers
-    var datepicker, datepicker2, datepicker3;
+    var datepicker, datepicker2, datepicker3, datepicker4;
     try { datepicker = new Datepicker(filterStartDateInput, { format: 'dd/mm/yyyy', autohide: true }); } catch(e){}
     try { datepicker2 = new Datepicker(filterEndDateInput, { format: 'dd/mm/yyyy', autohide: true }); } catch(e){}
     try {
         var expDateInput = document.getElementById('expense-date');
         if (expDateInput) datepicker3 = new Datepicker(expDateInput, { format: 'dd/mm/yyyy', autohide: true });
     } catch(e){}
+    try {
+        var editExpDateInput = document.getElementById('edit-expense-date');
+        if (editExpDateInput) datepicker4 = new Datepicker(editExpDateInput, { format: 'dd/mm/yyyy', autohide: true });
+    } catch(e){}
 
     try {
         if (datepicker) { filterStartDateInput.addEventListener('focus', function() { datepicker.show(); }); filterStartDateInput.addEventListener('click', function() { datepicker.show(); }); }
         if (datepicker2) { filterEndDateInput.addEventListener('focus', function() { datepicker2.show(); }); filterEndDateInput.addEventListener('click', function() { datepicker2.show(); }); }
+        if (datepicker4) { 
+            var editExpDateInput = document.getElementById('edit-expense-date');
+            if (editExpDateInput) { 
+                editExpDateInput.addEventListener('focus', function() { datepicker4.show(); }); 
+                editExpDateInput.addEventListener('click', function() { datepicker4.show(); }); 
+            }
+        }
     } catch(e){}
-
+    
     function formatDateForInput(d) {
         if (!d) return '';
         return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
     }
-
+    
     try {
+        var editDateBtn = document.getElementById('editDateBtn');
+        if (editDateBtn && datepicker4) editDateBtn.addEventListener('click', function() { datepicker4.show(); });
+        var editExpDateInput = document.getElementById('edit-expense-date');
+        if (editExpDateInput) {
+            editExpDateInput.addEventListener('changeDate', function(e) { var p = e.detail && e.detail.date; if (p) editExpDateInput.value = formatDateForInput(p); });
+        }
         filterStartDateInput.addEventListener('changeDate', function(e) { var p = e.detail && e.detail.date; if (p) filterStartDateInput.value = formatDateForInput(p); applyFilters(); });
         filterEndDateInput.addEventListener('changeDate', function(e) { var p = e.detail && e.detail.date; if (p) filterEndDateInput.value = formatDateForInput(p); applyFilters(); });
         var startDateBtn = document.getElementById('startDateBtn');

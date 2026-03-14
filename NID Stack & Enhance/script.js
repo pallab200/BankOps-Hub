@@ -27,6 +27,20 @@ const cropInfo2 = document.getElementById('cropInfo2');
 let img1 = null, img2 = null;
 let cropRects = {1: null, 2: null}; // store {x,y,w,h} in original image pixels
 
+// === Placeholder show/hide helpers ===
+function setThumbPlaceholder(n, hasContent) {
+  const ph = document.getElementById('thumb' + n + 'Placeholder');
+  const img = document.getElementById('thumb' + n);
+  if (ph)  ph.style.display  = hasContent ? 'none'  : 'flex';
+  if (img) img.style.display = hasContent ? 'block' : 'none';
+}
+function setCanvasPlaceholder(canvasId, hasContent) {
+  const ph = document.getElementById(canvasId + 'Placeholder');
+  const cv = document.getElementById(canvasId);
+  if (ph)  ph.style.display  = hasContent ? 'none'  : 'flex';
+  if (cv)  cv.style.display  = hasContent ? 'block' : 'none';
+}
+
 function setProgress(p){
   progressWrap.classList.remove('hidden');
   progressBar.style.width = (Math.max(0, Math.min(100, p))) + '%';
@@ -52,6 +66,7 @@ file1.addEventListener('change', async (e)=>{
   readFileToImg(f, (img)=>{
     img1 = img;
     thumb1.src = img ? img.src : '';
+    setThumbPlaceholder(1, !!img);
     document.getElementById('preview1').src = img ? img.src : '';
     document.getElementById('preview1-container').style.display = img ? 'block' : 'none';
     cropRects[1] = null;
@@ -67,6 +82,7 @@ file2.addEventListener('change', async (e)=>{
   readFileToImg(f, (img)=>{
     img2 = img;
     thumb2.src = img ? img.src : '';
+    setThumbPlaceholder(2, !!img);
     document.getElementById('preview2').src = img ? img.src : '';
     document.getElementById('preview2-container').style.display = img ? 'block' : 'none';
     cropRects[2] = null;
@@ -86,8 +102,8 @@ function setupDropzone(id, targetIndex){
     if(!f) return;
     setProgress(5);
     readFileToImg(f, (img)=>{
-      if(targetIndex===1){ img1 = img; thumb1.src = img ? img.src : ''; cropRects[1]=null; cropInfo1.textContent=''; }
-      else { img2 = img; thumb2.src = img ? img.src : ''; cropRects[2]=null; cropInfo2.textContent=''; }
+      if(targetIndex===1){ img1 = img; thumb1.src = img ? img.src : ''; setThumbPlaceholder(1, !!img); cropRects[1]=null; cropInfo1.textContent=''; }
+      else { img2 = img; thumb2.src = img ? img.src : ''; setThumbPlaceholder(2, !!img); cropRects[2]=null; cropInfo2.textContent=''; }
       setProgress(30);
     });
   });
@@ -310,6 +326,8 @@ clearBtn.addEventListener('click', ()=>{
   if(file2) file2.value = '';
   thumb1.src = '';
   thumb2.src = '';
+  setThumbPlaceholder(1, false);
+  setThumbPlaceholder(2, false);
   document.getElementById('preview1').src = '';
   document.getElementById('preview2').src = '';
   document.getElementById('preview1-container').style.display = 'none';
@@ -321,6 +339,8 @@ clearBtn.addEventListener('click', ()=>{
   if(downloadPdfBtn) downloadPdfBtn.classList.add('hidden');
   const ctx = previewCanvas.getContext('2d');
   ctx && ctx.clearRect(0,0,previewCanvas.width, previewCanvas.height);
+  setCanvasPlaceholder('previewCanvas', false);
+  setCanvasPlaceholder('adjustedCanvas', false);
 });
 
 // format and quality controls removed from UI — use defaults in code above.
@@ -472,6 +492,7 @@ combineBtn.addEventListener('click', async ()=>{
     // Show PDF download button
     if(downloadPdfBtn) downloadPdfBtn.classList.remove('hidden');
     // subtle preview animation
+    setCanvasPlaceholder('previewCanvas', true);
     try{ previewCanvas.classList.add('fade-in'); setTimeout(()=>previewCanvas.classList.remove('fade-in'), 700); }catch(e){}
     setProgress(100);
   }, fmt, quality);
@@ -566,6 +587,7 @@ async function renderAdjusted(applySharpen){
     const id = tctx.getImageData(0,0,t.width,t.height);
     const out = applyConvolution(id, k, 3);
   actx.putImageData(out, 0, 0);
+  setCanvasPlaceholder('adjustedCanvas', true);
   try{ adjustedCanvas.classList.add('fade-in'); setTimeout(()=>adjustedCanvas.classList.remove('fade-in'), 700); }catch(e){}
     // copy to baseAdjusted (unfiltered) canvas
     baseAdjustedCanvas.width = adjustedCanvas.width;
@@ -582,6 +604,7 @@ async function renderAdjusted(applySharpen){
     // quick preview without expensive convolution
   actx.clearRect(0,0,adjustedCanvas.width, adjustedCanvas.height);
   actx.drawImage(t, 0, 0);
+  setCanvasPlaceholder('adjustedCanvas', true);
   try{ adjustedCanvas.classList.add('fade-in'); setTimeout(()=>adjustedCanvas.classList.remove('fade-in'), 600); }catch(e){}
     // copy preview to baseAdjusted so filters can be applied to preview too
     baseAdjustedCanvas.width = adjustedCanvas.width;

@@ -1841,7 +1841,7 @@
     </script>
 
     <!-- Main Container -->
-    <main id="main-content" class="flex-1 flex p-6 gap-6 overflow-hidden mt-[24px]">
+    <main id="main-content" class="flex-1 flex pt-1 pb-6 px-6 gap-6 overflow-hidden mt-2">
         
         <!-- Left Sidebar -->
         <aside id="sidebar" class="w-64 p-4 flex flex-col items-center rounded-xl shadow-lg sidebar closed hidden">
@@ -1880,23 +1880,23 @@
     <div class="sidebar-overlay" aria-hidden="true"></div>
 
     <!-- Main Content Area -->
-    <section id="content-area" class="flex-1 rounded-xl shadow-lg p-6 flex flex-col items-center overflow-auto" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1px solid rgba(99,102,241,0.08);">
+    <section id="content-area" class="flex-1 rounded-xl shadow-lg p-3 flex flex-col items-center overflow-auto" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1px solid rgba(99,102,241,0.08);">
             
             <!-- Cash Calculator Page Content -->
             <div id="cash-calculator-page" class="flex-1 flex flex-col w-full">
                 
                 <!-- Page Title with Icon -->
-                <div class="mb-6 pb-4 border-b-2 border-gray-200">
-                    <h2 class="text-2xl font-bold" style="color: #6366f1; display: flex; align-items: center; gap: 12px;">
-                        <span style="width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #4f46e5); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(99,102,241,0.2);">
-                            <i class="fas fa-calculator" style="color: white; font-size: 18px;"></i>
+                <div class="mb-1 pb-1 border-b-2 border-gray-200">
+                    <h2 class="text-xl font-bold" style="color: #6366f1; display: flex; align-items: center; gap: 10px;">
+                        <span style="width: 36px; height: 36px; background: linear-gradient(135deg, #6366f1, #4f46e5); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(99,102,241,0.2);">
+                            <i class="fas fa-calculator" style="color: white; font-size: 16px;"></i>
                         </span>
                         Cash Calculator
                     </h2>
-                    <p style="color: #64748b; margin-top: 8px; margin-left: 52px; font-size: 0.95rem;">Manage your cash transactions with real-time calculations and denomination tracking</p>
+                    <p style="color: #64748b; margin-top: 4px; margin-left: 46px; font-size: 0.9rem;">Manage cash transactions with real-time calculations and denomination tracking</p>
                 </div>
                 
-                <div class="flex flex-col md:flex-row gap-6 w-full items-start">
+                <div class="flex flex-col md:flex-row gap-4 w-full items-start">
                     
                     <!-- NEW: Column 1 - In Hand Calculation (with Amount Column) -->
                     <div class="w-full md:w-1/3">
@@ -2065,8 +2065,13 @@
                             <!-- Transactions will be injected here by JS -->
                             <p class="text-center text-sm text-gray-500 py-4">No recent transactions.</p>
                         </div>
-                        <div class="mt-3">
-                            <button id="openCalcWindowBtn" class="main-button btn-animated w-full" title="Open calculator in a separate window">Open in Window</button>
+                        <div class="mt-3 space-y-2">
+                            <button id="openCalcWindowBtn" class="main-button btn-animated w-full" title="Open calculator in a separate window"><i class="fas fa-external-link-alt" style="margin-right: 6px;"></i>Open in Window</button>
+                            <div class="flex gap-2">
+                                <button id="exportTransactionsBtn" class="main-button btn-animated flex-1" title="Export transactions as JSON file" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"><i class="fas fa-download" style="margin-right: 4px;"></i>Export</button>
+                                <button id="importTransactionsBtn" class="main-button btn-animated flex-1" title="Import transactions from JSON file" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);"><i class="fas fa-upload" style="margin-right: 4px;"></i>Import</button>
+                            </div>
+                            <input type="file" id="transactionsFileInput" accept=".json" style="display: none;">
                         </div>
                         
                     </div>
@@ -2557,15 +2562,27 @@
                                 <div class="flex justify-between items-center"><label for="atm-location" class="font-semibold" style="display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-map-marker-alt" style="color: #f59e0b; font-size: 0.9rem;"></i>ATM Location:</label><input type="text" id="atm-location" value="Kashinathpur, Pabna" class="border-b-2 border-gray-300 text-right w-1/2 p-1 atm-info-input" style="border-radius: 6px; border: 2px solid #e2e8f0; padding: 8px;"></div>
                             </div>
                         </div>
-                         <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.05) 100%); border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); border: 1px solid rgba(59, 130, 246, 0.2);">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-                                <i class="fas fa-history" style="color: #3b82f6; font-size: 1.1rem;"></i>
-                                <h3 class="font-bold text-lg" style="margin: 0; color: #1e293b;">Previous Replenishment</h3>
+                        <div class="flex flex-col gap-4">
+                            <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.08) 100%); border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); border: 1px solid rgba(245, 158, 11, 0.35);">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                                    <i class="fas fa-calendar-check" style="color: #f59e0b; font-size: 1.1rem;"></i>
+                                    <h3 class="font-bold text-lg" style="margin: 0; color: #1e293b;">Current Replenishment Details</h3>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center"><label class="font-semibold" style="display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-calendar" style="color: #f59e0b; font-size: 0.9rem;"></i>Date:</label><input type="date" id="curr_date" class="border-b-2 border-gray-300 text-right w-1/2 p-1 atm-info-input" style="border-radius: 6px; border: 2px solid #e2e8f0; padding: 8px;"></div>
+                                    <div class="flex justify-between items-center"><label class="font-semibold" style="display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-clock" style="color: #f59e0b; font-size: 0.9rem;"></i>Time:</label><input type="time" id="curr_time" class="border-b-2 border-gray-300 text-right w-1/2 p-1 atm-info-input" style="border-radius: 6px; border: 2px solid #e2e8f0; padding: 8px;"></div>
+                                </div>
                             </div>
-                            <div class="space-y-2">
-                                <div class="flex justify-between items-center"><label class="font-semibold" style="display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-calendar" style="color: #3b82f6; font-size: 0.9rem;"></i>Date:</label><input type="date" id="prev_date" class="border-b-2 border-gray-300 text-right w-1/2 p-1 atm-info-input" style="border-radius: 6px; border: 2px solid #e2e8f0; padding: 8px;"></div>
-                                <div class="flex justify-between items-center"><label class="font-semibold" style="display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-money-bill-wave" style="color: #3b82f6; font-size: 0.9rem;"></i>Amount:</label><input type="number" id="prev_amount" class="border-b-2 border-gray-300 text-right w-1/2 p-1 atm-info-input" value="0" style="border-radius: 6px; border: 2px solid #e2e8f0; padding: 8px;"></div>
-                                <div class="flex justify-between items-center"><label class="font-semibold" style="display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-clock" style="color: #3b82f6; font-size: 0.9rem;"></i>Time:</label><input type="time" id="prev_time" class="border-b-2 border-gray-300 text-right w-1/2 p-1 atm-info-input" style="border-radius: 6px; border: 2px solid #e2e8f0; padding: 8px;"></div>
+                            <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.05) 100%); border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); border: 1px solid rgba(59, 130, 246, 0.2);">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                                    <i class="fas fa-history" style="color: #3b82f6; font-size: 1.1rem;"></i>
+                                    <h3 class="font-bold text-lg" style="margin: 0; color: #1e293b;">Previous Replenishment</h3>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center"><label class="font-semibold" style="display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-calendar" style="color: #3b82f6; font-size: 0.9rem;"></i>Date:</label><input type="date" id="prev_date" class="border-b-2 border-gray-300 text-right w-1/2 p-1 atm-info-input" style="border-radius: 6px; border: 2px solid #e2e8f0; padding: 8px;"></div>
+                                    <div class="flex justify-between items-center"><label class="font-semibold" style="display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-money-bill-wave" style="color: #3b82f6; font-size: 0.9rem;"></i>Amount:</label><input type="number" id="prev_amount" class="border-b-2 border-gray-300 text-right w-1/2 p-1 atm-info-input" value="0" style="border-radius: 6px; border: 2px solid #e2e8f0; padding: 8px;"></div>
+                                    <div class="flex justify-between items-center"><label class="font-semibold" style="display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-clock" style="color: #3b82f6; font-size: 0.9rem;"></i>Time:</label><input type="time" id="prev_time" class="border-b-2 border-gray-300 text-right w-1/2 p-1 atm-info-input" style="border-radius: 6px; border: 2px solid #e2e8f0; padding: 8px;"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2829,17 +2846,6 @@
             return parseFloat(str) || 0;
         }
         
-        // --- Clipboard Utility ---
-        function copyTextToClipboard(text) {
-            // Fallback method for copying text
-            const dummy = document.createElement('textarea');
-            document.body.appendChild(dummy);
-            dummy.value = text;
-            dummy.select();
-            document.execCommand('copy');
-            document.body.removeChild(dummy);
-        }
-
         // --- Persistence Functions (localStorage) for Main App Data ---
         function saveDataToLocal() {
             try {
@@ -2895,7 +2901,7 @@
                     appData.atmInputs.info[input.id] = input.value;
                 });
                 
-                const tables = ['rejectEjournal', 'cassetteEjournal', 'rejectActual', 'cassetteEjournal', 'cashLoad'];
+                const tables = ['rejectEjournal', 'cassetteEjournal', 'rejectActual', 'cassetteActual', 'cashLoad'];
                 const tableIds = ['reject-ejournal-table', 'cassette-ejournal-table', 'reject-actual-table', 'cassette-actual-table', 'cash-load-table'];
                 
                 tables.forEach((key, tableIndex) => {
@@ -3004,6 +3010,13 @@
                 samityInfo.textContent = appData.electricitySamityInfo;
             }
             
+            // Set default current replenishment date/time if not already saved
+            const currDateEl = document.getElementById('curr_date');
+            const currTimeEl = document.getElementById('curr_time');
+            const _now = new Date();
+            if (currDateEl && !currDateEl.value) currDateEl.value = _now.toISOString().slice(0, 10);
+            if (currTimeEl && !currTimeEl.value) currTimeEl.value = _now.toTimeString().slice(0, 5);
+
             // Recalculate everything after setting base inputs
             updateAndSaveCalculatorState();
             window.atm_calculateAllInputTotals();
@@ -3069,6 +3082,14 @@
                     atmInputPage.style.display = 'block';
                     atmOutputPage.style.display = 'none';
                 }
+                // Auto-fill current date and time (always reset to today/now)
+                const currDateEl = document.getElementById('curr_date');
+                const currTimeEl = document.getElementById('curr_time');
+                const now = new Date();
+                const todayStr = now.toISOString().slice(0, 10);
+                const timeStr = now.toTimeString().slice(0, 5);
+                if (currDateEl) currDateEl.value = todayStr;
+                if (currTimeEl) currTimeEl.value = timeStr;
             }
         }
         
@@ -3179,9 +3200,23 @@
                 prevTime = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
             }
 
+            const currDateInputVal = document.getElementById('curr_date') ? document.getElementById('curr_date').value : '';
+            const currTimeInputVal = document.getElementById('curr_time') ? document.getElementById('curr_time').value : '';
             const now = new Date();
-            const currentDate = now.toLocaleDateString('en-GB').replace(/\//g, '.');
-            const currentTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+            let currentDate, currentTime;
+            if (currDateInputVal) {
+                const [y, m, d] = currDateInputVal.split('-');
+                currentDate = `${d}.${m}.${y}`;
+            } else {
+                currentDate = now.toLocaleDateString('en-GB').replace(/\//g, '.');
+            }
+            if (currTimeInputVal) {
+                const [hours, minutes] = currTimeInputVal.split(':');
+                const t = new Date(); t.setHours(hours); t.setMinutes(minutes);
+                currentTime = t.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+            } else {
+                currentTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+            }
             
             let cashLoadTotalAmountEl = document.getElementById('cash-load-total-amount');
             let cashLoadTotalNotesEl = document.getElementById('cash-load-total-notes');
@@ -3687,6 +3722,94 @@
                 listContainer.appendChild(item);
                 listContainer.appendChild(details);
             });
+        }
+
+        // NEW: Function to export recent transactions as JSON
+        function exportRecentTransactions() {
+            try {
+                const transactions = appData.transactionHistory || [];
+                if (transactions.length === 0) {
+                    alert('No transactions to export.');
+                    return;
+                }
+
+                const exportData = {
+                    exportDate: new Date().toISOString(),
+                    version: '1.0',
+                    transactions: transactions
+                };
+
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `cash-transactions-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+                alert(`Successfully exported ${transactions.length} transaction(s).`);
+            } catch (error) {
+                console.error('Export failed:', error);
+                alert('Failed to export transactions: ' + error.message);
+            }
+        }
+
+        // NEW: Function to import recent transactions from JSON
+        function importRecentTransactions(file) {
+            try {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        
+                        // Validate structure
+                        if (!importedData.transactions || !Array.isArray(importedData.transactions)) {
+                            throw new Error('Invalid file format: missing transactions array');
+                        }
+
+                        const transactions = importedData.transactions;
+                        if (transactions.length === 0) {
+                            alert('No transactions found in the file.');
+                            return;
+                        }
+
+                        // Ask user if they want to replace or merge
+                        const action = confirm(
+                            `Found ${transactions.length} transaction(s) in file.\n\n` +
+                            'Click OK to replace existing transactions.\n' +
+                            'Click Cancel to merge with existing transactions.'
+                        );
+
+                        if (action) {
+                            // Replace: clear existing and add imported
+                            appData.transactionHistory = transactions;
+                        } else {
+                            // Merge: append imported transactions
+                            appData.transactionHistory = (appData.transactionHistory || []).concat(transactions);
+                        }
+
+                        // Sort by timestamp to maintain chronological order
+                        appData.transactionHistory.sort((a, b) => b.timestamp - a.timestamp);
+
+                        // Save and render
+                        saveDataToLocal();
+                        renderRecentTransactions();
+                        updateAndSaveCalculatorState();
+
+                        alert(`Successfully imported ${transactions.length} transaction(s).`);
+                    } catch (parseError) {
+                        console.error('Parse error:', parseError);
+                        alert('Failed to parse file: ' + parseError.message);
+                    }
+                };
+                reader.readAsText(file);
+            } catch (error) {
+                console.error('Import failed:', error);
+                alert('Failed to import transactions: ' + error.message);
+            }
         }
 
         // NEW: Function to update In Hand Calculation amounts
@@ -5274,7 +5397,7 @@
                 // Only render if the absolute value of the balance is greater than 0.001 (to handle floats)
                 if (Math.abs(balance) > 0.001) { 
                     hasNonZeroBalance = true;
-                    const balanceDisplay = balance.toFixed(2).toLocaleString();
+                    const balanceDisplay = balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     const balanceClass = balance < 0 ? 'text-red-600' : 'text-green-600';
 
                     const html = `
@@ -5342,14 +5465,14 @@
                         <td class="px-6 py-3 text-sm text-gray-700">${entry.description}</td>
                         <!-- PAID (RED) - Position 3 -->
                         <td class="px-6 py-3 whitespace-nowrap text-sm text-red-700 text-right">
-                            ${paymentAmount.toFixed(2).toLocaleString()}
+                            ${paymentAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <!-- RECEIVED (GREEN) - Position 4 -->
                         <td class="px-6 py-3 whitespace-nowrap text-sm text-green-700 text-right">
-                            ${receiptAmount.toFixed(2).toLocaleString()}
+                            ${receiptAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td class="px-6 py-3 whitespace-nowrap text-sm text-right ${balanceClass}">
-                            ${runningBalance.toFixed(2).toLocaleString()}
+                            ${runningBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                     </tr>
                 `;
@@ -5394,7 +5517,7 @@
             const el = document.getElementById('cf-final-balance');
             if (!el) return;
             const num = typeof value === 'number' ? value : computeCurrentCashBalance();
-            const text = num.toFixed(2).toLocaleString();
+            const text = num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             el.textContent = text;
             // color mapping: positive -> green (To be Pay), negative -> red (To be Receive), zero -> neutral
             if (num > 0) {
@@ -6248,6 +6371,11 @@
                     } catch (e) {
                         console.error('Failed to clear Cash Flow during Reset All:', e);
                     }
+
+                    // Refresh page after reset completion with a brief delay to show completion feedback
+                    setTimeout(() => {
+                        location.reload();
+                    }, 600);
                 });
             }
 
@@ -6800,6 +6928,47 @@
                 });
             })();
             
+            // --- Recent Transactions Export/Import ---
+            (function initTransactionIO() {
+                const exportBtn = document.getElementById('exportTransactionsBtn');
+                const importBtn = document.getElementById('importTransactionsBtn');
+                const fileInput = document.getElementById('transactionsFileInput');
+
+                if (exportBtn) {
+                    exportBtn.addEventListener('click', () => {
+                        exportBtn.disabled = true;
+                        exportBtn.textContent = 'Exporting...';
+                        try {
+                            exportRecentTransactions();
+                        } finally {
+                            exportBtn.disabled = false;
+                            exportBtn.innerHTML = '<i class="fas fa-download" style="margin-right: 4px;"></i>Export';
+                        }
+                    });
+                }
+
+                if (importBtn && fileInput) {
+                    importBtn.addEventListener('click', () => {
+                        fileInput.click();
+                    });
+
+                    fileInput.addEventListener('change', (event) => {
+                        const file = event.target.files[0];
+                        if (file) {
+                            importBtn.disabled = true;
+                            importBtn.textContent = 'Importing...';
+                            try {
+                                importRecentTransactions(file);
+                            } finally {
+                                importBtn.disabled = false;
+                                importBtn.innerHTML = '<i class="fas fa-upload" style="margin-right: 4px;"></i>Import';
+                                fileInput.value = ''; // Reset file input
+                            }
+                        }
+                    });
+                }
+            })();
+            
             // --- ATM Event Listeners ---
             const atmInputPage = document.getElementById('atm-input-page');
             
@@ -6844,8 +7013,4 @@
 </body>
 
 <!-- Calculation popup removed -->
-</html>    </script>
-</body>
-
-<!-- Calculation popup removed -->
-</html></html>
+</html>

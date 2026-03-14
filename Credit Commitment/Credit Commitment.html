@@ -6,8 +6,873 @@
   <title>Credit Commitment Editor</title>
   <link rel="stylesheet" href="../css/fontawesome.min.css">
   <link rel="stylesheet" href="../css/fontawesome-fix.css">
-  <link rel="stylesheet" href="styles.css" />
-  <style>body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }</style>
+  <script src="html2pdf.bundle.min.js"></script>
+  <style>
+/* ========================================================
+   Credit Commitment Editor - Modern Design System
+   Clean, organized, easy-to-use interface
+   ======================================================== */
+
+/* --- Design Tokens --- */
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --primary-light: #818cf8;
+  --primary-ghost: rgba(99, 102, 241, 0.08);
+  --accent: #ec4899;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --bg: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-elevated: #f8fafc;
+  --text: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --border: #e2e8f0;
+  --border-hover: #cbd5e1;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow-xs: 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(15,23,42,0.07), 0 2px 4px -2px rgba(15,23,42,0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(15,23,42,0.08), 0 4px 6px -4px rgba(15,23,42,0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(15,23,42,0.1), 0 8px 10px -6px rgba(15,23,42,0.06);
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Reset and Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* --- Header --- */
+header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  padding: 20px 32px;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.25);
+  animation: slideDown 0.5s ease-out;
+  position: relative;
+  z-index: 10;
+}
+
+header h1 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: #fff;
+}
+
+header h1 i { font-size: 1.6rem; opacity: 0.9; }
+
+.lead {
+  margin-top: 4px;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.8);
+  font-weight: 400;
+}
+
+.accent-text {
+  display: inline-block;
+  padding: 3px 10px;
+  margin-left: 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* --- Nav --- */
+.nav-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.9);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-btn:hover {
+  background: rgba(255,255,255,0.22);
+  transform: translateY(-1px);
+}
+
+.nav-btn.active {
+  background: #fff;
+  color: var(--primary-dark);
+  border-color: transparent;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  font-weight: 700;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255,255,255,0.2);
+}
+
+.nav { margin-top: 8px; }
+
+/* --- Main Layout --- */
+main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 28px 28px 20px;
+  animation: fadeIn 0.5s ease-out 0.1s both;
+  display: block;
+  position: static;
+}
+
+/* --- Section Cards --- */
+.unified-editor,
+.unified-customers {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 0;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.unified-editor:hover,
+.unified-customers:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.unified-editor { margin-bottom: 28px; }
+
+/* --- Columns --- */
+.editor-column,
+.customer-column {
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+}
+
+.editor-column:first-child,
+.customer-column:first-child {
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--border);
+  padding-right: 28px;
+}
+
+.editor-column:last-child,
+.customer-column:last-child {
+  padding-left: 28px;
+}
+
+/* --- Section Headers inside unified cards --- */
+.unified-editor h2,
+.unified-editor h3,
+.unified-customers h2,
+.unified-customers h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  padding-bottom: 16px;
+  margin: 0 0 20px 0;
+  border-bottom: 2px solid var(--border);
+}
+
+.unified-editor h2 i,
+.unified-editor h3 i,
+.unified-customers h2 i,
+.unified-customers h3 i {
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+/* --- Labels inside columns --- */
+.editor-column label,
+.customer-column label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-bottom: 6px;
+  margin-top: 0;
+}
+
+.editor-column label i,
+.customer-column label i {
+  color: var(--primary);
+  margin-right: 6px;
+  font-size: 0.85rem;
+}
+
+/* --- Inputs --- */
+input:not([type="hidden"]):not([type="file"]),
+select,
+textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  font-family: inherit;
+  color: var(--text);
+  background: #fff;
+  transition: var(--transition);
+  outline: none;
+}
+
+input:not([type="hidden"]):not([type="file"]):hover,
+select:hover,
+textarea:hover {
+  border-color: var(--border-hover);
+}
+
+input:not([type="hidden"]):not([type="file"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-ghost) !important;
+  background: #fff !important;
+}
+
+textarea { resize: vertical; min-height: 72px; font-family: inherit; }
+select { cursor: pointer; }
+::placeholder { color: var(--text-muted) !important; }
+
+/* --- Buttons --- */
+.iss-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  font-size: 0.9rem;
+  font-weight: 650;
+  font-family: inherit;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+  position: relative;
+  overflow: hidden;
+  animation: none;
+}
+
+.iss-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+  transform: translateX(-120%);
+  transition: transform 0.5s ease;
+  pointer-events: none;
+}
+
+.iss-btn:hover::after { transform: translateX(120%); }
+
+.iss-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+}
+
+.iss-btn:active { transform: translateY(0); }
+
+.iss-btn.small {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+}
+
+.iss-btn.secondary,
+.secondary,
+.btn-cancel {
+  background: #fff !important;
+  color: var(--text) !important;
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-xs);
+}
+
+.iss-btn.secondary:hover,
+.secondary:hover,
+.btn-cancel:hover {
+  background: var(--bg-elevated) !important;
+  border-color: var(--primary-light) !important;
+  color: var(--primary-dark) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.buttons button { flex: 1; min-width: 130px; min-height: 42px; }
+
+.primary-btn {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+}
+
+/* --- Tables --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table thead th {
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border: none;
+  white-space: nowrap;
+}
+
+table thead th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+table thead th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+
+table tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+table tbody tr { transition: var(--transition); }
+table tbody tr:hover { background: var(--primary-ghost); }
+table tbody tr:last-child td { border-bottom: none; }
+
+table button,
+.elist-edit,
+.elist-del,
+.cust-edit,
+.cust-del {
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 70px;
+  text-align: center;
+}
+
+table button:hover,
+.elist-edit:hover,
+.cust-edit:hover {
+  background: var(--primary-ghost);
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.elist-del:hover,
+.cust-del:hover {
+  background: rgba(239, 68, 68, 0.06);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--danger);
+}
+
+/* --- Form Group --- */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group:last-of-type {
+  margin-bottom: 0;
+}
+
+/* --- Table Wrapper --- */
+.table-wrapper {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.table-wrapper table {
+  margin: 0;
+}
+
+/* --- Editor List Form --- */
+#editorListForm {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  padding: 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+
+#editorListForm label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+/* --- Modals --- */
+.modal-overlay,
+#branchModal,
+#signModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(6px);
+}
+
+.modal-overlay.hidden { display: none !important; }
+
+.modal-content,
+#branchModal > div,
+#signModal > div {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  max-width: 860px;
+  width: 94%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  animation: modalIn 0.3s ease-out;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+}
+
+.modal-header i { color: var(--primary); font-size: 1.25rem; }
+.modal-header h3 { flex: 1; font-size: 1.15rem; font-weight: 700; color: var(--text); margin: 0; padding: 0; border: none; }
+
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  position: static;
+}
+
+.modal-close:hover { background: var(--primary-ghost); color: var(--primary); }
+
+.modal-body { display: grid; gap: 24px; }
+
+.modal-section { display: grid; gap: 14px; }
+
+.modal-section h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+}
+
+.modal-section.two-column {
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.modal-section.two-column > div { display: grid; gap: 14px; }
+
+.modal-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-form-group label {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+  font-size: 0.88rem;
+}
+
+.modal-form-group label i {
+  color: var(--primary);
+  margin-right: 6px;
+  font-size: 0.82rem;
+}
+
+.modal-form-group input,
+.modal-form-group textarea {
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  transition: var(--transition);
+  background: #fff;
+  color: var(--text);
+}
+
+.modal-form-group input:focus,
+.modal-form-group textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-ghost);
+  outline: none;
+}
+
+.modal-preview {
+  padding: 14px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border);
+  min-height: 40px;
+}
+
+.modal-preview img {
+  max-width: 100%;
+  max-height: 140px;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 2px solid var(--border);
+}
+
+.modal-actions button { min-width: 110px; min-height: 40px; }
+.modal-actions .iss-btn.small { padding: 10px 14px; }
+.modal-actions .iss-btn { padding: 10px 18px; }
+
+/* --- Slide Menu --- */
+.slide-menu-toggle {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1001;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  border: none;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 14px 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide-menu-toggle:hover {
+  padding-left: 16px;
+  background: linear-gradient(135deg, var(--primary-dark), #7c3aed);
+}
+
+.slide-menu-toggle i { font-size: 1.15rem; }
+
+.slide-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  z-index: 1002;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+}
+
+.slide-menu-backdrop.show { opacity: 1; visibility: visible; }
+
+.slide-menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 260px;
+  max-width: 85vw;
+  background: #fff;
+  z-index: 1003;
+  box-shadow: var(--shadow-xl);
+  transform: translateX(-100%);
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.slide-menu.open { transform: translateX(0); }
+
+.slide-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+}
+
+.slide-menu-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  color: #fff;
+}
+
+.slide-menu-close {
+  background: rgba(255,255,255,0.18);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.slide-menu-close:hover { background: rgba(255,255,255,0.3); }
+
+.slide-menu-body { flex: 1; overflow-y: auto; padding: 12px; }
+
+.slide-menu-nav { list-style: none; padding: 0; margin: 0; }
+.slide-menu-nav li { margin-bottom: 2px; }
+
+.slide-menu-nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.92rem;
+  transition: var(--transition);
+}
+
+.slide-menu-nav a:hover {
+  background: var(--primary-ghost);
+  color: var(--primary);
+}
+
+.slide-menu-nav a i {
+  width: 20px;
+  text-align: center;
+  color: var(--primary);
+  font-size: 0.95rem;
+}
+
+/* --- Footer --- */
+footer { padding: 16px 28px; text-align: center; }
+.neon-footer { padding: 12px 18px; }
+.footer-rgb { display: flex; align-items: center; justify-content: center; }
+
+.footer-rgb .rgb-text,
+footer small {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 20%, #ec4899 40%, #f97316 60%, #06b6d4 80%, #6366f1 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: rgbShift 5s linear infinite;
+}
+
+@keyframes rgbShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* --- Preview --- */
+.preview { flex: 1; }
+.preview .card {
+  background: var(--bg-card);
+  padding: 18px;
+  border-radius: var(--radius-md);
+  min-height: 220px;
+  white-space: pre-wrap;
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- Customer page layout fallback --- */
+.customer-page { display: flex; gap: 20px; align-items: flex-start; }
+.customer-page .controls { flex: 0 0 420px; }
+.customer-list { flex: 1; }
+
+.controls {
+  background: var(--bg-card);
+  padding: 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.controls label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.controls label:first-of-type { margin-top: 0; }
+
+/* --- Top actions bar (now in header) --- */
+.top-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.top-actions button {
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.top-actions button:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateY(-1px);
+}
+
+/* --- Responsive --- */
+@media (max-width: 960px) {
+  .unified-editor,
+  .unified-customers {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-column:first-child,
+  .customer-column:first-child {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+  }
+
+  .editor-column:last-child,
+  .customer-column:last-child {
+    padding-left: 28px;
+    padding-top: 24px;
+  }
+
+  header { border-radius: 0; padding: 18px 20px; }
+  main { padding: 20px 16px; }
+
+  .customer-page { flex-direction: column; }
+  .customer-page .controls { flex: unset; width: 100%; }
+  .controls { width: 100%; }
+}
+
+@media (max-width: 640px) {
+  header h1 { font-size: 1.2rem; }
+  .nav-buttons { flex-direction: column; }
+  .nav-btn { width: 100%; justify-content: center; }
+  .header-actions { margin-left: 0; padding-left: 0; border-left: none; margin-top: 8px; }
+  .modal-section.two-column { grid-template-columns: 1fr; }
+  .slide-menu-toggle { display: none !important; }
+  .editor-column, .customer-column { padding: 20px; }
+}
+
+/* --- Utility --- */
+.hidden { display: none !important; }
+button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
+
+/* Override any old theme leaks */
+#headerLogoPreview img { max-height: 48px; display: block; }
+#branchModal > div::before, #signModal > div::before { display: none; }
+  </style>
 </head>
 <body>
   <!-- Left Slide Menu Toggle -->
@@ -27,8 +892,10 @@
         <li><a href="#" id="slideMenuEditBranch"><i class="fas fa-building"></i> Edit Branch Details</a></li>
         <li><a href="#" id="slideMenuEditOfficer"><i class="fas fa-user-tie"></i> Edit Officer Details</a></li>
       </ul>
-      <div style="padding:8px 0;border-top:1px solid var(--border);margin-top:8px;text-align:center;font-size:0.85rem;color:var(--text-muted);font-weight:600;">
-        Developed by Tanzil Ahmed — EID 7966.
+      <div class="neon-footer">
+        <div class="footer-rgb">
+          <span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span>
+        </div>
       </div>
     </div>
   </div>
@@ -95,7 +962,7 @@
         <input id="rightSignSig" type="hidden" />
 
         <div class="buttons" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <button id="printBtn" class="iss-btn"><i class="fas fa-file-pdf"></i> Print / PDF</button>
+          <button id="printBtn" class="iss-btn"><i class="fas fa-file-pdf"></i> Print</button>
           <button id="sendMailBtn" class="iss-btn"><i class="fas fa-paper-plane"></i> Send Mail</button>
         </div>
       </div>
@@ -128,7 +995,8 @@
           </div>
           <div class="buttons" style="margin-top:14px;">
             <button id="editorAddSaveBtn" class="iss-btn small"><i class="fas fa-save"></i> Save</button>
-            <button id="editorAddCancelBtn" class="iss-btn small secondary"><i class="fas fa-times"></i> Cancel</button>
+            <button id="editorAddCancelBtn" class="iss-btn small secondary"><i class="fas fa-times"></i> Clear</button>
+            <button id="editorClearAllBtn" class="iss-btn small danger"><i class="fas fa-trash-alt"></i> Clear All</button>
           </div>
         </div>
 
@@ -207,9 +1075,6 @@
   </main>
 
   <footer class="neon-footer">
-    <div class="footer-rgb">
-      <span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span>
-    </div>
   </footer>
 
   <!-- Branch Details Modal -->
@@ -328,7 +1193,1901 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script>
+// Credit Commitment Editor - app.js
+// This script contains a small set of templates (6 types) and UI wiring.
+
+(function(){
+  // Default templates (fallback if fetch not available when opening file://)
+  const DEFAULT_TEMPLATES = [
+  { id: 'pw3-7', name: 'Form PW3-7', html: true, templateHtml: `
+<div class="pw3-container">
+  <style>
+    .pw3-container{font-family: 'Times New Roman', Times, serif; color:#000; max-width:800px; margin:0 auto; padding:24px}
+  .header-row{display:flex; justify-content:space-between; align-items:flex-start}
+  .header-right{font-size:11px; text-align:right}
+  .pw3-title{font-weight:700; font-size:14px}
+  .pw3-sub{font-size:10px; text-align:center; margin-bottom:12px}
+  .pw3-body{margin-top:10px; font-size:12px; line-height:1.45; text-align:justify}
+  .pw3-sign{margin-top:120px; display:flex; justify-content:space-between; align-items:flex-start}
+  .pw3-sign .left, .pw3-sign .right{width:48%; text-align:center}
+  .pw3-sign .name{display:block; font-weight:700; font-size:13px}
+  .pw3-sign .title{display:block; font-size:11px; margin-top:6px}
+  .pw3-sign .title{display:block; font-size:11px; margin-top:6px}
+  .pw3-address{white-space:pre-wrap; margin-bottom:8px}
+  </style>
+
+  <div class="header-row">
+    <div></div>
+    <div class="header-right">
+      <div>{{branchDetails}}</div>
+    </div>
+  </div>
+
+  <div class="pw3-title" style="text-align:center">Letter of Commitment for Bank's Undertaking for Line of Credit (Form PW3-7)</div>
+  <div class="pw3-sub">[This is the format for the Credit Line to be issued by any scheduled Bank of Bangladesh in accordance with ITT Clause 32.1(d)]</div>
+
+  <div class="pw3-body">
+    <div><strong>Invitation for Tender No:</strong> APP ID : 204431</div>
+    <div><strong>Tender ID:</strong> 1128414</div>
+    <div><strong>Tender Package No:</strong> GSID-2/PAB/SDW-388</div>
+    <div><strong>Lot No (when applicable):</strong> </div>
+
+  <p><strong>To</strong><br>{{recipient}}</p>
+
+    <h3 style="text-align:center">CREDIT COMMITMENT No: 427/2025 &nbsp;&nbsp; Date: 25.10.2025</h3>
+
+  <p>We have been informed that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> (hereinafter called "the Tenderer") intends to submit to you its Tender (hereinafter called "the Tender") for the execution of the Works of "{{description}}", under the above Invitation for Tenders (hereinafter called "the IFT").</p>
+
+    <p>Furthermore, we understand that, according to your conditions, the Tenderer's Financial Capacity i.e., Liquid Asset must be substantiated by a Letter of Commitment of Bank's Undertaking for Line of Credit.</p>
+
+  <p>At the request of, and arrangement with, the Tenderer, we United Commercial Bank PLC do hereby agree and undertake that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> will be provided by us with a revolving line of credit, in case awarded the Contract, for execution of the Works viz. "{{description}}", for an amount not less than <strong>{{amount}} {{amountWordsBriket}}</strong> for the sole purpose of the execution of the above Contract. This Revolving Line of Credit will be maintained by us until issuance of "Taking-Over Certificate" by the Procuring Entity.</p>
+
+    <p>In witness whereof, authorised representative of the Bank has hereunto signed and sealed this Letter of Commitment.</p>
+
+    <div class="pw3-sign">
+      <div class="left"><span class="name">{{leftSignName}}</span><span class="title">{{leftSignTitle}}</span></div>
+      <div class="right"><span class="name">{{rightSignName}}</span><span class="title">{{rightSignTitle}}</span></div>
+    </div>
+  </div>
+</div>
+` },
+  { id: 'pg2-5', name: 'Form PG2-5', html: true, templateHtml: `
+<div class="pw3-container">
+  <style>
+    .pw3-container{font-family: 'Times New Roman', Times, serif; color:#000; max-width:800px; margin:0 auto; padding:24px}
+  .header-row{display:flex; justify-content:space-between; align-items:flex-start}
+  .header-right{font-size:11px; text-align:right}
+  .pw3-title{font-weight:700; font-size:14px}
+  .pw3-sub{font-size:10px; text-align:center; margin-bottom:12px}
+  .pw3-body{margin-top:10px; font-size:12px; line-height:1.45; text-align:justify}
+  .pw3-list{margin:12px 0 18px 20px}
+  .pw3-sign{margin-top:120px; display:flex; justify-content:space-between; align-items:flex-start}
+  .pw3-sign .left, .pw3-sign .right{width:48%; text-align:center}
+  .pw3-sign .name{display:block; font-weight:700; font-size:13px}
+  .pw3-sign .title{display:block; font-size:11px; margin-top:6px}
+  </style>
+
+  <div class="header-row">
+    <div></div>
+    <div class="header-right">
+      <div>{{branchDetails}}</div>
+    </div>
+  </div>
+
+  <div class="pw3-title" style="text-align:center">Letter of Commitment for Bank's Undertaking for Line of Credit (Form PG2-5)</div>
+  <div class="pw3-sub">[This is the format for the Credit Line to be issued by any scheduled Bank of Bangladesh in accordance with ITT Clause 17.1(d)]</div>
+
+  <div class="pw3-body">
+    <div><strong>Invitation for Tender No:</strong> APP ID : 204431</div>
+    <div><strong>Tender ID:</strong> 1128414</div>
+    <div><strong>Tender Package No:</strong> GSID-2/PAB/SDW-388</div>
+    <div><strong>Lot No (when applicable):</strong> </div>
+  <p><strong>To</strong><br>{{recipient}}</p>
+    <h3 style="text-align:center">CREDIT COMMITMENT No: 427/2025 &nbsp;&nbsp; Date: 25.10.2025</h3>
+  <p>We have been informed that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> (hereinafter called "the Tenderer") intends to submit to you its Tender (hereinafter called "the Tender") for the supply of Goods of "{{description}}", under the above Invitation for Tenders (hereinafter called "the IFT").</p>
+
+    <p>Furthermore, we understand that, according to your conditions, the Tenderer's Financial Capacity i.e., Liquid Asset must be substantiated by a Letter of Commitment of Bank's Undertaking for Line of Credit.</p>
+
+  <p>At the request of, and arrangement with, the Tenderer, we United Commercial Bank PLC do hereby agree and undertake that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> will be provided by us with a revolving line of credit, in case awarded the Contract, for delivery of Goods and related services for an amount not less than <strong>{{amount}} {{amountWordsBriket}}</strong> for the sole purpose of the supply of Goods and related services under the above Contract. This Revolving Line of Credit will be maintained by us until issuance of 'Acceptance Certificate' by the Procuring Entity.</p>
+
+    <p>In witness whereof, authorised representative of the Bank has hereunto signed and sealed this Letter of Commitment.</p>
+
+    <div class="pw3-sign">
+      <div class="left"><span class="name">{{leftSignName}}</span><span class="title">{{leftSignTitle}}</span></div>
+      <div class="right"><span class="name">{{rightSignName}}</span><span class="title">{{rightSignTitle}}</span></div>
+    </div>
+  </div>
+</div>
+` },
+  { id: 'pw2b-3', name: 'Form PW2b-3', html: true, templateHtml: `
+<div class="pw3-container">
+  <style>
+    .pw3-container{font-family: 'Times New Roman', Times, serif; color:#000; max-width:800px; margin:0 auto; padding:24px}
+    .header-row{display:flex; justify-content:space-between; align-items:flex-start}
+  .header-right{font-size:11px; text-align:right}
+  .pw3-title{font-weight:700; font-size:14px}
+  .pw3-sub{font-size:10px; text-align:center; margin-bottom:12px}
+  .pw3-body{margin-top:10px; font-size:12px; line-height:1.45; text-align:justify}
+    .pw3-list{margin:12px 0 18px 20px}
+  .pw3-sign{margin-top:120px; display:flex; justify-content:space-between; align-items:flex-start}
+  .pw3-sign .left, .pw3-sign .right{width:48%; text-align:center}
+  .pw3-sign .name{display:block; font-weight:700; font-size:13px}
+  .pw3-sign .title{display:block; font-size:11px; margin-top:6px}
+  .pw3-address{white-space:pre-wrap; margin-bottom:8px}
+  </style>
+
+  <div class="header-row">
+    <div></div>
+    <div class="header-right">
+      <div>{{branchDetails}}</div>
+    </div>
+  </div>
+
+  <div class="pw3-title" style="text-align:center">Letter of Commitment for Bank's Undertaking for Line of Credit (Form PW2b-3)</div>
+  <div class="pw3-sub">[This is the format for the Credit Line to be issued by any scheduled Bank of Bangladesh in accordance with ITTClause 23.1(c)]</div>
+
+  <div class="pw3-body">
+    <div><strong>Invitation for Tender No:</strong> APP ID : 204431</div>
+    <div><strong>Tender ID:</strong> 1128414</div>
+    <div><strong>Tender Package No:</strong> GSID-2/PAB/SDW-388</div>
+    <div><strong>Lot No (when applicable):</strong> </div>
+  <p><strong>To</strong><br>{{recipient}}</p>
+    <h3 style="text-align:center">CREDIT COMMITMENT No: 427/2025 &nbsp;&nbsp; Date: 25.10.2025</h3>
+  <p>We have been informed that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> (hereinafter called "the Tenderer") intends to submit to you its Tender (hereinafter called "the Tender") for the execution of the Works of "{{description}}", under the above Invitation for Tenders (hereinafter called "the IFT").</p>
+
+    <p>Furthermore, we understand that, according to your conditions, the Tenderer's Financial Capacity i.e., Liquid Asset must be substantiated by a Letter of Commitment of Bank's Undertaking for Line of Credit.</p>
+
+  <p>At the request of, and arrangement with, the Tenderer, we United Commercial Bank PLC do hereby agree and undertake that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> will be provided by us with a revolving line of credit, in case awarded the Contract, for execution of the Works viz. "{{description}}", for an amount not less than <strong>{{amount}} {{amountWordsBriket}}</strong> for the sole purpose of the execution of the above Contract. This Revolving Line of Credit will be maintained by us until issuance of "Taking-Over Certificate" by the Procuring Entity.</p>
+
+    <p>In witness whereof, authorised representative of the Bank has hereunto signed and sealed this Letter of Commitment.</p>
+
+    <div class="pw3-sign">
+      <div class="left"><span class="name">{{leftSignName}}</span><span class="title">{{leftSignTitle}}</span></div>
+      <div class="right"><span class="name">{{rightSignName}}</span><span class="title">{{rightSignTitle}}</span></div>
+    </div>
+  </div>
+</div>
+` },
+  { id: 'epw2a-3', name: 'Form e-PW2A-3', html: true, templateHtml: `
+<div class="pw3-container">
+  <style>
+    .pw3-container{font-family: 'Times New Roman', Times, serif; color:#000; max-width:800px; margin:0 auto; padding:24px}
+  .header-row{display:flex; justify-content:space-between; align-items:flex-start}
+  .header-right{font-size:11px; text-align:right}
+  .pw3-title{font-weight:700; font-size:14px}
+  .pw3-sub{font-size:10px; text-align:center; margin-bottom:12px}
+  .pw3-body{margin-top:10px; font-size:12px; line-height:1.45; text-align:justify}
+  .pw3-sign{margin-top:120px; display:flex; justify-content:space-between; align-items:flex-start}
+  .pw3-sign .left, .pw3-sign .right{width:48%; text-align:center}
+  .pw3-sign .name{display:block; font-weight:700; font-size:13px}
+  .pw3-sign .title{display:block; font-size:11px; margin-top:6px}
+  </style>
+
+  <div class="header-row">
+    <div></div>
+    <div class="header-right">
+      <div>{{branchDetails}}</div>
+    </div>
+  </div>
+
+  <div class="pw3-title" style="text-align:center">Letter of Commitment for Bank's Undertaking for Line of Credit (Form e-PW2A-3)</div>
+  <div class="pw3-sub">[This is the format for the Credit Line to be issued by any scheduled Bank of Bangladesh in accordance with ITT Clause 10.1(b)]</div>
+
+  <div class="pw3-body">
+    <div><strong>Invitation for Tender No:</strong> APP ID : 204431</div>
+    <div><strong>Tender ID:</strong> 1128414</div>
+    <div><strong>Tender Package No:</strong> GSID-2/PAB/SDW-388</div>
+    <div><strong>Lot No (when applicable):</strong></div>
+  <p><strong>To</strong><br>{{recipient}}</p>
+    <h3 style="text-align:center">CREDIT COMMITMENT No: 427/2025 &nbsp;&nbsp; Date: 25.10.2025</h3>
+    <p>We have been informed that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> (hereinafter called "the Tenderer") intends to submit to you its Tender (hereinafter called "the Tender") for the execution of the Works of "Improvement of Laxmikunda Baitul Amann Jam-E-Mosque at Laxmikunda Tatul Tola road under Laxmikunda Union [Latitude:24.03168 Longitude:89.06824] Upazila:Ishwardi, District: Pabna", under the above Invitation for Tenders (hereinafter called "the IFT").</p>
+    <p>Furthermore, we understand that, according to your conditions, the Tenderer's Financial Capacity i.e., Liquid Asset must be substantiated by a Letter of Commitment of Bank's Undertaking for Line of Credit.</p>
+  <p>At the request of, and arrangement with, the Tenderer, we United Commercial Bank PLC do hereby agree and undertake that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> will be provided by us with a revolving line of credit, in case awarded the Contract, for execution of the Works, for an amount not less than <strong>{{amount}} {{amountWordsBriket}}</strong> for the sole purpose of the execution of the above Contract. This Revolving Line of Credit will be maintained by us until issuance of "Taking-Over Certificate" by the Procuring Entity.</p>
+    <p>In witness whereof, authorised representative of the Bank has hereunto signed and sealed this Letter of Commitment.</p>
+    <div class="pw3-sign">
+      <div class="left"><span class="name">{{leftSignName}}</span><span class="title">{{leftSignTitle}}</span></div>
+      <div class="right"><span class="name">{{rightSignName}}</span><span class="title">{{rightSignTitle}}</span></div>
+    </div>
+  </div>
+</div>
+` },
+  { id: 'pg3-11', name: 'Form PG3-11', html: true, templateHtml: `
+<div class="pw3-container">
+  <style>
+    .pw3-container{font-family: 'Times New Roman', Times, serif; color:#000; max-width:800px; margin:0 auto; padding:24px}
+    .header-row{display:flex; justify-content:space-between; align-items:flex-start}
+  .header-right{font-size:12px; text-align:right}
+  .pw3-title{font-weight:700; font-size:15px}
+  .pw3-sub{font-size:11px; text-align:center; margin-bottom:12px}
+  .pw3-body{margin-top:10px; font-size:13px; line-height:1.45; text-align:justify}
+  .pw3-sign{margin-top:120px; display:flex; justify-content:space-between; align-items:flex-start}
+  .pw3-sign .left, .pw3-sign .right{width:48%; text-align:center}
+  .pw3-sign .name{display:block; font-weight:700; font-size:14px}
+  .pw3-sign .title{display:block; font-size:12px; margin-top:6px}
+  </style>
+
+    <div class="header-row">
+    <div></div>
+    <div class="header-right">
+      <div>{{branchDetails}}</div>
+    </div>
+  </div>
+
+  <div class="pw3-title" style="text-align:center">Letter of Commitment for Bank's Undertaking for Line of Credit (Form PG3-11)</div>
+  <div class="pw3-sub">[This is the format for the Credit Line to be issued by any scheduled Bank of Bangladesh in accordance with ITT Clause28.1(d)]</div>
+
+  <div class="pw3-body">
+    <div><strong>Invitation for Tender No:</strong> APP ID : 204431</div>
+    <div><strong>Tender ID:</strong> 1128414</div>
+    <div><strong>Tender Package No:</strong> GSID-2/PAB/SDW-388</div>
+    <div><strong>Lot No (when applicable):</strong></div>
+  <p><strong>To</strong><br>{{recipient}}</p>
+    <h3 style="text-align:center">CREDIT COMMITMENT No: 427/2025 &nbsp;&nbsp; Date: 25.10.2025</h3>
+    <p>We have been informed that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> (hereinafter called "the Tenderer") intends to submit to you its Tender (hereinafter called "the Tender") for the supply of Goods of "Improvement of Laxmikunda Baitul Amann Jam-E-Mosque at Laxmikunda Tatul Tola road under Laxmikunda Union [Latitude:24.03168 Longitude:89.06824] Upazila:Ishwardi, District: Pabna", under the above Invitation for Tenders (hereinafter called "the IFT").</p>
+    <p>Furthermore, we understand that, according to your conditions, the Tenderer's Financial Capacity i.e., Liquid Asset must be substantiated by a Letter of Commitment of Bank's Undertaking for Line of Credit.</p>
+  <p>At the request of, and arrangement with, the Tenderer, we United Commercial Bank PLC do hereby agree and undertake that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> will be provided by us with a revolving line of credit, in case awarded the Contract, for the delivery of Goods and related services for an amount not less than <strong>{{amount}} {{amountWordsBriket}}</strong> for the sole purpose of the supply of Goods and related services under the above Contract. This Revolving Line of Credit will be maintained by us until issuance of "Acceptance Certificate" by the Procuring Entity.</p>
+    <p>In witness whereof, authorised representative of the Bank has hereunto signed and sealed this Letter of Commitment.</p>
+    <div class="pw3-sign">
+      <div class="left"><span class="name">{{leftSignName}}</span><span class="title">{{leftSignTitle}}</span></div>
+      <div class="right"><span class="name">{{rightSignName}}</span><span class="title">{{rightSignTitle}}</span></div>
+    </div>
+  </div>
+</div>
+` },
+  { id: 'pw2a-3', name: 'Form PW2a-3', html: true, templateHtml: `
+<div class="pw3-container">
+  <style>
+    .pw3-container{font-family: 'Times New Roman', Times, serif; color:#000; max-width:800px; margin:0 auto; padding:24px}
+    .header-row{display:flex; justify-content:space-between; align-items:flex-start}
+  .header-right{font-size:12px; text-align:right}
+  .pw3-title{font-weight:700; font-size:15px}
+  .pw3-sub{font-size:11px; text-align:center; margin-bottom:12px}
+  .pw3-body{margin-top:10px; font-size:13px; line-height:1.45; text-align:justify}
+  .pw3-sign{margin-top:120px; display:flex; justify-content:space-between; align-items:flex-start}
+  .pw3-sign .left, .pw3-sign .right{width:48%; text-align:center}
+  .pw3-sign .name{display:block; font-weight:700; font-size:14px}
+  .pw3-sign .title{display:block; font-size:12px; margin-top:6px}
+  </style>
+
+  <div class="header-row">
+    <div></div>
+    <div class="header-right">
+      <div>{{branchDetails}}</div>
+    </div>
+  </div>
+
+  <div class="pw3-title" style="text-align:center">Letter of Commitment for Bank's Undertaking for Line of Credit (Form PW2a-3)</div>
+  <div class="pw3-sub">[This is the format for the Credit Line to be issued by any scheduled Bank of Bangladesh in accordance with ITT Clause23.1 (f)]</div>
+
+  <div class="pw3-body">
+    <div><strong>Invitation for Tender No:</strong> APP ID : 204431</div>
+    <div><strong>Tender ID:</strong> 1128414</div>
+    <div><strong>Tender Package No:</strong> GSID-2/PAB/SDW-388</div>
+    <div><strong>Lot No (when applicable):</strong></div>
+  <p><strong>To</strong><br>{{recipient}}</p>
+    <h3 style="text-align:center">CREDIT COMMITMENT No: 427/2025 &nbsp;&nbsp; Date: 25.10.2025</h3>
+    <p>We have been informed that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> (hereinafter called "the Tenderer") intends to submit to you its Tender (hereinafter called "the Tender") for the execution of the Works of "Improvement of Laxmikunda Baitul Amann Jam-E-Mosque at Laxmikunda Tatul Tola road under Laxmikunda Union [Latitude:24.03168 Longitude:89.06824] Upazila:Ishwardi, District: Pabna", under the above Invitation for Tenders (hereinafter called "the IFT").</p>
+    <p>Furthermore, we understand that, according to your conditions, the Tenderer's Financial Capacity i.e., Liquid Asset must be substantiated by a Letter of Commitment of Bank's Undertaking for Line of Credit.</p>
+  <p>At the request of, and arrangement with, the Tenderer, we United Commercial Bank PLC do hereby agree and undertake that <strong>{{customerName}}</strong>, Proprietor: <strong>{{proprietorName}}</strong>, Address: <strong>{{address}}</strong> will be provided by us with a revolving line of credit, in case awarded the Contract, for execution of the Works, for an amount not less than <strong>{{amount}} {{amountWordsBriket}}</strong> for the sole purpose of the execution of the above Contract. This Revolving Line of Credit will be maintained by us until issuance of "Taking-Over Certificate" by the Procuring Entity.</p>
+    <p>In witness whereof, authorised representative of the Bank has hereunto signed and sealed this Letter of Commitment.</p>
+    <div class="pw3-sign">
+      <div class="left"><span class="name">{{leftSignName}}</span><span class="title">{{leftSignTitle}}</span></div>
+      <div class="right"><span class="name">{{rightSignName}}</span><span class="title">{{rightSignTitle}}</span></div>
+    </div>
+  </div>
+</div>
+` },
+  ];
+
+  // Default customers (used when localStorage has no saved customers)
+  const DEFAULT_CUSTOMERS = [
+    { org: 'M/S Khan Traders', proprietor: 'Md Awlad Hossain', address: 'Sayedpur, Aminpur, Sujanagar, Pabna', email: '' }
+  ];
+
+  // Normalize any hard-coded demo values in templates into placeholders
+  // This fixes templates that were using literal demo text so they update from editor fields
+  function normalizeTemplates(templates){
+    if (!Array.isArray(templates)) return;
+  const fixes = [
+      { from: '<strong>M/S Khan Traders</strong>', to: '<strong>{{customerName}}</strong>' },
+      { from: '<strong>Md Awlad Hossain</strong>', to: '<strong>{{proprietorName}}</strong>' },
+      { from: '<strong>Sayedpur, Aminpur, Sujanagar, Pabna</strong>', to: '<strong>{{address}}</strong>' },
+      // common hard-coded tender/template values -> placeholders
+      { from: 'APP ID : 204431', to: '{{ift}}' },
+      { from: 'APP ID: 204431', to: '{{ift}}' },
+      { from: 'APP ID - 204431', to: '{{ift}}' },
+      { from: '1128414', to: '{{tenderId}}' },
+      { from: 'GSID-2/PAB/SDW-388', to: '{{packageNo}}' },
+  // package description / work text replacements -> use {{description}}
+  { from: 'Improvement of Laxmikunda Baitul Amann Jam-E-Mosque at Laxmikunda Tatul Tola road under Laxmikunda Union [Latitude:24.03168 Longitude:89.06824] Upazila: Ishwardi, District: Pabna', to: '{{description}}' },
+  { from: 'Improvement of Laxmikunda Baitul Amann Jam-E-Mosque', to: '{{description}}' },
+  { from: 'Package Description : Work (Improvement of Laxmikunda Baitul Amann Jam-E-Mosque at Laxmikunda Tatul Tola road under Laxmikunda Union [Latitude:24.03168 Longitude:89.06824] Upazila: Ishwardi, District: Pabna).', to: 'Package Description : Work ({{description}}).' },
+  { from: 'Package Description : Work (Improvement of Laxmikunda Baitul Amann Jam-E-Mosque).', to: 'Package Description : Work ({{description}}).' },
+      { from: 'BDT 2.00 Lac', to: '{{amount}}' },
+      { from: 'BDT 2.00 Lac', to: '{{amount}}' },
+  { from: 'BDT 2.00 Lac ( Two Lakh Taka Only )', to: '{{amount}} {{amountWordsBriket}}' },
+  { from: 'BDT 2.00 Lac (Two Lakh Taka Only)', to: '{{amount}} {{amountWordsBriket}}' },
+  { from: 'BDT 2.00 Lac ( Two Lakh Only )', to: '{{amount}} {{amountWordsBriket}}' },
+  { from: '(Two Lakh Taka Only)', to: '{{amountWordsBriket}}' },
+  { from: '( Two Lakh Taka Only )', to: '{{amountWordsBriket}}' },
+  { from: 'Two Lakh Taka Only', to: '{{amountWords}}' },
+      { from: 'Taka 2.00 Lakh', to: '{{amount}}' },
+      // credit commitment ref number/year -> placeholders
+      { from: 'CREDIT COMMITMENT No: 427/2025', to: 'CREDIT COMMITMENT No: {{refNumber}}/{{year}}' },
+      { from: 'CREDIT COMMITMENT No:427/2025', to: 'CREDIT COMMITMENT No: {{refNumber}}/{{year}}' },
+  // keep the original 'Invitation for Tender No' label intact; do NOT inject an extra {{ift}}
+  // { from: 'Invitation for Tender No', to: 'Invitation for Tender No: {{ift}}' }
+    ];
+    // also replace hard-coded date shown in templates with {{date}}
+    fixes.push({ from: 'Date: 25.10.2025', to: 'Date: {{date}}' });
+    fixes.push({ from: 'Date : 25.10.2025', to: 'Date: {{date}}' });
+    function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    templates.forEach(t => {
+      if (t && (t.html || t.templateHtml) && t.templateHtml) {
+        fixes.forEach(f => {
+          try{
+            const pattern = new RegExp(escapeRegExp(f.from), 'gi');
+            t.templateHtml = t.templateHtml.replace(pattern, f.to);
+          }catch(e){
+            // fallback to simple split/join
+            if (t.templateHtml.indexOf(f.from) !== -1) {
+              t.templateHtml = t.templateHtml.split(f.from).join(f.to);
+            }
+          }
+        });
+        // collapse accidental duplicate placeholders created by overlapping fixes
+        try{
+          // collect placeholder tokens from fixes (those that contain {{...}})
+          const placeholders = Array.from(new Set(fixes.map(f=>f.to).filter(x=>typeof x==='string' && x.indexOf('{{')!==-1)));
+          placeholders.forEach(ph => {
+            const esc = escapeRegExp(ph);
+            // match sequences like '{{ift}} : {{ift}}' or '{{ift}}{{ift}}' and reduce to single '{{ift}}'
+            const dupRe = new RegExp('(' + esc + ')(?:[\\s:\\-\/,]*)+(?:' + esc + ')+','gi');
+            t.templateHtml = t.templateHtml.replace(dupRe, ph);
+          });
+        }catch(e){ /* ignore dedupe errors */ }
+      }
+    });
+  }
+  // normalize built-in default templates
+  normalizeTemplates(DEFAULT_TEMPLATES);
+
+  // Format date as dd/mm/yyyy
+  function formatDate(date) {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  const el = id => document.getElementById(id);
+
+  const state = {
+    templates: DEFAULT_TEMPLATES,
+    currentType: DEFAULT_TEMPLATES[0].id
+  };
+
+  // Try to load templates.json only when served over http(s).
+  // When opened via file:// many browsers block fetch; the app has built-in fallback templates
+  function tryLoadTemplates() {
+    try {
+      if (!location || typeof location.protocol !== 'string' || !location.protocol.startsWith('http')) {
+        // running via file:// — skip fetching templates.json to avoid CORS/file access issues
+        return Promise.resolve();
+      }
+    } catch (e) {
+      return Promise.resolve();
+    }
+
+    return fetch('templates.json').then(r => {
+      if (!r.ok) throw new Error('no templates.json');
+      return r.json();
+    }).then(json => {
+      if (Array.isArray(json) && json.length >= 1) {
+        // normalize any hard-coded demo values in fetched templates as well
+        try{
+          normalizeTemplates(json);
+        }catch(e){ /* ignore normalization errors */ }
+        state.templates = json;
+      }
+    }).catch(_ => {
+      // fallback to defaults
+    });
+  }
+
+  function populateTemplateSelect() {
+    const sel = el('templateSelect');
+    sel.innerHTML = '';
+    state.templates.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.id;
+      opt.textContent = t.name || t.id;
+      sel.appendChild(opt);
+    });
+    sel.value = state.currentType;
+  }
+
+  function getTemplateById(id){
+    return state.templates.find(t=>t.id===id) || state.templates[0];
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#39;');
+  }
+
+  // Convert integers (0..99999999) into words using Indian numbering (crore, lakh, thousand)
+  function numberToWordsIndian(num){
+    num = parseInt(num,10);
+    if (isNaN(num) || num === 0) return 'Zero';
+    const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+    const tens = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+    function twoDigit(n){
+      if (n < 20) return ones[n];
+      const t = Math.floor(n/10);
+      const o = n % 10;
+      return tens[t] + (o ? ' ' + ones[o] : '');
+    }
+    function threeDigit(n){
+      const h = Math.floor(n/100);
+      const rem = n % 100;
+      return (h ? ones[h] + ' Hundred' + (rem ? ' ' : '') : '') + (rem ? twoDigit(rem) : '');
+    }
+    let out = '';
+    const crore = Math.floor(num / 10000000);
+    if (crore) { out += numberToWordsIndian(crore) + ' Crore'; num = num % 10000000; if (num) out += ' '; }
+    const lakh = Math.floor(num / 100000);
+    if (lakh) { out += (lakh < 100 ? twoDigit(lakh) : threeDigit(lakh)) + ' Lakh'; num = num % 100000; if (num) out += ' '; }
+    const thousand = Math.floor(num / 1000);
+    if (thousand) { out += (thousand < 100 ? twoDigit(thousand) : threeDigit(thousand)) + ' Thousand'; num = num % 1000; if (num) out += ' '; }
+    if (num) { out += threeDigit(num); }
+    return out.trim();
+  }
+
+  // Convert amount given in lakhs (e.g., '2.00' means 2.00 lac) into words like 'Two Lakh Taka Only'
+  function takaAmountToWords(amountLac){
+    if (amountLac === null || amountLac === undefined) return '';
+    const val = parseFloat(String(amountLac).replace(/,/g,''));
+    if (isNaN(val)) return '';
+    const taka = Math.round(val * 100000); // 1 lac = 100,000 taka
+    if (taka === 0) return 'Zero Taka Only';
+    const words = numberToWordsIndian(taka);
+    return words + ' Taka Only';
+  }
+
+  // Same as takaAmountToWords but wrapped in parentheses/brackets for templates that expect them
+  function takaAmountToWordsBriket(amountLac){
+    const w = takaAmountToWords(amountLac);
+    if (!w) return '';
+    return '(' + w + ')';
+  }
+
+  function renderPreview(){
+    const tmplObj = getTemplateById(state.currentType);
+    const data = {
+      customerName: el('customerName').value || '—',
+      address: el('address').value || '—',
+      proprietorName: el('proprietorName').value || '—',
+      recipient: (el('recipient') ? el('recipient').value : 'The Executive Engineer,\nLGED, Pabna'),
+      // amount/purpose/date removed from editor; provide sensible defaults
+      amount: '',
+      amountWords: '',
+      amountWordsBriket: '',
+      purpose: '',
+      date: formatDate(new Date()),
+      branchDetails: (el('branchDetails') ? el('branchDetails').value : ''),
+      leftSignName: (el('leftSignName') ? el('leftSignName').value : ''),
+      leftSignTitle: (el('leftSignTitle') ? el('leftSignTitle').value : ''),
+      rightSignName: (el('rightSignName') ? el('rightSignName').value : ''),
+      rightSignTitle: (el('rightSignTitle') ? el('rightSignTitle').value : '')
+      ,
+      refNumber: '',
+      year: new Date().getFullYear()
+    };
+    // preview: compute refNumber from editor input or saved payload; default to start value (no increment)
+    try{
+      const rawStart = getSavedEditorField('refStart') || '';
+      let startNum = parseInt(String(rawStart||'').trim(), 10);
+      if (isNaN(startNum)) startNum = '';
+      data.refNumber = startNum ? String(startNum) : '';
+    }catch(e){ data.refNumber = ''; }
+    const preview = el('previewArea');
+    if (tmplObj && tmplObj.html && tmplObj.templateHtml) {
+      let out = tmplObj.templateHtml;
+  const specialKeys = ['branchDetails','leftSignName','leftSignTitle','rightSignName','rightSignTitle','recipient'];
+      // replace normal keys with escaped values
+      Object.keys(data).forEach(k=>{
+        if (specialKeys.indexOf(k) !== -1) return;
+        const re = new RegExp('{{\\s*'+k+'\\s*}}','g');
+        out = out.replace(re, escapeHtml(data[k]));
+      });
+      // replace special keys with HTML-friendly values (branchDetails may contain newlines)
+      specialKeys.forEach(k=>{
+        const val = data[k] || '';
+        // if replacing signatory NAME placeholders, show signature image above the name
+        if (k === 'leftSignName'){
+          const leftSig = (el('leftSignSig') || {}).value || '';
+          const leftHtml = leftSig ? ('<div style="margin-top:6px"><img src="'+leftSig+'" style="max-width:140px; max-height:80px"/></div>') : '';
+          const safeName = escapeHtml(val).replace(/\n/g, '<br/>');
+          const re = new RegExp('{{\\s*'+k+'\\s*}}','g');
+          out = out.replace(re, leftHtml + safeName);
+          return;
+        }
+        if (k === 'rightSignName'){
+          const rightSig = (el('rightSignSig') || {}).value || '';
+          const rightHtml = rightSig ? ('<div style="margin-top:6px"><img src="'+rightSig+'" style="max-width:140px; max-height:80px"/></div>') : '';
+          const safeName = escapeHtml(val).replace(/\n/g, '<br/>');
+          const re = new RegExp('{{\\s*'+k+'\\s*}}','g');
+          out = out.replace(re, rightHtml + safeName);
+          return;
+        }
+        const safe = escapeHtml(val).replace(/\n/g, '<br/>');
+        const re = new RegExp('{{\\s*'+k+'\\s*}}','g');
+        out = out.replace(re, safe);
+      });
+  // signatures: also make raw signature placeholders available if templates use them explicitly
+      try{
+        const leftSig = (el('leftSignSig') || {}).value || '';
+        const rightSig = (el('rightSignSig') || {}).value || '';
+        const leftHtml = leftSig ? ('<div style="margin-top:6px"><img src="'+leftSig+'" style="max-width:140px; max-height:80px"/></div>') : '';
+        const rightHtml = rightSig ? ('<div style="margin-top:6px"><img src="'+rightSig+'" style="max-width:140px; max-height:80px"/></div>') : '';
+        out = out.replace(/{{\s*leftSignSignature\s*}}/g, leftHtml);
+        out = out.replace(/{{\s*rightSignSignature\s*}}/g, rightHtml);
+      }catch(e){ /* ignore */ }
+      // inject header logo into the left side of header-row if available
+      try{
+        const logoData = getSavedEditorField('headerLogoData') || '';
+        if (logoData) {
+          out = out.replace(/(<div\s+class=["']header-row["'][^>]*>\s*)<div>\s*<\/div>/i, '$1<div><img src="' + logoData + '" style="max-width:160px; max-height:80px"/></div>');
+        }
+      }catch(e){}
+      // remove any existing footer blocks inside the template to avoid duplicates
+      try{ out = removeTemplateFooter(out); }catch(e){}
+      // inject footer text into the preview as a normal block so it is always visible
+      try{
+        const footerVal = getSavedEditorField('footerText') || '';
+        if (footerVal) {
+          const footerHtml = escapeHtml(footerVal).replace(/\n/g, '<br/>');
+          // wrap content and append footer as a normal block (not absolute) so preview shows it
+          out = '<div style="position:relative; padding-bottom:12px;">' + out + '</div>' + '<div style="margin-top:8px; font-size:12px; white-space:pre-wrap; color:#333">' + footerHtml + '</div>';
+        }
+      }catch(e){}
+      preview.innerHTML = out;
+    } else {
+      const template = (tmplObj && tmplObj.template) ? tmplObj.template : '';
+      let out = template;
+      Object.keys(data).forEach(k=>{
+        const re = new RegExp('{{\\s*'+k+'\\s*}}','g');
+        out = out.replace(re, data[k]);
+      });
+      preview.textContent = out;
+    }
+  }
+
+  function saveCurrent(){
+    const key = 'cc_editor:' + state.currentType;
+    const payload = {
+      customerName: el('customerName').value,
+      address: el('address').value,
+      proprietorName: el('proprietorName').value,
+      // new editor-level fields
+  recipient: (el('recipient') ? el('recipient').value : ''),
+      branchDetails: (el('branchDetails') ? el('branchDetails').value : ''),
+      leftSignName: (el('leftSignName') ? el('leftSignName').value : ''),
+      leftSignTitle: (el('leftSignTitle') ? el('leftSignTitle').value : ''),
+      rightSignName: (el('rightSignName') ? el('rightSignName').value : ''),
+  rightSignTitle: (el('rightSignTitle') ? el('rightSignTitle').value : ''),
+  // header logo data (data URL)
+      headerLogoData: (el('headerLogoData') ? el('headerLogoData').value : ''),
+  // footer text
+  footerText: (el('footerText') ? el('footerText').value : ''),
+    // reference start number
+    refStart: (el('refStart') ? el('refStart').value : ''),
+      // signature images (data URLs) - optional
+      leftSignSig: (el('leftSignSig') ? el('leftSignSig').value : ''),
+      rightSignSig: (el('rightSignSig') ? el('rightSignSig').value : ''),
+      // date intentionally not stored - always use current date
+      updated: new Date().toISOString()
+    };
+    localStorage.setItem(key, JSON.stringify(payload));
+    alert('Saved successfully');
+  }
+
+  // Save shared fields (branch details, officer/signatory details, logo, footer)
+  // across ALL template types in localStorage, so they stay consistent.
+  function saveSharedFieldsToAllTemplates(sharedUpdates){
+    try{
+      state.templates.forEach(function(tmpl){
+        var key = 'cc_editor:' + tmpl.id;
+        var p = {};
+        try{
+          var raw = localStorage.getItem(key);
+          if (raw) p = JSON.parse(raw);
+        }catch(e){ p = {}; }
+        Object.assign(p, sharedUpdates, { updated: new Date().toISOString() });
+        localStorage.setItem(key, JSON.stringify(p));
+      });
+    }catch(e){ /* ignore storage errors */ }
+  }
+
+  // Merge arbitrary updates into the saved payload for the current template
+  // This helper is used when UI elements (like footer textarea) may not exist
+  // so we can still persist headerLogoData/footerText into localStorage.
+  function updateEditorPayload(updates){
+    try{
+      const key = 'cc_editor:' + state.currentType;
+      let p = {};
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        try{ p = JSON.parse(raw); }catch(e){ p = {}; }
+      }
+      p = Object.assign({}, p, updates, { updated: new Date().toISOString() });
+      localStorage.setItem(key, JSON.stringify(p));
+    }catch(e){ /* ignore storage errors */ }
+  }
+
+  // Read a saved editor field value; prefer DOM element value if present,
+  // otherwise read from the per-template saved payload in localStorage.
+  function getSavedEditorField(field){
+    try{
+      if (el(field)) return (el(field).value || '');
+      const key = 'cc_editor:' + state.currentType;
+      const raw = localStorage.getItem(key);
+      if (!raw) return '';
+      try{ const p = JSON.parse(raw); return (p && p[field]) ? p[field] : ''; }catch(e){ return ''; }
+    }catch(e){ return ''; }
+  }
+
+  function loadCurrent(){
+    const key = 'cc_editor:' + state.currentType;
+    const raw = localStorage.getItem(key);
+    if (!raw) { alert('No saved data for this template'); return; }
+    try{
+      const p = JSON.parse(raw);
+  el('customerName').value = p.customerName || '';
+      el('address').value = p.address || '';
+      el('proprietorName').value = p.proprietorName || '';
+  if (el('recipient')) el('recipient').value = p.recipient || '';
+      if (el('branchDetails')) el('branchDetails').value = p.branchDetails || '';
+  if (el('headerLogoData')) el('headerLogoData').value = p.headerLogoData || '';
+  if (el('footerText')) el('footerText').value = p.footerText || '';
+  if (el('refStart')) el('refStart').value = p.refStart || '';
+  if (el('footerText')) el('footerText').value = p.footerText || '';
+    if (el('refStart')) el('refStart').value = p.refStart || '';
+      if (el('leftSignName')) el('leftSignName').value = p.leftSignName || '';
+      if (el('leftSignTitle')) el('leftSignTitle').value = p.leftSignTitle || '';
+      if (el('rightSignName')) el('rightSignName').value = p.rightSignName || '';
+      if (el('rightSignTitle')) el('rightSignTitle').value = p.rightSignTitle || '';
+      if (el('leftSignSig')) el('leftSignSig').value = p.leftSignSig || '';
+      if (el('rightSignSig')) el('rightSignSig').value = p.rightSignSig || '';
+      renderPreview();
+    }catch(e){ alert('Unable to read saved data'); }
+  }
+
+  // silent loader used at init to populate fields from storage without alerts
+  function loadCurrentSilent(){
+    const key = 'cc_editor:' + state.currentType;
+    const raw = localStorage.getItem(key);
+    if (!raw) return false;
+    try{
+      const p = JSON.parse(raw);
+  if (el('customerName')) el('customerName').value = p.customerName || '';
+      if (el('address')) el('address').value = p.address || '';
+      if (el('proprietorName')) el('proprietorName').value = p.proprietorName || '';
+  if (el('recipient')) el('recipient').value = p.recipient || '';
+      if (el('branchDetails')) el('branchDetails').value = p.branchDetails || '';
+    if (el('headerLogoData')) el('headerLogoData').value = p.headerLogoData || '';
+    if (el('footerText')) el('footerText').value = p.footerText || '';
+      if (el('leftSignName')) el('leftSignName').value = p.leftSignName || '';
+      if (el('leftSignTitle')) el('leftSignTitle').value = p.leftSignTitle || '';
+      if (el('rightSignName')) el('rightSignName').value = p.rightSignName || '';
+      if (el('rightSignTitle')) el('rightSignTitle').value = p.rightSignTitle || '';
+      if (el('leftSignSig')) el('leftSignSig').value = p.leftSignSig || '';
+      if (el('rightSignSig')) el('rightSignSig').value = p.rightSignSig || '';
+      return true;
+    }catch(e){ return false; }
+  }
+
+  function resetForm(){
+    el('customerName').value = '';
+    el('address').value = '';
+    el('proprietorName').value = '';
+    if (el('branchDetails')) el('branchDetails').value = '';
+    if (el('leftSignName')) el('leftSignName').value = '';
+    if (el('leftSignTitle')) el('leftSignTitle').value = '';
+    if (el('rightSignName')) el('rightSignName').value = '';
+    if (el('rightSignTitle')) el('rightSignTitle').value = '';
+    if (el('leftSignSig')) el('leftSignSig').value = '';
+    if (el('rightSignSig')) el('rightSignSig').value = '';
+    renderPreview();
+  }
+
+  function printPreview(){
+    const tmplObj = getTemplateById(state.currentType);
+    const w = window.open('', '_blank');
+    w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Print - '+state.currentType+'</title>');
+    w.document.write('<style>body{font-family:Segoe UI, Roboto, Arial, sans-serif; padding:20px}</style>');
+    w.document.write('</head><body>');
+    w.document.write('<h2>' + (tmplObj.name || state.currentType) + '</h2>');
+    if (tmplObj && tmplObj.html) {
+      // use the preview innerHTML which already contains replaced, escaped values
+      w.document.write(el('previewArea').innerHTML);
+    } else {
+      const previewHtml = '<pre style="white-space:pre-wrap; font-family:inherit;">'+ el('previewArea').textContent + '</pre>';
+      w.document.write(previewHtml);
+    }
+    w.document.write('</body></html>');
+    w.document.close();
+    w.focus();
+    // give it a moment to render then call print
+    setTimeout(()=>{ w.print(); }, 300);
+  }
+
+  function downloadHTML(){
+    const tmplObj = getTemplateById(state.currentType);
+    let html;
+    if (tmplObj && tmplObj.html) {
+      html = '<!doctype html><html><head><meta charset="utf-8"><title>Filled - '+state.currentType+'</title></head><body>' + el('previewArea').innerHTML + '</body></html>';
+    } else {
+      html = '<!doctype html><html><head><meta charset="utf-8"><title>Filled - '+state.currentType+'</title></head><body><pre style="white-space:pre-wrap">'+ el('previewArea').textContent + '</pre></body></html>';
+    }
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = state.currentType + '-filled.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  // Convert small HTML snippet into readable plain text for email bodies
+  function htmlToPlain(html){
+    if (!html) return '';
+    // replace <br> with newlines
+    let s = html.replace(/<br\s*\/?/gi, '\n');
+    // block-level tags to newlines
+    s = s.replace(/<(\/)?(div|p|li|tr|h[1-6]|td|th)[^>]*>/gi, '\n');
+    // remove remaining tags
+    s = s.replace(/<[^>]+>/g, '');
+    // decode HTML entities
+    try{
+      const ta = document.createElement('textarea');
+      ta.innerHTML = s;
+      return ta.value;
+    }catch(e){ return s; }
+  }
+
+  // Collapse duplicated IFT / APP ID sequences that may be introduced by overlapping
+  // normalization rules (e.g. 'Invitation for Tender No: {{ift}}: {{ift}}' -> '...: {{ift}}').
+  // Also collapse literal repeated APP ID values like 'APP ID : 204431: APP ID : 204431'.
+  function collapseDuplicateIft(html){
+    if (!html) return html;
+    try{
+      // 1) collapse duplicated placeholder tokens like '{{ift}} : {{ift}}' -> '{{ift}}'
+      html = html.replace(/({{\s*ift\s*}})(?:[\s:\-\/,]*)+(?:\1)+/gi, '$1');
+      // 2) collapse duplicated literal APP ID occurrences like 'APP ID : 204431: APP ID : 204431' -> 'APP ID : 204431'
+      html = html.replace(/(APP\s*ID\s*[:\-]\s*\d+)(?:[\s:\-\/,]*)+(?:\1)+/gi, '$1');
+      // 3) as a fallback, collapse obvious duplicated sequences where the same phrase repeats twice separated by punctuation
+      html = html.replace(/(Invitation for Tender No\s*[:\-]?.{0,80}?)(?:[\s:\-\/,]*)+\1/gi, '$1');
+    }catch(e){ /* ignore any regex errors */ }
+    return html;
+  }
+
+  // Remove existing footer-like blocks from a template HTML string so we don't
+  // end up with duplicate footers when auto-adding our UCB footer.
+  function removeTemplateFooter(html){
+    if (!html) return html;
+    try{
+      // 1) remove elements with class or id containing 'footer'
+      html = html.replace(/<div[^>]+(?:class|id)=["'][^"']*footer[^"']*["'][^>]*>[\s\S]*?<\/div>/gi, '');
+      // 2) remove divs that contain the UCB footer literal (first 200 chars match)
+      html = html.replace(/<div[^>]*>[\s\S]{0,500}?United Commercial Bank PLC[\s\S]*?<\/div>/gi, '');
+      // 3) remove absolutely positioned bottom-left blocks (heuristic)
+      html = html.replace(/<div[^>]*style=["'][^"']*(?:position\s*:\s*absolute)[^"']*(?:bottom\s*:\s*\d+px)[^"']*(?:left\s*:\s*\d+px)[^"']*[^>]*>[\s\S]*?<\/div>/gi, '');
+    }catch(e){ /* ignore */ }
+    return html;
+  }
+
+  // Remove the currently-set footer from the editor and preview, persist the change.
+  function removeFooter(){
+    try{
+      if (el('footerText')) el('footerText').value = '';
+      // also remove any footer nodes currently present in the preview
+      try{
+        const p = el('previewArea');
+        if (p){
+          // remove any element that contains the UCB footer text
+          Array.from(p.querySelectorAll('div')).forEach(d=>{
+            try{
+              if (d.textContent && d.textContent.indexOf('United Commercial Bank PLC') !== -1) d.remove();
+            }catch(e){}
+          });
+        }
+      }catch(e){}
+      try{ saveCurrent(); }catch(e){}
+      try{ renderPreview(); }catch(e){}
+    }catch(e){ /* ignore */ }
+  }
+
+  function sendMail(){
+    try{ renderPreview(); }catch(e){}
+    const tmplObj = getTemplateById(state.currentType) || {};
+    const orgName = el('customerName') ? el('customerName').value : '';
+    const subject = 'CREDIT COMMITTMENT OF ' + (orgName || 'organization');
+    const list = loadEditorList();
+    const editorKey = 'cc_editor:' + state.currentType;
+    let _savedPayload = {};
+    try{ const _raw = localStorage.getItem(editorKey); if (_raw) _savedPayload = JSON.parse(_raw) || {}; }catch(e){ _savedPayload = {}; }
+    try{ normalizeTemplates([tmplObj]); }catch(e){}
+
+    if (typeof html2pdf === 'undefined'){
+      alert('PDF library not loaded. Please check your internet connection and reload.');
+      return;
+    }
+
+    let bodyHtml = '';
+    const itemList = (list && list.length) ? list : [{}];
+    itemList.forEach((r, idx)=>{
+      const data = {
+        customerName: (el('customerName') ? el('customerName').value : '') || '',
+        proprietorName: (el('proprietorName') ? el('proprietorName').value : '') || '',
+        address: (el('address') ? el('address').value : '') || '',
+        recipient: (el('recipient') ? el('recipient').value : '') || '',
+        amount: '', amountWords: '', amountWordsBriket: '',
+        purpose: r.description || '',
+        date: formatDate(new Date()),
+        branchDetails: (el('branchDetails') ? el('branchDetails').value : ''),
+        leftSignName: (el('leftSignName') ? el('leftSignName').value : ''),
+        leftSignTitle: (el('leftSignTitle') ? el('leftSignTitle').value : ''),
+        rightSignName: (el('rightSignName') ? el('rightSignName').value : ''),
+        rightSignTitle: (el('rightSignTitle') ? el('rightSignTitle').value : ''),
+        refNumber: '', year: new Date().getFullYear()
+      };
+      try{
+        const rawStart = getSavedEditorField('refStart') || ((_savedPayload && _savedPayload.refStart) ? String(_savedPayload.refStart) : '');
+        let startNum = parseInt(String(rawStart||'').trim(), 10);
+        if (isNaN(startNum)) startNum = 1;
+        data.refNumber = String(startNum + idx);
+      }catch(e){ data.refNumber = String(idx + 1); }
+
+      let contentHtml = '';
+      if (tmplObj && tmplObj.html && tmplObj.templateHtml){
+        contentHtml = tmplObj.templateHtml;
+        const amtVal = (r.amountLac || '').toString().trim();
+        const formattedAmount = amtVal ? ('BDT ' + amtVal + ' Lac') : '';
+        const amountWords = amtVal ? takaAmountToWords(amtVal) : '';
+        const amountWordsBriket = amtVal ? takaAmountToWordsBriket(amtVal) : '';
+        const leftSigData = (el('leftSignSig') || {}).value || '';
+        const rightSigData = (el('rightSignSig') || {}).value || '';
+        const leftSigHtml = leftSigData ? ('<div style="margin-top:6px"><img src="'+leftSigData+'" style="max-width:140px; max-height:80px"/></div>') : '';
+        const rightSigHtml = rightSigData ? ('<div style="margin-top:6px"><img src="'+rightSigData+'" style="max-width:140px; max-height:80px"/></div>') : '';
+        const replacer = Object.assign({}, data, {
+          tenderId: r.tenderId || '', packageNo: r.packageNo || '',
+          ift: r.ift || '', description: r.description || '',
+          amount: formattedAmount, amountWords, amountWordsBriket
+        });
+        replacer.refNumber = data.refNumber || '';
+        replacer.year = String(data.year || new Date().getFullYear());
+        replacer.leftSignSignature = leftSigHtml;
+        replacer.rightSignSignature = rightSigHtml;
+        ['branchDetails','recipient','leftSignTitle','rightSignName','rightSignTitle'].forEach(k=>{
+          if (replacer[k]) replacer[k] = String(replacer[k]).replace(/\n/g,'<br/>');
+        });
+        if (replacer.leftSignName !== undefined){
+          replacer.leftSignName = leftSigHtml + String(replacer.leftSignName || '').replace(/\n/g,'<br/>');
+        }
+        if (replacer.rightSignName !== undefined){
+          replacer.rightSignName = rightSigHtml + String(replacer.rightSignName || '').replace(/\n/g,'<br/>');
+        }
+        Object.keys(replacer).forEach(k=>{
+          const re = new RegExp('{{\\s*'+k+'\\s*}}','g');
+          contentHtml = contentHtml.replace(re, String(replacer[k] || ''));
+        });
+      } else if (tmplObj && tmplObj.template){
+        contentHtml = '<pre style="white-space:pre-wrap;font-family:inherit;">' + String(tmplObj.template) + '</pre>';
+      }
+      try{
+        const logoData = getSavedEditorField('headerLogoData') || (_savedPayload && _savedPayload.headerLogoData) || '';
+        if (logoData){
+          contentHtml = contentHtml.replace(/(<div\s+class=["']header-row["'][^>]*>\s*)<div>\s*<\/div>/i, '$1<div><img src="' + logoData + '" style="max-width:160px; max-height:80px"/></div>');
+        }
+      }catch(e){}
+      try{
+        const footerVal = getSavedEditorField('footerText') || (_savedPayload && _savedPayload.footerText) || '';
+        if (footerVal){
+          try{ contentHtml = removeTemplateFooter(contentHtml); }catch(e){}
+          const footerHtml = String(footerVal).replace(/\n/g,'<br/>');
+          contentHtml = '<div style="display:flex;flex-direction:column;min-height:280mm;box-sizing:border-box;position:relative;"><div style="flex:1;">' + contentHtml + '</div><div style="font-size:11px;white-space:pre-wrap;color:#555;padding:12px 10px;border-top:1px solid #ddd;background:#fafafa;">' + footerHtml + '</div></div>';
+        }
+      }catch(e){}
+      try{ contentHtml = collapseDuplicateIft(contentHtml); }catch(e){}
+      bodyHtml += '<div style="page-break-after:always;">' + contentHtml + '</div>';
+    });
+
+    const orgSafe = (orgName || 'commitment').replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim();
+    const pdfFilename = 'CREDIT COMMITTMENT OF ' + orgSafe + '.pdf';
+    const fullHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + pdfFilename + '</title><style>*{margin:0;padding:0;}body{font-family:Arial,sans-serif;background:#fff;color:#000;}</style></head><body>' + bodyHtml + '</body></html>';
+
+    const opt = {
+      margin: 5,
+      filename: pdfFilename,
+      image: { type: 'jpeg', quality: 0.80 },
+      html2canvas: { scale: 1.5, useCORS: true, logging: false, backgroundColor: '#ffffff', scrollY: 0 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
+    };
+
+    html2pdf().set(opt).from(fullHtml).save().then(function(){
+      let recipientEmail = '';
+      try{
+        const sel = el('orgSelect');
+        if (sel && sel.value && sel.value !== '-1'){
+          const customers = loadCustomers();
+          const idx = parseInt(String(sel.value), 10);
+          if (!isNaN(idx) && customers && customers[idx] && customers[idx].email) recipientEmail = (customers[idx].email || '').trim();
+        }
+      }catch(e){}
+      try{ if (!recipientEmail && el('cust_email') && el('cust_email').value) recipientEmail = (el('cust_email').value || '').trim(); }catch(e){}
+
+      const shortBody = 'Dear Sir,\n\nPlease find the Credit Commitment in the attached PDF.\n\nRegards';
+      let mailto = 'mailto:' + (recipientEmail || '') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(shortBody);
+
+      setTimeout(()=>{
+        window.location.href = mailto;
+        alert('PDF downloaded as "' + pdfFilename + '". Please attach it to the email.');
+      }, 800);
+    }).catch(function(err){
+      alert('Failed to generate PDF: ' + (err && err.message || 'Unknown error'));
+    });
+  }
+
+  // --- Customer list management ---
+  const CUSTOMERS_KEY = 'cc_customers';
+  let customerEditIndex = -1;
+
+  function loadCustomers(){
+    try{
+      const raw = localStorage.getItem(CUSTOMERS_KEY);
+      // If there are no saved customers, return the DEFAULT_CUSTOMERS so the dropdown has entries
+      if (!raw) return DEFAULT_CUSTOMERS.slice();
+      return JSON.parse(raw);
+    } catch(e){ return DEFAULT_CUSTOMERS.slice(); }
+  }
+
+  function saveCustomers(list){
+    localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(list || []));
+  }
+
+  function renderCustomers(){
+    const body = el('customerTableBody');
+    if (!body) return;
+    const list = loadCustomers();
+    body.innerHTML = '';
+    list.forEach((c, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>'+escapeHtml(c.org||'')+'</td><td>'+escapeHtml(c.proprietor||'')+'</td><td>'+escapeHtml(c.address||'')+'</td><td>'+escapeHtml(c.email||'')+'</td><td style="text-align:right"><button data-idx="'+idx+'" class="cust-edit">Edit</button> <button data-idx="'+idx+'" class="cust-del">Delete</button></td>';
+      body.appendChild(tr);
+    });
+    // wire row buttons
+    body.querySelectorAll('.cust-edit').forEach(b=>b.addEventListener('click', (e)=>{
+      const i = Number(e.target.dataset.idx); editCustomer(i);
+    }));
+    body.querySelectorAll('.cust-del').forEach(b=>b.addEventListener('click', (e)=>{
+      const i = Number(e.target.dataset.idx); if(confirm('Delete this customer?')) deleteCustomer(i);
+    }));
+    // refresh organization dropdown in editor
+    try { populateOrgSelect(); } catch (e) { /* ignore if not present */ }
+  }
+
+  function clearCustomerForm(){
+    el('cust_org').value = '';
+    el('cust_prop').value = '';
+    el('cust_addr').value = '';
+    el('cust_email').value = '';
+    customerEditIndex = -1;
+    el('custAddBtn').innerHTML = '<i class="fas fa-save"></i> Add / Save';
+  }
+
+  function addOrUpdateCustomer(){
+    const org = el('cust_org').value.trim();
+    const proprietor = el('cust_prop').value.trim();
+    const address = el('cust_addr').value.trim();
+    const email = el('cust_email').value.trim();
+    if (!org){ alert('Organization name is required'); return; }
+    const list = loadCustomers();
+    const item = { org, proprietor, address, email };
+    if (customerEditIndex >= 0 && customerEditIndex < list.length){
+      list[customerEditIndex] = item;
+    } else {
+      list.push(item);
+    }
+    saveCustomers(list);
+    renderCustomers();
+    clearCustomerForm();
+  }
+
+  function editCustomer(i){
+    const list = loadCustomers();
+    const c = list[i];
+    if (!c) return;
+    el('cust_org').value = c.org || '';
+    el('cust_prop').value = c.proprietor || '';
+    el('cust_addr').value = c.address || '';
+    el('cust_email').value = c.email || '';
+    customerEditIndex = i;
+    el('custAddBtn').innerHTML = '<i class="fas fa-save"></i> Save';
+  }
+
+  function deleteCustomer(i){
+    const list = loadCustomers();
+    if (i < 0 || i >= list.length) return;
+    list.splice(i,1);
+    saveCustomers(list);
+    renderCustomers();
+  }
+
+  function populateOrgSelect(){
+    const sel = el('orgSelect');
+    if (!sel) return;
+    const list = loadCustomers();
+    const current = sel.value;
+    sel.innerHTML = '<option value="-1">— Select organization —</option>';
+    list.forEach((c, idx) => {
+      const opt = document.createElement('option');
+      opt.value = String(idx);
+      opt.textContent = (c.org || '') + (c.proprietor ? ' — ' + c.proprietor : '');
+      sel.appendChild(opt);
+    });
+    // try to restore previous selection if still valid
+    if (current && sel.querySelector('option[value="'+current+'"]')) sel.value = current;
+  }
+
+  // --- Editor right-side list (persisted) ---
+  const EDITOR_LIST_KEY = 'cc_editor_list';
+  let editorEditIndex = -1;
+
+  const DEFAULT_EDITOR_LIST = [
+    { tenderId: '1128414', amountLac: '2.00', packageNo: 'GSID-2/PAB/SDW-388', ift: 'APP ID : 204431', description: 'Improvement of Laxmikunda Baitul Amann Jam-E-Mosque' }
+  ];
+
+  function loadEditorList(){
+    try{
+      const raw = localStorage.getItem(EDITOR_LIST_KEY);
+      if (!raw) return DEFAULT_EDITOR_LIST.slice();
+      return JSON.parse(raw);
+    }catch(e){ return DEFAULT_EDITOR_LIST.slice(); }
+  }
+
+  function saveEditorList(list){
+    localStorage.setItem(EDITOR_LIST_KEY, JSON.stringify(list || []));
+  }
+
+  function clearEditorForm(){
+    const ids = ['el_tenderId','el_packageNo','el_amount','el_ift','el_description'];
+    ids.forEach(id=>{ const eln = document.getElementById(id); if(eln) eln.value = ''; });
+    editorEditIndex = -1;
+    const form = document.getElementById('editorListForm'); if(form) form.style.display = '';
+  }
+
+  function showEditorForm(editIdx){
+    const form = document.getElementById('editorListForm'); if(!form) return;
+    // keep form visible (always editable)
+    if (typeof editIdx === 'number' && editIdx >= 0){
+      const list = loadEditorList(); const r = list[editIdx];
+      if (r){
+        document.getElementById('el_tenderId').value = r.tenderId || '';
+        document.getElementById('el_amount').value = r.amountLac || '';
+        document.getElementById('el_packageNo').value = r.packageNo || '';
+        document.getElementById('el_ift').value = r.ift || '';
+        document.getElementById('el_description').value = r.description || '';
+        editorEditIndex = editIdx;
+      }
+    } else {
+      clearEditorForm();
+    }
+    form.style.display = '';
+  }
+
+  function addOrUpdateEditorRow(){
+    const tenderId = (document.getElementById('el_tenderId') || {}).value || '';
+    const amountLac = (document.getElementById('el_amount') || {}).value || '';
+    const packageNo = (document.getElementById('el_packageNo') || {}).value || '';
+    const ift = (document.getElementById('el_ift') || {}).value || '';
+    const description = (document.getElementById('el_description') || {}).value || '';
+    if (!tenderId){ alert('Tender ID is required'); return; }
+    const list = loadEditorList();
+    const item = { tenderId, amountLac, packageNo, ift, description };
+    if (editorEditIndex >=0 && editorEditIndex < list.length){
+      list[editorEditIndex] = item;
+    } else {
+      list.push(item);
+    }
+    saveEditorList(list);
+    renderEditorList();
+    clearEditorForm();
+  }
+
+  function editEditorRow(i){
+    showEditorForm(i);
+  }
+
+  function deleteEditorRow(i){
+    const list = loadEditorList(); if (i<0 || i>=list.length) return; if(!confirm('Delete this row?')) return;
+    list.splice(i,1); saveEditorList(list); renderEditorList();
+  }
+
+  function clearAllEditorList(){
+    if(!confirm('Clear all saved commitments? This action cannot be undone.')) return;
+    saveEditorList([]);
+    renderEditorList();
+    clearEditorForm();
+  }
+
+  function useEditorRow(i){
+    const list = loadEditorList(); const r = list[i]; if(!r) return;
+    // populate editor fields
+    const cName = (document.getElementById('customerName') || {});
+    const addr = (document.getElementById('address') || {});
+    const prop = (document.getElementById('proprietorName') || {});
+    if (r.description) cName.value = r.description; // if you prefer a different mapping change here
+    if (r.packageNo) addr.value = r.packageNo;
+    if (r.tenderId) prop.value = r.tenderId;
+    // also set amount/purpose/date if present
+    renderPreview();
+  }
+
+  function renderEditorList(){
+    const body = document.getElementById('editorListBody');
+    if (!body) return;
+    body.innerHTML = '';
+    const list = loadEditorList();
+    list.forEach((r, idx) => {
+      const tr = document.createElement('tr');
+      // Render row including Amount column
+      tr.innerHTML = '<td style="width:48px">'+(idx+1)+'</td><td>'+escapeHtml(r.tenderId||'')+'</td><td>'+escapeHtml(r.packageNo||'')+'</td><td style="text-align:right">'+escapeHtml(r.amountLac||'')+'</td><td>'+escapeHtml(r.ift||'')+'</td><td>'+escapeHtml(r.description||'')+'</td><td style="text-align:right"><button data-idx="'+idx+'" class="elist-edit">Edit</button> <button data-idx="'+idx+'" class="elist-del">Delete</button></td>';
+      body.appendChild(tr);
+    });
+    // wire row buttons
+  body.querySelectorAll('.elist-edit').forEach(b=>b.addEventListener('click', (e)=>{ editEditorRow(Number(e.target.dataset.idx)); }));
+  body.querySelectorAll('.elist-del').forEach(b=>b.addEventListener('click', (e)=>{ deleteEditorRow(Number(e.target.dataset.idx)); }));
+  }
+
+  
+
+
+  function wire(){
+    el('templateSelect').addEventListener('change', e => {
+      state.currentType = e.target.value;
+      // try load existing data into fields (without alerts)
+      const key = 'cc_editor:' + state.currentType;
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        try{
+          const p = JSON.parse(raw);
+          el('customerName').value = p.customerName || '';
+          el('address').value = p.address || '';
+          el('proprietorName').value = p.proprietorName || '';
+          if (el('branchDetails')) el('branchDetails').value = p.branchDetails || '';
+          if (el('leftSignName')) el('leftSignName').value = p.leftSignName || '';
+          if (el('leftSignTitle')) el('leftSignTitle').value = p.leftSignTitle || '';
+          if (el('rightSignName')) el('rightSignName').value = p.rightSignName || '';
+          if (el('rightSignTitle')) el('rightSignTitle').value = p.rightSignTitle || '';
+          if (el('leftSignSig')) el('leftSignSig').value = p.leftSignSig || '';
+          if (el('rightSignSig')) el('rightSignSig').value = p.rightSignSig || '';
+        }catch(_){
+          el('customerName').value = '';
+          el('address').value = '';
+          el('proprietorName').value = '';
+        }
+      } else {
+        el('customerName').value = '';
+        el('address').value = '';
+        el('proprietorName').value = '';
+        if (el('branchDetails')) el('branchDetails').value = '';
+        if (el('leftSignName')) el('leftSignName').value = '';
+        if (el('leftSignTitle')) el('leftSignTitle').value = '';
+        if (el('rightSignName')) el('rightSignName').value = '';
+        if (el('rightSignTitle')) el('rightSignTitle').value = '';
+      }
+      renderPreview();
+    });
+
+    ['customerName','address','proprietorName','recipient','branchDetails','leftSignName','leftSignTitle','rightSignName','rightSignTitle','footerText'].forEach(id => {
+      if (el(id)) el(id).addEventListener('input', ()=>{
+        try{ renderPreview(); }catch(e){}
+      });
+    });
+
+    // footer remove button
+    if (el('footerRemoveBtn')) el('footerRemoveBtn').addEventListener('click', ()=>{ removeFooter(); });
+
+  if (el('saveBtn')) el('saveBtn').addEventListener('click', saveCurrent);
+  if (el('loadBtn')) el('loadBtn').addEventListener('click', loadCurrent);
+  if (el('resetBtn')) el('resetBtn').addEventListener('click', () => { if(confirm('Clear fields?')) resetForm(); });
+  if (el('branchEditBtn')) el('branchEditBtn').addEventListener('click', openBranchModal);
+  if (el('signEditBtn')) el('signEditBtn').addEventListener('click', openSignModal);
+    if (el('printBtn')) el('printBtn').addEventListener('click', async ()=>{
+      // when Print / Export PDF clicked, print all commitments using the selected template (one page per commitment)
+      try{ await printCommitmentsUsingTemplate(); }catch(e){ /* fallback */ printPreview(); }
+    });
+    if (el('sendMailBtn')) el('sendMailBtn').addEventListener('click', sendMail);
+    if (el('downloadBtn')) el('downloadBtn').addEventListener('click', downloadHTML);
+    // showTemplateBtn removed from UI; keep handler only if element exists (defensive)
+    if (el('showTemplateBtn')) el('showTemplateBtn').addEventListener('click', ()=>{
+      const tmpl = getTemplateById(state.currentType) || {};
+      const html = tmpl.templateHtml || tmpl.template || '';
+      const w = window.open('', '_blank');
+      if (!w) { alert('Unable to open window to show template. Allow popups.'); return; }
+      w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Template HTML</title></head><body><pre style="white-space:pre-wrap">' + escapeHtml(html) + '</pre></body></html>');
+      w.document.close();
+    });
+    // navigation
+    const showPage = (p)=>{
+      const editor = document.getElementById('editorPage');
+      const cust = document.getElementById('customerPage');
+      const navEditor = document.getElementById('navEditor');
+      const navCustomers = document.getElementById('navCustomers');
+      if (p==='customers'){
+        if (editor) editor.style.display = 'none';
+        if (cust) cust.style.display = '';
+        if (navEditor) navEditor.classList.remove('active');
+        if (navCustomers) navCustomers.classList.add('active');
+        renderCustomers();
+      } else {
+        if (editor) editor.style.display = '';
+        if (cust) cust.style.display = 'none';
+        if (navEditor) navEditor.classList.add('active');
+        if (navCustomers) navCustomers.classList.remove('active');
+      }
+    };
+    const navEditor = document.getElementById('navEditor');
+    const navCustomers = document.getElementById('navCustomers');
+    if (navEditor) navEditor.addEventListener('click', ()=> showPage('editor'));
+    if (navCustomers) navCustomers.addEventListener('click', ()=> showPage('customers'));
+
+    // customer handlers
+    if (el('custAddBtn')) el('custAddBtn').addEventListener('click', addOrUpdateCustomer);
+    if (el('custClearBtn')) el('custClearBtn').addEventListener('click', clearCustomerForm);
+      // import/export buttons (top-right header)
+      if (el('exportCommitBtn')) el('exportCommitBtn').addEventListener('click', exportCommitments);
+      if (el('importCommitBtn')) el('importCommitBtn').addEventListener('click', ()=>{ if (el('importCommitFile')) el('importCommitFile').click(); });
+      if (el('exportCustBtn')) el('exportCustBtn').addEventListener('click', exportCustomers);
+      if (el('importCustBtn')) el('importCustBtn').addEventListener('click', ()=>{ if (el('importCustFile')) el('importCustFile').click(); });
+      // wire hidden file inputs
+      if (el('importCommitFile')) el('importCommitFile').addEventListener('change', e=>{ handleImportCommitFile(e.target.files && e.target.files[0]); });
+      if (el('importCustFile')) el('importCustFile').addEventListener('change', e=>{ handleImportCustFile(e.target.files && e.target.files[0]); });
+  // editor list form handlers (Save / Clear / Clear All)
+  if (el('editorAddSaveBtn')) el('editorAddSaveBtn').addEventListener('click', addOrUpdateEditorRow);
+  if (el('editorAddCancelBtn')) el('editorAddCancelBtn').addEventListener('click', clearEditorForm);
+  if (el('editorClearAllBtn')) el('editorClearAllBtn').addEventListener('click', clearAllEditorList);
+    // ensure initial nav state
+    if (navEditor) navEditor.classList.add('active');
+    // organization dropdown in editor: populate and wire
+    if (el('orgSelect')){
+      populateOrgSelect();
+      el('orgSelect').addEventListener('change', e=>{
+        const v = e.target.value;
+        if (!v || v === '-1'){
+          // clear editor fields
+          el('customerName').value = '';
+          el('address').value = '';
+          el('proprietorName').value = '';
+          renderPreview();
+          return;
+        }
+        const i = Number(v);
+        const list = loadCustomers();
+        const c = list[i];
+        if (!c) return;
+        // populate editor fields
+        el('customerName').value = c.org || '';
+        el('address').value = c.address || '';
+        el('proprietorName').value = c.proprietor || '';
+        renderPreview();
+      });
+    }
+  }
+
+  // --- Branch & Signatory modal handlers ---
+  function openBranchModal(){
+    // parse existing branchDetails into fields (split by newline)
+    const val = (el('branchDetails') || {}).value || '';
+    const parts = val.split('\n');
+    if (el('modal_branch_name')) el('modal_branch_name').value = parts[0] || '';
+    if (el('modal_branch_address')) el('modal_branch_address').value = parts[1] || '';
+    if (el('modal_branch_contact')) el('modal_branch_contact').value = parts[2] || '';
+    if (el('modal_branch_website')) el('modal_branch_website').value = parts[3] || '';
+    const m = el('branchModal'); if (m) { m.classList.remove('hidden'); m.style.display = 'flex'; }
+  }
+
+  function closeBranchModal(){ const m = el('branchModal'); if (m) { m.classList.add('hidden'); m.style.display = ''; } }
+
+  // Helper function to close Branch Modal when clicking on backdrop (outside the modal content)
+  function closeBranchModalOnBackdrop(event){
+    if (event.target.id === 'branchModal'){
+      closeBranchModal();
+    }
+  }
+
+  function openSignModal(){
+    if (el('modal_left_name')) el('modal_left_name').value = (el('leftSignName')||{}).value || '';
+    if (el('modal_left_title')) el('modal_left_title').value = (el('leftSignTitle')||{}).value || '';
+    if (el('modal_right_name')) el('modal_right_name').value = (el('rightSignName')||{}).value || '';
+    if (el('modal_right_title')) el('modal_right_title').value = (el('rightSignTitle')||{}).value || '';
+    // load previews from hidden inputs
+    const leftSig = (el('leftSignSig')||{}).value || '';
+    const rightSig = (el('rightSignSig')||{}).value || '';
+    if (el('modal_left_sig_preview')) el('modal_left_sig_preview').innerHTML = leftSig ? '<img src="'+leftSig+'" style="max-width:180px; max-height:120px"/>' : '';
+    if (el('modal_right_sig_preview')) el('modal_right_sig_preview').innerHTML = rightSig ? '<img src="'+rightSig+'" style="max-width:180px; max-height:120px"/>' : '';
+    // populate header logo preview and footer text in modal (if present)
+    try{
+      const hdr = (el('headerLogoData')||{}).value || '';
+      if (el('headerLogoPreview')) el('headerLogoPreview').innerHTML = hdr ? ('<img src="'+hdr+'" style="max-width:160px; max-height:80px"/>') : (el('headerLogoPreview').innerHTML || '');
+      if (el('footerText')){
+        // prefer the saved payload if any
+        const f = getSavedEditorField('footerText') || '';
+        el('footerText').value = f;
+      }
+    }catch(e){}
+    const m = el('signModal'); if (m) { m.classList.remove('hidden'); m.style.display = 'flex'; }
+    // Allow clicking outside the modal content (on the overlay) to close it,
+    // and also allow Escape key to close. Wire handlers once and store them
+    // on the element so they can be removed cleanly by closeSignModal().
+    try{
+      if (m){
+        if (!m._outsideHandler){
+          m._outsideHandler = function(e){ if (e.target === m) closeSignModal(); };
+          m.addEventListener('click', m._outsideHandler);
+        }
+        if (!m._escHandler){
+          m._escHandler = function(e){ if (e.key === 'Escape' || e.key === 'Esc') closeSignModal(); };
+          document.addEventListener('keydown', m._escHandler);
+        }
+      }
+    }catch(e){}
+    // Ensure Save/Cancel buttons are visible in the modal (we want explicit save)
+    try{
+      const saveBtn = el('modal_sign_save'); if (saveBtn) saveBtn.style.display = '';
+      const cancelBtn = el('modal_sign_cancel'); if (cancelBtn) cancelBtn.style.display = '';
+    }catch(e){}
+    // (X close button injection removed per UX request.)
+  }
+
+  function closeSignModal(){
+    const m = el('signModal');
+    if (m){
+      m.classList.add('hidden'); m.style.display = '';
+      try{
+        if (m._outsideHandler){ m.removeEventListener('click', m._outsideHandler); m._outsideHandler = null; }
+        if (m._escHandler){ document.removeEventListener('keydown', m._escHandler); m._escHandler = null; }
+      }catch(e){}
+    }
+  }
+
+  // file input change handlers for signature images
+  function setupSignatureFileHandlers(){
+    const leftFile = el('modal_left_sigfile');
+    const rightFile = el('modal_right_sigfile');
+    if (leftFile) leftFile.addEventListener('change', e=>{ handleFileSelect(e.target.files && e.target.files[0], 'left'); });
+    if (rightFile) rightFile.addEventListener('change', e=>{ handleFileSelect(e.target.files && e.target.files[0], 'right'); });
+  }
+
+  // header logo file handlers
+  function setupLogoFileHandlers(){
+    const logoFile = el('headerLogoFile');
+    if (logoFile) logoFile.addEventListener('change', e=>{ handleHeaderLogoFile(e.target.files && e.target.files[0]); });
+    const addBtn = el('headerLogoAdd');
+    if (addBtn && logoFile) addBtn.addEventListener('click', ()=>{
+      // Try to auto-load a known file from the app directory first (if present).
+      // Browsers will block arbitrary local file access, so this works when the file
+      // is served alongside the app (e.g. via local web server) or bundled in the repo.
+      const autoName = 'Screenshot 2025-10-25 203250.png';
+      const tryAuto = () => {
+        try{
+          fetch(encodeURI('./' + autoName)).then(r=>{
+            if (!r.ok) throw new Error('not found');
+            return r.blob();
+          }).then(b=>{
+            const reader = new FileReader();
+            reader.onload = function(ev){
+              const data = ev.target.result;
+              if (el('headerLogoData')) el('headerLogoData').value = data;
+              // header logo preview removed — only persist data URL
+              // set default footer when a logo is added. Persist into localStorage even
+              // when the footer textarea does not exist in the current HTML copy.
+              try{
+                const defaultFooter = 'United Commercial Bank PLC\nCorporate Office: Plot-CWS(A)-1, Road No-34\nGulshan Avenue, Dhaka-1212, Bangladesh,\nPhone: +880-2-55668070, +8809610999999, E-mail: info@ucb.com.bd';
+                // update visible textarea if present
+                if (el('footerText')) el('footerText').value = defaultFooter;
+                // persist headerLogoData + footerText into saved payload
+                try{ updateEditorPayload({ headerLogoData: data, footerText: defaultFooter }); }catch(e){}
+              }catch(e){}
+              try{ renderPreview(); }catch(e){}
+            };
+            reader.readAsDataURL(b);
+          }).catch(_=>{
+            // fallback to opening file picker if auto file not available
+            try{ logoFile.click(); }catch(e){}
+          });
+        }catch(e){ try{ logoFile.click(); }catch(_){} }
+      };
+      tryAuto();
+    });
+    const rem = el('headerLogoRemove');
+    if (rem) rem.addEventListener('click', ()=>{
+      if (el('headerLogoData')) el('headerLogoData').value = '';
+      // when logo removed, also remove the auto-set footer (persist cleared value)
+      try{
+        if (el('footerText')) el('footerText').value = '';
+      }catch(e){}
+      try{ updateEditorPayload({ headerLogoData: '', footerText: '' }); }catch(e){}
+      try{ renderPreview(); }catch(e){}
+    });
+  }
+
+  function handleHeaderLogoFile(file){
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      const data = ev.target.result;
+      if (el('headerLogoData')) el('headerLogoData').value = data;
+      // header logo preview removed — persist headerLogoData and footer text only
+      try{
+        const defaultFooter = 'United Commercial Bank PLC\nCorporate Office: Plot-CWS(A)-1, Road No-34\nGulshan Avenue, Dhaka-1212, Bangladesh,\nPhone: +880-2-55668070, +8809610999999, E-mail: info@ucb.com.bd';
+        if (el('footerText')) el('footerText').value = defaultFooter;
+        try{ updateEditorPayload({ headerLogoData: data, footerText: defaultFooter }); }catch(e){}
+  }catch(e){}
+  try{ renderPreview(); }catch(e){}
+    };
+    reader.readAsDataURL(file);
+  }
+
+
+  function handleFileSelect(file, side){
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      const data = ev.target.result;
+      // Store the data in the hidden input
+      if (side === 'left'){
+        if (el('modal_left_sig_preview')) el('modal_left_sig_preview').innerHTML = '<img src="'+data+'" style="max-width:180px; max-height:120px"/>';
+        if (el('leftSignSig')) el('leftSignSig').value = data;
+        // Also persist immediately to localStorage
+        try{ updateEditorPayload({ leftSignSig: data }); }catch(e){}
+      } else {
+        if (el('modal_right_sig_preview')) el('modal_right_sig_preview').innerHTML = '<img src="'+data+'" style="max-width:180px; max-height:120px"/>';
+        if (el('rightSignSig')) el('rightSignSig').value = data;
+        // Also persist immediately to localStorage
+        try{ updateEditorPayload({ rightSignSig: data }); }catch(e){}
+      }
+      // Refresh preview so signature appears immediately
+      try{ renderPreview(); }catch(e){}
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // modal save/cancel wiring
+  function wireModals(){
+    // Branch modal close handlers
+    if (el('branchModalClose')) el('branchModalClose').addEventListener('click', closeBranchModal);
+    if (el('branchModalCancel')) el('branchModalCancel').addEventListener('click', closeBranchModal);
+    
+    if (el('modal_branch_save')) el('modal_branch_save').addEventListener('click', ()=>{
+      const name = (el('modal_branch_name')||{}).value || '';
+      const address = (el('modal_branch_address')||{}).value || '';
+      const contact = (el('modal_branch_contact')||{}).value || '';
+      const website = (el('modal_branch_website')||{}).value || '';
+      // always keep four lines: Branch name, Address, Contact, Website
+      const full = [name || '', address || '', contact || '', website || ''].join('\n');
+      if (el('branchDetails')) el('branchDetails').value = full;
+      // persist branch details across ALL form types so every template shares them
+      try{ saveSharedFieldsToAllTemplates({ branchDetails: full }); }catch(e){}
+      try{ saveCurrent(); }catch(e){}
+      closeBranchModal(); renderPreview();
+    });
+
+    // Sign modal close handlers
+    if (el('signModalClose')) el('signModalClose').addEventListener('click', closeSignModal);
+    if (el('signModalCancel')) el('signModalCancel').addEventListener('click', closeSignModal);
+    setupLogoFileHandlers();
+    setupSignatureFileHandlers();  // Wire file input handlers for signatures
+    // wire sign modal save/cancel handlers
+    if (el('modal_sign_cancel')) el('modal_sign_cancel').addEventListener('click', ()=>{ closeSignModal(); });
+    if (el('modal_sign_save')) el('modal_sign_save').addEventListener('click', ()=>{
+      try{
+        // copy modal fields into hidden editor fields
+        const lName = (el('modal_left_name')||{}).value || '';
+        const lTitle = (el('modal_left_title')||{}).value || '';
+        const rName = (el('modal_right_name')||{}).value || '';
+        const rTitle = (el('modal_right_title')||{}).value || '';
+        if (el('leftSignName')) el('leftSignName').value = lName;
+        if (el('leftSignTitle')) el('leftSignTitle').value = lTitle;
+        if (el('rightSignName')) el('rightSignName').value = rName;
+        if (el('rightSignTitle')) el('rightSignTitle').value = rTitle;
+        // header logo data and signature image data are stored in hidden inputs by file handlers
+        const headerData = (el('headerLogoData')||{}).value || '';
+        const leftSig = (el('leftSignSig')||{}).value || '';
+        const rightSig = (el('rightSignSig')||{}).value || '';
+        if (el('leftSignSig')) el('leftSignSig').value = leftSig;
+        if (el('rightSignSig')) el('rightSignSig').value = rightSig;
+        // footer text (may be present in modal)
+        const footerVal = (el('footerText')||{}).value || '';
+
+        // persist officer/signatory details across ALL form types
+        const sharedOfficerFields = { headerLogoData: headerData, footerText: footerVal, leftSignSig: leftSig, rightSignSig: rightSig, leftSignName: lName, leftSignTitle: lTitle, rightSignName: rName, rightSignTitle: rTitle };
+        try{ saveSharedFieldsToAllTemplates(sharedOfficerFields); }catch(e){}
+
+        // also save into visible hidden inputs and call saveCurrent to persist normal fields
+        try{ saveCurrent(); }catch(e){}
+      }catch(e){ /* ignore */ }
+      closeSignModal();
+      try{ renderPreview(); }catch(e){}  // Refresh preview with signature images
+      try{ renderPreview(); }catch(e){}
+    });
+
+    // wire remove-signature buttons (clear hidden inputs, persist and refresh preview)
+    const leftSigRem = el('modal_left_sig_remove');
+    if (leftSigRem) leftSigRem.addEventListener('click', ()=>{
+      try{
+        if (el('leftSignSig')) el('leftSignSig').value = '';
+        if (el('modal_left_sig_preview')) el('modal_left_sig_preview').innerHTML = '';
+        try{ updateEditorPayload({ leftSignSig: '' }); }catch(e){}
+        try{ saveCurrent(); }catch(e){}
+        try{ renderPreview(); }catch(e){}
+      }catch(e){}
+    });
+
+    const rightSigRem = el('modal_right_sig_remove');
+    if (rightSigRem) rightSigRem.addEventListener('click', ()=>{
+      try{
+        if (el('rightSignSig')) el('rightSignSig').value = '';
+        if (el('modal_right_sig_preview')) el('modal_right_sig_preview').innerHTML = '';
+        try{ updateEditorPayload({ rightSignSig: '' }); }catch(e){}
+        try{ saveCurrent(); }catch(e){}
+        try{ renderPreview(); }catch(e){}
+      }catch(e){}
+    });
+  }
+
+  // Print each commitment in its own print dialog (one window per commitment).
+  // Note: browsers may block multiple popups; allow popups and be prepared to confirm multiple print dialogs.
+  async function printCommitmentsUsingTemplate(){
+    const list = loadEditorList();
+    if (!list || !list.length){ printPreview(); return; }
+
+  const tmplObj = getTemplateById(state.currentType) || {};
+  // load any persisted editor payload for the current template as a fallback
+  const editorKey = 'cc_editor:' + state.currentType;
+  let _savedPayload = {};
+  try{
+    const _raw = localStorage.getItem(editorKey);
+    if (_raw) _savedPayload = JSON.parse(_raw) || {};
+  }catch(e){ _savedPayload = {}; }
+  // Ensure the chosen template has been normalized (in case it came from fetched JSON or was edited)
+  try{ normalizeTemplates([tmplObj]); }catch(e){ /* ignore */ }
+    const pageCss = `
+      <style>
+        body{font-family:Segoe UI, Roboto, Arial, sans-serif; color:#111; margin:0; padding:18px}
+        .page{position:relative; box-sizing:border-box; width:100%; padding:18px; page-break-after:always}
+        .page:last-child{page-break-after:auto}
+        /* Fixed footer positioned bottom-left inside each printed page */
+        .cc-footer{position:absolute; left:18px; bottom:18px; font-size:12px; white-space:pre-wrap; text-align:left; color:#333}
+      </style>`;
+
+    let bodyHtml = '';
+    list.forEach((r, idx)=>{
+      // prepare data for template replacements
+      const data = {
+        customerName: (el('customerName') ? el('customerName').value : '') || '',
+        proprietorName: (el('proprietorName') ? el('proprietorName').value : '') || '',
+        address: (el('address') ? el('address').value : '') || '',
+        recipient: (el('recipient') ? el('recipient').value : '') || '',
+        // commitment amount/purpose/date removed from editor; provide values from commitment where appropriate
+        amount: '',
+        amountWords: '',
+        purpose: escapeHtml(r.description || ''),
+        date: formatDate(new Date()),
+        branchDetails: (el('branchDetails') ? el('branchDetails').value : ''),
+        leftSignName: (el('leftSignName') ? el('leftSignName').value : ''),
+        leftSignTitle: (el('leftSignTitle') ? el('leftSignTitle').value : ''),
+        rightSignName: (el('rightSignName') ? el('rightSignName').value : ''),
+        rightSignTitle: (el('rightSignTitle') ? el('rightSignTitle').value : '')
+        ,
+        // compute refNumber for preview/print; default is empty and will be handled later
+        refNumber: '',
+        year: new Date().getFullYear()
+      };
+
+        // Determine starting reference number (may be stored in editor payload or entered in DOM)
+        try{
+          const rawStart = getSavedEditorField('refStart') || ((_savedPayload && _savedPayload.refStart) ? String(_savedPayload.refStart) : '');
+          let startNum = parseInt(String(rawStart||'').trim(), 10);
+          if (isNaN(startNum)) startNum = 1;
+          data.refNumber = String(startNum + idx);
+        }catch(e){ data.refNumber = String(idx + 1); }
+
+      // render template content (if html template exists) or fallback to simple block
+      let contentHtml = '';
+      if (tmplObj && tmplObj.html && tmplObj.templateHtml){
+        contentHtml = tmplObj.templateHtml;
+        // If rendering multiple commitments (one page per commitment), avoid repeating
+        // the 'Invitation for Tender No' block on subsequent pages — show it only on the first page.
+        if (idx > 0) {
+          try{
+            // Keep the label 'Invitation for Tender No:' and include a single {{ift}} placeholder
+            // so the IFT value is shown on every page. collapseDuplicateIft will remove any accidental duplicates.
+            contentHtml = contentHtml.replace(/<div>\s*<strong>\s*Invitation for Tender No\s*:?[\s<\/strong>]*<\/strong>.*?<\/div>/ig, '<div><strong>Invitation for Tender No:</strong> {{ift}}</div>');
+          }catch(e){ /* ignore regex errors */ }
+        }
+        // combine editor-level data and commitment-level fields for replacement
+        // compute amount fields from commitment (amountLac stored in list)
+        const amtVal = (r.amountLac || '').toString().trim();
+        const formattedAmount = amtVal ? ('BDT ' + amtVal + ' Lac') : '';
+        const amountWords = amtVal ? takaAmountToWords(amtVal) : '';
+        const amountWordsBriket = amtVal ? takaAmountToWordsBriket(amtVal) : '';
+        const leftSigData = (el('leftSignSig') || {}).value || '';
+        const rightSigData = (el('rightSignSig') || {}).value || '';
+        const leftSigHtml = leftSigData ? ('<div style="margin-top:6px"><img src="'+leftSigData+'" style="max-width:140px; max-height:80px"/></div>') : '';
+        const rightSigHtml = rightSigData ? ('<div style="margin-top:6px"><img src="'+rightSigData+'" style="max-width:140px; max-height:80px"/></div>') : '';
+
+        const replacer = Object.assign({}, data, {
+          tenderId: escapeHtml(r.tenderId || ''),
+          packageNo: escapeHtml(r.packageNo || ''),
+          ift: escapeHtml(r.ift || ''),
+          description: escapeHtml(r.description || ''),
+          amount: escapeHtml(formattedAmount),
+          amountWords: escapeHtml(amountWords),
+          amountWordsBriket: escapeHtml(amountWordsBriket)
+        });
+          // ensure refNumber/year are available in replacer (escapeHtml for safety)
+          replacer.refNumber = escapeHtml(data.refNumber || '');
+          replacer.year = escapeHtml(String(data.year || new Date().getFullYear()));
+        // attach signature HTML (raw) so templates can include {{leftSignSignature}} / {{rightSignSignature}}
+        replacer.leftSignSignature = leftSigHtml;
+        replacer.rightSignSignature = rightSigHtml;
+        // sanitize special placeholders (escape HTML then convert newlines to <br/>)
+        // For signatory NAME placeholders, show the signature image above the name
+        ['branchDetails','recipient','leftSignTitle','rightSignName','rightSignTitle'].forEach(k=>{
+          if (replacer[k]) replacer[k] = escapeHtml(replacer[k]).replace(/\n/g,'<br/>');
+        });
+        // left sign name: include signature image above name
+        if (replacer.leftSignName !== undefined){
+          const nameVal = replacer.leftSignName || '';
+          const safeName = escapeHtml(nameVal).replace(/\n/g,'<br/>');
+          replacer.leftSignName = leftSigHtml + safeName;
+        }
+        // right sign name: include signature image above name
+        if (replacer.rightSignName !== undefined){
+          const nameVal = replacer.rightSignName || '';
+          const safeName = escapeHtml(nameVal).replace(/\n/g,'<br/>');
+          replacer.rightSignName = rightSigHtml + safeName;
+        }
+        Object.keys(replacer).forEach(k=>{
+          const re = new RegExp('{{\\s*'+k+'\\s*}}','g');
+          contentHtml = contentHtml.replace(re, replacer[k]);
+        });
+      } else if (tmplObj && tmplObj.template){
+        contentHtml = escapeHtml(tmplObj.template);
+      } else {
+        contentHtml = '<div><h2>Commitment</h2><p>'+data.purpose+'</p></div>';
+      }
+
+  // Do not prepend metadata header; include only the rendered template content per page
+  // Inject header logo into the left of header-row for this page if available
+  try{
+    const logoData = getSavedEditorField('headerLogoData') || (_savedPayload && _savedPayload.headerLogoData) || '';
+    if (logoData) {
+      try{
+        contentHtml = contentHtml.replace(/(<div\s+class=["']header-row["'][^>]*>\s*)<div>\s*<\/div>/i, '$1<div><img src="' + logoData + '" style="max-width:160px; max-height:80px"/></div>');
+      }catch(e){}
+    }
+  }catch(e){}
+  // Inject header logo into the left of header-row for this page if available
+  try{
+    const logoData = getSavedEditorField('headerLogoData') || (_savedPayload && _savedPayload.headerLogoData) || '';
+    if (logoData) {
+      try{
+        contentHtml = contentHtml.replace(/(<div\s+class=["']header-row["'][^>]*>\s*)<div>\s*<\/div>/i, '$1<div><img src="' + logoData + '" style="max-width:160px; max-height:80px"/></div>');
+      }catch(e){}
+    }
+  }catch(e){}
+
+  // Inject footer (bottom-left) for this page if provided.
+  // Use a non-absolute appended block so the footer is not clipped by browser print margins
+  try{
+    const footerVal = getSavedEditorField('footerText') || (_savedPayload && _savedPayload.footerText) || '';
+    if (footerVal) {
+      const footerHtml = escapeHtml(footerVal).replace(/\n/g,'<br/>');
+  try{ contentHtml = removeTemplateFooter(contentHtml); }catch(e){}
+  // Insert a fixed-position footer element inside the page. The page container
+  // is positioned relative, so this absolute footer will be placed bottom-left.
+  const footerDiv = '<div class="cc-footer">' + footerHtml + '</div>';
+  // reserve 96px at the bottom so footer does not overlap page content
+  contentHtml = '<div style="box-sizing:border-box; padding-bottom:206px;">' + contentHtml + '</div>' + footerDiv;
+    }
+  }catch(e){}
+
+  // Aggressive per-page dedupe to remove any duplicated IFT / APP ID tokens introduced
+  // during normalization or replacement for this specific page.
+  try{ contentHtml = collapseDuplicateIft(contentHtml); }catch(e){}
+  bodyHtml += '<div class="page">'+contentHtml+'</div>';
+    });
+
+  // Create a filename/title that includes the organization name where possible so
+  // browsers use a meaningful default when saving as PDF (Save as PDF uses the document title in many browsers).
+  const orgNameRaw = (el('customerName') ? (el('customerName').value || '') : '') || '';
+  // sanitize filename/title: remove problematic characters
+  const orgSafe = orgNameRaw.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim();
+  const pageTitle = orgSafe ? ('CREDIT COMMITTMENT OF ' + orgSafe) : ('CREDIT COMMITTMENT - ' + (tmplObj.name || state.currentType));
+  const full = '<!doctype html><html><head><meta charset="utf-8"><title>' + escapeHtml(pageTitle) + '</title>' + pageCss + '</head><body>' + bodyHtml + '</body></html>';
+
+  // run targeted dedupe to prevent duplicated IFT / APP ID tokens from appearing
+  const cleaned = collapseDuplicateIft(full);
+
+  // Print without opening a visible new window: write into a hidden iframe and trigger print
+  try{
+    const iframe = document.createElement('iframe');
+    // keep it off-screen and as small as possible
+    iframe.style.position = 'fixed';
+    iframe.style.left = '-9999px';
+    iframe.style.top = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    // Use srcdoc when available for simpler write
+    if ('srcdoc' in iframe) {
+      iframe.srcdoc = cleaned;
+    } else {
+      // fallback: write to iframe document after attaching
+      iframe.onload = function(){
+        try{
+          const idoc = iframe.contentDocument || iframe.contentWindow.document;
+          idoc.open(); idoc.write(cleaned); idoc.close();
+        }catch(e){}
+      };
+    }
+    document.body.appendChild(iframe);
+    const doPrint = ()=>{
+      try{
+        const iwin = iframe.contentWindow || iframe;
+        try{ iwin.focus(); }catch(e){}
+        // Trigger print
+        iwin.print();
+      }catch(e){
+        // fallback to opening a new window if iframe-print is blocked
+        try{ const w = window.open('', '_blank'); if (w){ w.document.write(cleaned); w.document.close(); w.focus(); setTimeout(()=>{ try{ w.print(); }catch(_){} }, 200); } else { alert('Unable to start print. Allow popups or try again.'); } }catch(err){ alert('Unable to start print: ' + (err && err.message)); }
+      } finally {
+        // remove iframe after short delay to allow print dialog to start
+        setTimeout(()=>{ try{ document.body.removeChild(iframe); }catch(_){ } }, 1500);
+      }
+    };
+    // If iframe has loaded content, call print. Use a short timeout to ensure resources (images) load.
+    if (iframe.srcdoc) {
+      iframe.onload = function(){ setTimeout(doPrint, 250); };
+    } else {
+      // content was written in onload fallback; wait then print
+      setTimeout(doPrint, 500);
+    }
+  }catch(e){
+    // last-resort fallback: open window
+    try{ const w = window.open('', '_blank'); if (!w){ alert('Unable to open new window — allow popups for this page.'); return; } w.document.write(cleaned); w.document.close(); w.focus(); setTimeout(()=>{ try{ w.print(); }catch(_){} }, 200); }catch(err){ alert('Print failed: ' + (err && err.message)); }
+  }
+  }
+
+  // init
+  // --- Import / Export helpers for commitments and customers ---
+  function downloadJSON(obj, filename){
+    try{
+      const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=> URL.revokeObjectURL(url), 5000);
+    }catch(e){ alert('Failed to prepare download: ' + (e && e.message)); }
+  }
+
+  function exportCommitments(){
+    const list = loadEditorList() || [];
+    const d = new Date();
+    const yy = String(d.getFullYear());
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const filename = 'commitments-' + yy + mm + dd + '.json';
+    downloadJSON(list, filename);
+  }
+
+  function handleImportCommitFile(file){
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        const text = ev.target.result || '';
+        const parsed = JSON.parse(text);
+        if (!Array.isArray(parsed)) { alert('Invalid file format: expected an array of commitments'); return; }
+        if (!confirm('Replace existing commitments with imported list? Click OK to replace, Cancel to abort.')) return;
+        saveEditorList(parsed);
+        try{ renderEditorList(); }catch(e){}
+        alert('Imported ' + parsed.length + ' commitments.');
+      }catch(e){ alert('Failed to import commitments: ' + (e && e.message)); }
+    };
+    reader.onerror = function(){ alert('Failed to read the selected file.'); };
+    reader.readAsText(file);
+    // clear file input so re-selecting same file will fire change event next time
+    if (el('importCommitFile')) el('importCommitFile').value = '';
+  }
+
+  function exportCustomers(){
+    const list = loadCustomers() || [];
+    const d = new Date();
+    const yy = String(d.getFullYear());
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const filename = 'customers-' + yy + mm + dd + '.json';
+    downloadJSON(list, filename);
+  }
+
+  function handleImportCustFile(file){
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        const text = ev.target.result || '';
+        const parsed = JSON.parse(text);
+        if (!Array.isArray(parsed)) { alert('Invalid file format: expected an array of customers'); return; }
+        // basic validation: each item should have an 'org' property
+        const invalid = parsed.find(x => !x || (typeof x.org !== 'string'));
+        if (invalid){ alert('Invalid customer entry found. Each customer must have an "org" name.'); return; }
+        if (!confirm('Replace existing saved customers with imported list? Click OK to replace, Cancel to abort.')) return;
+        saveCustomers(parsed);
+        try{ renderCustomers(); }catch(e){}
+        try{ populateOrgSelect(); }catch(e){}
+        alert('Imported ' + parsed.length + ' customers.');
+      }catch(e){ alert('Failed to import customers: ' + (e && e.message)); }
+    };
+    reader.onerror = function(){ alert('Failed to read the selected file.'); };
+    reader.readAsText(file);
+    if (el('importCustFile')) el('importCustFile').value = '';
+  }
+  tryLoadTemplates().finally(()=>{
+    populateTemplateSelect();
+    wire();
+    // load saved editor data for the selected template (silent)
+    try{ loadCurrentSilent(); }catch(e){}
+    wireModals();
+    renderPreview();
+    // render editor side list
+    try{ renderEditorList(); }catch(e){ /* ignore if not present */ }
+    // set sensible defaults for branch and signatory fields if empty
+    try{
+      const defBranch = 'Kashinathpur Branch\n1st Floor, Khan Plaza, Kashinathpurbazar, Santhia, Pabna, Bangladesh\nContact: 01713 108762, E-mail: knb@ucb.com.bd\nWebsite: www.ucb.com.bd';
+      if (el('branchDetails') && !el('branchDetails').value) el('branchDetails').value = defBranch;
+      if (el('leftSignName') && !el('leftSignName').value) el('leftSignName').value = 'Md. Abdullah Al Mamun';
+      if (el('leftSignTitle') && !el('leftSignTitle').value) el('leftSignTitle').value = 'Senior Officer';
+      if (el('rightSignName') && !el('rightSignName').value) el('rightSignName').value = 'Md. Delowar Hossain';
+      if (el('rightSignTitle') && !el('rightSignTitle').value) el('rightSignTitle').value = 'SEO & Operation Manager';
+      renderPreview();
+    }catch(e){ /* ignore */ }
+  // renderEditorList already places the list; keep it in-flow (non-floating) by CSS
+  });
+
+  // Expose functions to global scope for inline onclick handlers in HTML
+  window.closeBranchModalOnBackdrop = closeBranchModalOnBackdrop;
+  window.closeBranchModal = closeBranchModal;
+  window.openBranchModal = openBranchModal;
+
+})();
+  </script>
   <script>
     // Slide Menu Toggle
     const slideMenuToggle = document.getElementById('slideMenuToggle');

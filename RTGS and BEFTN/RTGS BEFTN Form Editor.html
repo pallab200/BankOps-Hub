@@ -663,6 +663,12 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
     display: none !important;
   }
 
+  /* Customer export/import are ALWAYS visible (not hidden by developer mode) */
+  #slideMenuCustomerExport,
+  #slideMenuCustomerImport {
+    display: flex !important;
+  }
+
   /* Officer Seal Popup */
   .officer-seal-popup-backdrop {
     position:fixed; top:0; left:0; right:0; bottom:0;
@@ -747,8 +753,14 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
         <label for="slideBranchInput" style="display:block; font-weight:600; color:var(--text-secondary); margin-bottom:3px; font-size:0.95rem;">Branch Name</label>
         <input id="slideBranchInput" type="text" placeholder="Branch name" style="width:100%; padding:6px 8px; border-radius:4px; border:1px solid var(--border-color); font-size:0.95rem;">
       </div>
+      <div class="slide-quick-field" style="padding:5px 7px; border-bottom:1px solid var(--border-color);">
+        <label for="slideDateInput" style="display:block; font-weight:600; color:var(--text-secondary); margin-bottom:3px; font-size:0.95rem;">Date</label>
+        <input id="slideDateInput" type="date" style="width:100%; padding:6px 8px; border-radius:4px; border:1px solid var(--border-color); font-size:0.95rem;">
+      </div>
       <ul class="slide-menu-nav" style="padding:7px; display:flex; flex-direction:column; gap:5px;">
         <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuOfficerSeal"><i class="fas fa-stamp"></i> Officer Seal</a></li>
+        <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuCustomerExport"><i class="fas fa-download"></i> Customer Export</a></li>
+        <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuCustomerImport"><i class="fas fa-upload"></i> Customer Import</a></li>
         <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuExport"><i class="fas fa-file-export"></i> Export</a></li>
         <li style="margin-bottom:2.5px;"><a href="#" id="slideMenuImport"><i class="fas fa-file-import"></i> Import</a></li>
       </ul>
@@ -871,7 +883,7 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
           </label>
 
           <div class="form-section">
-            <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Payment Details</div>
+            <div class="form-section-title"><span style="font-size:1.2rem; font-weight:700; color:var(--primary)">৳</span>Payment Details</div>
           <label>Amount
             <input name="amount" type="text" placeholder="Amount">
           </label>
@@ -1419,14 +1431,33 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
 
   function update(source){
     const data = new FormData(form);
-  // compute today's date in DDMMYYYY format and keep date overlay in sync
-  const _now = new Date();
+  // Use date from slide menu input field (YYYY-MM-DD format)
+  // If user clears it, the date will be blank
+  let _now = new Date();
+  let _dateIsEmpty = false;
+  try {
+    const slideDateInputEl = document.getElementById('slideDateInput');
+    const selectedDate = slideDateInputEl ? slideDateInputEl.value : '';
+    
+    if (selectedDate && selectedDate.trim() !== '') {
+      const parts = selectedDate.split('-');
+      if (parts.length === 3) {
+        _now = new Date(parts[0], parseInt(parts[1]) - 1, parts[2]);
+      }
+    } else {
+      // If date field is blank/empty, mark it as empty
+      _dateIsEmpty = true;
+    }
+  } catch (e) {
+    // If anything fails, mark as empty
+    _dateIsEmpty = true;
+  }
   const _dd = String(_now.getDate()).padStart(2,'0');
   const _mm = String(_now.getMonth()+1).padStart(2,'0');
   const _yyyy = String(_now.getFullYear());
-  const _todayStr = _dd + _mm + _yyyy; // keep legacy date value (DDMMYYYY) for existing date overlay
+  const _todayStr = _dateIsEmpty ? '' : (_dd + _mm + _yyyy); // blank if no date selected
   // For the combined dateTime (BEFTN) produce "DD-MM-YYYY & HH:MM AM/PM"
-  const _displayDate = _dd + '-' + _mm + '-' + _yyyy; // dashed date for readability
+  const _displayDate = _dateIsEmpty ? '' : (_dd + '-' + _mm + '-' + _yyyy); // dashed date for readability
   const _hours24 = _now.getHours();
   const _hours12 = (_hours24 % 12) === 0 ? 12 : (_hours24 % 12);
   const _hh = String(_hours12).padStart(2, '0');
@@ -2229,6 +2260,108 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
 
   // close modal with Escape
   document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && pe.classList.contains('active')) closePresetEditor(); });
+  
+  // ============= CUSTOMER EXPORT / IMPORT (Senders & Receivers only) =============
+  
+  window.exportCustomerData = function(){
+    try{
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        type: 'customer-data',
+        senders: loadList(SENDERS_LIST_KEY),
+        receivers: loadList(RECEIVERS_LIST_KEY)
+      };
+
+      // Export as JSON file
+      const jsonStr = JSON.stringify(payload, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+      a.download = `rtgs_customers_${timestamp}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      showToast('Customer data exported successfully');
+    }catch(e){ 
+      console.error('Customer export failed', e); 
+      showToast('Customer export failed'); 
+    }
+  };
+
+  window.importCustomerFile = function(file){
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        let obj;
+        const content = String(reader.result || '{}');
+        
+        // Parse as JSON
+        obj = JSON.parse(content);
+        
+        // Validate format
+        if(!obj || typeof obj !== 'object'){ throw new Error('Invalid file format'); }
+        if(obj.type !== 'customer-data'){ throw new Error('Not a customer data file'); }
+        
+        // Merge sender presets
+        try{
+          if(Array.isArray(obj.senders)){
+            const existing = loadList(SENDERS_LIST_KEY) || [];
+            obj.senders.forEach(it => {
+              try{
+                // Match by id or accountNumber to avoid duplicates
+                const acc = it && it.data && (it.data.accountNumber || '');
+                const found = existing.find(e => (it.id && e.id === it.id) || (acc && e.data && e.data.accountNumber === acc));
+                if(found){
+                  // Update existing
+                  found.data = Object.assign({}, found.data || {}, it.data || {});
+                  found.name = it.name || found.name;
+                } else {
+                  // Add new
+                  if(!it.id) it.id = makeId();
+                  existing.push(it);
+                }
+              }catch(err){ /* ignore item errors */ }
+            });
+            saveList(SENDERS_LIST_KEY, existing);
+          }
+        }catch(e){ console.warn('Failed to merge customer senders', e); }
+
+        // Merge receiver presets
+        try{
+          if(Array.isArray(obj.receivers)){
+            const existing = loadList(RECEIVERS_LIST_KEY) || [];
+            obj.receivers.forEach(it => {
+              try{
+                const acc = it && it.data && (it.data.recvAccount || '');
+                const found = existing.find(e => (it.id && e.id === it.id) || (acc && e.data && e.data.recvAccount === acc));
+                if(found){
+                  found.data = Object.assign({}, found.data || {}, it.data || {});
+                  found.name = it.name || found.name;
+                } else {
+                  if(!it.id) it.id = makeId();
+                  existing.push(it);
+                }
+              }catch(err){}
+            });
+            saveList(RECEIVERS_LIST_KEY, existing);
+          }
+        }catch(e){ console.warn('Failed to merge customer receivers', e); }
+
+        // Refresh UI
+        try{ renderSendersList(); renderReceiversList(); populateEntryDropdowns(); }catch(e){}
+        showToast('Customer data imported successfully');
+      }catch(err){ 
+        console.error('Customer import failed', err); 
+        showToast('Customer import failed: invalid file'); 
+      }
+    };
+    reader.onerror = ()=>{ showToast('Failed to read file'); };
+    reader.readAsText(file);
+  };
+  
   // both pages are always visible (no page-switch buttons)
 })();
 
@@ -3518,6 +3651,61 @@ function openPreviewWindow(pages){
     }
   }
 
+  // Date Sync between Slide Menu and Form (with today's date as default)
+  const DATE_KEY = 'rtgs_date_v1';
+  const slideDateInput = document.getElementById('slideDateInput');
+
+  function saveDateValue(value) {
+    try {
+      localStorage.setItem(DATE_KEY, value);
+    } catch (e) {
+      console.warn('Failed to save date', e);
+    }
+  }
+
+  function loadDateValue() {
+    try {
+      return localStorage.getItem(DATE_KEY) || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function getTodayDateString() {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function convertDateToOverlayFormat(dateStr) {
+    // Convert from YYYY-MM-DD to DDMMYYYY format for overlay display
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return '';
+    return `${parts[2]}${parts[1]}${parts[0]}`;
+  }
+
+  if (slideDateInput) {
+    // Always initialize to today's date (fresh on each page load)
+    const dateToSet = getTodayDateString();
+    slideDateInput.value = dateToSet;
+
+    // When user types or changes the date in real-time (input event)
+    // This allows clearing the field without auto-reset during the session
+    slideDateInput.addEventListener('input', (e) => {
+      const selectedDate = e.target.value;
+      // Update the form's date field with DDMMYYYY format
+      const overlayFormatDate = convertDateToOverlayFormat(selectedDate);
+      if (document.querySelector('input[name="date"]')) {
+        document.querySelector('input[name="date"]').value = overlayFormatDate;
+      }
+      // Trigger update to refresh overlays in real-time
+      if (typeof update === 'function') update();
+    });
+  }
+
   // Slide Menu Export/Import Buttons
   const slideMenuExportBtn = document.getElementById('slideMenuExport');
   const slideMenuImportBtn = document.getElementById('slideMenuImport');
@@ -3537,6 +3725,38 @@ function openPreviewWindow(pages){
       closeSlideMenu();
     });
   }
+
+  // Customer Export/Import Buttons  
+  const slideMenuCustomerExportBtn = document.getElementById('slideMenuCustomerExport');
+  const slideMenuCustomerImportBtn = document.getElementById('slideMenuCustomerImport');
+  const customerImportFile = document.createElement('input');
+  customerImportFile.type = 'file';
+  customerImportFile.accept = 'application/json';
+  customerImportFile.style.display = 'none';
+  document.body.appendChild(customerImportFile);
+
+  if (slideMenuCustomerExportBtn) {
+    slideMenuCustomerExportBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (typeof window.exportCustomerData === 'function') window.exportCustomerData();
+      closeSlideMenu();
+    });
+  }
+
+  if (slideMenuCustomerImportBtn) {
+    slideMenuCustomerImportBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      customerImportFile.click();
+      closeSlideMenu();
+    });
+  }
+
+  customerImportFile.addEventListener('change', (e)=>{
+    const f = (e.target && e.target.files && e.target.files[0]) ? e.target.files[0] : null;
+    if(f && typeof window.importCustomerFile === 'function') window.importCustomerFile(f);
+    // Reset input
+    try{ customerImportFile.value = ''; }catch(e){}
+  });
 
   // Navigation links in slide menu (menu stays open)
 

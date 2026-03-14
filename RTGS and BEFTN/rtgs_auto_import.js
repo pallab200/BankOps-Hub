@@ -1,14 +1,14 @@
 window.RTGS_AUTO_IMPORT_DATA = {
-  "exportedAt": "2026-02-27T17:52:06.601Z",
+  "exportedAt": "2026-03-10T15:53:32.375Z",
   "formValues": {
-    "branchName": "",
-    "accountNumber": "",
-    "cifNumber": "",
+    "branchName": "serajgonj",
+    "accountNumber": "1872750000000068",
+    "cifNumber": "187000007",
     "routingNumber": "",
-    "dateTime": "",
-    "senderName": "",
+    "dateTime": "10-03-2026 & 12:00 AM",
+    "senderName": "M/S GOLAM MOSTAFA",
     "recvName": "",
-    "senderContact": "",
+    "senderContact": "01712289504",
     "amount": "",
     "reason": "business purpose",
     "recvBank": "",
@@ -441,8 +441,8 @@ window.RTGS_AUTO_IMPORT_DATA = {
       "top": 77.0771
     },
     "beftn::1::dateTime::37": {
-      "left": 15.4625,
-      "top": 55.6777
+      "left": 19.4438,
+      "top": 57.6231
     },
     "beftn::1::accountNumberBeftn::32": {
       "left": 18.24,
@@ -653,123 +653,6 @@ window.RTGS_AUTO_IMPORT_DATA = {
       "top": 94.5466
     }
   },
-  "senders": [
-    {
-      "id": "p_1761509100453_401",
-      "name": "tanzil ahmed",
-      "created": 1761509100453,
-      "data": {
-        "senderName": "TANZIL AHMED",
-        "accountNumber": "0953202000030622",
-        "cifNumber": "095029869",
-        "senderContact": "01745740185"
-      }
-    },
-    {
-      "id": "p_1761510329058_77",
-      "name": "M/S GOLAM MOSTAFA",
-      "created": 1761510329058,
-      "data": {
-        "senderName": "M/S GOLAM MOSTAFA",
-        "senderContact": "01712289504",
-        "cifNumber": "187000007",
-        "accountNumber": "1872750000000068"
-      }
-    },
-    {
-      "id": "p_1761671032850_495",
-      "name": "M/S GOLAM MOSTAFA",
-      "created": 1761671032850,
-      "data": {
-        "senderName": "M/S GOLAM MOSTAFA",
-        "senderContact": "01712289504",
-        "cifNumber": "187000007",
-        "accountNumber": "1872750000000068"
-      }
-    },
-    {
-      "id": "p_1761671042206_74",
-      "name": "M/S GOLAM MOSTAFA",
-      "created": 1761671042206,
-      "data": {
-        "senderName": "M/S GOLAM MOSTAFA",
-        "senderContact": "01712289504",
-        "cifNumber": "187000007",
-        "accountNumber": "1872750000000068"
-      }
-    },
-    {
-      "id": "p_1761678407698_755",
-      "name": "M/S BANGLADESH TRADERS",
-      "created": 1761678407698,
-      "data": {
-        "senderName": "M/S BANGLADESH TRADERS",
-        "senderContact": "01715233756",
-        "cifNumber": "187000022",
-        "accountNumber": "1872112000000284"
-      }
-    }
-  ],
-  "receivers": [
-    {
-      "id": "p_1761509114696_179",
-      "name": "tanzil ahmed",
-      "created": 1761509114696,
-      "data": {
-        "recvName": "tanzil ahmed",
-        "recvAccount": "0953202000030622222",
-        "routingNumber": "123456789",
-        "recvBranch": "kashinathpur",
-        "recvBank": "united commercial bank plc"
-      }
-    },
-    {
-      "id": "p_1761510638476_613",
-      "name": "RAKIB PARIBAHAN SANGTHA",
-      "created": 1761510638476,
-      "data": {
-        "recvName": "RAKIB PARIBAHAN SANGTHA",
-        "recvAccount": "10511100005302",
-        "routingNumber": "235120100",
-        "recvBranch": "ASHUGANJ",
-        "recvBank": "THE PREMIER BANK PLC"
-      }
-    },
-    {
-      "id": "p_1761670937429_797",
-      "name": "RAKIB PARIBAHAN SANGTHA",
-      "created": 1761670937429,
-      "data": {
-        "recvName": "RAKIB PARIBAHAN SANGTHA",
-        "recvAccount": "10511100005302",
-        "routingNumber": "235120100",
-        "recvBranch": "ASHUGANJ",
-        "recvBank": "THE PREMIER BANK PLC"
-      }
-    },
-    {
-      "id": "p_1761671187284_317",
-      "name": "RAKIB PARIBAHAN SANGTH",
-      "created": 1761671187284,
-      "data": {
-        "recvName": "RAKIB PARIBAHAN SANGTH",
-        "recvAccount": "1051110000530",
-        "routingNumber": "23512010",
-        "recvBranch": "ASHUGAN",
-        "recvBank": "THE PREMIER BANK PL"
-      }
-    },
-    {
-      "id": "p_1761678465127_550",
-      "name": "MD.GOLAM NABI",
-      "created": 1761678465127,
-      "data": {
-        "recvName": "MD.GOLAM NABI",
-        "recvAccount": "3855020000936111111",
-        "routingNumber": "185761514",
-        "recvBranch": "MATHURAHAT",
-        "recvBank": "RUPALI BANK PLC"
-      }
-    }
-  ]
+  "senders": [],
+  "receivers": []
 };
