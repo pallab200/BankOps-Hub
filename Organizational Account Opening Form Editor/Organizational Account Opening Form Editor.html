@@ -3002,6 +3002,10 @@ input:checked + .slider:before {
       <div class="others-popup-body">
         <div class="others-info-grid">
           <div class="others-info-item">
+            <label>Date</label>
+            <div class="others-info-value" id="othersTodayDate">—</div>
+          </div>
+          <div class="others-info-item">
             <label>Account Number</label>
             <div class="others-info-value" id="othersAccountNumber">—</div>
           </div>
@@ -3025,9 +3029,6 @@ input:checked + .slider:before {
             <label>Relation with Organization</label>
             <div class="others-info-value" id="kycSourceOfFund">—</div>
           </div>
-        </div>
-
-        <div class="others-info-grid">
           <div class="others-info-item">
             <label>Client's Business</label>
             <div class="others-info-value" id="kycClientBusiness">—</div>
@@ -3146,6 +3147,8 @@ input:checked + .slider:before {
       <form id="account-form">
         <!-- Hidden branch field (moved to Quick Navigation) -->
         <input type="hidden" name="branchName" id="branchNameHidden">
+        <input type="hidden" name="todayDate">
+        <input type="hidden" name="todayDateMode" value="auto">
         <div class="form-sections">
           
           <!-- Organization Information -->
@@ -5084,17 +5087,109 @@ input:checked + .slider:before {
   }
 
   // Format a date so each digit is separated by three non-breaking spaces: d   d   m   m   y   y   y   y
+  function getLocalDateValue(date = new Date()) {
+    if (!(date instanceof Date) || isNaN(date.getTime())) return '';
+    const yyyy = String(date.getFullYear()).padStart(4, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function parseDateParts(dateValue) {
+    if (!dateValue) return null;
+    const normalizedValue = String(dateValue).trim();
+    const isoMatch = normalizedValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (isoMatch) {
+      return {
+        yyyy: isoMatch[1],
+        mm: isoMatch[2],
+        dd: isoMatch[3]
+      };
+    }
+
+    const parsedDate = new Date(normalizedValue);
+    if (isNaN(parsedDate.getTime())) return null;
+
+    return {
+      dd: String(parsedDate.getDate()).padStart(2, '0'),
+      mm: String(parsedDate.getMonth() + 1).padStart(2, '0'),
+      yyyy: String(parsedDate.getFullYear()).padStart(4, '0')
+    };
+  }
+
+  function isOthersPopupOpen() {
+    const othersBackdropEl = document.getElementById('othersBackdrop');
+    return !!(othersBackdropEl && othersBackdropEl.classList.contains('open'));
+  }
+
+  function resetTodayDateToAuto() {
+    const todayDateEl = form && form.elements['todayDate'];
+    const todayDateModeEl = form && form.elements['todayDateMode'];
+    const todayValue = getLocalDateValue();
+
+    if (todayDateEl) todayDateEl.value = todayValue;
+    if (todayDateModeEl) todayDateModeEl.value = 'auto';
+
+    const popupDateInput = document.querySelector('#othersTodayDate input');
+    if (popupDateInput) popupDateInput.value = todayValue;
+
+    return todayValue;
+  }
+
+  function getEffectiveTodayDateValue() {
+    const todayDateEl = form && form.elements['todayDate'];
+    const todayDateModeEl = form && form.elements['todayDateMode'];
+    const todayValue = getLocalDateValue();
+
+    if (!todayDateEl) return todayValue;
+
+    if (!isOthersPopupOpen()) {
+      return resetTodayDateToAuto();
+    }
+
+    if (todayDateModeEl && !todayDateModeEl.value) {
+      todayDateModeEl.value = todayDateEl.value && todayDateEl.value !== todayValue ? 'manual' : 'auto';
+    }
+
+    const modeValue = todayDateModeEl ? String(todayDateModeEl.value || '').trim().toLowerCase() : 'auto';
+    if (!todayDateEl.value || modeValue !== 'manual') {
+      todayDateEl.value = todayValue;
+      if (todayDateModeEl) todayDateModeEl.value = 'auto';
+    }
+
+    return todayDateEl.value || todayValue;
+  }
+
+  function syncTodayDateMode(dateValue) {
+    const todayDateModeEl = form && form.elements['todayDateMode'];
+    if (!todayDateModeEl) return;
+    if (!isOthersPopupOpen()) {
+      resetTodayDateToAuto();
+      return;
+    }
+    todayDateModeEl.value = dateValue && dateValue !== getLocalDateValue() ? 'manual' : 'auto';
+  }
+
+  function formatSpacedPreviewDate(dateValue) {
+    const parts = parseDateParts(dateValue);
+    if (!parts) return '';
+    const gap = '\u00A0'.repeat(8);
+    return parts.dd + gap + parts.mm + gap + parts.yyyy;
+  }
+
+  function formatDashedDate(dateValue) {
+    const parts = parseDateParts(dateValue);
+    if (!parts) return '';
+    return parts.dd + '-' + parts.mm + '-' + parts.yyyy;
+  }
+
   function formatDateDigits(dateValue) {
-    if (!dateValue) return '';
-    const dt = new Date(dateValue);
-    if (isNaN(dt)) return '';
-    const dd = String(dt.getDate()).padStart(2, '0');
-    const mm = String(dt.getMonth() + 1).padStart(2, '0');
-    const yyyy = String(dt.getFullYear()).padStart(4, '0');
+    const parts = parseDateParts(dateValue);
+    if (!parts) return '';
     const gap = '\u00A0\u00A0\u00A0\u00A0';
     // join digits with gap, then join components with gap as well
-    const parts = [dd, mm, yyyy].map(part => part.split('').join(gap));
-    return parts.join(gap);
+    const spacedParts = [parts.dd, parts.mm, parts.yyyy].map(part => part.split('').join(gap));
+    return spacedParts.join(gap);
   }
 
   // Convert number to words using Indian numbering (supports up to crores)
@@ -5216,6 +5311,8 @@ input:checked + .slider:before {
       }
     });
 
+    const selectedTodayDate = getEffectiveTodayDateValue();
+
     // Format main DOB so each digit is separated: d   d   m   m   y   y   y   y
     if (data.dob) {
       data.dob = formatDateDigits(data.dob);
@@ -5249,14 +5346,9 @@ input:checked + .slider:before {
       data.accountTypeCode = '';
     }
 
-    // Add today's date (for preview only) in format DD<NBSP*3>MM<NBSP*3>YYYY
+    // Add the print date using the existing preview spacing rules.
     try {
-      const dt = new Date();
-      const dd = String(dt.getDate()).padStart(2, '0');
-      const mm = String(dt.getMonth() + 1).padStart(2, '0');
-      const yyyy = dt.getFullYear();
-      const gap = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0';
-      data.todayDate = dd + gap + mm + gap + yyyy;
+      data.todayDate = formatSpacedPreviewDate(selectedTodayDate);
     } catch (e) {
       data.todayDate = '';
     }
@@ -6056,35 +6148,9 @@ input:checked + .slider:before {
         displayValue = (cfg && cfg.label) ? cfg.label : '';
       }
 
-      // Special display for today's date:
-      // - page 13: use dd/mm/yyyy
-      // - pages 6 and 7: use dd-mm-yyyy (existing behavior)
-      else if (field === 'todayDate' && overlay.dataset.page === '13') {
-        try {
-          const dt = new Date();
-          if (!isNaN(dt)) {
-            const dd = String(dt.getDate()).padStart(2, '0');
-            const mm = String(dt.getMonth() + 1).padStart(2, '0');
-            const yyyy = dt.getFullYear();
-            displayValue = dd + '-' + mm + '-' + yyyy;
-          }
-        } catch (e) {
-          displayValue = value;
-        }
-      }
-      // Page 29: use dd-mm-yyyy for today's date (special case)
-      else if (field === 'todayDate' && overlay.dataset.page === '29') {
-        try {
-          const dt = new Date();
-          if (!isNaN(dt)) {
-            const dd = String(dt.getDate()).padStart(2, '0');
-            const mm = String(dt.getMonth() + 1).padStart(2, '0');
-            const yyyy = dt.getFullYear();
-            displayValue = dd + '-' + mm + '-' + yyyy;
-          }
-        } catch (e) {
-          displayValue = value;
-        }
+      // Keep the existing dashed date format on these pages, but use the selected popup date.
+      else if (field === 'todayDate' && (overlay.dataset.page === '13' || overlay.dataset.page === '29' || overlay.dataset.page === '6' || overlay.dataset.page === '7')) {
+        displayValue = formatDashedDate(selectedTodayDate) || value;
       }
       // Second Applicant Date: use dd-mm-yyyy format (today's date) - only show if secondApplicantName exists
       else if (field === 'secondApplicantDate') {
@@ -6126,19 +6192,6 @@ input:checked + .slider:before {
           }
         } else {
           displayValue = '';
-        }
-      }
-      else if (field === 'todayDate' && (overlay.dataset.page === '6' || overlay.dataset.page === '7')) {
-        try {
-          const dt = new Date();
-          if (!isNaN(dt)) {
-            const dd = String(dt.getDate()).padStart(2, '0');
-            const mm = String(dt.getMonth() + 1).padStart(2, '0');
-            const yyyy = dt.getFullYear();
-            displayValue = dd + '-' + mm + '-' + yyyy;
-          }
-        } catch (e) {
-          displayValue = value;
         }
       }
 
@@ -7075,13 +7128,164 @@ input:checked + .slider:before {
   }
 
   // Print functions
+  function getPrintHeadMarkup() {
+    const styleLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+      .map(node => node.outerHTML)
+      .join('\n');
+    const styleTags = Array.from(document.querySelectorAll('style'))
+      .map(node => node.outerHTML)
+      .join('\n');
+    return `<base href="${document.baseURI}">\n${styleLinks}\n${styleTags}`;
+  }
+
+  function clonePrintablePageMarkup(page) {
+    const clone = page.cloneNode(true);
+    clone.classList.add('active');
+    clone.style.display = 'block';
+
+    const sourceControls = Array.from(page.querySelectorAll('input, textarea, select'));
+    const cloneControls = Array.from(clone.querySelectorAll('input, textarea, select'));
+
+    cloneControls.forEach((control, index) => {
+      const sourceControl = sourceControls[index];
+      if (!sourceControl) return;
+
+      if (control.tagName === 'TEXTAREA') {
+        control.textContent = sourceControl.value;
+        return;
+      }
+
+      if (control.tagName === 'SELECT') {
+        Array.from(control.options).forEach((option, optionIndex) => {
+          const sourceOption = sourceControl.options[optionIndex];
+          option.selected = !!(sourceOption && sourceOption.selected);
+        });
+        return;
+      }
+
+      if (control.type === 'checkbox' || control.type === 'radio') {
+        control.checked = sourceControl.checked;
+        if (sourceControl.checked) {
+          control.setAttribute('checked', 'checked');
+        } else {
+          control.removeAttribute('checked');
+        }
+        return;
+      }
+
+      control.value = sourceControl.value;
+      control.setAttribute('value', sourceControl.value);
+    });
+
+    return clone.outerHTML;
+  }
+
+  function getVisibleFormPages() {
+    return Array.from(document.querySelectorAll('#form-page .form-page')).filter(page => {
+      const computedStyle = window.getComputedStyle(page);
+      return page.style.display !== 'none' && computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden';
+    });
+  }
+
+  function printPagesWithIframe(pages, title) {
+    if (!pages || pages.length === 0) {
+      console.warn('No form pages available to print');
+      return;
+    }
+
+    const existingFrame = document.getElementById('__org_print_frame');
+    if (existingFrame && existingFrame.parentNode) {
+      existingFrame.parentNode.removeChild(existingFrame);
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.left = '-10000px';
+    iframe.style.top = '0';
+    iframe.style.width = '1px';
+    iframe.style.height = '1px';
+    iframe.style.border = '0';
+    iframe.style.opacity = '0.01';
+    iframe.style.pointerEvents = 'none';
+    iframe.id = '__org_print_frame';
+    document.body.appendChild(iframe);
+
+    const pageMarkup = pages.map(clonePrintablePageMarkup).join('\n');
+    const html = '<!doctype html><html><head><meta charset="utf-8"><title>' + title + '</title>' +
+      getPrintHeadMarkup() +
+      '<style>' +
+      'html,body{margin:0;padding:0;background:#fff;overflow:auto;}' +
+      'body{font-family:"Times New Roman",Times,serif;}' +
+      '.print-root{margin:0;padding:0;}' +
+      '.print-root .form-page{display:block !important;}' +
+      '.page-nav,.action-bar,.preview-controls,.toast,.presets-panel,.panel-backdrop,.slide-menu-toggle,.slide-menu-backdrop,.slide-menu,.account-type-popup-backdrop,.officer-seal-popup-backdrop,.others-popup-backdrop{display:none !important;}' +
+      '@page{margin:0;size:auto;}' +
+      '</style></head><body><div class="print-root">' + pageMarkup +
+      '</div><script>window.onload=function(){setTimeout(function(){try{window.focus();window.print();}catch(e){}},300);};<\/script></body></html>';
+
+    const printDoc = iframe.contentDocument || iframe.contentWindow.document;
+    printDoc.open();
+    printDoc.write(html);
+    printDoc.close();
+
+    const cleanup = () => {
+      try {
+        const frame = document.getElementById('__org_print_frame');
+        if (frame && frame.parentNode) {
+          frame.parentNode.removeChild(frame);
+        }
+      } catch (e) {}
+    };
+
+    setTimeout(cleanup, 6000);
+  }
+
+  function printFormTypePages(formType, title, options = {}) {
+    const currentFormType = formTypeSelect ? formTypeSelect.value : '';
+
+    if (formTypeSelect) {
+      formTypeSelect.value = formType;
+      handleFormTypeChange();
+    }
+
+    try {
+      if (options.includePhysicalVerification) {
+        document.querySelectorAll('.form-page.physical-verification-page').forEach(page => {
+          page.style.display = 'block';
+          page.classList.add('active');
+        });
+      }
+
+      if (options.includeNomineeWhenAvailable) {
+        const nomineeName = form.elements['nomineeName'] ? form.elements['nomineeName'].value.trim() : '';
+        document.querySelectorAll('.form-page.nominee-page').forEach(page => {
+          page.style.display = nomineeName ? 'block' : 'none';
+          page.classList.toggle('active', !!nomineeName);
+        });
+      }
+
+      try {
+        if (typeof calculateTransactionTotals === 'function') calculateTransactionTotals();
+        if (typeof computeOverallTotals === 'function') computeOverallTotals();
+        if (typeof updateOverlays === 'function') updateOverlays();
+      } catch (e) {}
+
+      printPagesWithIframe(getVisibleFormPages(), title);
+    } finally {
+      if (formTypeSelect) {
+        formTypeSelect.value = currentFormType;
+        handleFormTypeChange();
+      }
+
+      try {
+        if (typeof calculateTransactionTotals === 'function') calculateTransactionTotals();
+        if (typeof computeOverallTotals === 'function') computeOverallTotals();
+        if (typeof updateOverlays === 'function') updateOverlays();
+      } catch (e) {}
+    }
+  }
+
   function printCurrentPage() {
-    // Hide info page, show form page, then print selected form type
-    const infoPage = document.getElementById('info-page');
-    const formPage = document.getElementById('form-page');
-    const wasInfoVisible = infoPage.classList.contains('active');
-    const wasFormVisible = formPage.classList.contains('active');
-    
     // Auto-detect form type based on account number or account type
     const accountNumberEl = form.elements['accountNumber'];
     const accountNumber = accountNumberEl ? (accountNumberEl.value || '') : '';
@@ -7108,117 +7312,20 @@ input:checked + .slider:before {
     if (printFormTypeSelect) {
       printFormTypeSelect.value = selectedPrintType;
     }
-    
-    // Save current form type
-    const currentFormType = formTypeSelect ? formTypeSelect.value : 'conventional';
-    
-    // Switch to selected print form type
-    if (formTypeSelect) {
-      formTypeSelect.value = selectedPrintType;
-      handleFormTypeChange();
-    }
-    
-    // Also show Physical Verification pages for printing (always print after form)
-    const physicalVerificationPages = document.querySelectorAll('.form-page.physical-verification-page');
-    physicalVerificationPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
-    
-    // Show Nominee pages only if nomineeName has data (after physical verification)
-    const nomineeNameEl = form.elements['nomineeName'];
-    const nomineeName = nomineeNameEl ? nomineeNameEl.value.trim() : '';
-    const nomineePages = document.querySelectorAll('.form-page.nominee-page');
-    if (nomineeName) {
-      nomineePages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
-    } else {
-      nomineePages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
-    }
-    
-    infoPage.classList.remove('active');
-    formPage.classList.add('active');
-    
-    setTimeout(() => {
-      window.print();
-      
-      // Restore form type
-      if (formTypeSelect) {
-        formTypeSelect.value = currentFormType;
-        handleFormTypeChange();
-      }
-      
-      // Restore visibility
-      if (wasInfoVisible) infoPage.classList.add('active');
-      if (!wasFormVisible) formPage.classList.remove('active');
-    }, 100);
+
+    printFormTypePages(selectedPrintType, 'Organizational Account Opening Form', {
+      includePhysicalVerification: true,
+      includeNomineeWhenAvailable: true
+    });
   }
 
   function printAllPages() {
-    // All pages are visible by default; simply print the document
-    window.print();
+    printPagesWithIframe(getVisibleFormPages(), 'Organizational Account Opening Form');
   }
 
   // Print Others pages only
   function printOthersPages() {
-    const infoPage = document.getElementById('info-page');
-    const formPage = document.getElementById('form-page');
-    const othersBackdropEl = document.getElementById('othersBackdrop');
-    const wasInfoVisible = infoPage.classList.contains('active');
-    const wasFormVisible = formPage.classList.contains('active');
-    const wasPopupOpen = othersBackdropEl && othersBackdropEl.classList.contains('open');
-    
-    // Save current form type
-    const currentFormType = formTypeSelect ? formTypeSelect.value : 'conventional';
-    
-    // Close the Others popup so it doesn't interfere with printing
-    if (othersBackdropEl && wasPopupOpen) {
-      othersBackdropEl.classList.remove('open');
-    }
-    
-    // Switch to Others form type
-    if (formTypeSelect) {
-      formTypeSelect.value = 'others';
-      handleFormTypeChange();
-    }
-    
-    // Show form page for printing
-    infoPage.classList.remove('active');
-    formPage.classList.add('active');
-    
-    // Force DOM reflow and wait for render with requestAnimationFrame
-    requestAnimationFrame(() => {
-      // Force layout reflow to ensure rendering
-      document.body.offsetHeight;
-      
-      // Wait a bit more then compute totals and print
-      setTimeout(() => {
-        try {
-          if (typeof calculateTransactionTotals === 'function') calculateTransactionTotals();
-          if (typeof computeOverallTotals === 'function') computeOverallTotals();
-          if (typeof updateOverlays === 'function') updateOverlays();
-        } catch (e) {}
-        window.print();
-        
-        // Restore after print dialog closes
-        setTimeout(() => {
-          try {
-            if (typeof calculateTransactionTotals === 'function') calculateTransactionTotals();
-            if (typeof computeOverallTotals === 'function') computeOverallTotals();
-            if (typeof updateOverlays === 'function') updateOverlays();
-          } catch (e) {}
-          if (formTypeSelect) {
-            formTypeSelect.value = currentFormType;
-            handleFormTypeChange();
-          }
-          
-          // Restore visibility
-          if (wasInfoVisible) infoPage.classList.add('active');
-          if (!wasFormVisible) formPage.classList.remove('active');
-          
-          // Reopen popup if it was open before
-          if (wasPopupOpen && othersBackdropEl) {
-            othersBackdropEl.classList.add('open');
-          }
-        }, 1000);
-      }, 300);
-    });
+    printFormTypePages('others', 'KYC, TP, SBS Print');
   }
 
   // Same address functionality
@@ -8426,6 +8533,7 @@ input:checked + .slider:before {
 
   function openOthersPopup() {
     if (!othersBackdrop) return;
+    resetTodayDateToAuto();
     othersBackdrop.classList.add('open');
     updateOthersPopupData();
   }
@@ -8433,22 +8541,25 @@ input:checked + .slider:before {
   function closeOthersPopup() {
     if (!othersBackdrop) return;
     othersBackdrop.classList.remove('open');
+    resetTodayDateToAuto();
+    try { if (typeof updateOverlays === 'function') updateOverlays(); } catch (e) {}
   }
 
   // Create or update a text input (or textarea) inside a popup container and sync with form
-  function makeEditableInput(containerId, formFieldName, value, isTextarea, onChangeCallback) {
+  function makeEditableInput(containerId, formFieldName, value, isTextarea, onChangeCallback, inputType = 'text') {
     const container = document.getElementById(containerId);
     if (!container) return;
     let input = container.querySelector('input, textarea');
     if (!input) {
       input = isTextarea ? document.createElement('textarea') : document.createElement('input');
-      if (!isTextarea) input.type = 'text';
       input.className = 'others-input';
       container.innerHTML = '';
       container.appendChild(input);
     }
+    if (!isTextarea) input.type = inputType;
     if (input.value !== value) input.value = value;
-    input.addEventListener('input', () => {
+
+    const syncInputValue = () => {
       try {
         // When there are multiple elements with the same name, update all of them
         const formEls = form.elements[formFieldName];
@@ -8464,9 +8575,12 @@ input:checked + .slider:before {
           }
         }
       } catch (e) {}
-      try { if (typeof updateOverlays === 'function') updateOverlays(); } catch (e) {}
       try { if (onChangeCallback && typeof onChangeCallback === 'function') onChangeCallback({ target: input }); } catch (e) {}
-    });
+      try { if (typeof updateOverlays === 'function') updateOverlays(); } catch (e) {}
+    };
+
+    input.oninput = syncInputValue;
+    input.onchange = !isTextarea && input.type === 'date' ? syncInputValue : null;
   }
 
   // Create or update a select inside a popup container by cloning options from a source select (from the form)
@@ -8507,7 +8621,7 @@ input:checked + .slider:before {
       select.value = fallbackVal || '';
     }
 
-    select.addEventListener('change', () => {
+    select.onchange = () => {
       try { if (form && form.elements[formFieldName]) form.elements[formFieldName].value = select.value; } catch (e) {}
       try {
         // If user selects Client's Profession, reset Client's Business and vice-versa
@@ -8521,7 +8635,7 @@ input:checked + .slider:before {
       } catch (e) {}
       try { if (typeof updateOverlays === 'function') updateOverlays(); } catch (e) {}
       try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
-    });
+    };
   }
 
   function updateOthersPopupData() {
@@ -8532,6 +8646,7 @@ input:checked + .slider:before {
     // occupation maps: personal 'occupation' (detailed) and kyc 'occupationProfession'
     const occupationPersonal = form.elements['occupation']?.value || '';
     const occupationKyc = form.elements['occupationProfession']?.value || '';
+    const todayDate = getEffectiveTodayDateValue();
 
     // KYC fields and selects
     const transection = form.elements['transectionProfile']?.value || '';
@@ -8542,6 +8657,9 @@ input:checked + .slider:before {
     makeEditableInput('othersAccountNumber', 'accountNumber', accountNumber, false);
     makeEditableSelect('othersAccountType', 'accountType', 'accountType');
     makeEditableInput('othersAccountTitle', 'accountTitle', form.elements['accountTitle']?.value || '', false);
+    makeEditableInput('othersTodayDate', 'todayDate', todayDate, false, (event) => {
+      syncTodayDateMode(event.target.value);
+    }, 'date');
     // For the basic Occupation show personal occupation if present else KYC occupation
     // Use single-line inputs to match Transection Profile size
     makeEditableInput('othersOccupation', 'occupation', occupationPersonal || occupationKyc, false);
@@ -8595,12 +8713,6 @@ input:checked + .slider:before {
 
   if (othersClose) {
     othersClose.addEventListener('click', closeOthersPopup);
-  }
-
-  if (othersBackdrop) {
-    othersBackdrop.addEventListener('click', (e) => {
-      if (e.target === othersBackdrop) closeOthersPopup();
-    });
   }
 
   // Update Others popup when form data changes

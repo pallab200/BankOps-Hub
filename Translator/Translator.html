@@ -689,6 +689,12 @@
             }
         });
 
+        // Function to convert English numerals to Bangla numerals
+        function convertNumbersToBangla(text) {
+            const banglaNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return text.replace(/[0-9]/g, (digit) => banglaNumbers[parseInt(digit)]);
+        }
+
         // Auto-translation function
         function autoTranslate() {
             const text = sourceText.value;
@@ -720,6 +726,10 @@
                         data[0].forEach(item => {
                             if (item[0]) translatedText += item[0];
                         });
+                        // Convert English numerals to Bangla numerals when translating to Bangla
+                        if (targetLang === 'bn') {
+                            translatedText = convertNumbersToBangla(translatedText);
+                        }
                         targetText.value = translatedText;
                         loadingIndicator.classList.remove('active');
                         isTranslating = false;

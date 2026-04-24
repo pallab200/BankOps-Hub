@@ -1,5 +1,5 @@
 window.TDRD_AUTO_IMPORT_DATA = {
-  "exportedAt": "2026-02-27T17:48:12.141Z",
+  "exportedAt": "2026-04-10T09:23:34.582Z",
   "form": {
     "accountNumber": "",
     "cifNumber": "",
@@ -81,6 +81,7 @@ window.TDRD_AUTO_IMPORT_DATA = {
     "nomineeEmail": "",
     "kycClientBusiness": "",
     "kycClientProfession": "",
+    "kycProfessionSBS": "",
     "kycTypeOfOnboarding": "Branch/Relationship Manager|2",
     "kycPepIpCeo": "No|0",
     "kycCloseAssociatePep": "No|0",
@@ -93,8 +94,8 @@ window.TDRD_AUTO_IMPORT_DATA = {
     "sectorCode": "",
     "combinedApplicants": "",
     "combinedApplicantsBn": "",
-    "branchName": "serajgonj",
-    "todayDate": "27      02      2026",
+    "branchName": "",
+    "todayDate": "",
     "staticOne": "1",
     "staticFour": "4",
     "staticThreePage3": "3",
@@ -185,8 +186,8 @@ window.TDRD_AUTO_IMPORT_DATA = {
       {
         "page": "1",
         "field": "tradeLicenceDate",
-        "leftPercent": 71.0666,
-        "topPercent": 81.0492
+        "leftPercent": 71.1333,
+        "topPercent": 77.2208
       },
       {
         "page": "1",
@@ -204,7 +205,7 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "page": "1",
         "field": "registrationDate",
         "leftPercent": 71.0666,
-        "topPercent": 77.293
+        "topPercent": 80.9723
       },
       {
         "page": "1",
@@ -3056,7 +3057,7 @@ window.TDRD_AUTO_IMPORT_DATA = {
       },
       {
         "page": "15",
-        "field": "profession",
+        "field": "kycProfessionSBS",
         "leftPercent": 19.2,
         "topPercent": 20.6741
       },

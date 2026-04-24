@@ -374,6 +374,42 @@ button.calculate-btn:hover {
     font-size: 16px;
 }
 
+.millionaire-card-header {
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.edit-toggle-btn {
+    margin-left: auto;
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #475569, #334155);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(51, 65, 85, 0.22);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.edit-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(51, 65, 85, 0.3);
+}
+
+.edit-toggle-btn.is-unlocked {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.28);
+}
+
+.edit-toggle-btn.is-unlocked:hover {
+    box-shadow: 0 6px 18px rgba(217, 119, 6, 0.35);
+}
+
 /* Grid Layout for Cards */
 .prospectus-grid {
     display: grid;
@@ -579,6 +615,26 @@ button.calculate-btn:hover {
     font-weight: 600;
 }
 
+.millionaire-input {
+    width: 92px;
+    margin-right: 4px;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.millionaire-input.is-locked {
+    background: transparent;
+    border-color: transparent;
+    color: #475569;
+    pointer-events: none;
+}
+
+.millionaire-input::-webkit-outer-spin-button,
+.millionaire-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .rate-input:focus {
     outline: none;
     border-color: var(--primary-color);
@@ -717,7 +773,10 @@ button.calculate-btn:hover {
     }
     .bottom-note {
         display: block !important;
-        margin-left: 6mm; /* nudge note slightly to the right in print */
+        margin-top: 4mm !important;
+        padding-top: 2mm !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
 
     @page {
@@ -757,6 +816,7 @@ button.calculate-btn:hover {
     header,
     .print-btn,
     .save-btn,
+    .edit-toggle-btn,
     .button-group {
         display: none !important;
     }
@@ -787,9 +847,13 @@ button.calculate-btn:hover {
         color: black !important;
     }
 
-    /* Add top margin to first page only */
+    /* Keep a small printable frame around the first page */
     .prospectus-view:not(.page-2) {
-        margin-top: 15mm !important;
+        margin: 8mm auto 5mm !important;
+        width: calc(100% - 6mm) !important;
+        max-width: calc(100% - 6mm) !important;
+        padding: 0 3mm 4mm !important;
+        box-sizing: border-box;
     }
 
     .prospectus-view::before {

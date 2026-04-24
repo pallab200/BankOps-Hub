@@ -857,6 +857,7 @@
                             <thead>
                                 <tr>
                                     <th>Date</th>
+                                    <th>Module</th>
                                     <th>GL Name</th>
                                     <th>Narration</th>
                                     <th>Reference #</th>
@@ -1012,8 +1013,50 @@
     let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
     let budgets = JSON.parse(localStorage.getItem('budgets')) || {};
     let currentPage = 1;
+    let _budgetEditMode = false; // true only while editing an existing budget entry
+    var _budgetEditKey = null; // composite key of budget being edited
     const pageSize = 10;
     let lastFilteredTransactions = [];
+
+    // Composite key helpers for multi-module GL support
+    function makeBudgetKey(glNumber, module) { return glNumber + '|' + module; }
+    function parseBudgetKey(key) { var i = key.indexOf('|'); return i === -1 ? { glNumber: key, module: '' } : { glNumber: key.substring(0, i), module: key.substring(i + 1) }; }
+
+    // Auto-migrate old plain-key budgets and transactions to composite keys
+    (function migrateBudgetKeys() {
+        var changed = false;
+        for (var yr in budgets) {
+            var keys = Object.keys(budgets[yr]);
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                if (key.indexOf('|') === -1) {
+                    var entry = budgets[yr][key];
+                    var newKey = makeBudgetKey(key, entry.module || '');
+                    budgets[yr][newKey] = entry;
+                    delete budgets[yr][key];
+                    changed = true;
+                }
+            }
+        }
+        if (changed) updateLocalStorage('budgets', budgets);
+        var txChanged = false;
+        for (var j = 0; j < transactions.length; j++) {
+            var t = transactions[j];
+            if (t.glNumber && t.glNumber.indexOf('|') === -1) {
+                for (var yr2 in budgets) {
+                    for (var bk in budgets[yr2]) {
+                        if (parseBudgetKey(bk).glNumber === t.glNumber) {
+                            t.glNumber = bk;
+                            txChanged = true;
+                            break;
+                        }
+                    }
+                    if (t.glNumber.indexOf('|') !== -1) break;
+                }
+            }
+        }
+        if (txChanged) updateLocalStorage('transactions', transactions);
+    })();
 
     // Utilities
     function generateID() { return Math.floor(Math.random() * 100000000); }
@@ -1098,6 +1141,22 @@
         if (monthlyOverride !== null && monthlyOverride < 0) { alert('Monthly override cannot be negative.'); return; }
         if (!budgets[year]) budgets[year] = {};
 
+        var bKey = makeBudgetKey(glNumber, module);
+
+        // Duplicate guard — only runs when adding a new record (not editing)
+        if (!_budgetEditMode) {
+            for (var _k in budgets[year]) {
+                var _p = parseBudgetKey(_k);
+                var _e = budgets[year][_k];
+                if (_p.glNumber === glNumber && _e.name === glName) {
+                    if (_e.module === module) {
+                        alert('Duplicate entry: A GL budget with GL Number "' + glNumber + '", GL Name "' + glName + '", and Module "' + module + '" already exists.');
+                        return;
+                    }
+                }
+            }
+        }
+
         const now = new Date();
         const monthYearKey = now.getFullYear() + '-' + (now.getMonth() + 1);
 
@@ -1105,11 +1164,15 @@
         const currentMonthlySpent = remainingOverride !== null ? transactions
             .filter(function(t) {
                 const d = new Date(t.date);
-                return d.getFullYear() == now.getFullYear() && d.getMonth() == now.getMonth() && t.glNumber === glNumber;
+                return d.getFullYear() == now.getFullYear() && d.getMonth() == now.getMonth() && t.glNumber === bKey;
             })
             .reduce(function(acc, t) { return acc + t.amount; }, 0) : null;
-        
-        budgets[year][glNumber] = { 
+
+        // If editing and the key changed (e.g., module was modified), remove old entry
+        if (_budgetEditMode && _budgetEditKey && _budgetEditKey !== bKey) {
+            delete budgets[year][_budgetEditKey];
+        }
+        budgets[year][bKey] = { 
             name: glName, 
             module: module, 
             description: description, 
@@ -1123,6 +1186,8 @@
         init();
         budgetForm.reset();
         budgetGlNumberInput.readOnly = false;
+        _budgetEditMode = false;
+        _budgetEditKey = null;
         
         // Show success notification
         showNotification('Budget set successfully', 'success', 'bi-check-circle');
@@ -1143,7 +1208,9 @@
         const year = new Date().getFullYear();
         const b = budgets[year][glNumber];
         if (b) {
-            budgetGlNumberInput.value = glNumber;
+            _budgetEditMode = true;
+            _budgetEditKey = glNumber;
+            budgetGlNumberInput.value = parseBudgetKey(glNumber).glNumber;
             budgetGlNameInput.value = b.name;
             budgetModuleInput.value = b.module;
             budgetDescriptionInput.value = b.description || '';
@@ -1189,6 +1256,7 @@
         for (const glNumber of glKeys) {
             if (!budgets[year][glNumber]) continue;
             const info = budgets[year][glNumber];
+            const rawGlNumber = parseBudgetKey(glNumber).glNumber;
             
             // Check if we're in a different month than when overrides were set
             const now = new Date();
@@ -1265,7 +1333,7 @@
 
             const row = document.createElement('tr');
             row.innerHTML =
-                '<td><a href="#" onclick="showGlDetails(event,\'' + glNumber + '\')" class="gl-link">' + info.name + '</a><div class="gl-sub">' + glNumber + '</div></td>' +
+                '<td><a href="#" onclick="showGlDetails(event,\'' + glNumber + '\')" class="gl-link">' + info.name + '</a><div class="gl-sub">' + rawGlNumber + '</div></td>' +
                 '<td>' + info.module + '</td>' +
                 '<td>' + budgetDisplay + ' / ' + spentDisplay + '</td>' +
                 '<td>' + totalRemainingDisplay + '</td>' +
@@ -1296,7 +1364,9 @@
         if (!budgets[year]) return;
 
         for (const glNumber in budgets[year]) {
-            const label = glNumber + ' - ' + budgets[year][glNumber].name;
+            const glInfo = budgets[year][glNumber];
+            const rawGl = parseBudgetKey(glNumber).glNumber;
+            const label = rawGl + (glInfo.module ? ' - ' + glInfo.module : '') + ' - ' + glInfo.name;
 
             if (glNumberDropdown) {
                 const option = document.createElement('option');
@@ -1428,7 +1498,7 @@
         
         currentEditingTransactionId = id;
         document.getElementById('edit-gl-name-display').textContent = transaction.glName;
-        document.getElementById('edit-gl-number-display').textContent = transaction.glNumber;
+        document.getElementById('edit-gl-number-display').textContent = parseBudgetKey(transaction.glNumber).glNumber;
         document.getElementById('edit-amount').value = transaction.amount;
         document.getElementById('edit-reference-number').value = transaction.referenceNumber || '';
         document.getElementById('edit-gl-description').value = transaction.glDescription;
@@ -1516,10 +1586,16 @@
         if (filterGl) filtered = filtered.filter(function(t) { return t.glNumber === filterGl; });
         if (searchTerm) {
             filtered = filtered.filter(function(t) {
+                var year = new Date().getFullYear();
+                var module = '-';
+                if (budgets[year] && budgets[year][t.glNumber] && budgets[year][t.glNumber].module) {
+                    module = budgets[year][t.glNumber].module;
+                }
                 return (t.glName || '').toLowerCase().indexOf(searchTerm) !== -1 ||
                     (t.glNumber || '').toLowerCase().indexOf(searchTerm) !== -1 ||
                     (t.glDescription || '').toLowerCase().indexOf(searchTerm) !== -1 ||
-                    (t.referenceNumber || '').toLowerCase().indexOf(searchTerm) !== -1;
+                    (t.referenceNumber || '').toLowerCase().indexOf(searchTerm) !== -1 ||
+                    (module || '').toLowerCase().indexOf(searchTerm) !== -1;
             });
         }
 
@@ -1539,7 +1615,7 @@
 
         if (total === 0) {
             expensePagination.innerHTML = '';
-            expenseTableBody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="bi bi-inbox"></i><p>No expenses found</p></div></td></tr>';
+            expenseTableBody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="bi bi-inbox"></i><p>No expenses found</p></div></td></tr>';
             return;
         }
 
@@ -1547,9 +1623,16 @@
         var pageItems = sorted.slice(start, start + pageSize);
         pageItems.forEach(function(t) {
             var row = document.createElement('tr');
+            var year = new Date().getFullYear();
+            var module = '-';
+            if (budgets[year] && budgets[year][t.glNumber] && budgets[year][t.glNumber].module) {
+                module = budgets[year][t.glNumber].module;
+            }
+            var displayGlNumber = parseBudgetKey(t.glNumber).glNumber;
             row.innerHTML =
                 '<td>' + formatDate(t.date) + '</td>' +
-                '<td><strong>' + t.glName + '</strong><div class="gl-sub">' + t.glNumber + '</div></td>' +
+                '<td><strong>' + module + '</strong></td>' +
+                '<td><strong>' + t.glName + '</strong><div class="gl-sub">' + displayGlNumber + '</div></td>' +
                 '<td style="color:var(--text-muted)">' + t.glDescription + '</td>' +
                 '<td><strong style="color:var(--primary)">' + (t.referenceNumber || '-') + '</strong></td>' +
                 '<td class="text-end amount-cell amount-negative">\u09F3' + t.amount.toFixed(2) + '</td>' +
@@ -1606,7 +1689,8 @@
         for (var glNumber in budgets[year]) {
             var option = document.createElement('option');
             option.value = glNumber;
-            option.textContent = glNumber + ' - ' + budgets[year][glNumber].name;
+            var rawFilterGl = parseBudgetKey(glNumber).glNumber;
+            option.textContent = rawFilterGl + ' - ' + (budgets[year][glNumber].module ? budgets[year][glNumber].module + ' - ' : '') + budgets[year][glNumber].name;
             filterGlInput.appendChild(option);
         }
     }
@@ -1650,7 +1734,7 @@
             .filter(function(t) { var d = new Date(t.date); return d.getFullYear() == year && d.getMonth() == new Date().getMonth() && t.glNumber === glNumber; })
             .reduce(function(acc, t) { return acc + t.amount; }, 0);
 
-        document.getElementById('modal-gl-number').textContent = glNumber;
+        document.getElementById('modal-gl-number').textContent = parseBudgetKey(glNumber).glNumber;
         document.getElementById('modal-gl-name').textContent = info.name;
         document.getElementById('modal-gl-description').textContent = info.description || '';
         document.getElementById('modal-gl-module').textContent = info.module;

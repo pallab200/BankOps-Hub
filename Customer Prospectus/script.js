@@ -8,13 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.currentRates = {
         fdrDouble: 10.80,
         fdrFixed: {
-            day360: 11.50,
-            day180: 11.00,
-            day90: 10.75
+            day360: 10.00,
+            day180: 10.00,
+            day90: 9.75
         },
         dps: {
             male: { year1: 9.50, year2: 9.50, year3: 9.75, year5: 10.00, year10: 10.00 },
-            female: { year1: 9.75, year2: 9.75, year3: 10.00, year5: 10.25, year10: 10.25 }
+            female: { year1: 9.75, year2: 9.75, year3: 10.00, year5: 10.00, year10: 10.00 }
         },
         earningPlus: {
             month1: 9.75,
@@ -23,11 +23,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    window.millionaireEditLocked = true;
+
     // Bangla Number Conversion
     function toBanglaNumber(num) {
         const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
         return String(num).replace(/\d/g, digit => banglaDigits[digit]);
     }
+
+    function applyMillionaireEditLock() {
+        const locked = window.millionaireEditLocked !== false;
+        const millionaireInputs = document.querySelectorAll('.millionaire-input');
+
+        millionaireInputs.forEach(input => {
+            input.readOnly = locked;
+            input.classList.toggle('is-locked', locked);
+
+            if (locked) {
+                input.setAttribute('tabindex', '-1');
+            } else {
+                input.removeAttribute('tabindex');
+            }
+        });
+
+        const toggleButton = document.getElementById('millionaire-edit-toggle');
+        if (toggleButton) {
+            toggleButton.classList.toggle('is-unlocked', !locked);
+            toggleButton.innerHTML = locked
+                ? '<i class="fa-solid fa-lock"></i> Unlock Edit'
+                : '<i class="fa-solid fa-lock-open"></i> Lock Edit';
+            toggleButton.setAttribute('aria-pressed', String(!locked));
+            toggleButton.setAttribute('title', locked ? 'Unlock Multi-Millionaire editing' : 'Lock Multi-Millionaire editing');
+        }
+    }
+
+    window.toggleMillionaireEditLock = function () {
+        const activeElement = document.activeElement;
+        window.millionaireEditLocked = !window.millionaireEditLocked;
+
+        if (window.millionaireEditLocked && activeElement && activeElement.classList?.contains('millionaire-input')) {
+            activeElement.blur();
+        }
+
+        applyMillionaireEditLock();
+    };
 
     // Convert all numbers to Bangla for print
     function convertNumbersToBanglaForPrint() {
@@ -39,7 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Create a span to hold the bangla value
                 const originalDisplay = input.style.display;
-                const banglaValue = toBanglaNumber(input.value);
+                const numericValue = Number(input.value);
+                const printValue = input.dataset.printFormat === 'amount' && Number.isFinite(numericValue)
+                    ? numericValue.toLocaleString('en-US')
+                    : input.value;
+                const banglaValue = toBanglaNumber(printValue);
 
                 // Store display style and hide input
                 input.setAttribute('data-original-display', originalDisplay || 'inline-block');
@@ -357,20 +400,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr>
                         <td>1</td>
                         <td>৩৬০ দিন</td>
-                        <td><input type="number" class="rate-input" value="11.50" step="0.01" oninput="calculateFDRFixed(this)">%</td>
-                        <td class="profit-value">958.33 টাকা</td>
+                        <td><input type="number" class="rate-input" value="10.00" step="0.01" oninput="calculateFDRFixed(this)">%</td>
+                        <td class="profit-value">833.33 টাকা</td>
                     </tr>
                     <tr>
                         <td>2</td>
                         <td>১৮০ দিন</td>
-                        <td><input type="number" class="rate-input" value="11.00" step="0.01" oninput="calculateFDRFixed(this)">%</td>
-                        <td class="profit-value">916.66 টাকা</td>
+                        <td><input type="number" class="rate-input" value="10.00" step="0.01" oninput="calculateFDRFixed(this)">%</td>
+                        <td class="profit-value">833.33 টাকা</td>
                     </tr>
                     <tr>
                         <td>3</td>
                         <td>৯০ দিন</td>
-                        <td><input type="number" class="rate-input" value="10.75" step="0.01" oninput="calculateFDRFixed(this)">%</td>
-                        <td class="profit-value">895.83 টাকা</td>
+                        <td><input type="number" class="rate-input" value="9.75" step="0.01" oninput="calculateFDRFixed(this)">%</td>
+                        <td class="profit-value">812.50 টাকা</td>
                     </tr>
                     </tbody>
                 </table>
@@ -426,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td>4</td>
                         <td>০৫ বছর</td>
                         <td><input type="number" class="rate-input" value="10.00" step="0.01" oninput="calculateProspectusDPSRow(this)">%</td>
-                        <td><input type="number" class="rate-input" value="10.25" step="0.01" oninput="calculateProspectusDPSRow(this)">%</td>
+                        <td><input type="number" class="rate-input" value="10.00" step="0.01" oninput="calculateProspectusDPSRow(this)">%</td>
                         <td class="dps-maturity male">0</td>
                         <td class="dps-maturity female">0</td>
                     </tr>
@@ -434,7 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td>5</td>
                         <td>১০ বছর</td>
                         <td><input type="number" class="rate-input" value="10.00" step="0.01" oninput="calculateProspectusDPSRow(this)">%</td>
-                        <td><input type="number" class="rate-input" value="10.25" step="0.01" oninput="calculateProspectusDPSRow(this)">%</td>
+                        <td><input type="number" class="rate-input" value="10.00" step="0.01" oninput="calculateProspectusDPSRow(this)">%</td>
                         <td class="dps-maturity male">0</td>
                         <td class="dps-maturity female">0</td>
                     </tr>
@@ -507,10 +550,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <!-- Multi-Millionaire -->
                 <div class="scheme-card full-width">
-                <div class="card-header">
+                <div class="card-header millionaire-card-header">
                     <span style="font-size:1.3em;">💎</span>
+                    <div>
                     <h3>Multi-Millionaire</h3>
                     <span class="subtitle">লক্ষ্য পূরণের কিস্তি</span>
+                    </div>
+                    <button type="button" id="millionaire-edit-toggle" class="edit-toggle-btn" onclick="toggleMillionaireEditLock()">
+                        <i class="fa-solid fa-lock"></i> Unlock Edit
+                    </button>
                 </div>
                 <div class="table-responsive">
                     <table class="rate-table">
@@ -527,51 +575,51 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tbody>
                         <tr>
                         <td>০৫ বছর</td>
-                        <td>১২,৯৪৯ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="12949" min="0" step="1" data-print-format="amount" aria-label="১০ লক্ষ টাকার জন্য ০৫ বছর"> টাকা</td>
                         <td>০৭ বছর</td>
-                        <td>৪১,৬৬৩ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="41663" min="0" step="1" data-print-format="amount" aria-label="৫০ লক্ষ টাকার জন্য ০৭ বছর"> টাকা</td>
                         <td>১০ বছর</td>
-                        <td>৪৮,৯৪৭ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="49602" min="0" step="1" data-print-format="amount" aria-label="১ কোটি টাকার জন্য ১০ বছর"> টাকা</td>
                         </tr>
                         <tr>
                         <td>০৬ বছর</td>
-                        <td>১০,২৪৬ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="10246" min="0" step="1" data-print-format="amount" aria-label="১০ লক্ষ টাকার জন্য ০৬ বছর"> টাকা</td>
                         <td>০৮ বছর</td>
-                        <td>৩৪,৫৬৩ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="34563" min="0" step="1" data-print-format="amount" aria-label="৫০ লক্ষ টাকার জন্য ০৮ বছর"> টাকা</td>
                         <td>১১ বছর</td>
-                        <td>৪২,০৩৩ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="42659" min="0" step="1" data-print-format="amount" aria-label="১ কোটি টাকার জন্য ১১ বছর"> টাকা</td>
                         </tr>
                         <tr>
                         <td>০৭ বছর</td>
-                        <td>৮,৩৩৩ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="8333" min="0" step="1" data-print-format="amount" aria-label="১০ লক্ষ টাকার জন্য ০৭ বছর"> টাকা</td>
                         <td>০৯ বছর</td>
-                        <td>২৯,১০৭ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="29107" min="0" step="1" data-print-format="amount" aria-label="৫০ লক্ষ টাকার জন্য ০৯ বছর"> টাকা</td>
                         <td>১২ বছর</td>
-                        <td>৩৬,৩৬৯ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="36968" min="0" step="1" data-print-format="amount" aria-label="১ কোটি টাকার জন্য ১২ বছর"> টাকা</td>
                         </tr>
                         <tr>
                         <td>০৮ বছর</td>
-                        <td>৬,৯১৩ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="6913" min="0" step="1" data-print-format="amount" aria-label="১০ লক্ষ টাকার জন্য ০৮ বছর"> টাকা</td>
                         <td>১০ বছর</td>
-                        <td>২৪,৮০১ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="24801" min="0" step="1" data-print-format="amount" aria-label="৫০ লক্ষ টাকার জন্য ১০ বছর"> টাকা</td>
                         <td>১৩ বছর</td>
-                        <td>৩১,৬৬৫ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="32236" min="0" step="1" data-print-format="amount" aria-label="১ কোটি টাকার জন্য ১৩ বছর"> টাকা</td>
                         </tr>
                         <tr>
                         <td>০৯ বছর</td>
-                        <td>৫,৮২২ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="5822" min="0" step="1" data-print-format="amount" aria-label="১০ লক্ষ টাকার জন্য ০৯ বছর"> টাকা</td>
                         <td>১১ বছর</td>
-                        <td>২১,৩৩০ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="21330" min="0" step="1" data-print-format="amount" aria-label="৫০ লক্ষ টাকার জন্য ১১ বছর"> টাকা</td>
                         <td>১৪ বছর</td>
-                        <td>২৭,৭১৩ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="28258" min="0" step="1" data-print-format="amount" aria-label="১ কোটি টাকার জন্য ১৪ বছর"> টাকা</td>
                         </tr>
                         <tr>
                         <td>১০ বছর</td>
-                        <td>৪,৯৬১ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="4961" min="0" step="1" data-print-format="amount" aria-label="১০ লক্ষ টাকার জন্য ১০ বছর"> টাকা</td>
                         <td>১২ বছর</td>
-                        <td>১৮,৪৮৪ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="18484" min="0" step="1" data-print-format="amount" aria-label="৫০ লক্ষ টাকার জন্য ১২ বছর"> টাকা</td>
                         <td>১৫ বছর</td>
-                        <td>২৪,৩৬১ টাকা</td>
+                        <td><input type="number" class="rate-input millionaire-input" value="24881" min="0" step="1" data-print-format="amount" aria-label="১ কোটি টাকার জন্য ১৫ বছর"> টাকা</td>
                         </tr>
                     </tbody>
                     </table>
@@ -583,9 +631,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="contact-card">
                 <i class="fa-solid fa-user-tie"></i>
                 <div>
-                    <input type="text" id="prospectus-contact-name" value="মোঃ সারোয়ার রেজা" style="border:none; background:transparent; font-weight:700; font-size:16px; color:#1e293b; padding:0; margin:0;" />
-                    <input type="text" id="prospectus-contact-title" value="শাখা প্রধান" style="border:none; background:transparent; color:#64748b; padding:0; margin:0;" />
-                    <input type="text" id="prospectus-contact-phone" value="০১৭১৩-১০৮৭৬২" style="border:none; background:transparent; color:#64748b; padding:0; margin:0;" />
+                    <input type="text" id="prospectus-contact-name" value="" style="border:none; background:transparent; font-weight:700; font-size:16px; color:#1e293b; padding:0; margin:0;" />
+                    <input type="text" id="prospectus-contact-title" value="" style="border:none; background:transparent; color:#64748b; padding:0; margin:0;" />
+                    <input type="text" id="prospectus-contact-phone" value="" style="border:none; background:transparent; color:#64748b; padding:0; margin:0;" />
                 </div>
                 </div>
             </div>
@@ -812,6 +860,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             </div>
         `;
+
+        applyMillionaireEditLock();
 
         // Initialize calculations
         calculateFDRDouble();
@@ -1168,7 +1218,10 @@ document.addEventListener('DOMContentLoaded', () => {
     renderProspectus = function () {
         originalRenderProspectus.call(this);
         // Load saved rates after rendering
-        setTimeout(loadSavedRates, 100);
+        setTimeout(() => {
+            loadSavedRates();
+            applyMillionaireEditLock();
+        }, 100);
     };
 
     // Calculation Functions for Prospectus

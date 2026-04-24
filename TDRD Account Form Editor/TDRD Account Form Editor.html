@@ -921,7 +921,7 @@ body::after {
 
 @media print {
   /* Hide all UI elements */
-  .page-nav, .action-bar, .preview-controls, .slide-menu-toggle, .slide-menu, .slide-menu-backdrop, .info-page, #info-page {
+  .page-nav, .action-bar, .preview-controls, .slide-menu-toggle, .slide-menu, .slide-menu-backdrop, .info-page, #info-page, .others-popup-backdrop, .others-popup, .saved-presets-backdrop, .saved-presets-panel {
     display: none !important;
     visibility: hidden !important;
   }
@@ -1732,11 +1732,9 @@ body::after {
   .others-popup-body {
     padding: 20px;
   }
-  }
+}
 
-  }
-  
-  .edit-toggle label i {
+.edit-toggle label i {
     color: var(--primary);
   }
   
@@ -1826,6 +1824,10 @@ body::after {
       <div class="others-popup-body">
         <div class="others-info-grid">
           <div class="others-info-item">
+            <label>Date</label>
+            <div class="others-info-value" id="othersTodayDate">—</div>
+          </div>
+          <div class="others-info-item">
             <label>Account Number</label>
             <div class="others-info-value" id="othersAccountNumber">—</div>
           </div>
@@ -1872,6 +1874,10 @@ body::after {
           <div class="others-info-item">
             <label>Client's Profession</label>
             <div class="others-info-value" id="kycClientProfession">—</div>
+          </div>
+          <div class="others-info-item">
+            <label>Profession (SBS)</label>
+            <div class="others-info-value" id="kycProfessionSBS">—</div>
           </div>
           <div class="others-info-item">
             <label>Type of On-boarding Score</label>
@@ -2389,6 +2395,9 @@ body::after {
                   <option value="NID">National ID</option>
                   <option value="Passport">Passport</option>
                   <option value="BirthCertificate">Birth Certificate</option>
+                  <option value="ETin">E-Tin no</option>
+                  <option value="VATReg">VAT Reg. no</option>
+                  <option value="Registration">Registration no</option>
                   <option value="Others">Others</option>
                 </select>
                 <input type="text" name="identityDocumentNumber" placeholder="Document number" style="margin-top:8px; width:100%; padding:8px; box-sizing:border-box;">
@@ -2708,6 +2717,10 @@ body::after {
                 </select>
               </div>
               <div class="form-group">
+                <label>Profession (SBS)</label>
+                <input type="text" name="kycProfessionSBS" placeholder="Profession (SBS)">
+              </div>
+              <div class="form-group">
                 <label>Type of On-boarding Score</label>
                 <select name="kycTypeOfOnboarding">
                   <option value="">Select Type of On-boarding</option>
@@ -2970,25 +2983,30 @@ body::after {
   
   // Initialize KYC Print button visibility on page load
   try { updateKYCPrintButtonVisibility(); } catch (e) {}
+
+  function printPreparedForm(targetFormType) {
+    const mainFormTypeSelect = document.getElementById('formTypeSelect');
+    if (!mainFormTypeSelect) return;
+
+    mainFormTypeSelect.value = targetFormType;
+    mainFormTypeSelect.dispatchEvent(new Event('change'));
+
+    const formPageBtn = document.querySelector('.nav-btn[data-page="form"]');
+    if (formPageBtn) formPageBtn.click();
+
+    setTimeout(function() {
+      try { syncBranchNameState(); } catch (e) {}
+      try { updateOverlays(); } catch (e) {}
+      window.print();
+      const infoPageBtn = document.querySelector('.nav-btn[data-page="info"]');
+      if (infoPageBtn) infoPageBtn.click();
+    }, 200);
+  }
   
   // KYC Print button functionality
   if (kycPrintBtn) {
     kycPrintBtn.addEventListener('click', function() {
-      // Switch to KYC Stand Alone FD form type
-      formTypeSelect.value = 'others';
-      formTypeSelect.dispatchEvent(new Event('change'));
-      
-      // Switch to form preview before printing
-      const formPageBtn = document.querySelector('.nav-btn[data-page="form"]');
-      if (formPageBtn) formPageBtn.click();
-      
-      // Small delay to ensure the form preview is rendered
-      setTimeout(function() {
-        window.print();
-        // After print dialog closes, return to information input page
-        const infoPageBtn = document.querySelector('.nav-btn[data-page="info"]');
-        if (infoPageBtn) infoPageBtn.click();
-      }, 200);
+      printPreparedForm('others');
     });
   }
   const formTypeSelect = document.getElementById('formTypeSelect');
@@ -3265,6 +3283,7 @@ body::after {
       try {
         const data = JSON.parse(saved);
         Object.keys(data).forEach(key => {
+          if (key === 'todayDate') return;
           const field = form.elements[key];
           if (field) {
             try {
@@ -3403,6 +3422,7 @@ body::after {
       if (form.elements['fullNameBn']) {
         form.elements['fullNameBn'].value = '';
         try { setOverlayText('fullNameBn', ''); } catch (e) {}
+        try { updateCombinedApplicantsBangla(); } catch (e) {}
         debouncedSave();
       }
       return;
@@ -3420,11 +3440,15 @@ body::after {
     }
     
     const translated = await translateText(textToTranslate);
+    if (!form.elements['fullNameEn'] || form.elements['fullNameEn'].value !== text) {
+      return;
+    }
     if (form.elements['fullNameBn']) {
       // If prefix was detected, prepend Bengali "মোছাঃ" to the translated name
       const finalBangla = hasPrefix && translated ? 'মোছাঃ ' + translated : translated;
       form.elements['fullNameBn'].value = finalBangla;
       try { setOverlayText('fullNameBn', finalBangla); } catch (e) {}
+      try { updateCombinedApplicantsBangla(); } catch (e) {}
       debouncedSave();
     }
   }, 700);
@@ -3436,6 +3460,12 @@ body::after {
       translateDebounced(englishText);
       updateCombinedApplicants();
     });
+  }
+
+  const fullNameBnField = form.elements['fullNameBn'];
+  if (fullNameBnField) {
+    fullNameBnField.addEventListener('input', updateCombinedApplicantsBangla);
+    fullNameBnField.addEventListener('change', updateCombinedApplicantsBangla);
   }
 
   // Auto-translate Organization Name (English) to Organization Name (Bangla)
@@ -3451,10 +3481,13 @@ body::after {
     }
     
     const translated = await translateText(text.trim());
+    if (!form.elements['orgNameEn'] || form.elements['orgNameEn'].value !== text) {
+      return;
+    }
     if (form.elements['orgNameBn']) {
       form.elements['orgNameBn'].value = translated;
       try { setOverlayText('orgNameBn', translated); } catch (e) {}
-      try { setOverlayText('orgNameBn2', translated); } catch (e) {}
+      try { setOverlayText('orgNameBn2', isSameAsLinkedAccountPersonalChecked() ? '' : translated); } catch (e) {}
       debouncedSave();
     }
   }, 700);
@@ -3465,7 +3498,7 @@ body::after {
       const englishText = e.target.value || '';
       translateOrgNameDebounced(englishText);
       // Sync to second overlay
-      try { setOverlayText('orgNameEn2', englishText); } catch (e) {}
+      try { setOverlayText('orgNameEn2', isSameAsLinkedAccountPersonalChecked() ? '' : englishText); } catch (e) {}
     });
   }
 
@@ -3612,16 +3645,10 @@ body::after {
   }
 
   async function updateCombinedApplicantsBangla() {
-    const fullName = (form.elements['fullNameEn'] && form.elements['fullNameEn'].value || '').trim();
+    const fullName = (form.elements['fullNameBn'] && form.elements['fullNameBn'].value || '').trim();
     const secondApplicant = (form.elements['secondApplicant'] && form.elements['secondApplicant'].value || '').trim();
     const thirdApplicant = (form.elements['thirdApplicant'] && form.elements['thirdApplicant'].value || '').trim();
 
-    // Collect non-empty names
-    const names = [];
-    if (fullName) names.push(fullName);
-    if (secondApplicant) names.push(secondApplicant);
-    if (thirdApplicant) names.push(thirdApplicant);
-    
     // Ensure hidden input exists
     let combinedBnEl = form.elements['combinedApplicantsBn'];
     if (!combinedBnEl) {
@@ -3631,14 +3658,16 @@ body::after {
       form.appendChild(combinedBnEl);
     }
     
-    if (names.length === 0) {
+    if (!fullName && !secondApplicant && !thirdApplicant) {
       combinedBnEl.value = '';
       try { setOverlayText('combinedApplicantsBn', ''); } catch (e) {}
       return;
     }
     
-    // Translate each name individually with mst/most prefix handling
-    const translatedNames = await Promise.all(names.map(name => translateNameWithPrefix(name)));
+    const translatedNames = [];
+    if (fullName) translatedNames.push(fullName);
+    if (secondApplicant) translatedNames.push(await translateNameWithPrefix(secondApplicant));
+    if (thirdApplicant) translatedNames.push(await translateNameWithPrefix(thirdApplicant));
     
     // Join with Bengali "এবং" (and)
     const finalBangla = translatedNames.filter(n => n).join(' এবং ');
@@ -3660,22 +3689,8 @@ body::after {
     if (firstDigit === '7') {
       targetFormType = 'taqwa';
     }
-    
-    // Switch form type if needed
-    formTypeSelect.value = targetFormType;
-    formTypeSelect.dispatchEvent(new Event('change'));
-    
-    // Switch to form preview before printing
-    const formPageBtn = document.querySelector('.nav-btn[data-page="form"]');
-    if (formPageBtn) formPageBtn.click();
-    
-    // Small delay to ensure the form preview is rendered
-    setTimeout(function() {
-      window.print();
-      // After print dialog closes, return to information input page
-      const infoPageBtn = document.querySelector('.nav-btn[data-page="info"]');
-      if (infoPageBtn) infoPageBtn.click();
-    }, 200);
+
+    printPreparedForm(targetFormType);
   });
 
   // Clear form
@@ -3722,6 +3737,8 @@ body::after {
     }
     // Re-render overlays for the selected form type
     renderOverlaysForCurrentType();
+    try { syncBranchNameState(); } catch (e) {}
+    try { updateOverlays(); } catch (e) {}
     // Keep preview selector in sync if present
     if (formTypePreviewSelect) formTypePreviewSelect.value = this.value;
   });
@@ -3779,8 +3796,130 @@ body::after {
     } catch (e) {}
   }
 
+  function isSameAsLinkedAccountPersonalChecked() {
+    return !!(form.elements['sameAsLinkedAccountPersonal'] && form.elements['sameAsLinkedAccountPersonal'].checked);
+  }
+
   const sameAsLinkedAccountPersonal = document.getElementById('sameAsLinkedAccountPersonal');
   const sameAsLinkedAccountNominee = document.getElementById('sameAsLinkedAccountNominee');
+
+  function getPrimaryNameMode(accountValue) {
+    const accountNumber = accountValue !== undefined
+      ? accountValue
+      : ((form.elements['accountNumber'] && form.elements['accountNumber'].value) || '');
+    const fourthDigit = accountNumber.length > 3 ? accountNumber[3] : '';
+
+    if (fourthDigit === '1' || fourthDigit === '2') return 'organization';
+    if (fourthDigit === '3') return 'personal';
+    return 'neutral';
+  }
+
+  function clearFullNameFields() {
+    let changed = false;
+    const fullNameEnField = form.elements['fullNameEn'];
+    const fullNameBnField = form.elements['fullNameBn'];
+
+    if (fullNameEnField && fullNameEnField.value) {
+      fullNameEnField.value = '';
+      changed = true;
+    }
+    if (fullNameBnField && fullNameBnField.value) {
+      fullNameBnField.value = '';
+      changed = true;
+    }
+
+    if (changed) {
+      try { setOverlayText('fullNameEn', ''); } catch (e) {}
+      try { setOverlayText('fullNameBn', ''); } catch (e) {}
+      try { updateCombinedApplicants(); } catch (e) {}
+      try { updateCombinedApplicantsBangla(); } catch (e) {}
+    }
+
+    return changed;
+  }
+
+  function clearOrganizationNameFields() {
+    let changed = false;
+    const orgNameEnField = form.elements['orgNameEn'];
+    const orgNameBnField = form.elements['orgNameBn'];
+
+    if (orgNameEnField && orgNameEnField.value) {
+      orgNameEnField.value = '';
+      changed = true;
+    }
+    if (orgNameBnField && orgNameBnField.value) {
+      orgNameBnField.value = '';
+      changed = true;
+    }
+
+    if (changed) {
+      try { setOverlayText('orgNameEn', ''); } catch (e) {}
+      try { setOverlayText('orgNameBn', ''); } catch (e) {}
+      try { setOverlayText('orgNameEn2', ''); } catch (e) {}
+      try { setOverlayText('orgNameBn2', ''); } catch (e) {}
+    }
+
+    return changed;
+  }
+
+  function syncPrimaryNameFields(accountValue) {
+    const mode = getPrimaryNameMode(accountValue);
+    let changed = false;
+
+    if (mode === 'organization') {
+      changed = clearFullNameFields();
+    } else if (mode === 'personal') {
+      changed = clearOrganizationNameFields();
+    }
+
+    if (changed) {
+      try { updateOverlays(); } catch (e) {}
+      try { saveFormData(); } catch (e) {}
+    }
+  }
+
+  function updatePrimaryApplicantSectionVisibility(accountValue) {
+    try {
+      const accountNumber = accountValue !== undefined
+        ? accountValue
+        : ((form.elements['accountNumber'] && form.elements['accountNumber'].value) || '');
+      const fourthDigit = accountNumber.length > 3 ? accountNumber[3] : '';
+      syncPrimaryNameFields(accountNumber);
+      const orgSection = document.getElementById('organization-info');
+      const indSection = document.getElementById('depositor-info');
+      const fullNameEnField = form.elements['fullNameEn'];
+      const fullNameBnField = form.elements['fullNameBn'];
+
+      if (isSameAsLinkedAccountPersonalChecked()) {
+        if (orgSection) orgSection.style.display = 'none';
+        if (indSection) indSection.style.display = 'none';
+        const shouldShowFullName = !(fourthDigit === '1' || fourthDigit === '2');
+        if (fullNameEnField && fullNameEnField.parentElement) fullNameEnField.parentElement.style.display = shouldShowFullName ? 'block' : 'none';
+        if (fullNameBnField && fullNameBnField.parentElement) fullNameBnField.parentElement.style.display = shouldShowFullName ? 'block' : 'none';
+        try { updateOrgNameFieldsVisibility(); } catch (e) {}
+        return;
+      }
+
+      if (fourthDigit === '3') {
+        if (orgSection) orgSection.style.display = 'none';
+        if (indSection) indSection.style.display = 'block';
+        if (fullNameEnField && fullNameEnField.parentElement) fullNameEnField.parentElement.style.display = 'block';
+        if (fullNameBnField && fullNameBnField.parentElement) fullNameBnField.parentElement.style.display = 'block';
+      } else if (fourthDigit === '2' || fourthDigit === '1') {
+        if (orgSection) orgSection.style.display = 'block';
+        if (indSection) indSection.style.display = 'none';
+        if (fullNameEnField && fullNameEnField.parentElement) fullNameEnField.parentElement.style.display = 'none';
+        if (fullNameBnField && fullNameBnField.parentElement) fullNameBnField.parentElement.style.display = 'none';
+      } else {
+        if (orgSection) orgSection.style.display = 'block';
+        if (indSection) indSection.style.display = 'block';
+        if (fullNameEnField && fullNameEnField.parentElement) fullNameEnField.parentElement.style.display = 'block';
+        if (fullNameBnField && fullNameBnField.parentElement) fullNameBnField.parentElement.style.display = 'block';
+      }
+
+      try { updateOrgNameFieldsVisibility(); } catch (e) {}
+    } catch (e) {}
+  }
   
   // Helper: hide/show nominee section when "Same as Link Account (Nominee)" is checked
   function toggleNomineeSection(checked) {
@@ -3840,6 +3979,8 @@ body::after {
       setTickOverlay('tickSameAsLinkedAccountPersonal', this.checked);
       // hide/show related sections when personal link is checked
       toggleSectionsForSameAsPersonal(this.checked);
+      updatePrimaryApplicantSectionVisibility(accountVal);
+      try { updateOverlays(); } catch (e) {}
       saveFormData();
     });
     // keep overlay updated when debitMyAccount changes
@@ -4032,7 +4173,8 @@ body::after {
     depositTypeCodeIfFullNameEn: 1.08,
     depositTypeCodeIfOrgNameEn: 1.08,
     sectorCodeIfFullNameEn: 1.08,
-    sectorCodeIfOrgNameEn: 1.08
+    sectorCodeIfOrgNameEn: 1.08,
+    depositCode: 1.08
   };
 
   // Helper function to apply letter spacing to overlay elements
@@ -4117,22 +4259,7 @@ body::after {
         const s = (form.elements['schemeName'] && form.elements['schemeName'].value) || (form.elements['dpsSchemeName'] && form.elements['dpsSchemeName'].value) || '';
         displayText = s ? s : displayText;
       } else if (data.field === 'todayDate') {
-        const d = (form.elements['todayDate'] && form.elements['todayDate'].value) || '';
-        if (d) {
-          displayText = d;
-        } else {
-          // fallback to current date
-          const now = new Date();
-          const dd = String(now.getDate()).padStart(2, '0');
-          const mm = String(now.getMonth() + 1).padStart(2, '0');
-          const yyyy = now.getFullYear();
-          // Format: DD-MM-YYYY for page 9, DD    MM    YYYY for others
-          if (data.page === '9') {
-            displayText = dd + '-' + mm + '-' + yyyy;
-          } else {
-            displayText = dd + '\u00A0\u00A0\u00A0\u00A0' + mm + '\u00A0\u00A0\u00A0\u00A0' + yyyy;
-          }
-        }
+        displayText = getTodayDateDisplay(data.page);
       } else if (data.field === 'orgNameEn') {
         displayText = (form.elements['orgNameEn'] && form.elements['orgNameEn'].value) || displayText;
       } else if (data.field === 'orgNameBn') {
@@ -4343,7 +4470,7 @@ body::after {
   // Helper: set overlay text for a given field name
   function setOverlayText(fieldName, text) {
     // Apply NBSP spacing for specific fields (but NOT accountNumber/cifNumber on page 9)
-    const fieldsWithNBSPSpacing = ['accountNumber', 'accountNumber1', 'cifNumber', 'interestAccountNumber', 'eTin', 'eTinIndividual', 'presentPostCode', 'permanentPostCode', 'tradeLicenceDate', 'registrationDate', 'depositTypeCode'];
+    const fieldsWithNBSPSpacing = ['accountNumber', 'accountNumber1', 'cifNumber', 'interestAccountNumber', 'eTin', 'eTinIndividual', 'presentPostCode', 'permanentPostCode', 'tradeLicenceDate', 'registrationDate', 'depositTypeCode', 'depositTypeCodeIfFullNameEn', 'depositTypeCodeIfOrgNameEn', 'sectorCodeIfFullNameEn', 'sectorCodeIfOrgNameEn', 'depositCode'];
     if (fieldsWithNBSPSpacing.includes(fieldName) && text) {
       // Skip initial NBSP spacing for accountNumber and cifNumber - will handle per overlay below
       if (!((fieldName === 'accountNumber' || fieldName === 'cifNumber'))) {
@@ -4364,16 +4491,9 @@ body::after {
       let displayText = text;
       const page = el.dataset.page;
       
-      // Handle todayDate with page-specific formatting
-      if (fieldName === 'todayDate' && displayText) {
-        if (page === '9') {
-          // Format as DD-MM-YYYY for page 9
-          const dateMatch = displayText.match(/(\d{2})\s*[-\/]?\s*(\d{2})\s*[-\/]?\s*(\d{4})/);
-          if (dateMatch) {
-            displayText = dateMatch[1] + '-' + dateMatch[2] + '-' + dateMatch[3];
-          }
-        }
-        // For other pages, displayText keeps its spacing as provided
+      // todayDate uses the current date unless the popup date overrides it
+      if (fieldName === 'todayDate') {
+        displayText = getTodayDateDisplay(page);
       }
       
       // Handle accountNumber and cifNumber spacing per page
@@ -4422,6 +4542,22 @@ body::after {
     });
   }
 
+  const sameAsLinkedPersonalHiddenOverlayFields = new Set([
+    'tradeLicenceNo', 'tradeLicenceDate', 'tradeLicenceAuthority',
+    'registrationNo', 'registrationDate', 'registrationAuthority', 'registeredAddress',
+    'vatBin', 'eTin', 'businessAddress', 'annualTurnover', 'orgType', 'orgTypeOther', 'businessTypeOther', 'businessNature',
+    'dateOfBirth', 'identityDocumentNumber', 'nationality', 'fatherName', 'motherName', 'spouseName',
+    'profession', 'probableMonthlyIncome', 'sourceOfFund', 'eTinIndividual', 'mobileNumber', 'email',
+    'nationalIdNumber', 'passportNumber', 'birthCertificateNumber'
+  ]);
+  const sameAsLinkedPersonalHiddenOverlayPrefixes = ['tickOrg_', 'tickBusiness_', 'tickGender_', 'tickId_'];
+
+  function shouldHideOverlayForSameAsLinkedPersonal(fieldName) {
+    if (!isSameAsLinkedAccountPersonalChecked() || !fieldName) return false;
+    if (sameAsLinkedPersonalHiddenOverlayFields.has(fieldName)) return true;
+    return sameAsLinkedPersonalHiddenOverlayPrefixes.some(prefix => fieldName.startsWith(prefix));
+  }
+
   // Update all overlays with current form data (called when switching to Form Preview)
   function updateOverlays() {
     // Collect form data
@@ -4434,8 +4570,6 @@ body::after {
     // Get account type
     const mainAccountType = document.getElementById('mainAccountType');
     const accountType = mainAccountType ? mainAccountType.value : (form.elements['accountType'] ? form.elements['accountType'].value : '');
-    
-    console.log('updateOverlays - accountType:', accountType);
 
     // Get DPS popup values (check popup first, then fallback to hidden inputs)
     const dpsSchemeInput = document.getElementById('dpsSchemeName');
@@ -4481,6 +4615,12 @@ body::after {
       const field = overlay.dataset.field;
       const page = overlay.dataset.page;
       if (!field) return;
+
+      if (shouldHideOverlayForSameAsLinkedPersonal(field)) {
+        overlay.textContent = '';
+        overlay.style.display = 'none';
+        return;
+      }
 
       // Defer rendering of generic tick overlays to dedicated tick-update functions
       // (tick overlays are controlled by functions like updateMaturityTicks/updateModeTicks)
@@ -4785,19 +4925,16 @@ body::after {
 
       // When DPS is selected, ALWAYS hide FDR fields on main pages
       if (accountType === 'DPS' && fdrFields.includes(field) && mainPages.includes(page)) {
-        console.log('Hiding FDR field:', field, 'on page:', page);
         overlay.textContent = '';
         overlay.style.display = 'none';
         return;
       }
 
       // Mirror orgNameEn to orgNameEn2, and orgNameBn to orgNameBn2
-      // Hide when sameAsLinkedAccountPersonal is checked
-      const sameAsLinked = form.elements['sameAsLinkedAccountPersonal'] && form.elements['sameAsLinkedAccountPersonal'].checked;
       
       if (field === 'orgNameEn2') {
         const orgNameEnValue = form.elements['orgNameEn'] ? form.elements['orgNameEn'].value : '';
-        if (orgNameEnValue && !sameAsLinked) {
+        if (orgNameEnValue && !isSameAsLinkedAccountPersonalChecked()) {
           overlay.textContent = orgNameEnValue;
           overlay.style.display = '';
         } else {
@@ -4809,7 +4946,7 @@ body::after {
 
       if (field === 'orgNameBn2') {
         const orgNameBnValue = form.elements['orgNameBn'] ? form.elements['orgNameBn'].value : '';
-        if (orgNameBnValue && !sameAsLinked) {
+        if (orgNameBnValue && !isSameAsLinkedAccountPersonalChecked()) {
           overlay.textContent = orgNameBnValue;
           overlay.style.display = '';
         } else {
@@ -4819,8 +4956,7 @@ body::after {
         return;
       }
 
-      // Hide fullNameEn and fullNameBn on pages 2 and 6 when sameAsLinkedAccountPersonal is checked
-      if ((field === 'fullNameEn' || field === 'fullNameBn') && (page === '2' || page === '6') && sameAsLinked) {
+      if ((field === 'fullNameEn' || field === 'fullNameBn') && page === '2' && isSameAsLinkedAccountPersonalChecked()) {
         overlay.textContent = '';
         overlay.style.display = 'none';
         return;
@@ -4859,24 +4995,9 @@ body::after {
           value = formatDateForOverlay(value);
           applyLetterSpacing(overlay, field, page);
         }
-        // Format todayDate: DD-MM-YYYY for page 9, with spaces for others
+        // todayDate uses the current date unless the popup date overrides it
         if (field === 'todayDate') {
-          if (page === '9') {
-            // Format as DD-MM-YYYY for page 9
-            const dateMatch = value.match(/(\d{4})-(\d{2})-(\d{2})/);
-            if (dateMatch) {
-              value = dateMatch[3] + '-' + dateMatch[2] + '-' + dateMatch[1];
-            }
-          } else {
-            // Keep spacing for other pages
-            const dateMatch = value.match(/(\d{4})-(\d{2})-(\d{2})/);
-            if (dateMatch) {
-              const dd = dateMatch[3];
-              const mm = dateMatch[2];
-              const yyyy = dateMatch[1];
-              value = dd + '\u00A0\u00A0\u00A0\u00A0' + mm + '\u00A0\u00A0\u00A0\u00A0' + yyyy;
-            }
-          }
+          value = getTodayDateDisplay(page);
         }
         // Apply letter-spacing for fields (but NOT accountNumber/cifNumber on page 9)
         if (field === 'debitMyAccount' || field === 'accountNumber' || field === 'accountNumber1' || field === 'cifNumber' || field === 'sectorCodeIfFullNameEn' || field === 'sectorCodeIfOrgNameEn' || field === 'depositTypeCodeIfFullNameEn' || field === 'depositTypeCodeIfOrgNameEn') {
@@ -5508,7 +5629,7 @@ body::after {
       { field: 'sectorCodeIfOrgNameEn', top: '9%', left: '75%', label: 'Sector Code', page: '15' },
       { field: 'depositTypeCodeIfOrgNameEn', top: '12%', left: '75%', label: 'Deposit Type Code', page: '15' },
       { field: 'orgType', top: '24%', left: '10%', label: 'Type of Organization', page: '15' },
-      { field: 'profession', top: '28%', left: '10%', label: 'Profession (In details)', page: '15' },
+      { field: 'kycProfessionSBS', top: '28%', left: '10%', label: 'Profession (SBS)', page: '15' },
       { field: 'depositCode', top: '31%', left: '10%', label: 'Deposit Code', page: '15' },
       { field: 'branchName', top: '4%', left: '10%', label: 'Branch Name', page: '15' },
       { field: 'officerSeal1', top: '85%', left: '10%', label: 'Officer Seal 1', page: '15' },
@@ -5525,17 +5646,26 @@ body::after {
       const cfg = overlayConfig[type];
       if (!cfg || !cfg.length) return;
       
-      // Always merge new configuration entries that don't exist in saved overlays
-      const existingFields = new Set(existing.map(item => item.field + '_' + item.page));
+      // Always merge new configuration entries that don't exist in saved overlays.
+      // Count duplicates per field/page so repeated branch overlays on the same page are preserved.
+      const existingCounts = {};
+      existing.forEach(item => {
+        const key = item.field + '_' + item.page;
+        existingCounts[key] = (existingCounts[key] || 0) + 1;
+      });
+      const usedCounts = {};
       cfg.forEach(cfgEntry => {
         const key = cfgEntry.field + '_' + cfgEntry.page;
-        if (!existingFields.has(key)) {
+        usedCounts[key] = (usedCounts[key] || 0) + 1;
+        if ((existingCounts[key] || 0) < usedCounts[key]) {
           existing.push({ 
             page: cfgEntry.page || '1', 
             field: cfgEntry.field, 
             leftPercent: parseFloat(cfgEntry.left) || 0, 
-            topPercent: parseFloat(cfgEntry.top) || 0 
+            topPercent: parseFloat(cfgEntry.top) || 0,
+            label: cfgEntry.label || ''
           });
+          existingCounts[key] = (existingCounts[key] || 0) + 1;
         }
       });
       
@@ -5626,25 +5756,7 @@ body::after {
     try { if (typeof updateIdentityIdTicks === 'function') updateIdentityIdTicks(); } catch (e) {}
     try { setTickOverlay('tickOne', true); } catch (e) {}
     try { setTickOverlay('tickTextbox', true); } catch (e) {}
-    // Update todayDate overlays with page-specific formatting
-    try {
-      const now = new Date();
-      const dd = String(now.getDate()).padStart(2, '0');
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const yyyy = now.getFullYear();
-      const todayDateOverlays = document.querySelectorAll('.overlay[data-field="todayDate"]');
-      todayDateOverlays.forEach(el => {
-        const page = el.dataset.page;
-        let displayDate;
-        if (page === '9') {
-          displayDate = dd + '-' + mm + '-' + yyyy;
-        } else {
-          displayDate = dd + '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0' + mm + '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0' + yyyy;
-        }
-        el.textContent = displayDate;
-        el.style.display = '';
-      });
-    } catch (e) {}
+    try { syncTodayDate(); } catch (e) {}
   }
   
   // Ensure account number and CIF overlays on page 1
@@ -6031,6 +6143,7 @@ body::after {
   renderOverlaysForCurrentType();
   // Load preserved branchName from localStorage
   try { loadFormData(); } catch (e) {}
+  try { updateRenewalOptionVisibility(); } catch (e) {}
   // Refresh overlays with loaded form data
   try { updateOverlays(); } catch (e) {}
   try { updateOrgTypeTicks(); } catch (e) {}
@@ -6055,18 +6168,45 @@ body::after {
     }
   } catch (e) {}
 
+  function getSelectedAccountType() {
+    const accountTypeField = document.getElementById('mainAccountType') || (form && form.elements ? form.elements['accountType'] : null);
+    return accountTypeField ? (accountTypeField.value || '') : '';
+  }
+
   // Update tick overlays based on the selected maturity instruction
   function updateMaturityTicks() {
     try {
       const sel = form.elements['maturityInstruction'];
-      const val = sel ? sel.value : '';
+      const accountType = getSelectedAccountType();
+      if (accountType === 'DPS' && sel && sel.value) {
+        sel.value = '';
+      }
+      const val = (accountType === 'DPS') ? '' : (sel ? sel.value : '');
       setTickOverlay('tickRenewBoth', val === 'RenewBoth');
       setTickOverlay('tickRenewPrincipal', val === 'RenewPrincipal');
       // show credit interest field only when 'RenewPrincipal' is selected
       try {
         const creditWrap = document.getElementById('creditInterestField');
-        if (creditWrap) creditWrap.style.display = (val === 'RenewPrincipal') ? 'block' : 'none';
+        if (creditWrap) creditWrap.style.display = (accountType !== 'DPS' && val === 'RenewPrincipal') ? 'block' : 'none';
       } catch (e) {}
+    } catch (e) {}
+  }
+
+  function updateRenewalOptionVisibility() {
+    try {
+      const renewalSelect = form.elements['maturityInstruction'];
+      const renewalWrap = renewalSelect ? renewalSelect.closest('.form-group') : null;
+      const shouldHide = getSelectedAccountType() === 'DPS';
+
+      if (renewalWrap) {
+        renewalWrap.style.display = shouldHide ? 'none' : '';
+      }
+
+      if (shouldHide && renewalSelect && renewalSelect.value) {
+        renewalSelect.value = '';
+      }
+
+      updateMaturityTicks();
     } catch (e) {}
   }
 
@@ -6083,6 +6223,12 @@ body::after {
   // Update tick overlays for Gender selection
   function updateGenderTicks() {
     try {
+      if (isSameAsLinkedAccountPersonalChecked()) {
+        setTickOverlay('tickGender_Male', false);
+        setTickOverlay('tickGender_Female', false);
+        setTickOverlay('tickGender_Third', false);
+        return;
+      }
       const sel = form.elements['gender'];
       const val = sel ? sel.value : '';
       setTickOverlay('tickGender_Male', val === 'Male');
@@ -6095,11 +6241,18 @@ body::after {
   const maturitySelect = form.elements['maturityInstruction'];
   if (maturitySelect) {
     maturitySelect.addEventListener('change', function() {
+      // Reset Interest Account Number when "Renew both" is selected
+      if (this.value === 'RenewBoth') {
+        const interestField = form.elements['interestAccountNumber'];
+        if (interestField) {
+          interestField.value = '';
+        }
+      }
       updateMaturityTicks();
       saveFormData();
     });
     // set initial state from loaded form data
-    updateMaturityTicks();
+    updateRenewalOptionVisibility();
   }
 
   // Wire change listener to Mode of Operation select
@@ -6143,38 +6296,10 @@ body::after {
     accountNumberInput.addEventListener('input', function() {
       const val = accountNumberInput.value || '';
       setOverlayText('accountNumber', val);
+      updatePrimaryApplicantSectionVisibility(val);
       
-      // Toggle visibility based on 4th digit
+      // Toggle note overlay visibility based on 4th digit
       const fourthDigit = val.length > 3 ? val[3] : '';
-      const orgSection = document.getElementById('organization-info');
-      const indSection = document.getElementById('depositor-info');
-      
-      // Get fullNameEn and fullNameBn fields
-      const fullNameEnField = form.elements['fullNameEn'];
-      const fullNameBnField = form.elements['fullNameBn'];
-      
-      if (fourthDigit === '3') {
-        // Show Individual Information, hide Organization Information
-        if (orgSection) orgSection.style.display = 'none';
-        if (indSection) indSection.style.display = 'block';
-        // Show fullNameEn and fullNameBn
-        if (fullNameEnField && fullNameEnField.parentElement) fullNameEnField.parentElement.style.display = 'block';
-        if (fullNameBnField && fullNameBnField.parentElement) fullNameBnField.parentElement.style.display = 'block';
-      } else if (fourthDigit === '2' || fourthDigit === '1') {
-        // Show Organization Information, hide Individual Information
-        if (orgSection) orgSection.style.display = 'block';
-        if (indSection) indSection.style.display = 'none';
-        // Hide fullNameEn and fullNameBn
-        if (fullNameEnField && fullNameEnField.parentElement) fullNameEnField.parentElement.style.display = 'none';
-        if (fullNameBnField && fullNameBnField.parentElement) fullNameBnField.parentElement.style.display = 'none';
-      } else {
-        // Default: show both
-        if (orgSection) orgSection.style.display = 'block';
-        if (indSection) indSection.style.display = 'block';
-        // Show fullNameEn and fullNameBn
-        if (fullNameEnField && fullNameEnField.parentElement) fullNameEnField.parentElement.style.display = 'block';
-        if (fullNameBnField && fullNameBnField.parentElement) fullNameBnField.parentElement.style.display = 'block';
-      }
       
       // Show/hide 'Same as Link Account' overlay based on 4th digit and checkbox state
       const isChecked = (sameAsLinkedAccountPersonal && sameAsLinkedAccountPersonal.checked);
@@ -6219,6 +6344,7 @@ body::after {
         });
       }
     });
+    try { updatePrimaryApplicantSectionVisibility(accountNumberInput.value || ''); } catch (e) {}
   }
   // Keep interest account number overlays in sync with the interestAccountNumber input
   const interestAccountInput = form.elements['interestAccountNumber'];
@@ -6235,16 +6361,18 @@ body::after {
     dpsSchemeInput.addEventListener('input', function() {
       const v = dpsSchemeInput.value || '';
       setHiddenInput('schemeName', v);
+      setOverlayText('schemeName', v);
       saveFormData();
-      try { renderOverlaysForCurrentType(); } catch (e) {}
     });
   }
   if (dpsYearsInput) {
     dpsYearsInput.addEventListener('input', function() {
       const v = dpsYearsInput.value || '';
       setHiddenInput('dpsYears', v);
+      const yearsText = v === '1' ? (v + ' Year') : v ? (v + ' Years') : '';
+      setOverlayText('dpsYears', yearsText);
+      if (v) setOverlayText('dpsMonths', String(Number(v) * 12));
       saveFormData();
-      try { renderOverlaysForCurrentType(); } catch (e) {}
     });
   }
   // Keep branch name overlays in sync with the branch name input
@@ -6587,6 +6715,71 @@ body::after {
     el.value = value;
   }
 
+  function getCurrentDateInputValue() {
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const yyyy = now.getFullYear();
+    return yyyy + '-' + mm + '-' + dd;
+  }
+
+  function getStandaloneKycDateInput() {
+    return document.getElementById('othersTodayDateInput');
+  }
+
+  function isStandaloneKycPopupOpen() {
+    const popupBackdrop = document.getElementById('othersBackdrop');
+    return !!(popupBackdrop && popupBackdrop.classList.contains('open'));
+  }
+
+  function getStandaloneKycDateValue() {
+    const todayValue = getCurrentDateInputValue();
+    const dateInput = getStandaloneKycDateInput();
+    if (!dateInput || !isStandaloneKycPopupOpen()) return todayValue;
+
+    const isManual = dateInput.dataset.manual === 'true' && dateInput.value;
+    if (!isManual) {
+      if (dateInput.value !== todayValue) {
+        dateInput.value = todayValue;
+      }
+      dateInput.dataset.manual = 'false';
+    }
+
+    dateInput.dataset.autoValue = todayValue;
+    return dateInput.value || todayValue;
+  }
+
+  function resetStandaloneKycDateOverride() {
+    const dateInput = getStandaloneKycDateInput();
+    if (!dateInput) return;
+
+    const todayValue = getCurrentDateInputValue();
+    dateInput.value = todayValue;
+    dateInput.dataset.manual = 'false';
+    dateInput.dataset.autoValue = todayValue;
+  }
+
+  function getTodayDateDisplay(page) {
+    const compactDate = formatDateForOverlay(getStandaloneKycDateValue());
+    if (!compactDate || compactDate.length !== 8) return '';
+    const dd = compactDate.slice(0, 2);
+    const mm = compactDate.slice(2, 4);
+    const yyyy = compactDate.slice(4);
+    const spacedDate = dd + '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0' + mm + '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0' + yyyy;
+    return page === '9' ? (dd + '-' + mm + '-' + yyyy) : spacedDate;
+  }
+
+  function syncTodayDate(forceSave) {
+    setHiddenInput('todayDate', getTodayDateDisplay('1'));
+    document.querySelectorAll('.overlay[data-field="todayDate"]').forEach(el => {
+      el.textContent = getTodayDateDisplay(el.dataset.page);
+      el.style.display = '';
+    });
+    if (forceSave) {
+      saveFormData();
+    }
+  }
+
   // Format date string into DDMMYYYY (no separators) for overlay display
   function formatDateForOverlay(s) {
     if (!s) return s;
@@ -6691,6 +6884,17 @@ body::after {
     // append 'only' to match currency wording
     return result + ' only';
   }
+  function syncBranchNameState(branchValue) {
+    const slideBranch = document.getElementById('slideBranchInput');
+    const hiddenBranch = form.elements['branchName'];
+    const normalizedValue = branchValue !== undefined
+      ? branchValue
+      : ((slideBranch && slideBranch.value) || (hiddenBranch && hiddenBranch.value) || '');
+
+    setHiddenInput('branchName', normalizedValue);
+    try { setOverlayText('branchName', normalizedValue); } catch (e) {}
+    return normalizedValue;
+  }
 
   // Branch name quick input (slide menu) - keep form in sync and update overlays
   const slideBranchInput = document.getElementById('slideBranchInput');
@@ -6700,21 +6904,17 @@ body::after {
       const savedBranch = localStorage.getItem(BRANCH_KEY);
       if (savedBranch && (!slideBranchInput.value || slideBranchInput.value.trim() === '')) {
         slideBranchInput.value = savedBranch;
-        setHiddenInput('branchName', savedBranch);
-        try { setOverlayText('branchName', savedBranch); } catch (e) {}
+        syncBranchNameState(savedBranch);
       }
     } catch (e) {}
 
     slideBranchInput.addEventListener('input', function() {
-      const val = slideBranchInput.value || '';
-      // ensure value exists in the main form as hidden input
-      setHiddenInput('branchName', val);
+      const val = syncBranchNameState(slideBranchInput.value || '');
       // persist branch name separately so it survives form clears
       try { localStorage.setItem(BRANCH_KEY, val); } catch (e) {}
       // persist form data
       saveFormData();
-      // update any overlays (if present)
-      try { setOverlayText('branchName', val); } catch (e) {}
+      try { updateOverlays(); } catch (e) {}
     });
   }
 
@@ -6744,6 +6944,7 @@ body::after {
         // clear both sets if none selected
         ['productName','productInterestRate','tenorYears','tenorMonths','tenorDays','schemeName','dpsYears'].forEach(n => { if (form.elements[n]) form.elements[n].value = ''; });
       }
+      try { updateRenewalOptionVisibility(); } catch (e) {}
       saveFormData();
       // update deposit label to reflect selected account type
       try { updateDepositAmountLabel(); } catch (e) {}
@@ -7093,11 +7294,20 @@ body::after {
 
   if (mainAccountType) {
     mainAccountType.addEventListener('change', function() {
+      // Reset Interest Account Number when DPS is selected
+      if (this.value === 'DPS') {
+        const interestField = form.elements['interestAccountNumber'];
+        if (interestField) {
+          interestField.value = '';
+        }
+      }
       updateProductDropdown();
       updateDepositAmountLabel();
+      updateRenewalOptionVisibility();
     });
     updateProductDropdown();
     updateDepositAmountLabel();
+    updateRenewalOptionVisibility();
   }
 
   function updateProductDisplay() {
@@ -7237,33 +7447,13 @@ body::after {
   } catch (e) {}
   // Update combined applicants on load
   try { updateCombinedApplicants(); } catch (e) {}
-  // Ensure todayDate hidden input has current date and overlay shows it
-  try {
-    const now = new Date();
-    const dd = String(now.getDate()).padStart(2, '0');
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const yyyy = now.getFullYear();
-    const dateStr = dd + '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0' + mm + '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0' + yyyy;
-    if (!(form.elements['todayDate'] && form.elements['todayDate'].value)) {
-      setHiddenInput('todayDate', dateStr);
-    }
-    // Update each todayDate overlay with page-specific formatting
-    const todayDateOverlays = document.querySelectorAll('.overlay[data-field="todayDate"]');
-    todayDateOverlays.forEach(el => {
-      const page = el.dataset.page;
-      let displayDate;
-      if (page === '9') {
-        displayDate = dd + '-' + mm + '-' + yyyy;
-      } else {
-        displayDate = dateStr;
-      }
-      el.textContent = displayDate;
-      el.style.display = '';
-    });
-    saveFormData();
-  } catch (e) {}
+  try { syncTodayDate(true); } catch (e) {}
   // Update org type tick overlays based on selected orgType
   function updateOrgTypeTicks() {
+    if (isSameAsLinkedAccountPersonalChecked()) {
+      ['tickOrg_Proprietorship','tickOrg_Partnership','tickOrg_JointVenture','tickOrg_PrivateLtd','tickOrg_PublicLtd','tickOrg_Trust','tickOrg_NGO','tickOrg_Club','tickOrg_Educational','tickOrg_Religious','tickOrg_Others'].forEach(f => setTickOverlay(f, false));
+      return;
+    }
     const sel = form.elements['orgType'];
     const val = sel ? sel.value : '';
     const types = {
@@ -7286,6 +7476,10 @@ body::after {
   try { updateOrgTypeTicks(); } catch (e) {}
   // Update business type tick overlays based on selected businessType
   function updateBusinessTypeTicks() {
+    if (isSameAsLinkedAccountPersonalChecked()) {
+      ['tickBusiness_Trading','tickBusiness_Service','tickBusiness_Manufacturing','tickBusiness_Others'].forEach(f => setTickOverlay(f, false));
+      return;
+    }
     const sel = form.elements['businessType'];
     const val = sel ? sel.value : '';
     const types = {
@@ -7326,6 +7520,10 @@ body::after {
   try { updateNomineeIdTicks(); } catch (e) {}
   // Update main identity document ticks on page 2 (conventional) and page 6 (taqwa)
   function updateIdentityIdTicks() {
+    if (isSameAsLinkedAccountPersonalChecked()) {
+      ['tickId_NID','tickId_Passport','tickId_BirthCertificate','tickId_Others'].forEach(f => setTickOverlay(f, false));
+      return;
+    }
     const sel = form.elements['identityDocumentType'];
     const val = sel ? sel.value : '';
     const types = {
@@ -7558,10 +7756,9 @@ body::after {
     if (businessVal && businessVal.includes('|')) {
       businessScore = businessVal.split('|')[1];
     }
-    const businessScoreOverlay = overlays.find(o => o.dataset.field === 'kycClientBusinessScore');
-    if (businessScoreOverlay) {
-      businessScoreOverlay.textContent = businessScore;
-    }
+    document.querySelectorAll('.overlay[data-field="kycClientBusinessScore"]').forEach(o => {
+      o.textContent = businessScore;
+    });
 
     // Extract and display Client's Profession score
     const professionField = form.elements['kycClientProfession'];
@@ -7570,10 +7767,9 @@ body::after {
     if (professionVal && professionVal.includes('|')) {
       professionScore = professionVal.split('|')[1];
     }
-    const professionScoreOverlay = overlays.find(o => o.dataset.field === 'kycClientProfessionScore');
-    if (professionScoreOverlay) {
-      professionScoreOverlay.textContent = professionScore;
-    }
+    document.querySelectorAll('.overlay[data-field="kycClientProfessionScore"]').forEach(o => {
+      o.textContent = professionScore;
+    });
   }
 
   function updateKycTotalScore() {
@@ -7644,11 +7840,10 @@ body::after {
     totalScore += 4;
 
     // Display total score
-    const totalScoreOverlay = overlays.find(o => o.dataset.field === 'kycTotalScore');
-    if (totalScoreOverlay) {
-      totalScoreOverlay.textContent = totalScore;
-      totalScoreOverlay.style.display = '';
-    }
+    document.querySelectorAll('.overlay[data-field="kycTotalScore"]').forEach(o => {
+      o.textContent = totalScore;
+      o.style.display = '';
+    });
     
     // Update ticks based on total score
     try { updateTotalScoreTicks(); } catch (e) {}
@@ -7780,12 +7975,18 @@ body::after {
       setOverlayText('nationalIdNumber', (idValue === 'NID') ? idNumberVal : '');
       setOverlayText('passportNumber', (idValue === 'Passport') ? idNumberVal : '');
       setOverlayText('birthCertificateNumber', (idValue === 'BirthCertificate') ? idNumberVal : '');
+      setOverlayText('eTinIndividual', (idValue === 'ETin') ? idNumberVal : '');
+      setOverlayText('vatBin', (idValue === 'VATReg') ? idNumberVal : '');
+      setOverlayText('registrationNo', (idValue === 'Registration') ? idNumberVal : '');
     } catch (e) {}
     
     // Update ticks: show 2 ticks for the selected document type if it has a value
     const hasNationalId = idValue === 'NID' && idNumberVal.length > 0;
     const hasPassport = idValue === 'Passport' && idNumberVal.length > 0;
     const hasBirthCert = idValue === 'BirthCertificate' && idNumberVal.length > 0;
+    const hasETin = idValue === 'ETin' && idNumberVal.length > 0;
+    const hasVATReg = idValue === 'VATReg' && idNumberVal.length > 0;
+    const hasRegistration = idValue === 'Registration' && idNumberVal.length > 0;
     
     try {
       setTickOverlay('tickNationalId1', hasNationalId);
@@ -7794,6 +7995,12 @@ body::after {
       setTickOverlay('tickPassport2', hasPassport);
       setTickOverlay('tickBirthCert1', hasBirthCert);
       setTickOverlay('tickBirthCert2', hasBirthCert);
+      setTickOverlay('tickETin1', hasETin);
+      setTickOverlay('tickETin2', hasETin);
+      setTickOverlay('tickVatBin1', hasVATReg);
+      setTickOverlay('tickVatBin2', hasVATReg);
+      setTickOverlay('tickRegistration1', hasRegistration);
+      setTickOverlay('tickRegistration2', hasRegistration);
     } catch (e) {}
   }
 
@@ -7871,6 +8078,25 @@ body::after {
     }
   } catch (e) {}
 
+  // Link Organization E-TIN to Individual E-TIN
+  try {
+    const orgETinField = form.elements['eTin'];
+    const indETinField = form.elements['eTinIndividual'];
+    if (orgETinField && indETinField) {
+      orgETinField.addEventListener('input', function() {
+        indETinField.value = orgETinField.value;
+        try { setOverlayText('eTinIndividual', orgETinField.value || ''); } catch (e) {}
+        try { updateETinIndividualTicks(); } catch (e) {}
+      });
+      orgETinField.addEventListener('change', function() {
+        indETinField.value = orgETinField.value;
+        try { setOverlayText('eTinIndividual', orgETinField.value || ''); } catch (e) {}
+        try { updateETinIndividualTicks(); } catch (e) {}
+        try { saveFormData(); } catch (e) {}
+      });
+    }
+  } catch (e) {}
+
   try {
     const vatField = form.elements['vatBin'];
     if (vatField) {
@@ -7884,169 +8110,107 @@ body::after {
     }
   } catch (e) {}
 
-  // Wire event listener for Client's Business dropdown
+  // Wire event listener for Client's Business dropdown (consolidated - ticks + score + total)
   try {
     const businessField = form.elements['kycClientBusiness'];
     if (businessField) {
       businessField.addEventListener('change', function() {
-        // Reset Client's Profession dropdown when Client's Business changes
         const professionField = form.elements['kycClientProfession'];
-        if (professionField) {
-          professionField.selectedIndex = 0;
-        }
+        if (professionField) professionField.selectedIndex = 0;
         try { updateClientBusinessTicks(); } catch (e) {}
         try { updateClientProfessionTicks(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
+        try { updateKycScoreFields(); } catch (e) {}
+        try { updateKycTotalScore(); } catch (e) {}
+        saveFormData();
       });
     }
   } catch (e) {}
 
-  // Wire event listener for Client's Profession dropdown
+  // Wire event listener for Client's Profession dropdown (consolidated - ticks + score + total)
   try {
     const professionField = form.elements['kycClientProfession'];
     if (professionField) {
       professionField.addEventListener('change', function() {
-        // Reset Client's Business dropdown when Client's Profession changes
         const businessField = form.elements['kycClientBusiness'];
-        if (businessField) {
-          businessField.selectedIndex = 0;
-        }
+        if (businessField) businessField.selectedIndex = 0;
         try { updateClientBusinessTicks(); } catch (e) {}
         try { updateClientProfessionTicks(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
+        try { updateKycScoreFields(); } catch (e) {}
+        try { updateKycTotalScore(); } catch (e) {}
+        saveFormData();
       });
     }
   } catch (e) {}
 
-  // Wire event listener for Type of On-boarding Score dropdown
+  // Wire event listener for Profession (SBS) textbox
+  try {
+    const professionSBSField = form.elements['kycProfessionSBS'];
+    if (professionSBSField) {
+      professionSBSField.addEventListener('input', function() {
+        try { setOverlayText('kycProfessionSBS', this.value || ''); } catch (e) {}
+      });
+      professionSBSField.addEventListener('change', function() {
+        saveFormData();
+      });
+    }
+  } catch (e) {}
+
+  // Wire event listener for Type of On-boarding Score dropdown (consolidated)
   try {
     const onboardingField = form.elements['kycTypeOfOnboarding'];
     if (onboardingField) {
       onboardingField.addEventListener('change', function() {
         try { updateTypeOfOnboardingTicks(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
+        try { updateKycTotalScore(); } catch (e) {}
+        saveFormData();
       });
     }
   } catch (e) {}
 
-  // Wire event listener for PEP/IP/CEO dropdown
+  // Wire event listener for PEP/IP/CEO dropdown (consolidated)
   try {
     const pepField = form.elements['kycPepIpCeo'];
     if (pepField) {
       pepField.addEventListener('change', function() {
         try { updatePepIpCeoTicks(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
+        try { updateKycTotalScore(); } catch (e) {}
+        saveFormData();
       });
     }
   } catch (e) {}
 
-  // Wire event listener for Close Associate of PEP/IP/CEO dropdown
+  // Wire event listener for Close Associate of PEP/IP/CEO dropdown (consolidated)
   try {
     const assocField = form.elements['kycCloseAssociatePep'];
     if (assocField) {
       assocField.addEventListener('change', function() {
         try { updateCloseAssociatePepTicks(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
-      });
-    }
-  } catch (e) {}
-
-  // Wire event listener for Customer's Avg Yearly Transaction dropdown
-  try {
-    const transactionField = form.elements['kycAvgYearlyTransaction'];
-    if (transactionField) {
-      transactionField.addEventListener('change', function() {
-        try { updateAvgYearlyTransactionTicks(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
-      });
-    }
-  } catch (e) {}
-
-  // Wire event listener for Credible Source of Funds dropdown
-  try {
-    const credibleField = form.elements['kycCredibleSourceOfFunds'];
-    if (credibleField) {
-      credibleField.addEventListener('change', function() {
-        try { updateCredibleSourceOfFundsTicks(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
-      });
-    }
-  } catch (e) {}
-
-  // Wire event listeners for Client's Business and Profession dropdowns to update score fields
-  try {
-    const businessField = form.elements['kycClientBusiness'];
-    if (businessField) {
-      businessField.addEventListener('change', function() {
-        try { updateKycScoreFields(); } catch (e) {}
         try { updateKycTotalScore(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
+        saveFormData();
       });
     }
   } catch (e) {}
 
-  try {
-    const professionField = form.elements['kycClientProfession'];
-    if (professionField) {
-      professionField.addEventListener('change', function() {
-        try { updateKycScoreFields(); } catch (e) {}
-        try { updateKycTotalScore(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
-      });
-    }
-  } catch (e) {}
-
-  // Wire event listeners for other KYC dropdowns to update total score
-  try {
-    const onboardingField = form.elements['kycTypeOfOnboarding'];
-    if (onboardingField) {
-      onboardingField.addEventListener('change', function() {
-        try { updateKycTotalScore(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
-      });
-    }
-  } catch (e) {}
-
-  try {
-    const pepField = form.elements['kycPepIpCeo'];
-    if (pepField) {
-      pepField.addEventListener('change', function() {
-        try { updatePepIpCeoTicks(); } catch (e) {}
-        try { updateKycTotalScore(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
-      });
-    }
-  } catch (e) {}
-
-  try {
-    const closeAssociateField = form.elements['kycCloseAssociatePep'];
-    if (closeAssociateField) {
-      closeAssociateField.addEventListener('change', function() {
-        try { updateCloseAssociatePepTicks(); } catch (e) {}
-        try { updateKycTotalScore(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
-      });
-    }
-  } catch (e) {}
-
+  // Wire event listener for Customer's Avg Yearly Transaction dropdown (consolidated)
   try {
     const transactionField = form.elements['kycAvgYearlyTransaction'];
     if (transactionField) {
       transactionField.addEventListener('change', function() {
         try { updateAvgYearlyTransactionTicks(); } catch (e) {}
         try { updateKycTotalScore(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
+        saveFormData();
       });
     }
   } catch (e) {}
 
+  // Wire event listener for Credible Source of Funds dropdown (consolidated)
   try {
     const credibleField = form.elements['kycCredibleSourceOfFunds'];
     if (credibleField) {
       credibleField.addEventListener('change', function() {
         try { updateCredibleSourceOfFundsTicks(); } catch (e) {}
         try { updateKycTotalScore(); } catch (e) {}
-        try { saveFormData(); } catch (e) {}
+        saveFormData();
       });
     }
   } catch (e) {}
@@ -8115,14 +8279,16 @@ body::after {
     }
   } catch (e) {}
   // Initialize all tick overlays from loaded form data
-  try { if (typeof updateMaturityTicks === 'function') updateMaturityTicks(); } catch (e) {}
-  try { if (typeof updateModeTicks === 'function') updateModeTicks(); } catch (e) {}
-  try { if (typeof updateGenderTicks === 'function') updateGenderTicks(); } catch (e) {}
-  try { if (typeof updateOrgTypeTicks === 'function') updateOrgTypeTicks(); } catch (e) {}
-  try { if (typeof updateBusinessTypeTicks === 'function') updateBusinessTypeTicks(); } catch (e) {}
-  try { if (typeof updateAvgYearlyTransactionTicks === 'function') updateAvgYearlyTransactionTicks(); } catch (e) {}
-  try { if (typeof updateCredibleSourceOfFundsTicks === 'function') updateCredibleSourceOfFundsTicks(); } catch (e) {}
-  try { if (typeof updateNomineeIdTicks === 'function') updateNomineeIdTicks(); } catch (e) {}
+  try { updateMaturityTicks(); } catch (e) {}
+  try { updateModeTicks(); } catch (e) {}
+  try { updateGenderTicks(); } catch (e) {}
+  try { updateOrgTypeTicks(); } catch (e) {}
+  try { updateBusinessTypeTicks(); } catch (e) {}
+  try { updateAvgYearlyTransactionTicks(); } catch (e) {}
+  try { updateCredibleSourceOfFundsTicks(); } catch (e) {}
+  try { updateNomineeIdTicks(); } catch (e) {}
+  try { updateKycScoreFields(); } catch (e) {}
+  try { updateKycTotalScore(); } catch (e) {}
   try { setTickOverlay('tickOne', true); } catch (e) {}
   try { setTickOverlay('tickTextbox', true); } catch (e) {}
   // migrate older presets if needed (productName -> product)
@@ -8184,6 +8350,7 @@ body::after {
 
         // Apply form values
         Object.keys(imported).forEach(key => {
+          if (key === 'todayDate') return;
           const el = form.elements[key];
           if (!el) return;
           if (el.type === 'checkbox') {
@@ -8223,7 +8390,6 @@ body::after {
   // Auto-import JSON data from tdrd_auto_import.js (loaded via <script> tag, works with file://)
   function autoImportJSON() {
     if (typeof window.TDRD_AUTO_IMPORT_DATA === 'undefined') {
-      console.log('No tdrd_auto_import.js found — skipping auto-import.');
       return;
     }
     try {
@@ -8232,6 +8398,7 @@ body::after {
 
       // Apply form values
       Object.keys(imported).forEach(key => {
+        if (key === 'todayDate') return;
         const el = form.elements[key];
         if (!el) return;
         if (el.type === 'checkbox') {
@@ -8258,8 +8425,6 @@ body::after {
       updateProductDisplay();
       updateFdrOverlayValues();
       try { if (typeof updateMaturityTicks === 'function') updateMaturityTicks(); } catch (e) {}
-
-      console.log('Auto-imported data from tdrd_auto_import.js');
     } catch (err) {
       console.error('Auto-import error', err);
     }
@@ -8328,6 +8493,8 @@ body::after {
   function closeOthersPopup() {
     if (!othersBackdrop) return;
     othersBackdrop.classList.remove('open');
+    resetStandaloneKycDateOverride();
+    try { syncTodayDate(true); } catch (e) {}
   }
 
   // Create or update a text input inside a popup container and sync with form
@@ -8341,23 +8508,61 @@ body::after {
       input.className = 'others-input';
       container.innerHTML = '';
       container.appendChild(input);
+      // Only attach listener once when creating the input
+      input.addEventListener('input', () => {
+        try {
+          const formEls = form.elements[formFieldName];
+          if (formEls) {
+            if (formEls.length) {
+              for (let i = 0; i < formEls.length; i++) {
+                formEls[i].value = input.value;
+              }
+            } else {
+              formEls.value = input.value;
+            }
+          }
+        } catch (e) {}
+        try { if (typeof updateFdrOverlayValues === 'function') updateFdrOverlayValues(); } catch (e) {}
+      });
     }
     if (input.value !== value) input.value = value;
-    input.addEventListener('input', () => {
-      try {
-        const formEls = form.elements[formFieldName];
-        if (formEls) {
-          if (formEls.length) {
-            for (let i = 0; i < formEls.length; i++) {
-              formEls[i].value = input.value;
-            }
-          } else {
-            formEls.value = input.value;
-          }
-        }
-      } catch (e) {}
-      try { if (typeof updateFdrOverlayValues === 'function') updateFdrOverlayValues(); } catch (e) {}
-    });
+  }
+
+  function makeEditableDateInput(containerId, value) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    let input = container.querySelector('input');
+    const todayValue = getCurrentDateInputValue();
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'date';
+      input.id = 'othersTodayDateInput';
+      input.className = 'others-input';
+      container.innerHTML = '';
+      container.appendChild(input);
+
+      const syncPopupDate = () => {
+        const currentToday = getCurrentDateInputValue();
+        input.dataset.manual = input.value && input.value !== currentToday ? 'true' : 'false';
+        try { syncTodayDate(true); } catch (e) {}
+        try { if (typeof updateOverlays === 'function') updateOverlays(); } catch (e) {}
+      };
+
+      input.addEventListener('input', syncPopupDate);
+      input.addEventListener('change', syncPopupDate);
+    }
+
+    const nextValue = value || todayValue;
+    const isManual = input.dataset.manual === 'true' && input.value;
+    if (!isManual) {
+      if (input.value !== nextValue) input.value = nextValue;
+      input.dataset.manual = nextValue !== todayValue ? 'true' : 'false';
+    } else if (!input.value) {
+      input.value = nextValue;
+    }
+
+    input.dataset.autoValue = todayValue;
   }
 
   // Create or update a select inside a popup container by cloning options from a source select
@@ -8366,6 +8571,7 @@ body::after {
     if (!container) return;
     let select = container.querySelector('select');
     const source = form ? form.elements[sourceSelectName] : null;
+    const isNew = !select;
     if (!select) {
       select = document.createElement('select');
       select.className = 'others-input';
@@ -8395,14 +8601,19 @@ body::after {
       select.value = fallbackVal || '';
     }
 
-    select.addEventListener('change', () => {
-      try { if (form && form.elements[formFieldName]) form.elements[formFieldName].value = select.value; } catch (e) {}
-      try { if (typeof updateFdrOverlayValues === 'function') updateFdrOverlayValues(); } catch (e) {}
-      try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
-    });
+    // Only attach listener once when creating the select
+    if (isNew) {
+      select.addEventListener('change', () => {
+        try { if (form && form.elements[formFieldName]) form.elements[formFieldName].value = select.value; } catch (e) {}
+        try { if (typeof updateFdrOverlayValues === 'function') updateFdrOverlayValues(); } catch (e) {}
+        try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
+      });
+    }
   }
 
   function updateOthersPopupData() {
+    const todayDate = getStandaloneKycDateValue();
+
     // Basic fields
     const accountNumber = form.elements['accountNumber']?.value || '';
     const cifNumber = form.elements['cifNumber']?.value || '';
@@ -8416,6 +8627,7 @@ body::after {
     // KYC fields
     const clientBusiness = form.elements['kycClientBusiness']?.value || '';
     const clientProfession = form.elements['kycClientProfession']?.value || '';
+    const professionSBS = form.elements['kycProfessionSBS']?.value || '';
     const typeOfOnboarding = form.elements['kycTypeOfOnboarding']?.value || '';
     const pepIpCeo = form.elements['kycPepIpCeo']?.value || '';
     const closeAssociatePep = form.elements['kycCloseAssociatePep']?.value || '';
@@ -8434,18 +8646,13 @@ body::after {
     const depositCode = form.elements['depositCode']?.value || '';
 
     // Build editable fields in the popup and sync
+    makeEditableDateInput('othersTodayDate', todayDate);
     makeEditableInput('othersAccountNumber', 'accountNumber', accountNumber);
     makeEditableInput('othersCifNumber', 'cifNumber', cifNumber);
     makeEditableInput('othersFullName', 'fullNameEn', fullName);
     makeEditableInput('othersNID', 'nid', nid);
     makeEditableInput('othersDob', 'dob', dob);
-
-    // Sync Full Name between Account Information and popup
-    const fullNameInput = form.elements['fullNameEn'];
-    if (fullNameInput) {
-      fullNameInput.addEventListener('change', updateOthersPopupData);
-      fullNameInput.addEventListener('input', updateOthersPopupData);
-    }
+    try { syncTodayDate(); } catch (e) {}
 
     // Special handling for Account Type dropdown from popup element
     const accountTypeContainer = document.getElementById('othersAccountType');
@@ -8458,6 +8665,13 @@ body::after {
         select.className = 'others-input';
         accountTypeContainer.innerHTML = '';
         accountTypeContainer.appendChild(select);
+        // Only attach listener once when creating the select
+        select.addEventListener('change', () => {
+          if (sourceSelect) sourceSelect.value = select.value;
+          if (mainAccountType) mainAccountType.value = select.value;
+          try { if (typeof updateFdrOverlayValues === 'function') updateFdrOverlayValues(); } catch (e) {}
+          try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
+        });
       }
       if (sourceSelect && sourceSelect.options) {
         if (select.options.length !== sourceSelect.options.length) {
@@ -8471,24 +8685,6 @@ body::after {
         }
         select.value = sourceSelect.value || '';
       }
-      select.addEventListener('change', () => {
-        if (sourceSelect) sourceSelect.value = select.value;
-        if (mainAccountType) mainAccountType.value = select.value;
-        try { if (typeof updateFdrOverlayValues === 'function') updateFdrOverlayValues(); } catch (e) {}
-        try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
-      });
-    }
-
-    // Sync main account type with popup selects
-    const mainAccountType = document.getElementById('mainAccountType');
-    const accountTypeSelectPopup = document.getElementById('accountTypeSelectPopup');
-    if (mainAccountType) {
-      mainAccountType.addEventListener('change', () => {
-        if (accountTypeSelectPopup) accountTypeSelectPopup.value = mainAccountType.value;
-        const popupSelect = document.querySelector('#othersAccountType select');
-        if (popupSelect) popupSelect.value = mainAccountType.value;
-        try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
-      });
     }
 
     makeEditableInput('othersProduct', 'product', product);
@@ -8497,34 +8693,7 @@ body::after {
     // KYC editable fields (clone selects where appropriate)
     makeEditableSelect('kycClientBusiness', 'kycClientBusiness', 'kycClientBusiness');
     makeEditableSelect('kycClientProfession', 'kycClientProfession', 'kycClientProfession');
-    
-    // Add mutual reset functionality for Client's Business and Client's Profession
-    setTimeout(() => {
-      const kycClientBusinessSelect = document.querySelector('#kycClientBusiness select');
-      const kycClientProfessionSelect = document.querySelector('#kycClientProfession select');
-      
-      if (kycClientBusinessSelect) {
-        kycClientBusinessSelect.addEventListener('change', () => {
-          if (kycClientProfessionSelect) {
-            kycClientProfessionSelect.value = '';
-          }
-          if (form && form.elements['kycClientProfession']) {
-            form.elements['kycClientProfession'].value = '';
-          }
-        });
-      }
-      
-      if (kycClientProfessionSelect) {
-        kycClientProfessionSelect.addEventListener('change', () => {
-          if (kycClientBusinessSelect) {
-            kycClientBusinessSelect.value = '';
-          }
-          if (form && form.elements['kycClientBusiness']) {
-            form.elements['kycClientBusiness'].value = '';
-          }
-        });
-      }
-    }, 0);
+    makeEditableInput('kycProfessionSBS', 'kycProfessionSBS', professionSBS);
     
     makeEditableSelect('kycTypeOfOnboarding', 'kycTypeOfOnboarding', 'kycTypeOfOnboarding');
     makeEditableSelect('othersPepIpCeo', 'kycPepIpCeo', 'kycPepIpCeo');
@@ -8545,27 +8714,62 @@ body::after {
     makeEditableInput('kycIdentityDocumentNumber', 'identityDocumentNumber', identityDocumentNumber);
   }
 
+  // Wire popup-related event listeners once (outside updateOthersPopupData to avoid listener leaks)
+  (function wireOthersPopupListeners() {
+    const fullNameInput = form.elements['fullNameEn'];
+    if (fullNameInput) {
+      fullNameInput.addEventListener('change', updateOthersPopupData);
+      fullNameInput.addEventListener('input', updateOthersPopupData);
+    }
+
+    const mainAccountType = document.getElementById('mainAccountType');
+    const accountTypeSelectPopup = document.getElementById('accountTypeSelectPopup');
+    if (mainAccountType) {
+      mainAccountType.addEventListener('change', () => {
+        if (accountTypeSelectPopup) accountTypeSelectPopup.value = mainAccountType.value;
+        const popupSelect = document.querySelector('#othersAccountType select');
+        if (popupSelect) popupSelect.value = mainAccountType.value;
+        try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
+      });
+    }
+
+    // Wire mutual reset for Client's Business and Client's Profession popup selects
+    // Use MutationObserver to attach once the selects are created
+    let mutualResetWired = false;
+    function wireMutualReset() {
+      if (mutualResetWired) return;
+      const kycClientBusinessSelect = document.querySelector('#kycClientBusiness select');
+      const kycClientProfessionSelect = document.querySelector('#kycClientProfession select');
+      if (kycClientBusinessSelect && kycClientProfessionSelect) {
+        mutualResetWired = true;
+        kycClientBusinessSelect.addEventListener('change', () => {
+          kycClientProfessionSelect.value = '';
+          if (form && form.elements['kycClientProfession']) {
+            form.elements['kycClientProfession'].value = '';
+          }
+        });
+        kycClientProfessionSelect.addEventListener('change', () => {
+          kycClientBusinessSelect.value = '';
+          if (form && form.elements['kycClientBusiness']) {
+            form.elements['kycClientBusiness'].value = '';
+          }
+        });
+      }
+    }
+    // Try wiring immediately and also after first popup data update
+    wireMutualReset();
+    const origUpdate = updateOthersPopupData;
+    const wrappedUpdate = function() {
+      origUpdate.call(this);
+      wireMutualReset();
+    };
+    // Replace the reference
+    updateOthersPopupData = wrappedUpdate;
+  })();
+
   // Print KYC popup content
   function printKYCPopup() {
-    // Close the popup first
-    closeOthersPopup();
-    
-    // Switch to KYC Stand Alone FD form type
-    const formTypeSelect = document.getElementById('formTypeSelect');
-    formTypeSelect.value = 'others';
-    formTypeSelect.dispatchEvent(new Event('change'));
-    
-    // Switch to form preview before printing
-    const formPageBtn = document.querySelector('.nav-btn[data-page="form"]');
-    if (formPageBtn) formPageBtn.click();
-    
-    // Small delay to ensure the form preview is rendered
-    setTimeout(function() {
-      window.print();
-      // After print dialog closes, return to information input page
-      const infoPageBtn = document.querySelector('.nav-btn[data-page="info"]');
-      if (infoPageBtn) infoPageBtn.click();
-    }, 200);
+    printPreparedForm('others');
   }
 
   if (othersBtn) {
@@ -8576,20 +8780,26 @@ body::after {
     othersClose.addEventListener('click', closeOthersPopup);
   }
 
-  if (othersBackdrop) {
-    othersBackdrop.addEventListener('click', (e) => {
-      if (e.target === othersBackdrop) closeOthersPopup();
-    });
-  }
+  // Backdrop click disabled - popup stays open when clicking outside
+  // if (othersBackdrop) {
+  //   othersBackdrop.addEventListener('click', (e) => {
+  //     if (e.target === othersBackdrop) closeOthersPopup();
+  //   });
+  // }
 
   if (popupPrintOthersBtn) {
     popupPrintOthersBtn.addEventListener('click', printKYCPopup);
   }
 
-  // Update Others popup when form data changes
+  // Update Others popup when form data changes (only when popup is open, debounced for input)
   if (form) {
-    form.addEventListener('change', updateOthersPopupData);
-    form.addEventListener('input', updateOthersPopupData);
+    const debouncedPopupUpdate = debounce(function() {
+      if (othersBackdrop && othersBackdrop.classList.contains('open')) updateOthersPopupData();
+    }, 300);
+    form.addEventListener('change', function() {
+      if (othersBackdrop && othersBackdrop.classList.contains('open')) updateOthersPopupData();
+    });
+    form.addEventListener('input', debouncedPopupUpdate);
   }
 
   // Close popup on Escape key
@@ -8614,17 +8824,13 @@ body::after {
     } catch (e) {}
     
     devModeToggle.addEventListener('change', function(e) {
-      console.log('[DEV MODE] Toggle changed:', this.checked);
       if (this.checked) {
         document.body.classList.add('developer-mode');
-        console.log('[DEV MODE] Developer mode ON');
       } else {
         document.body.classList.remove('developer-mode');
-        console.log('[DEV MODE] Developer mode OFF');
       }
       try { 
         localStorage.setItem('TDRD_DEV_MODE', this.checked ? 'true' : 'false'); 
-        console.log('[DEV MODE] Saved state:', this.checked ? 'true' : 'false');
       } catch (e) {}
     });
     
@@ -8633,12 +8839,19 @@ body::after {
       sliderEl.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('[DEV MODE] Slider clicked');
         devModeToggle.checked = !devModeToggle.checked;
         devModeToggle.dispatchEvent(new Event('change', { bubbles: true }));
       });
     }
   }
+
+  // Clear form data when page closes, reloads, or refreshes
+  window.addEventListener('beforeunload', function(event) {
+    try {
+      // Clear all saved form data from localStorage
+      localStorage.removeItem(FORM_KEY);
+    } catch (e) {}
+  });
 
 })();
   </script>

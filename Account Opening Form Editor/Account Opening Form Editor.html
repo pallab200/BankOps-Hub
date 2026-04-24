@@ -2927,6 +2927,10 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       <div class="others-popup-body">
         <div class="others-info-grid">
           <div class="others-info-item">
+            <label>Date</label>
+            <div class="others-info-value" id="othersPrintDate">—</div>
+          </div>
+          <div class="others-info-item">
             <label>Account Number</label>
             <div class="others-info-value" id="othersAccountNumber">—</div>
           </div>
@@ -3731,6 +3735,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                 </select>
               </div>
             </div>
+            <input type="hidden" name="todayDate">
+            <input type="hidden" name="todayDateAuto" value="true">
           </div>
 
           <!-- Beneficial Owner Details (shown when Beneficial Owner(s) = Yes) -->
@@ -3820,8 +3826,11 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
               </div>
 
               <!-- Present Address header full width -->
-              <div class="form-group span-4">
-                <label style="font-weight:700;">Present Address</label>
+              <div class="form-group span-4" style="display:flex; align-items:center; justify-content:flex-start; gap:8px;">
+                <label style="font-weight:700; margin:0;">Present Address</label>
+                <div class="checkbox-inline" style="margin:0 0 0 4px;">
+                  <label style="margin:0;"><input type="checkbox" id="boSameAddressAH" style="margin-right:4px; vertical-align:middle;">Same as Account Holder Present Address</label>
+                </div>
               </div>
               <div class="form-group">
                 <label>House, Street, Block, Sector</label>
@@ -4268,6 +4277,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   const sameAddressCheckbox = document.getElementById('sameAddress');
   const nomineeSameCheckbox = document.getElementById('nomineeSameAddress');
   const guardianSameCheckbox = document.getElementById('gSameAddress');
+  const boSameAddressAHCheckbox = document.getElementById('boSameAddressAH');
   const formTypeSelect = document.getElementById('formTypeSelect');
   const beneficialOwnersSelect = form ? form.elements['beneficialOwners'] : null;
   const boSection = document.getElementById('beneficial-owner-details');
@@ -4292,6 +4302,118 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   // initialize on load
   updateAccountNumberNoSpace();
   const slideBranchInput = document.getElementById('slideBranchInput');
+
+  function getTodayInputValue() {
+    const today = new Date();
+    return formatDateForInput(today);
+  }
+
+  function formatDateForInput(dateValue) {
+    if (!(dateValue instanceof Date) || Number.isNaN(dateValue.getTime())) return '';
+    const year = dateValue.getFullYear();
+    const month = String(dateValue.getMonth() + 1).padStart(2, '0');
+    const day = String(dateValue.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function parseFormDateValue(dateValue) {
+    if (!dateValue) return null;
+    const normalizedValue = String(dateValue).replace(/\u00A0/g, ' ').trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedValue)) {
+      const parts = normalizedValue.split('-').map(Number);
+      const parsedDate = new Date(parts[0], parts[1] - 1, parts[2]);
+      return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+    }
+    if (/^\d{2}[/-]\d{2}[/-]\d{4}$/.test(normalizedValue)) {
+      const parts = normalizedValue.split(/[/-]/).map(Number);
+      const parsedDate = new Date(parts[2], parts[1] - 1, parts[0]);
+      return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+    }
+    const digitsOnly = normalizedValue.replace(/\D/g, '');
+    if (digitsOnly.length === 8) {
+      const day = Number(digitsOnly.slice(0, 2));
+      const month = Number(digitsOnly.slice(2, 4));
+      const year = Number(digitsOnly.slice(4, 8));
+      const parsedDate = new Date(year, month - 1, day);
+      return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+    }
+    const parsedDate = new Date(normalizedValue);
+    return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+  }
+
+  function isOthersPopupOpen() {
+    const othersBackdropEl = document.getElementById('othersBackdrop');
+    return !!(othersBackdropEl && othersBackdropEl.classList.contains('open'));
+  }
+
+  function resetTodayDateToAutoToday() {
+    const todayDateField = form && form.elements ? form.elements['todayDate'] : null;
+    const todayDateAutoField = form && form.elements ? form.elements['todayDateAuto'] : null;
+    const todayValue = getTodayInputValue();
+    if (todayDateAutoField) todayDateAutoField.value = 'true';
+    if (todayDateField) todayDateField.value = todayValue;
+    return todayValue;
+  }
+
+  function ensureTodayDateValue() {
+    const todayDateField = form && form.elements ? form.elements['todayDate'] : null;
+    const todayDateAutoField = form && form.elements ? form.elements['todayDateAuto'] : null;
+    const defaultValue = getTodayInputValue();
+    if (!todayDateField) return defaultValue;
+    const autoModeValue = todayDateAutoField ? String(todayDateAutoField.value || 'true').trim().toLowerCase() : 'true';
+    const shouldForceAutoUpdate = !isOthersPopupOpen();
+    const shouldAutoUpdate = shouldForceAutoUpdate || autoModeValue !== 'false';
+    const parsedCurrentValue = parseFormDateValue(todayDateField.value);
+    const normalizedValue = shouldAutoUpdate
+      ? defaultValue
+      : (parsedCurrentValue ? formatDateForInput(parsedCurrentValue) : defaultValue);
+    if (todayDateAutoField && (shouldForceAutoUpdate || !todayDateAutoField.value)) {
+      todayDateAutoField.value = 'true';
+    }
+    if (todayDateField.value !== normalizedValue) {
+      todayDateField.value = normalizedValue;
+    }
+    return normalizedValue;
+  }
+
+  function handleTodayDateInputChange(event) {
+    const todayDateField = form && form.elements ? form.elements['todayDate'] : null;
+    const todayDateAutoField = form && form.elements ? form.elements['todayDateAuto'] : null;
+    if (!todayDateField) return;
+
+    const rawValue = event && event.target ? event.target.value : '';
+    const parsedValue = parseFormDateValue(rawValue);
+
+    if (parsedValue) {
+      todayDateField.value = formatDateForInput(parsedValue);
+      if (todayDateAutoField) todayDateAutoField.value = 'false';
+    } else {
+      todayDateField.value = getTodayInputValue();
+      if (todayDateAutoField) todayDateAutoField.value = 'true';
+    }
+
+    try { if (typeof updateOverlays === 'function') updateOverlays(); } catch (e) {}
+    try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
+  }
+
+  function formatPrintPreviewDate(dateValue) {
+    const parsedDate = parseFormDateValue(dateValue);
+    if (!parsedDate) return '';
+    const day = String(parsedDate.getDate()).padStart(2, '0');
+    const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+    const year = parsedDate.getFullYear();
+    const gap = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0';
+    return day + gap + month + gap + year;
+  }
+
+  function formatDateWithSeparator(dateValue, separator) {
+    const parsedDate = parseFormDateValue(dateValue);
+    if (!parsedDate) return '';
+    const day = String(parsedDate.getDate()).padStart(2, '0');
+    const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+    const year = parsedDate.getFullYear();
+    return day + separator + month + separator + year;
+  }
 
   // Guardian section visibility based on age (< 18)
   const guardianSectionNew = document.getElementById('guardian-info-new');
@@ -5442,11 +5564,11 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   // Format a date so each digit is separated by three non-breaking spaces: d   d   m   m   y   y   y   y
   function formatDateDigits(dateValue) {
     if (!dateValue) return '';
-    const dt = new Date(dateValue);
-    if (isNaN(dt)) return '';
-    const dd = String(dt.getDate()).padStart(2, '0');
-    const mm = String(dt.getMonth() + 1).padStart(2, '0');
-    const yyyy = String(dt.getFullYear()).padStart(4, '0');
+    const parsedDate = parseFormDateValue(dateValue);
+    if (!parsedDate) return '';
+    const dd = String(parsedDate.getDate()).padStart(2, '0');
+    const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
+    const yyyy = String(parsedDate.getFullYear()).padStart(4, '0');
     const gap = '\u00A0\u00A0\u00A0\u00A0';
     // join digits with gap, then join components with gap as well
     const parts = [dd, mm, yyyy].map(part => part.split('').join(gap));
@@ -5554,6 +5676,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   }
 
   function updateOverlays() {
+    const selectedPrintDate = ensureTodayDateValue();
     const formData = new FormData(form);
     const data = {};
     
@@ -5603,17 +5726,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       data.accountTypeCode = '130';
     }
 
-    // Add today's date (for preview only) in format DD<NBSP*3>MM<NBSP*3>YYYY
-    try {
-      const dt = new Date();
-      const dd = String(dt.getDate()).padStart(2, '0');
-      const mm = String(dt.getMonth() + 1).padStart(2, '0');
-      const yyyy = dt.getFullYear();
-      const gap = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0';
-      data.todayDate = dd + gap + mm + gap + yyyy;
-    } catch (e) {
-      data.todayDate = '';
-    }
+    // Add the selected print date in the existing preview spacing format.
+    data.todayDate = formatPrintPreviewDate(selectedPrintDate);
 
     // Convert initial deposit amount into words for display
     try {
@@ -6279,59 +6393,19 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       // - page 13: use dd/mm/yyyy
       // - pages 6 and 7: use dd-mm-yyyy (existing behavior)
       else if (field === 'todayDate' && overlay.dataset.page === '13') {
-        try {
-          const dt = new Date();
-          if (!isNaN(dt)) {
-            const dd = String(dt.getDate()).padStart(2, '0');
-            const mm = String(dt.getMonth() + 1).padStart(2, '0');
-            const yyyy = dt.getFullYear();
-            displayValue = dd + '-' + mm + '-' + yyyy;
-          }
-        } catch (e) {
-          displayValue = value;
-        }
+        displayValue = formatDateWithSeparator(selectedPrintDate, '-') || value;
       }
       // Page 23: use dd-mm-yyyy for today's date (special case)
       else if (field === 'todayDate' && overlay.dataset.page === '23') {
-        try {
-          const dt = new Date();
-          if (!isNaN(dt)) {
-            const dd = String(dt.getDate()).padStart(2, '0');
-            const mm = String(dt.getMonth() + 1).padStart(2, '0');
-            const yyyy = dt.getFullYear();
-            displayValue = dd + '-' + mm + '-' + yyyy;
-          }
-        } catch (e) {
-          displayValue = value;
-        }
+        displayValue = formatDateWithSeparator(selectedPrintDate, '-') || value;
       }
       // Page 29: use dd-mm-yyyy for today's date (special case)
       else if (field === 'todayDate' && overlay.dataset.page === '29') {
-        try {
-          const dt = new Date();
-          if (!isNaN(dt)) {
-            const dd = String(dt.getDate()).padStart(2, '0');
-            const mm = String(dt.getMonth() + 1).padStart(2, '0');
-            const yyyy = dt.getFullYear();
-            displayValue = dd + '-' + mm + '-' + yyyy;
-          }
-        } catch (e) {
-          displayValue = value;
-        }
+        displayValue = formatDateWithSeparator(selectedPrintDate, '-') || value;
       }
       // Page 35: use dd-mm-yyyy for today's date (special case)
       else if (field === 'todayDate' && overlay.dataset.page === '35') {
-        try {
-          const dt = new Date();
-          if (!isNaN(dt)) {
-            const dd = String(dt.getDate()).padStart(2, '0');
-            const mm = String(dt.getMonth() + 1).padStart(2, '0');
-            const yyyy = dt.getFullYear();
-            displayValue = dd + '-' + mm + '-' + yyyy;
-          }
-        } catch (e) {
-          displayValue = value;
-        }
+        displayValue = formatDateWithSeparator(selectedPrintDate, '-') || value;
       }
       // Second Applicant Date: use dd-mm-yyyy format (today's date) - only show if secondApplicantName exists
       else if (field === 'secondApplicantDate') {
@@ -6339,17 +6413,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         const secondApplicantName = (secondApplicantNameEl && secondApplicantNameEl.value) ? String(secondApplicantNameEl.value).trim() : '';
         
         if (secondApplicantName) {
-          try {
-            const dt = new Date();
-            if (!isNaN(dt)) {
-              const dd = String(dt.getDate()).padStart(2, '0');
-              const mm = String(dt.getMonth() + 1).padStart(2, '0');
-              const yyyy = dt.getFullYear();
-              displayValue = dd + '-' + mm + '-' + yyyy;
-            }
-          } catch (e) {
-            displayValue = '';
-          }
+          displayValue = formatDateWithSeparator(selectedPrintDate, '-');
         } else {
           displayValue = '';
         }
@@ -6360,33 +6424,13 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         const thirdApplicantName = (thirdApplicantNameEl && thirdApplicantNameEl.value) ? String(thirdApplicantNameEl.value).trim() : '';
         
         if (thirdApplicantName) {
-          try {
-            const dt = new Date();
-            if (!isNaN(dt)) {
-              const dd = String(dt.getDate()).padStart(2, '0');
-              const mm = String(dt.getMonth() + 1).padStart(2, '0');
-              const yyyy = dt.getFullYear();
-              displayValue = dd + '-' + mm + '-' + yyyy;
-            }
-          } catch (e) {
-            displayValue = '';
-          }
+          displayValue = formatDateWithSeparator(selectedPrintDate, '-');
         } else {
           displayValue = '';
         }
       }
       else if (field === 'todayDate' && (overlay.dataset.page === '6' || overlay.dataset.page === '7')) {
-        try {
-          const dt = new Date();
-          if (!isNaN(dt)) {
-            const dd = String(dt.getDate()).padStart(2, '0');
-            const mm = String(dt.getMonth() + 1).padStart(2, '0');
-            const yyyy = dt.getFullYear();
-            displayValue = dd + '-' + mm + '-' + yyyy;
-          }
-        } catch (e) {
-          displayValue = value;
-        }
+        displayValue = formatDateWithSeparator(selectedPrintDate, '-') || value;
       }
 
       // Special: accountTypeName - extract product code from account number and lookup type
@@ -7114,6 +7158,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     try { handleOwnershipChange(); } catch (e) {}
     try { handleNomineeSameAddress(); } catch (e) {}
     try { handleGuardianSameAddress(); } catch (e) {}
+    try { handleBOSameAddressAH(); } catch (e) {}
     updateOverlays();
   }
 
@@ -7383,206 +7428,175 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   }
 
   // Print functions
-  function printCurrentPage() {
-    // Hide info page, show form page, then print selected form type
-    const infoPage = document.getElementById('info-page');
-    const formPage = document.getElementById('form-page');
-    const wasInfoVisible = infoPage.classList.contains('active');
-    const wasFormVisible = formPage.classList.contains('active');
-    
-    // Auto-detect form type based on account type
+  function escapeHtmlAttribute(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function refreshPrintableData() {
+    try { if (typeof calculateTransactionTotals === 'function') calculateTransactionTotals(); } catch (e) {}
+    try { if (typeof computeOverallTotals === 'function') computeOverallTotals(); } catch (e) {}
+    try { if (typeof updateOverlays === 'function') updateOverlays(); } catch (e) {}
+    try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
+  }
+
+  function detectPrintFormType() {
     const accountNumberEl = form.elements['accountNumber'];
     const accountNumber = accountNumberEl ? accountNumberEl.value : '';
     const accountTypeName = getAccountTypeFromNumber(accountNumber).toLowerCase();
-    
+
     console.log('Print Auto-detect: accountNumber=' + accountNumber + ', accountTypeName=' + accountTypeName);
-    
-    let selectedPrintType = 'conventional'; // default
-    
+
+    let selectedPrintType = 'conventional';
+
     if (accountTypeName.includes('mudarabah') && accountTypeName.includes('imperial') && accountTypeName.includes('savings')) {
-      // Mudarabah Imperial Savings -> Taqwa Imperial
       selectedPrintType = 'taqwa-imperial';
     } else if (accountTypeName.includes('mudarabah') && accountTypeName.includes('savings')) {
-      // Mudarabah Savings -> Taqwa
       selectedPrintType = 'taqwa';
     } else if (accountTypeName.includes('imperial') && accountTypeName.includes('savings')) {
-      // Imperial Savings -> Conventional Imperial
       selectedPrintType = 'conventional-imperial';
-    } else {
-      // All other account types default to Conventional
-      selectedPrintType = 'conventional';
     }
-    
-    // Update dropdown to show auto-selected type
+
     const printFormTypeSelect = document.getElementById('printFormTypeSelect');
     if (printFormTypeSelect) {
       printFormTypeSelect.value = selectedPrintType;
     }
-    
-    // Save current form type
-    const currentFormType = formTypeSelect ? formTypeSelect.value : 'conventional';
-    
-    // Switch to selected print form type
-    if (formTypeSelect) {
-      formTypeSelect.value = selectedPrintType;
-      handleFormTypeChange();
-    }
 
-    // If Beneficial Owner(s) is Yes, also show Beneficial Owner form pages
+    return selectedPrintType;
+  }
+
+  function hasBeneficialOwnerPagesForPrint() {
     const boSelect = form.elements['beneficialOwners'];
     const boVal = boSelect ? String(boSelect.value || '').toLowerCase() : '';
-    const boPages = document.querySelectorAll('.form-page.beneficial-owner-page');
-    const boOriginalDisplay = [];
-    if (boPages && boPages.length) {
-      boPages.forEach((p, idx) => {
-        boOriginalDisplay[idx] = p.style.display;
-        if (boVal === 'yes') {
-          p.style.display = 'block';
-          p.classList.add('active');
-        }
-      });
-    }
+    return boVal === 'yes';
+  }
 
-    // If account holder age is below 18, show Guardian page; otherwise hide it
+  function hasGuardianPagesForPrint() {
     const dobEl = form.elements['dob'];
     const dobVal = dobEl ? dobEl.value : '';
-    let accountHolderAgeBelowEighteen = false;
-    const guardianPages = document.querySelectorAll('.form-page.guardian-page');
-    const guardianOriginalDisplay = [];
-    if (dobVal) {
+    const age = dobVal ? calculateAge(dobVal) : NaN;
+    return Number.isFinite(age) && age < 18;
+  }
+
+  function getPrintablePages(printType, includeSupplementaryPages) {
+    const selectorMap = {
+      'conventional': '.form-page:not(.others-page):not(.imperial-page):not(.taqwa-page):not(.taqwa-imperial-page):not(.beneficial-owner-page):not(.guardian-page)',
+      'conventional-imperial': '.form-page.imperial-page',
+      'taqwa': '.form-page.taqwa-page',
+      'taqwa-imperial': '.form-page.taqwa-imperial-page',
+      'others': '.form-page.others-page',
+      'beneficial-owner': '.form-page.beneficial-owner-page',
+      'guardian': '.form-page.guardian-page'
+    };
+
+    const includedPages = new Set();
+    const baseSelector = selectorMap[printType] || selectorMap['conventional'];
+    document.querySelectorAll(baseSelector).forEach(page => includedPages.add(page));
+
+    if (includeSupplementaryPages) {
+      if (hasBeneficialOwnerPagesForPrint()) {
+        document.querySelectorAll('.form-page.beneficial-owner-page').forEach(page => includedPages.add(page));
+      }
+      if (hasGuardianPagesForPrint()) {
+        document.querySelectorAll('.form-page.guardian-page').forEach(page => includedPages.add(page));
+      }
+    }
+
+    return Array.from(document.querySelectorAll('.form-page')).filter(page => includedPages.has(page));
+  }
+
+  function buildPrintablePagesMarkup(pages) {
+    return pages.map(page => {
+      const clone = page.cloneNode(true);
+      clone.classList.add('active');
+      clone.style.display = 'block';
+      return clone.outerHTML;
+    }).join('');
+  }
+
+  function printPagesInIframe(pages, title) {
+    if (!pages || pages.length === 0) {
+      console.warn('No pages available to print');
+      return;
+    }
+
+    const existingFrame = document.getElementById('__account_opening_print_frame');
+    if (existingFrame && existingFrame.parentNode) {
+      existingFrame.parentNode.removeChild(existingFrame);
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.id = '__account_opening_print_frame';
+    iframe.style.position = 'fixed';
+    iframe.style.left = '-10000px';
+    iframe.style.top = '0';
+    iframe.style.width = '1px';
+    iframe.style.height = '1px';
+    iframe.style.border = '0';
+    iframe.style.opacity = '0.01';
+    iframe.style.pointerEvents = 'none';
+    document.body.appendChild(iframe);
+
+    const headAssets = Array.from(document.head.querySelectorAll('style, link[rel="stylesheet"]'))
+      .map(element => element.outerHTML)
+      .join('\n');
+    const printableMarkup = buildPrintablePagesMarkup(pages);
+    const html = '<!doctype html><html lang="en"><head>' +
+      '<meta charset="utf-8">' +
+      '<base href="' + escapeHtmlAttribute(document.baseURI) + '">' +
+      '<title>' + escapeHtmlAttribute(title) + '</title>' +
+      headAssets +
+      '<style>' +
+      'html,body{margin:0;padding:0;background:#fff;}' +
+      'body{overflow:visible !important;}' +
+      '.page-container{display:block !important;padding:0 !important;margin:0 auto !important;height:auto !important;}' +
+      '.preview-container{margin:0 !important;padding:0 !important;max-width:none !important;}' +
+      '.form-page{display:block !important;margin:0 auto !important;}' +
+      '.form-page:not(.active){display:block !important;}' +
+      '</style>' +
+      '</head><body>' +
+      '<div class="page-container active" id="form-page"><div class="preview-container">' + printableMarkup + '</div></div>' +
+      '<script>window.onload=function(){setTimeout(function(){try{window.focus();window.print();}catch(e){}},300);};<\/script>' +
+      '</body></html>';
+
+    const printDocument = iframe.contentDocument || iframe.contentWindow.document;
+    printDocument.open();
+    printDocument.write(html);
+    printDocument.close();
+
+    setTimeout(() => {
       try {
-        const dobDate = new Date(dobVal);
-        const today = new Date();
-        const age = today.getFullYear() - dobDate.getFullYear();
-        const monthDiff = today.getMonth() - dobDate.getMonth();
-        const dayDiff = today.getDate() - dobDate.getDate();
-        const actualAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
-        if (actualAge < 18) {
-          accountHolderAgeBelowEighteen = true;
+        const frameEl = document.getElementById('__account_opening_print_frame');
+        if (frameEl && frameEl.parentNode) {
+          frameEl.parentNode.removeChild(frameEl);
         }
       } catch (e) {}
-    }
-    // Save original display state and apply print-time visibility
-    if (guardianPages && guardianPages.length) {
-      guardianPages.forEach((p, idx) => {
-        guardianOriginalDisplay[idx] = p.style.display;
-        if (accountHolderAgeBelowEighteen) {
-          // Age < 18: show guardian page
-          p.style.display = 'block';
-          p.classList.add('active');
-        } else {
-          // Age >= 18: hide guardian page during print
-          p.style.display = 'none';
-          p.classList.remove('active');
-        }
-      });
-    }
-    
-    infoPage.classList.remove('active');
-    formPage.classList.add('active');
-    
-    setTimeout(() => {
-      window.print();
-      
-      // Restore form type
-      if (formTypeSelect) {
-        formTypeSelect.value = currentFormType;
-        handleFormTypeChange();
-      }
+    }, 6000);
+  }
 
-      // Restore Beneficial Owner pages to their original display state
-      if (boPages && boPages.length) {
-        boPages.forEach((p, idx) => {
-          if (typeof boOriginalDisplay[idx] !== 'undefined') {
-            p.style.display = boOriginalDisplay[idx];
-          }
-        });
-      }
-
-      // Restore Guardian pages to their original display state
-      if (guardianPages && guardianPages.length) {
-        guardianPages.forEach((p, idx) => {
-          if (typeof guardianOriginalDisplay[idx] !== 'undefined') {
-            p.style.display = guardianOriginalDisplay[idx];
-          }
-        });
-      }
-      
-      // Restore visibility
-      if (wasInfoVisible) infoPage.classList.add('active');
-      if (!wasFormVisible) formPage.classList.remove('active');
-    }, 100);
+  function printCurrentPage() {
+    const selectedPrintType = detectPrintFormType();
+    refreshPrintableData();
+    const pages = getPrintablePages(selectedPrintType, true);
+    printPagesInIframe(pages, 'Account Opening Form Print');
   }
 
   function printAllPages() {
-    // All pages are visible by default; simply print the document
-    window.print();
+    refreshPrintableData();
+    const pages = Array.from(document.querySelectorAll('.form-page')).filter(page => {
+      return window.getComputedStyle(page).display !== 'none';
+    });
+    printPagesInIframe(pages, 'Account Opening Form Print');
   }
 
   // Print Others pages only
   function printOthersPages() {
-    const infoPage = document.getElementById('info-page');
-    const formPage = document.getElementById('form-page');
-    const othersBackdropEl = document.getElementById('othersBackdrop');
-    const wasInfoVisible = infoPage.classList.contains('active');
-    const wasFormVisible = formPage.classList.contains('active');
-    const wasPopupOpen = othersBackdropEl && othersBackdropEl.classList.contains('open');
-    
-    // Save current form type
-    const currentFormType = formTypeSelect ? formTypeSelect.value : 'conventional';
-    
-    // Close the Others popup so it doesn't interfere with printing
-    if (othersBackdropEl && wasPopupOpen) {
-      othersBackdropEl.classList.remove('open');
-    }
-    
-    // Switch to Others form type
-    if (formTypeSelect) {
-      formTypeSelect.value = 'others';
-      handleFormTypeChange();
-    }
-    
-    // Show form page for printing
-    infoPage.classList.remove('active');
-    formPage.classList.add('active');
-    
-    // Force DOM reflow and wait for render with requestAnimationFrame
-    requestAnimationFrame(() => {
-      // Force layout reflow to ensure rendering
-      document.body.offsetHeight;
-      
-      // Wait a bit more then compute totals and print
-      setTimeout(() => {
-        try {
-          if (typeof calculateTransactionTotals === 'function') calculateTransactionTotals();
-          if (typeof computeOverallTotals === 'function') computeOverallTotals();
-          if (typeof updateOverlays === 'function') updateOverlays();
-        } catch (e) {}
-        window.print();
-        
-        // Restore after print dialog closes
-        setTimeout(() => {
-          try {
-            if (typeof calculateTransactionTotals === 'function') calculateTransactionTotals();
-            if (typeof computeOverallTotals === 'function') computeOverallTotals();
-            if (typeof updateOverlays === 'function') updateOverlays();
-          } catch (e) {}
-          if (formTypeSelect) {
-            formTypeSelect.value = currentFormType;
-            handleFormTypeChange();
-          }
-          
-          // Restore visibility
-          if (wasInfoVisible) infoPage.classList.add('active');
-          if (!wasFormVisible) formPage.classList.remove('active');
-          
-          // Reopen popup if it was open before
-          if (wasPopupOpen && othersBackdropEl) {
-            othersBackdropEl.classList.add('open');
-          }
-        }, 1000);
-      }, 300);
-    });
+    refreshPrintableData();
+    const pages = getPrintablePages('others', false);
+    printPagesInIframe(pages, 'KYC, TP, SBS Print');
   }
 
   // Same address functionality
@@ -7650,6 +7664,25 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       form.elements['gPermanentThana'].value = form.elements['gPresentThana'] ? form.elements['gPresentThana'].value : '';
       form.elements['gPermanentDistrict'].value = form.elements['gPresentDistrict'] ? form.elements['gPresentDistrict'].value : '';
       form.elements['gPermanentCountry'].value = form.elements['gPresentCountry'] ? form.elements['gPresentCountry'].value : '';
+    }
+
+    updateOverlays();
+    // Ensure the overall summary totals are recomputed after sync
+    setTimeout(() => { if (typeof computeOverallTotals === 'function') computeOverallTotals(); }, 50);
+  }
+
+  // Beneficial Owner: copy account holder present address to beneficial owner present address when checked
+  function handleBOSameAddressAH() {
+    if (!form) return;
+    if (boSameAddressAHCheckbox && boSameAddressAHCheckbox.checked) {
+      // Copy individual account holder present address fields to beneficial owner present address fields
+      form.elements['boPresentHouse'].value = form.elements['presentHouse'] ? form.elements['presentHouse'].value : '';
+      form.elements['boPresentArea'].value = form.elements['presentRoad'] ? form.elements['presentRoad'].value : '';
+      form.elements['boPresentPO'].value = form.elements['presentPO'] ? form.elements['presentPO'].value : '';
+      form.elements['boPresentPostCode'].value = form.elements['presentPostCode'] ? form.elements['presentPostCode'].value : '';
+      form.elements['boPresentThana'].value = form.elements['presentThana'] ? form.elements['presentThana'].value : '';
+      form.elements['boPresentDistrict'].value = form.elements['presentDistrict'] ? form.elements['presentDistrict'].value : '';
+      form.elements['boPresentCountry'].value = form.elements['presentCountry'] ? form.elements['presentCountry'].value : '';
     }
 
     updateOverlays();
@@ -7754,6 +7787,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   sameAddressCheckbox.addEventListener('change', handleSameAddress);
   if (nomineeSameCheckbox) nomineeSameCheckbox.addEventListener('change', handleNomineeSameAddress);
   if (guardianSameCheckbox) guardianSameCheckbox.addEventListener('change', handleGuardianSameAddress);
+  if (boSameAddressAHCheckbox) boSameAddressAHCheckbox.addEventListener('change', handleBOSameAddressAH);
   if (boSameAddressCheckbox) boSameAddressCheckbox.addEventListener('change', handleBoSameAddress);
   if (beneficialOwnersSelect) {
     beneficialOwnersSelect.addEventListener('change', handleBeneficialOwnerToggle);
@@ -8237,6 +8271,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     if (el) el.addEventListener('input', () => {
       if (nomineeSameCheckbox && nomineeSameCheckbox.checked) handleNomineeSameAddress();
       if (guardianSameCheckbox && guardianSameCheckbox.checked) handleGuardianSameAddress();
+      if (boSameAddressAHCheckbox && boSameAddressAHCheckbox.checked) handleBOSameAddressAH();
     });
   });
 
@@ -8588,22 +8623,29 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   function closeOthersPopup() {
     if (!othersBackdrop) return;
     othersBackdrop.classList.remove('open');
+    resetTodayDateToAutoToday();
+    try { if (typeof updateOverlays === 'function') updateOverlays(); } catch (e) {}
+    try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
   }
 
   // Create or update a text input (or textarea) inside a popup container and sync with form
-  function makeEditableInput(containerId, formFieldName, value, isTextarea, onChangeCallback) {
+  function makeEditableInput(containerId, formFieldName, value, isTextarea, onChangeCallback, inputType) {
     const container = document.getElementById(containerId);
     if (!container) return;
     let input = container.querySelector('input, textarea');
     if (!input) {
       input = isTextarea ? document.createElement('textarea') : document.createElement('input');
-      if (!isTextarea) input.type = 'text';
       input.className = 'others-input';
       container.innerHTML = '';
       container.appendChild(input);
     }
+    if (!isTextarea) input.type = inputType || 'text';
     if (input.value !== value) input.value = value;
-    input.addEventListener('input', () => {
+    if (input._popupInputSyncHandler) {
+      input.removeEventListener('input', input._popupInputSyncHandler);
+      input.removeEventListener('change', input._popupInputSyncHandler);
+    }
+    input._popupInputSyncHandler = () => {
       try {
         // When there are multiple elements with the same name, update all of them
         const formEls = form.elements[formFieldName];
@@ -8621,7 +8663,9 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       } catch (e) {}
       try { if (typeof updateOverlays === 'function') updateOverlays(); } catch (e) {}
       try { if (onChangeCallback && typeof onChangeCallback === 'function') onChangeCallback({ target: input }); } catch (e) {}
-    });
+    };
+    input.addEventListener('input', input._popupInputSyncHandler);
+    input.addEventListener('change', input._popupInputSyncHandler);
   }
 
   // Create or update a select inside a popup container by cloning options from a source select (from the form)
@@ -8662,7 +8706,10 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       select.value = fallbackVal || '';
     }
 
-    select.addEventListener('change', () => {
+    if (select._popupSelectSyncHandler) {
+      select.removeEventListener('change', select._popupSelectSyncHandler);
+    }
+    select._popupSelectSyncHandler = () => {
       try { if (form && form.elements[formFieldName]) form.elements[formFieldName].value = select.value; } catch (e) {}
       try {
         // If user selects Client's Profession, reset Client's Business and vice-versa
@@ -8676,10 +8723,12 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       } catch (e) {}
       try { if (typeof updateOverlays === 'function') updateOverlays(); } catch (e) {}
       try { if (typeof updateOthersPopupData === 'function') updateOthersPopupData(); } catch (e) {}
-    });
+    };
+    select.addEventListener('change', select._popupSelectSyncHandler);
   }
 
   function updateOthersPopupData() {
+    const selectedPrintDate = ensureTodayDateValue();
     // Basic fields
     const accountNumber = form.elements['accountNumber']?.value || '';
     const fullName = form.elements['fullNameEn']?.value || '';
@@ -8695,6 +8744,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     const sourceOfFundsVerify = form.elements['sourceOfFundsVerify']?.value || '';
 
     // Build editable fields in the popup and sync
+    makeEditableInput('othersPrintDate', 'todayDate', selectedPrintDate, false, handleTodayDateInputChange, 'date');
     makeEditableInput('othersAccountNumber', 'accountNumber', accountNumber, false);
     makeEditableInput('othersFullName', 'fullNameEn', fullName, false);
     makeEditableInput('othersNID', 'nid', nid, false);
@@ -8742,11 +8792,12 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     othersClose.addEventListener('click', closeOthersPopup);
   }
 
-  if (othersBackdrop) {
-    othersBackdrop.addEventListener('click', (e) => {
-      if (e.target === othersBackdrop) closeOthersPopup();
-    });
-  }
+  // Backdrop click no longer closes popup - only the close button does
+  // if (othersBackdrop) {
+  //   othersBackdrop.addEventListener('click', (e) => {
+  //     if (e.target === othersBackdrop) closeOthersPopup();
+  //   });
+  // }
 
   // Update Others popup when form data changes
   if (form) {
