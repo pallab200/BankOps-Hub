@@ -449,15 +449,189 @@
             animation: floatSlow 3.6s ease-in-out infinite;
         }
 
+        .with-change-anchor {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .with-change-anchor > .main-button {
+            width: 100%;
+        }
+        .with-change-trigger {
+            min-height: 0 !important;
+            max-height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: 0 !important;
+            overflow: hidden;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+            z-index: 30;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.98) translateY(-4px);
+            transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.25s ease, margin 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 16px 28px rgba(15, 23, 42, 0.16);
+        }
+        .with-change-anchor.with-change-anchor--open .with-change-trigger {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+            margin-top: 8px !important;
+            min-height: 38px !important;
+            max-height: 60px !important;
+            padding: 0.55rem 0.75rem !important;
+        }
+        .with-change-popup {
+            width: 720px;
+            max-width: calc(100% - 32px);
+        }
+        .with-change-popup-tables {
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+            justify-content: space-between;
+        }
+        .with-change-popup-body {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .with-change-popup-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(148, 163, 184, 0.12), rgba(255, 255, 255, 0.96));
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+        .with-change-popup-summary .label {
+            color: #475569;
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .with-change-popup-summary .value {
+            color: #0f172a;
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+        .with-change-popup-table-shell {
+            flex: 1 1 0;
+            min-width: 0;
+            max-width: calc(50% - 6px);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 12px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            overflow: visible;
+            display: flex;
+            align-items: stretch;
+        }
+        .with-change-popup-table-shell table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .with-change-popup-table-shell thead th {
+            position: sticky;
+            top: 0;
+            background: rgba(241, 245, 249, 0.96);
+            backdrop-filter: blur(8px);
+            z-index: 1;
+        }
+        .with-change-popup-table-shell th,
+        .with-change-popup-table-shell td {
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.92);
+            font-size: 0.95rem;
+        }
+        /* Ensure denomination column text is left-aligned */
+        .with-change-popup-table-shell thead th:first-child,
+        .with-change-popup-table-shell tbody td:first-child {
+            text-align: left;
+            padding-left: 14px;
+            white-space: nowrap;
+        }
+        .with-change-popup-table-shell tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .with-change-popup-table-shell td:first-child,
+        .with-change-popup-table-shell td:last-child {
+            font-weight: 700;
+        }
+        .with-change-popup-table-shell td:last-child,
+        .with-change-popup-table-shell th:last-child {
+            text-align: right;
+        }
+        .with-change-popup-table-shell td:nth-child(2),
+        .with-change-popup-table-shell th:nth-child(2) {
+            text-align: center;
+        }
+        .with-change-popup-input {
+            width: 72px;
+            min-width: 56px;
+            text-align: center;
+            padding: 6px 8px;
+            height: 34px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #fff !important;
+            font-weight: 600;
+            box-sizing: border-box;
+        }
+        .with-change-popup-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.16) !important;
+        }
+        .with-change-popup-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .with-change-popup-actions .main-button {
+            min-width: 220px;
+        }
+
+        @media (max-width: 768px) {
+            .with-change-trigger {
+                font-size: 0.72rem;
+                padding-inline: 0.55rem;
+            }
+            .with-change-popup {
+                width: calc(100% - 24px);
+            }
+            /* Make popup inputs full-width on small screens for readability */
+            .with-change-popup-input {
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+            .with-change-popup-tables {
+                flex-direction: column;
+            }
+            .with-change-popup-actions .main-button {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+
         /* Exchange Popup Styles */
         .exchange-popup-overlay {
             display: none;
             position: fixed;
             inset: 0;
             background: rgba(11, 14, 20, 0.18);
-            align-items: flex-start;
+            /* center vertically and slightly reduce top padding to remove gap */
+            align-items: center;
             justify-content: center;
-            padding-top: 36px;
+            padding-top: 12px;
             overflow: auto;
             z-index: 1200;
         }
@@ -476,7 +650,7 @@
             margin: 0 auto;
         }
         .exchange-popup-large {
-            width: 880px;
+            width: 720px;
             overflow: visible;
         }
         .exchange-popup .popup-header {
@@ -1373,6 +1547,41 @@
         }
         .recent-chevron.chev-rotated {
             transform: rotate(-180deg);
+        }
+        .recent-transaction-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .recent-transaction-action-btn {
+            width: 1.9rem;
+            height: 1.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            border: 1px solid rgba(148, 163, 184, 0.45);
+            background: rgba(255, 255, 255, 0.92);
+            color: #475569;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+            transition: transform 160ms ease, background-color 160ms ease, color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+        }
+        .recent-transaction-action-btn:hover {
+            transform: translateY(-1px);
+        }
+        .recent-transaction-action-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+        }
+        .recent-transaction-edit-btn:hover {
+            color: #2563eb;
+            background: rgba(219, 234, 254, 0.95);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+        .recent-transaction-delete-btn:hover {
+            color: #dc2626;
+            background: rgba(254, 226, 226, 0.95);
+            border-color: rgba(239, 68, 68, 0.4);
         }
         
         /* Modern Button Base */
@@ -3697,11 +3906,17 @@
                             </div>
                         </div>
                         <!-- Calc popup removed -->
-                        <div class="grid grid-cols-3 gap-1 items-center mt-4 w-full">
+                        <div class="grid grid-cols-3 gap-2 items-start mt-4 w-full">
                             <!-- ADDED COPY LOGIC TO RECEIVED AND PAYMENT BUTTONS -->
-                            <button id="addReceivedBtn" class="main-button btn-received btn-animate">Received</button>
-                            <button id="addPaymentBtn" class="main-button btn-payment btn-animate">Payment</button>
-                            <button id="inHandResetBtn" class="main-button btn-reset btn-animate">Clear</button>
+                            <div class="with-change-anchor" data-with-change-mode="received">
+                                <button id="addReceivedBtn" type="button" class="main-button btn-received btn-animate">Received</button>
+                                <button id="addReceivedWithChangeBtn" type="button" class="main-button btn-received btn-animate with-change-trigger">With Change</button>
+                            </div>
+                            <div class="with-change-anchor" data-with-change-mode="payment">
+                                <button id="addPaymentBtn" type="button" class="main-button btn-payment btn-animate">Payment</button>
+                                <button id="addPaymentWithChangeBtn" type="button" class="main-button btn-payment btn-animate with-change-trigger">With Change</button>
+                            </div>
+                            <button id="inHandResetBtn" type="button" class="main-button btn-reset btn-animate">Clear</button>
                         </div>
                         <!-- Buttons Row: Note Exchange + Cheque/Deposit Summary + Print + Reset -->
                         <div class="mt-3 space-y-2">
@@ -4719,6 +4934,52 @@
         </div>
     </div>
 
+    <div class="exchange-popup-overlay" id="withChangePopupOverlay">
+        <div class="exchange-popup with-change-popup" id="withChangePopup">
+            <div class="popup-header">
+                <h3 id="withChangePopupTitle"><i class="fas fa-hand-holding-usd mr-2"></i>Received With Change</h3>
+                <div class="popup-header-actions">
+                    <button class="exchange-popup-close" id="withChangePopupClose" type="button">&times;</button>
+                </div>
+            </div>
+            <div class="exchange-popup-body with-change-popup-body">
+                <div class="with-change-popup-summary">
+                    <span class="label" id="withChangePopupSummaryLabel">Received With Change Total</span>
+                    <span class="value" id="withChangePopupTotal">0</span>
+                </div>
+                <div class="with-change-popup-tables">
+                    <div class="with-change-popup-table-shell">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Denom x</th>
+                                    <th>Count</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="withChangeDenominationRowsLeft"></tbody>
+                        </table>
+                    </div>
+                    <div class="with-change-popup-table-shell">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Denom x</th>
+                                    <th>Count</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="withChangeDenominationRowsRight"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="with-change-popup-actions">
+                    <button id="withChangePopupActionBtn" type="button" class="main-button btn-received btn-animate">Received With Change</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- PERSISTENCE SETUP: LOCAL STORAGE ---
         const appDataKey = 'ucbBankData'; 
@@ -5650,6 +5911,115 @@
     const calcOutputs = document.querySelectorAll('.calc-amount');
         const paymentInputs = document.querySelectorAll('.payment-input');
         const inHandInputs = document.querySelectorAll('.in-hand-input');
+
+        function getRecentTransactionTargetInputs(type) {
+            return type === 'received' ? calcInputs : paymentInputs;
+        }
+
+        function getTargetInputByDenomination(targetInputs, denomination) {
+            return Array.from(targetInputs).find(targetInput => targetInput.dataset.denomination === String(denomination)) || null;
+        }
+
+        function canReverseRecentTransaction(transaction) {
+            const denominations = transaction?.denominations || {};
+            const targetInputs = getRecentTransactionTargetInputs(transaction?.type);
+
+            if (!targetInputs || Object.keys(denominations).length === 0) {
+                return true;
+            }
+
+            return Object.entries(denominations).every(([denomination, countValue]) => {
+                const targetInput = getTargetInputByDenomination(targetInputs, denomination);
+                return targetInput && parseNumber(targetInput.value) >= parseNumber(countValue);
+            });
+        }
+
+        function applyDenominationDeltaToInputs(denominations, targetInputs, deltaMultiplier) {
+            Object.entries(denominations || {}).forEach(([denomination, countValue]) => {
+                const targetInput = getTargetInputByDenomination(targetInputs, denomination);
+
+                if (!targetInput) {
+                    return;
+                }
+
+                const currentCount = parseNumber(targetInput.value);
+                const nextCount = currentCount + (parseNumber(countValue) * deltaMultiplier);
+                targetInput.value = String(nextCount);
+            });
+        }
+
+        function populateCalculationInputs(denominations) {
+            inHandInputs.forEach(input => {
+                const nextCount = parseNumber(denominations?.[input.dataset.denomination]);
+                input.value = nextCount > 0 ? String(nextCount) : '';
+            });
+        }
+
+        function removeRecentTransactionRecord(transaction) {
+            if (!Array.isArray(appData.transactionHistory)) {
+                return false;
+            }
+
+            const transactionIndex = appData.transactionHistory.indexOf(transaction);
+            if (transactionIndex === -1) {
+                return false;
+            }
+
+            appData.transactionHistory.splice(transactionIndex, 1);
+            return true;
+        }
+
+        function deleteRecentTransactionRecord(transaction) {
+            if (!transaction) {
+                return;
+            }
+
+            const typeLabel = transaction.type === 'received' ? 'received' : 'payment';
+            const confirmed = confirm(`Delete this ${typeLabel} transaction for ${formatNumber(transaction.totalAmount)}?`);
+            if (!confirmed) {
+                return;
+            }
+
+            if (!canReverseRecentTransaction(transaction)) {
+                alert('This transaction cannot be deleted because the current totals no longer contain its denomination counts.');
+                return;
+            }
+
+            if (transaction.denominations && Object.keys(transaction.denominations).length > 0) {
+                applyDenominationDeltaToInputs(transaction.denominations, getRecentTransactionTargetInputs(transaction.type), -1);
+            }
+
+            removeRecentTransactionRecord(transaction);
+            updateAndSaveCalculatorState();
+            renderRecentTransactions();
+        }
+
+        function editRecentTransactionRecord(transaction) {
+            if (!transaction) {
+                return;
+            }
+
+            if (!transaction.denominations || Object.keys(transaction.denominations).length === 0) {
+                alert('This transaction has no denomination details to edit.');
+                return;
+            }
+
+            if (!canReverseRecentTransaction(transaction)) {
+                alert('This transaction cannot be edited because the current totals no longer contain its denomination counts.');
+                return;
+            }
+
+            applyDenominationDeltaToInputs(transaction.denominations, getRecentTransactionTargetInputs(transaction.type), -1);
+            removeRecentTransactionRecord(transaction);
+            populateCalculationInputs(transaction.denominations);
+            updateAndSaveCalculatorState();
+            renderRecentTransactions();
+
+            const firstFilledInput = Array.from(inHandInputs).find(input => parseNumber(input.value) > 0);
+            if (firstFilledInput) {
+                firstFilledInput.focus();
+            }
+        }
         
         // NEW: Function to render recent transactions
         function renderRecentTransactions() {
@@ -5699,6 +6069,14 @@
                             <div>
                                 <span class="${idx === 0 ? 'text-xl font-extrabold' : 'font-extrabold'} ${amountColor}">${amountSign} ${formatNumber(tx.totalAmount)}</span>
                             </div>
+                            <div class="recent-transaction-actions" role="group" aria-label="Transaction actions">
+                                <button type="button" class="recent-transaction-action-btn recent-transaction-edit-btn" title="Edit transaction" aria-label="Edit transaction">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="recent-transaction-action-btn recent-transaction-delete-btn" title="Delete transaction" aria-label="Delete transaction">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
                             <svg class="recent-chevron w-4 h-4 transition-transform duration-200" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
@@ -5711,14 +6089,35 @@
                 // start collapsed; animation will use the `expanded` class
                 details.className = 'recent-transaction-details text-sm mt-2';
                 if (tx.denominations && Object.keys(tx.denominations).length > 0) {
-                    const rows = Object.keys(tx.denominations).sort((a,b) => parseInt(b) - parseInt(a)).map(den => {
-                        const cnt = tx.denominations[den];
-                        const amt = (parseInt(den) * parseNumber(cnt)) || 0;
-                        return `<div class="flex justify-between"><span>${formatNumber(parseInt(den))} x ${formatNumber(cnt)}</span><span>${formatNumber(amt)}</span></div>`;
-                    }).join('');
-                    details.innerHTML = rows;
+                    const rows = Object.keys(tx.denominations)
+                        .sort((a,b) => parseInt(b) - parseInt(a))
+                        .filter(den => parseNumber(tx.denominations[den]) > 0)
+                        .map(den => {
+                            const cnt = tx.denominations[den];
+                            const amt = (parseInt(den) * parseNumber(cnt)) || 0;
+                            return `<div class="flex justify-between"><span>${formatNumber(parseInt(den))} x ${formatNumber(cnt)}</span><span>${formatNumber(amt)}</span></div>`;
+                        }).join('');
+                    details.innerHTML = rows ? rows : 'No denomination details recorded.';
                 } else {
                     details.textContent = 'No denomination details recorded.';
+                }
+
+                const editButton = item.querySelector('.recent-transaction-edit-btn');
+                if (editButton) {
+                    editButton.addEventListener('click', (ev) => {
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                        editRecentTransactionRecord(tx);
+                    });
+                }
+
+                const deleteButton = item.querySelector('.recent-transaction-delete-btn');
+                if (deleteButton) {
+                    deleteButton.addEventListener('click', (ev) => {
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                        deleteRecentTransactionRecord(tx);
+                    });
                 }
 
                 // Toggle details on click with accordion behavior (close others) and rotate chevron
@@ -6293,10 +6692,13 @@
             updateAndSaveCalculatorState();
 
             try {
-                if (totalAmount > 0) {
-                    copyTextToClipboard(formatNumber(totalAmount));
-                } else if (options.fallbackCopyText) {
-                    copyTextToClipboard(options.fallbackCopyText);
+                // Allow callers to suppress automatic clipboard copy when needed
+                if (!options.suppressCopy) {
+                    if (totalAmount > 0) {
+                        copyTextToClipboard(formatNumber(totalAmount));
+                    } else if (options.fallbackCopyText) {
+                        copyTextToClipboard(options.fallbackCopyText);
+                    }
                 }
             } catch (e) {
                 // ignore clipboard errors
@@ -8689,14 +9091,360 @@
             const targetAmountInput = document.getElementById('targetAmountInput'); 
             const addReceivedBtn = document.getElementById('addReceivedBtn');
             const addPaymentBtn = document.getElementById('addPaymentBtn');
+            const addReceivedWithChangeBtn = document.getElementById('addReceivedWithChangeBtn');
+            const addPaymentWithChangeBtn = document.getElementById('addPaymentWithChangeBtn');
             const inHandResetBtn = document.getElementById('inHandResetBtn');
             const resetAllBtn = document.getElementById('resetAllBtn');
             const cashPrintBtn = document.getElementById('cashPrintBtn'); // New button reference
+            const withChangeAnchors = document.querySelectorAll('.with-change-anchor');
+            const withChangePopupOverlay = document.getElementById('withChangePopupOverlay');
+            const withChangePopup = document.getElementById('withChangePopup');
+            const withChangePopupTitle = document.getElementById('withChangePopupTitle');
+            const withChangePopupSummaryLabel = document.getElementById('withChangePopupSummaryLabel');
+            const withChangePopupTotal = document.getElementById('withChangePopupTotal');
+            const withChangePopupClose = document.getElementById('withChangePopupClose');
+            const withChangePopupActionBtn = document.getElementById('withChangePopupActionBtn');
+            const withChangeDenominationRowsLeft = document.getElementById('withChangeDenominationRowsLeft');
+            const withChangeDenominationRowsRight = document.getElementById('withChangeDenominationRowsRight');
+            const withChangePopupTables = document.querySelector('.with-change-popup-tables');
 
             // Re-query for inputs inside DOMContentLoaded to ensure DOM is ready
             const calcInputs = document.querySelectorAll('.calc-input');
             const paymentInputs = document.querySelectorAll('.payment-input');
             const inHandInputs = document.querySelectorAll('.in-hand-input');
+            const withChangeDenominationsLeft = [1000, 500, 200, 100, 50];
+            const withChangeDenominationsRight = [20, 10, 5, 2, 1];
+            const withChangeHoverTimers = new WeakMap();
+            let activeWithChangeMode = 'received';
+
+            // Disable mouse-wheel adjustments to number inputs across the app
+            // and make ArrowUp/ArrowDown/Enter navigate between numeric fields
+            (function disableNumberInputWheelAndKeyNav() {
+                function preventWheel(e) {
+                    const target = e.target;
+                    if (target && target.tagName === 'INPUT' && target.type === 'number') {
+                        e.preventDefault();
+                    }
+                }
+
+                // Capture wheel at document level to prevent value changes
+                document.addEventListener('wheel', preventWheel, { passive: false, capture: true });
+
+                function attachWheelToInput(input) {
+                    try {
+                        input.addEventListener('wheel', function(ev) { ev.preventDefault(); }, { passive: false });
+                    } catch (e) {
+                        // ignore
+                    }
+                }
+
+                // Attach to existing number inputs
+                function attachToExisting() {
+                    document.querySelectorAll('input[type="number"]').forEach(attachWheelToInput);
+                }
+
+                attachToExisting();
+
+                // Observe DOM for dynamically added number inputs and attach handler
+                const observer = new MutationObserver((mutations) => {
+                    for (const m of mutations) {
+                        m.addedNodes.forEach(node => {
+                            if (!(node instanceof HTMLElement)) return;
+                            if (node.tagName === 'INPUT' && node.type === 'number') {
+                                attachWheelToInput(node);
+                            }
+                            node.querySelectorAll?.('input[type="number"]').forEach(input => attachWheelToInput(input));
+                        });
+                    }
+                });
+
+                observer.observe(document.body, { childList: true, subtree: true });
+
+                // Key navigation handler: ArrowUp/ArrowDown/Enter should move focus between fields
+                function handleNumberInputNav(e) {
+                    const el = e.target;
+                    if (!(el instanceof HTMLInputElement) || el.type !== 'number') return;
+
+                    const key = e.key;
+                    if (key !== 'ArrowUp' && key !== 'ArrowDown' && key !== 'Enter') return;
+
+                    // Determine the navigable group
+                    let group = null;
+                    if (el.classList.contains('with-change-popup-count')) {
+                        group = Array.from(withChangePopup?.querySelectorAll('.with-change-popup-count') || []);
+                    } else if (el.classList.contains('in-hand-input')) {
+                        group = Array.from(document.querySelectorAll('.in-hand-input'));
+                    } else if (el.classList.contains('denom-count-input')) {
+                        group = Array.from(document.querySelectorAll('.denom-count-input'));
+                    } else {
+                        // fallback: all numeric inputs in document order
+                        group = Array.from(document.querySelectorAll('input[type="number"]'));
+                    }
+
+                    const idx = group.indexOf(el);
+                    if (idx === -1) return;
+
+                    e.preventDefault();
+
+                    let targetIndex = idx;
+                    if (key === 'ArrowUp') {
+                        targetIndex = Math.max(0, idx - 1);
+                    } else if (key === 'ArrowDown' || key === 'Enter') {
+                        targetIndex = Math.min(group.length - 1, idx + 1);
+                    }
+
+                    const target = group[targetIndex];
+                    if (target && target !== el) {
+                        target.focus();
+                        try { target.select(); } catch (err) {}
+                    }
+                }
+
+                // Use capture so we intercept before default input behavior
+                document.addEventListener('keydown', handleNumberInputNav, true);
+            })();
+
+            function getWithChangeModeConfig(mode) {
+                if (mode === 'payment') {
+                    return {
+                        actionLabel: 'Payment With Change',
+                        summaryLabel: 'Payment With Change Total',
+                        buttonClass: 'btn-payment',
+                        targetInputs: paymentInputs,
+                        type: 'paymentInputs',
+                        iconClass: 'fas fa-arrow-up'
+                    };
+                }
+
+                return {
+                    actionLabel: 'Received With Change',
+                    summaryLabel: 'Received With Change Total',
+                    buttonClass: 'btn-received',
+                    targetInputs: calcInputs,
+                    type: 'calcInputs',
+                    iconClass: 'fas fa-arrow-down'
+                };
+            }
+
+            function renderWithChangePopupRows() {
+                const generateRows = (denominations) => denominations.map(denomination => `
+                    <tr>
+                        <td>${denomination} x</td>
+                        <td>
+                            <input type="number" min="0" step="1" data-denomination="${denomination}" class="input-field with-change-popup-input with-change-popup-count text-center" value="">
+                        </td>
+                        <td class="with-change-popup-amount" data-denomination="${denomination}">0</td>
+                    </tr>
+                `).join('');
+
+                if (withChangeDenominationRowsLeft) {
+                    withChangeDenominationRowsLeft.innerHTML = generateRows(withChangeDenominationsLeft);
+                }
+                if (withChangeDenominationRowsRight) {
+                    withChangeDenominationRowsRight.innerHTML = generateRows(withChangeDenominationsRight);
+                }
+            }
+
+            function updateWithChangePopupAmounts() {
+                if (!withChangePopup) return;
+
+                let total = 0;
+                withChangePopup.querySelectorAll('.with-change-popup-count').forEach(input => {
+                    const denomination = parseNumber(input.dataset.denomination);
+                    const count = Math.max(0, parseNumber(input.value));
+                    const amount = denomination * count;
+                    const amountCell = withChangePopup.querySelector(`.with-change-popup-amount[data-denomination="${input.dataset.denomination}"]`);
+
+                    if (amountCell) {
+                        amountCell.textContent = formatNumber(amount);
+                    }
+
+                    total += amount;
+                });
+
+                if (withChangePopupTotal) {
+                    withChangePopupTotal.textContent = formatNumber(total);
+                }
+
+                return total;
+            }
+
+            function resetWithChangePopupInputs() {
+                if (!withChangePopup) return;
+
+                withChangePopup.querySelectorAll('.with-change-popup-count').forEach(input => {
+                    input.value = '';
+                });
+
+                updateWithChangePopupAmounts();
+            }
+
+            function hideAllWithChangeAnchors() {
+                withChangeAnchors.forEach(anchor => {
+                    const timerId = withChangeHoverTimers.get(anchor);
+                    if (timerId) {
+                        window.clearTimeout(timerId);
+                    }
+                    anchor.classList.remove('with-change-anchor--open');
+                });
+            }
+
+            function openWithChangePopup(mode) {
+                const config = getWithChangeModeConfig(mode);
+                activeWithChangeMode = mode;
+
+                if (withChangePopupTitle) {
+                    withChangePopupTitle.innerHTML = `<i class="${config.iconClass} mr-2"></i>${config.actionLabel}`;
+                }
+
+                if (withChangePopupSummaryLabel) {
+                    withChangePopupSummaryLabel.textContent = config.summaryLabel;
+                }
+
+                if (withChangePopupActionBtn) {
+                    withChangePopupActionBtn.textContent = config.actionLabel;
+                    withChangePopupActionBtn.classList.remove('btn-received', 'btn-payment');
+                    withChangePopupActionBtn.classList.add(config.buttonClass);
+                }
+
+                resetWithChangePopupInputs();
+                hideAllWithChangeAnchors();
+
+                if (withChangePopupOverlay) {
+                    withChangePopupOverlay.classList.add('active');
+                    // ensure the popup uses the large exchange style for wider layout
+                    withChangePopup?.classList.add('exchange-popup-large');
+                }
+
+                window.requestAnimationFrame(() => {
+                    withChangePopup?.querySelector('.with-change-popup-count')?.focus();
+                });
+            }
+
+            function closeWithChangePopup() {
+                if (withChangePopupOverlay) {
+                    withChangePopupOverlay.classList.remove('active');
+                }
+                // remove the large class when closing
+                withChangePopup?.classList.remove('exchange-popup-large');
+            }
+
+            function getWithChangeDenominationMap() {
+                const denominations = {};
+
+                if (!withChangePopup) {
+                    return denominations;
+                }
+
+                withChangePopup.querySelectorAll('.with-change-popup-count').forEach(input => {
+                    denominations[input.dataset.denomination] = Math.max(0, parseNumber(input.value));
+                });
+
+                return denominations;
+            }
+
+            function scheduleWithChangeAnchor(anchor) {
+                if (!anchor) return;
+
+                const existingTimer = withChangeHoverTimers.get(anchor);
+                if (existingTimer) {
+                    window.clearTimeout(existingTimer);
+                }
+
+                const timerId = window.setTimeout(() => {
+                    hideAllWithChangeAnchors();
+                    anchor.classList.add('with-change-anchor--open');
+                    withChangeHoverTimers.delete(anchor);
+                }, 500);
+
+                withChangeHoverTimers.set(anchor, timerId);
+            }
+
+            function hideWithChangeAnchor(anchor) {
+                if (!anchor) return;
+
+                const existingTimer = withChangeHoverTimers.get(anchor);
+                if (existingTimer) {
+                    window.clearTimeout(existingTimer);
+                    withChangeHoverTimers.delete(anchor);
+                }
+
+                anchor.classList.remove('with-change-anchor--open');
+            }
+
+            renderWithChangePopupRows();
+            updateWithChangePopupAmounts();
+
+            withChangeAnchors.forEach(anchor => {
+                anchor.addEventListener('mouseenter', () => scheduleWithChangeAnchor(anchor));
+                anchor.addEventListener('mouseleave', () => hideWithChangeAnchor(anchor));
+            });
+
+            if (withChangePopupTables) {
+                withChangePopupTables.addEventListener('input', event => {
+                    if (event.target instanceof HTMLInputElement && event.target.classList.contains('with-change-popup-count')) {
+                        updateWithChangePopupAmounts();
+                    }
+                });
+            }
+
+            if (addReceivedWithChangeBtn) {
+                addReceivedWithChangeBtn.addEventListener('click', () => {
+                    openWithChangePopup('received');
+                });
+            }
+
+            if (addPaymentWithChangeBtn) {
+                addPaymentWithChangeBtn.addEventListener('click', () => {
+                    openWithChangePopup('payment');
+                });
+            }
+
+            if (withChangePopupActionBtn) {
+                withChangePopupActionBtn.addEventListener('click', () => {
+                    const popupDenominations = getWithChangeDenominationMap();
+                    const hasPopupCounts = Object.values(popupDenominations).some(count => parseNumber(count) > 0);
+
+                    if (!hasPopupCounts) {
+                        withChangePopup?.querySelector('.with-change-popup-count')?.focus();
+                        return;
+                    }
+
+                    // Calculate difference: Calculation total - Popup total
+                    const calcTotalEl = document.getElementById('inHandCalcTotal');
+                    const calcTotal = parseNumber(calcTotalEl?.textContent || '0');
+                    const popupTotal = parseNumber(withChangePopupTotal?.textContent || '0');
+                    const differenceToCopy = calcTotal - popupTotal;
+
+                    // Dual transfer logic:
+                    // - Received With Change: Calculation → Received, Popup → Payment
+                    // - Payment With Change: Calculation → Payment, Popup → Received
+                    if (activeWithChangeMode === 'received') {
+                        // Received With Change: add calculation to received, popup to payment
+                        addCountsToSection(inHandInputs, calcInputs, 'calcInputs');
+                        addDenominationsToSection(popupDenominations, paymentInputs, 'paymentInputs', {
+                            afterTransfer: resetWithChangePopupInputs
+                        });
+                    } else if (activeWithChangeMode === 'payment') {
+                        // Payment With Change: add calculation to payment, popup to received
+                        addCountsToSection(inHandInputs, paymentInputs, 'paymentInputs');
+                        addDenominationsToSection(popupDenominations, calcInputs, 'calcInputs', {
+                            afterTransfer: resetWithChangePopupInputs
+                        });
+                    }
+
+                    // Copy the difference to clipboard (bypasses the function's internal copy logic)
+                    if (differenceToCopy > 0) {
+                        copyTextToClipboard(formatNumber(differenceToCopy));
+                    }
+
+                    closeWithChangePopup();
+                });
+            }
+
+            if (withChangePopupClose) {
+                withChangePopupClose.addEventListener('click', closeWithChangePopup);
+            }
             
             // Auto-calculate difference on input change
             if (targetAmountInput) targetAmountInput.addEventListener('input', calculateDifference);
@@ -8968,7 +9716,9 @@
 
                 addDenominationsToSection(denominations, targetInputs, type, {
                     afterTransfer: resetChequeDepositDenominationInputs,
-                    fallbackCopyText: fallbackCopyText
+                    fallbackCopyText: fallbackCopyText,
+                    // Do not copy denomination breakdown totals to clipboard
+                    suppressCopy: true
                 });
 
                 // Clear cheque and deposit entries after transfer
@@ -9010,11 +9760,25 @@
                 };
             }
 
+            function getChequeDepositTxnType(chequeTotal, depositTotal) {
+                if (chequeTotal > depositTotal) {
+                    return 'PAYMENT';
+                }
+
+                if (depositTotal > 0 || chequeTotal === 0) {
+                    return 'RECEIVED';
+                }
+
+                return '-';
+            }
+
             function updateChequeDepositStatusCardAnimation(details = getChequeDepositDifferenceDetails()) {
                 if (!chequeDepositStatusCard) return;
 
                 const { chequeTotal, depositTotal, denomTotal, animationBalance } = details;
                 const hasValues = chequeTotal > 0 || depositTotal > 0 || denomTotal > 0;
+                const txnType = getChequeDepositTxnType(chequeTotal, depositTotal);
+                const isPaymentMode = txnType === 'PAYMENT';
 
                 chequeDepositStatusCard.classList.remove('positive', 'negative');
 
@@ -9022,7 +9786,11 @@
                     return;
                 }
 
-                chequeDepositStatusCard.classList.add(animationBalance > 0 ? 'positive' : 'negative');
+                const statusClass = animationBalance > 0
+                    ? (isPaymentMode ? 'negative' : 'positive')
+                    : (isPaymentMode ? 'positive' : 'negative');
+
+                chequeDepositStatusCard.classList.add(statusClass);
             }
 
             function updateChequeDepositDifferenceDisplay(details = getChequeDepositDifferenceDetails()) {
@@ -9064,19 +9832,21 @@
                 // Update transaction type button
                 const txnTypeBtn = modalTxnTypeBtn;
                 if (txnTypeBtn) {
-                    if (!hasSourceTotals) {
+                    const txnType = hasSourceTotals ? getChequeDepositTxnType(chequeTotal, depositTotal) : '-';
+
+                    if (txnType === '-') {
                         txnTypeBtn.textContent = '-';
                         txnTypeBtn.style.backgroundColor = '#9ca3af';
                         txnTypeBtn.disabled = true;
                         txnTypeBtn.style.opacity = '0.75';
                         txnTypeBtn.style.cursor = 'not-allowed';
-                    } else if (chequeTotal > depositTotal) {
+                    } else if (txnType === 'PAYMENT') {
                         txnTypeBtn.textContent = 'PAYMENT';
                         txnTypeBtn.style.backgroundColor = '#ef4444';
                         txnTypeBtn.disabled = false;
                         txnTypeBtn.style.opacity = '1';
                         txnTypeBtn.style.cursor = 'pointer';
-                    } else if (depositTotal > 0 || chequeTotal === 0) {
+                    } else if (txnType === 'RECEIVED') {
                         txnTypeBtn.textContent = 'RECEIVED';
                         txnTypeBtn.style.backgroundColor = '#10b981';
                         txnTypeBtn.disabled = false;
@@ -9479,16 +10249,25 @@
             }
 
             // Clear button function
-            function clearChequeDepositData() {
-                if (confirm('Are you sure you want to clear all cheque and deposit entries?')) {
-                    appData.chequeTotals = { cheques: [], deposits: [] };
-                    appData.denomBreakdown = {};
-                    saveDataToLocal();
-                    updateChequeDepositModalDisplay();
-                    resetChequeDepositDenominationInputs();
+            function clearChequeDepositData(skipConfirmation = false) {
+                if (!skipConfirmation && !confirm('Are you sure you want to clear all cheque and deposit entries?')) {
+                    return false;
+                }
+
+                appData.chequeTotals = { cheques: [], deposits: [] };
+                appData.denomBreakdown = {};
+                saveDataToLocal();
+                updateChequeDepositModalDisplay();
+                resetChequeDepositDenominationInputs();
+
+                if (chequeAmountInput) {
                     chequeAmountInput.value = '';
+                }
+                if (depositAmountInput) {
                     depositAmountInput.value = '';
                 }
+
+                return true;
             }
 
             // Clear button click
@@ -9759,7 +10538,7 @@
             if (resetAllBtn) {
                 resetAllBtn.addEventListener('click', () => {
                     // Confirm before doing a destructive Reset All
-                    const confirmed = confirm('Reset All will clear calculator inputs, receive data, and the Cash Flow ledger. Continue?');
+                    const confirmed = confirm('Reset All will clear calculator inputs, cheque and deposit calculations, receive data, and the Cash Flow ledger. Continue?');
                     if (!confirmed) return; 
                     // pulse the button for visual feedback
                     resetAllBtn.classList.remove('btn-pulse');
@@ -9774,6 +10553,8 @@
                     // Reset transaction history
                     appData.transactionHistory = []; 
                     updateAndSaveCalculatorState();
+
+                    clearChequeDepositData(true);
                     
                     // Reset Cash Receive related data (WITHOUT clearing vault)
                     const receiveInputs = document.querySelectorAll('#cash-receive-page .cash-receive-input');
@@ -9895,17 +10676,7 @@
                     }
                 });
 
-                // Mouse wheel support when focused (increment/decrement)
-                input.addEventListener('wheel', (ev) => {
-                    // only act when this input has focus to avoid page scroll surprises
-                    if (document.activeElement !== input) return;
-                    ev.preventDefault();
-                    const delta = ev.deltaY < 0 ? 1 : -1;
-                    const curr = parseInt(input.value) || 0;
-                    const next = Math.max(0, curr + delta);
-                    input.value = String(next);
-                    updateAndSaveCalculatorState();
-                }, { passive: false });
+                // Mouse wheel support when focused (increment/decrement) has been disabled per user request
             });
 
             // Focus guard: if a pointerdown occurred on an in-hand input very recently

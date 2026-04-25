@@ -1,0 +1,4231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CIB Inquiry</title>
+  <link rel="stylesheet" href="assets/font-awesome.min.css">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+
+      --ink: #0f172a;
+      --muted: #475569;
+      --border: rgba(148, 163, 184, 0.28);
+      --border-strong: rgba(100, 116, 139, 0.34);
+      --accent: #6366f1;
+      --accent-strong: #4f46e5;
+      --accent-soft: rgba(99, 102, 241, 0.12);
+      --signal: #ec4899;
+      --signal-soft: rgba(236, 72, 153, 0.12);
+      --danger: #ef4444;
+      --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      --danger-soft: rgba(239, 68, 68, 0.12);
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 8px 30px rgba(15, 23, 42, 0.1);
+      --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 24px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-fast: 0.15s ease;
+      --card-bg: rgba(255, 255, 255, 0.98);
+      --bg-secondary: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Poppins", "Segoe UI", sans-serif;
+      color: var(--text-primary);
+      background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-secondary) 100%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      border-radius: 999px;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.7;
+    }
+
+    body::before {
+      width: 600px;
+      height: 600px;
+      top: -200px;
+      right: -100px;
+      left: auto;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+    }
+
+    body::after {
+      width: 500px;
+      height: 500px;
+      left: -100px;
+      right: auto;
+      bottom: -150px;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(168, 85, 247, 0.08));
+    }
+
+    @keyframes sectionShimmer {
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    @keyframes rgbCycle {
+      0%   { color: #8b5cf6; text-shadow: 0 0 6px rgba(139,92,246,0.85); }
+      25%  { color: #ff6b6b; text-shadow: 0 0 6px rgba(255,107,107,0.85); }
+      50%  { color: #ffd166; text-shadow: 0 0 6px rgba(255,209,102,0.9); }
+      75%  { color: #4ade80; text-shadow: 0 0 6px rgba(74,222,128,0.85); }
+      100% { color: #8b5cf6; text-shadow: 0 0 6px rgba(139,92,246,0.85); }
+    }
+
+    @keyframes rgbShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(79, 70, 229, 0.98) 50%, rgba(139, 92, 246, 0.95) 100%);
+      color: #fff;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 4px 30px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.08));
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-copy h1 {
+      margin: 0;
+      font-size: 1.28rem;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-copy p {
+      margin: 3px 0 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.93rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-cluster {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-btn {
+      display: none;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      padding: 10px 22px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .nav-btn:hover,
+    .nav-btn:focus-visible {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.14);
+      outline: none;
+    }
+
+    .nav-btn.active {
+      background: #fff;
+      border-color: #fff;
+      color: var(--primary-dark);
+      box-shadow: 0 10px 20px rgba(12, 20, 28, 0.16);
+    }
+
+    .page {
+      display: none;
+      padding-top: 92px;
+      min-height: 100vh;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .layout {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 24px 24px 120px;
+      display: block;
+    }
+
+    .editor-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .editor-meta .status-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sidebar-card,
+    .form-card,
+    .preview-toolbar,
+    .preset-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(18px);
+    }
+
+    .sidebar-card {
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+
+    .sidebar-card h2,
+    .form-card h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+    }
+
+    .hero-card {
+      background:
+        linear-gradient(160deg, rgba(16, 34, 53, 0.98), rgba(17, 94, 89, 0.93)),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 40%);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      background: rgba(244, 193, 93, 0.22);
+      top: -70px;
+      right: -60px;
+      filter: blur(4px);
+    }
+
+    .hero-card p {
+      margin: 8px 0 0;
+      color: rgba(255, 255, 255, 0.78);
+      line-height: 1.45;
+      font-size: 0.94rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chip-row,
+    .page-chip-list,
+    .jump-list,
+    .quick-grid,
+    .metric-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip,
+    .page-chip,
+    .jump-btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 9px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.08);
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-chip,
+    .jump-btn {
+      background: var(--surface-soft);
+      color: var(--ink);
+      border-color: var(--border);
+    }
+
+    .page-chip:hover,
+    .jump-btn:hover,
+    .page-chip:focus-visible,
+    .jump-btn:focus-visible {
+      outline: none;
+      border-color: rgba(15, 118, 110, 0.36);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .page-chip.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .metric span {
+      display: block;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 1.05rem;
+      color: #fff;
+    }
+
+    .sidebar-subtitle,
+    .card-copy,
+    .hint {
+      margin: 8px 0 0;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .editor-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      border: 1px solid transparent;
+      background-image:
+        linear-gradient(var(--card-bg), var(--card-bg)),
+        linear-gradient(180deg, var(--primary), var(--signal));
+      background-origin: border-box;
+      background-clip: padding-box, border-box;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+      scroll-margin-top: 118px;
+    }
+
+    .form-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--signal), var(--primary));
+      background-size: 200% 100%;
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .form-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg), 0 0 40px rgba(99, 102, 241, 0.2);
+      border-color: transparent;
+    }
+
+    .form-card:hover::before {
+      opacity: 1;
+      animation: sectionShimmer 2s linear infinite;
+    }
+
+    .fixed-bank-note {
+      margin-bottom: 16px;
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.14);
+      color: var(--text-secondary);
+    }
+
+    .section-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+      padding-bottom: 11px;
+      border-bottom: 1px solid #f1f5f9;
+      position: relative;
+    }
+
+    .section-top::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 80px;
+      height: 3px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--signal));
+      transition: width var(--transition);
+    }
+
+    .section-icon {
+      font-size: 1.3rem;
+      color: var(--primary);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.08));
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      transition: var(--transition);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+    }
+
+    .section-top > div {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .section-top h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .form-card:hover .section-icon {
+      transform: scale(1.1) rotate(-5deg);
+      background: linear-gradient(135deg, var(--primary), var(--signal));
+      color: white;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .form-card:hover .section-top::after {
+      width: 116px;
+    }
+
+    .section-top p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .section-tag {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      white-space: nowrap;
+    }
+
+    .section-tag.warm {
+      background: var(--signal-soft);
+      color: var(--signal);
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      grid-column: span 3;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .field.span-2 {
+      grid-column: span 2;
+    }
+
+    .field.span-4 {
+      grid-column: span 4;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .field.span-6 {
+      grid-column: span 6;
+    }
+
+    .field.span-8 {
+      grid-column: span 8;
+    }
+
+    .field.span-12 {
+      grid-column: span 12;
+    }
+
+    .field-subsection {
+      grid-column: span 12;
+      border-top: 2px solid #e2e8f0;
+      padding-top: 14px;
+      margin-top: 6px;
+    }
+
+    .field-subsection:first-child {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .field-subsection-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #1e293b;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .field label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .field .sub-label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: -4px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+      color: var(--text-primary);
+      padding: 12px 13px;
+      transition: var(--transition);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .field textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15), var(--shadow-md);
+    }
+
+    .field input:hover,
+    .field select:hover,
+    .field textarea:hover {
+      border-color: var(--primary-light);
+    }
+
+    .address-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .address-panel {
+      border: 1px solid rgba(16, 34, 53, 0.12);
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 20px;
+      padding: 16px;
+    }
+
+    .address-panel h3 {
+      margin: 0 0 12px;
+      font-size: 0.96rem;
+    }
+
+    .inline-note {
+      margin-top: 12px;
+      padding: 11px 13px;
+      border-radius: 14px;
+      background: rgba(16, 34, 53, 0.04);
+      color: var(--muted);
+      font-size: 0.87rem;
+      line-height: 1.45;
+    }
+
+    .preview-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 24px 120px;
+    }
+
+    .preview-toolbar {
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+    }
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-group label {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .toolbar-group select {
+      border-radius: 14px;
+      border: 1px solid rgba(16, 34, 53, 0.14);
+      background: #fff;
+      padding: 11px 14px;
+      min-width: 200px;
+    }
+
+    .toolbar-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--text-primary);
+      font-size: 0.84rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+    }
+
+    .status-pill strong {
+      font-weight: 800;
+    }
+
+    .preview-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+
+    .sheet {
+      width: min(100%, 210mm);
+      min-height: 297mm;
+      margin: 0 auto;
+      background: var(--paper);
+      box-shadow: var(--paper-shadow);
+      border-radius: 10px;
+      padding: 16mm 14mm 14mm;
+      font-family: "Times New Roman", Times, serif;
+      color: #111;
+      position: relative;
+    }
+
+    .sheet[hidden] {
+      display: none;
+    }
+
+    .sheet-title-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .sheet-title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.02em;
+    }
+
+    .sheet-annex {
+      justify-self: end;
+      text-align: right;
+      font-size: 12px;
+      line-height: 1.35;
+      min-width: 90px;
+    }
+
+    .to-block,
+    .official-paragraph,
+    .undertaking-note,
+    .small-note,
+    .footnote {
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .to-block {
+      margin-top: 10px;
+      margin-bottom: 16px;
+    }
+
+    .to-block div {
+      margin: 1px 0;
+    }
+
+    .subject-line {
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    .subject-line span {
+      font-weight: 700;
+    }
+
+    .official-paragraph p,
+    .undertaking-note {
+      margin: 0 0 8px;
+      text-align: justify;
+    }
+
+    .official-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 14px;
+      font-size: 12px;
+    }
+
+    .official-table th,
+    .official-table td {
+      border: 1px solid #111;
+      padding: 7px 6px;
+      vertical-align: middle;
+    }
+
+    .official-table th {
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .undertaking-company-table thead th {
+      line-height: 1.05;
+      padding: 3px 4px;
+    }
+
+    .official-table td.center {
+      text-align: center;
+    }
+
+    .signature-table {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid #111;
+      min-height: 92px;
+      margin-top: 18px;
+    }
+
+    .signature-cell {
+      padding: 8px 10px;
+      border-right: 1px solid #111;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 6px;
+      font-size: 12px;
+      min-height: 92px;
+    }
+
+    .signature-cell:last-child {
+      border-right: 0;
+    }
+
+    .signature-cell.has-print-seal,
+    .signature-entry.has-print-seal {
+        justify-content: flex-end;
+        gap: 0;
+    }
+
+    .signature-box-label {
+      font-weight: 700;
+    }
+
+    .print-seal {
+      display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+      margin: 0 auto;
+      max-width: 100%;
+      color: #000;
+      font-weight: 800;
+      line-height: 1.2;
+      text-align: center;
+      word-break: break-word;
+      overflow: hidden;
+    }
+
+    .print-seal-text {
+      white-space: pre-wrap;
+    }
+
+    .form-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .form-title {
+      text-align: center;
+      flex: 1;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .form-header .sheet-annex {
+      margin-left: auto;
+    }
+
+    .form-intro,
+    .selection-line,
+    .section-caption,
+    .field-line,
+    .address-columns,
+    .signature-strip,
+    .footer-grid,
+    .meta-grid {
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .form-intro {
+      margin-bottom: 8px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 20px;
+      margin-bottom: 8px;
+    }
+
+    .field-line {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .label,
+    .required-label {
+      font-weight: 700;
+    }
+
+    .required-label {
+      white-space: nowrap;
+    }
+
+    .fill-line {
+      display: inline-block;
+      min-width: 84px;
+      min-height: 16px;
+      padding: 0 2px 1px;
+      vertical-align: bottom;
+    }
+
+    .fill-line.upper,
+    .fill-block.upper {
+      text-transform: uppercase;
+    }
+
+    .fill-line.strong {
+      font-weight: 700;
+    }
+
+    .fill-block {
+      display: block;
+      width: 100%;
+      min-height: 16px;
+      padding: 0 2px 2px;
+    }
+
+    .option-sequence {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 2px 8px;
+      align-items: center;
+    }
+
+    .option-sequence .sep {
+      opacity: 0.7;
+    }
+
+    .option-sequence .opt.selected {
+      font-weight: 700;
+    }
+
+    .section-caption {
+      font-weight: 700;
+      margin: 10px 0 5px;
+    }
+
+    .small-note {
+      margin: 4px 0 8px;
+    }
+
+    .two-col-split,
+    .address-columns,
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .address-panel-plain {
+      min-width: 0;
+    }
+
+    .address-panel-plain p {
+      margin: 2px 0;
+    }
+
+    .digit-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 5px 0;
+      flex-wrap: wrap;
+    }
+
+    .digit-row {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+
+    .digit-gap {
+      width: 8px;
+      height: 1px;
+    }
+
+    .digit-box {
+      width: 18px;
+      height: 18px;
+      border: 1px solid #111;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+
+    .compact-box .digit-box {
+      width: 17px;
+      height: 17px;
+    }
+
+    .triple-line {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    .signature-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 22px;
+      margin-top: 24px;
+      align-items: end;
+    }
+
+    .signature-entry {
+      text-align: center;
+      min-height: 72px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .signature-entry::before {
+      content: "";
+      display: block;
+      border-top: 1px solid #111;
+      margin-bottom: 6px;
+    }
+
+    .signature-entry.no-line::before {
+      display: none;
+    }
+
+    .footnote {
+      margin-top: 16px;
+    }
+
+    .ref-sheet {
+      border-radius: 0;
+      box-shadow: none;
+      color: #000;
+      letter-spacing: 0;
+    }
+
+    .ref-head {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .ref-title {
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .ref-annex {
+      position: absolute;
+      top: 0;
+      right: 0;
+      text-align: right;
+    }
+
+    .undertaking-page {
+      padding: 8.8mm 8mm 8.4mm;
+      font-size: 12.5px;
+      line-height: 1.14;
+    }
+
+    .undertaking-page .ref-head {
+      min-height: 28px;
+      margin-bottom: 16px;
+    }
+
+    .undertaking-page .ref-title {
+      font-size: 17px;
+    }
+
+    .undertaking-page .ref-annex {
+      min-width: 86px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .undertaking-page .to-block,
+    .undertaking-page .subject-line,
+    .undertaking-page .undertaking-note,
+    .undertaking-page .footnote,
+    .undertaking-page .signature-cell {
+      font-size: 12.5px;
+    }
+
+    .undertaking-page .to-block {
+      margin-top: 10px;
+      margin-bottom: 14px;
+      line-height: 1.1;
+    }
+
+    .undertaking-page .subject-line {
+      margin-bottom: 12px;
+      line-height: 1.16;
+    }
+
+    .undertaking-page .official-paragraph {
+      font-size: 12.5px;
+      line-height: 1.16;
+    }
+
+    .undertaking-page .official-paragraph p {
+      margin: 0 0 7px;
+      text-align: justify;
+    }
+
+    .undertaking-page .official-table {
+      table-layout: fixed;
+      margin: 12px 0 14px;
+      font-size: 12.2px;
+    }
+
+    .undertaking-page .official-table th,
+    .undertaking-page .official-table td {
+      padding: 5px 4px;
+      line-height: 1.16;
+    }
+
+    .undertaking-page .signature-table {
+      margin-top: 42px;
+      min-height: 98px;
+    }
+
+    .undertaking-page .signature-cell {
+      min-height: 98px;
+      padding: 7px 8px;
+      line-height: 1.18;
+    }
+
+    .undertaking-page .footnote {
+      margin-top: 10px;
+      font-size: 11.5px;
+    }
+
+    .cib-form-page {
+      position: relative;
+      padding: 8mm 7.6mm 14mm;
+      font-size: 12.5px;
+      line-height: 1.08;
+    }
+
+    .cib-form-page .ref-head {
+      min-height: 20px;
+      margin-bottom: 8px;
+    }
+
+    .cib-form-page .ref-title {
+      font-size: 17px;
+    }
+
+    .cib-form-page .ref-annex {
+      min-width: 74px;
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    .cib-form-page .form-intro,
+    .cib-form-page .selection-line,
+    .cib-form-page .section-caption,
+    .cib-form-page .field-line,
+    .cib-form-page .small-note,
+    .cib-form-page .footnote,
+    .cib-form-page .signature-entry {
+      font-size: 12.5px;
+      line-height: 1.1;
+    }
+
+    .cib-form-page .form-intro {
+      margin-bottom: 6px;
+    }
+
+    .cib-form-page .top-meta-grid,
+    .cib-form-page .installment-grid,
+    .cib-form-page .bottom-detail-grid,
+    .cib-form-page .address-grid-ref {
+      gap: 0 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .cib-form-page .top-meta-grid {
+      margin-bottom: 4px;
+    }
+
+    .cib-form-page .installment-grid {
+      margin-bottom: 6px;
+    }
+
+    .cib-form-page .slim-caption {
+      margin: 4px 0 1px;
+    }
+
+    .cib-form-page .role-row,
+    .cib-form-page .legal-form-row,
+    .cib-form-page .institution-subject-line {
+      margin: 6px 0 2px;
+      align-items: flex-start;
+    }
+
+    .cib-form-page .role-row .option-sequence {
+      max-width: calc(100% - 120px);
+    }
+
+    .cib-form-page .legal-form-row .option-sequence {
+      max-width: calc(100% - 86px);
+    }
+
+    .cib-form-page .institution-subject-line .option-sequence {
+      max-width: calc(100% - 72px);
+    }
+
+    .cib-form-page .name-line {
+      margin-bottom: 1px;
+    }
+
+    .cib-form-page .parent-lines {
+      display: grid;
+      row-gap: 1px;
+      margin-bottom: 3px;
+    }
+
+    .cib-form-page .address-block {
+      margin-top: 2px;
+    }
+
+    .cib-form-page .bottom-detail-grid {
+      margin-top: 6px;
+    }
+
+    .cib-form-page .field-line {
+      gap: 4px;
+      margin-bottom: 2px;
+    }
+
+    .cib-form-page .fill-line {
+      min-height: 13px;
+      padding: 0 2px 1px;
+    }
+
+    .cib-form-page .option-sequence {
+      gap: 1px 5px;
+    }
+
+    .cib-form-page .option-sequence .opt.selected {
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .cib-form-page .digit-line {
+      margin: 3px 0;
+      flex-wrap: nowrap;
+    }
+
+    .cib-form-page .digit-row {
+      flex-wrap: nowrap;
+      gap: 1px;
+    }
+
+    .cib-form-page .digit-gap {
+      width: 4px;
+    }
+
+    .cib-form-page .digit-box {
+      width: 16px;
+      height: 16px;
+      font-size: 10px;
+    }
+
+    .cib-form-page .compact-box .digit-box {
+      width: 15px;
+      height: 15px;
+    }
+
+    .cib-form-page .date-sign-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 100px;
+      align-items: end;
+    }
+
+    .cib-form-page .customer-signature-label {
+      text-align: center;
+      font-weight: 700;
+      padding-right: 0;
+    }
+
+    .cib-form-page .seal-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 42px;
+      margin-top: 16px;
+    }
+
+    .cib-form-page .seal-row .signature-entry {
+      min-height: 0;
+    }
+
+    .cib-form-page .seal-row .signature-entry::before {
+      display: none;
+    }
+
+    .cib-form-page .seal-row .signature-entry div {
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .cib-form-page .seal-row .print-seal {
+        margin-bottom: 0;
+    }
+
+    .form1-page .seal-row {
+      margin-top: 16px;
+    }
+
+    .form2-page .seal-row {
+      margin-top: 16px;
+    }
+
+    .cib-form-page .footnote {
+      position: absolute;
+      left: 7.6mm;
+      bottom: 8mm;
+      margin-top: 0;
+      font-size: 10.1px;
+    }
+
+    .action-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 35;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px 18px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+      border-top: 1px solid rgba(226, 232, 240, 0.85);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 -8px 30px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+
+    .action-btn,
+    .preset-btn {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-btn:hover,
+    .preset-btn:hover,
+    .action-btn:focus-visible,
+    .preset-btn:focus-visible {
+      transform: translateY(-4px);
+      outline: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .action-btn.secondary,
+    .preset-btn.secondary {
+      background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .action-btn.primary,
+    .preset-btn.primary {
+      background: var(--primary-gradient);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .action-btn.warm,
+    .preset-btn.warm {
+      background: var(--accent-gradient);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .action-btn.danger,
+    .preset-btn.danger {
+      background: var(--danger-gradient);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .slide-menu-toggle {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1001;
+      background: var(--primary-gradient);
+      color: #fff;
+      border: none;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: 14px 9px;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .slide-menu-toggle:hover,
+    .slide-menu-toggle:focus-visible {
+      padding-left: 14px;
+      outline: none;
+    }
+
+    .slide-menu-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.4);
+      z-index: 1002;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .slide-menu-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .slide-menu {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 280px;
+      max-width: 88vw;
+      background: var(--card-bg);
+      z-index: 1003;
+      box-shadow: var(--shadow-lg);
+      transform: translateX(-100%);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-menu.open {
+      transform: translateX(0);
+    }
+
+    .slide-menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+    }
+
+    .slide-menu-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slide-menu-close {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-fast);
+      font-size: 1.1rem;
+    }
+
+    .slide-menu-close:hover,
+    .slide-menu-close:focus-visible {
+      background: rgba(255, 255, 255, 0.3);
+      outline: none;
+    }
+
+    .slide-menu-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+    }
+
+    .drawer-input-group {
+      padding: 6px 8px 10px;
+    }
+
+    .drawer-input-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .drawer-input-group input {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 2px solid var(--border-color);
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+      color: var(--text-primary);
+    }
+
+    .drawer-input-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+    }
+
+    .slide-menu-nav {
+      list-style: none;
+      padding: 10px 0 0;
+      margin: 0;
+    }
+
+    .slide-menu-nav li {
+      margin-bottom: 4px;
+    }
+
+    .slide-menu-nav button {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--text-primary);
+      text-align: left;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    .slide-menu-nav button i {
+      width: 20px;
+      text-align: center;
+      color: var(--primary);
+      transition: var(--transition);
+    }
+
+    .slide-menu-nav button:hover,
+    .slide-menu-nav button:focus-visible,
+    .slide-menu-nav button.active {
+      background: var(--bg-secondary);
+      color: var(--primary);
+      outline: none;
+    }
+
+    .slide-menu-nav button:hover i {
+      transform: scale(1.12);
+    }
+
+    .developer-credit {
+      text-align: center;
+      padding: 20px;
+      margin-top: 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      animation: rgbCycle 6s ease-in-out infinite;
+    }
+
+    .developer-credit.small {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 14px;
+      margin-top: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(139,92,246,0.06) 50%, rgba(236,72,153,0.05) 100%);
+      box-shadow: 0 4px 15px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+      border: 1px solid rgba(99,102,241,0.1);
+      animation: rgbCycle 4s linear infinite;
+    }
+
+    .footer-rgb .rgb-text {
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: 600;
+      background: linear-gradient(90deg, #5b21b6, #7c3aed, #ec4899, #fb7185, #f97316, #f59e0b, #06b6d4, #0ea5a1, #5b21b6);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      animation: rgbShift 6s linear infinite;
+      text-align: center;
+    }
+
+    .officer-seal-popup-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.58);
+      backdrop-filter: blur(5px);
+      z-index: 70;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .officer-seal-popup-backdrop.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .officer-seal-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.92);
+      width: min(960px, calc(100vw - 28px));
+      max-height: min(86vh, 760px);
+      overflow: hidden;
+      border-radius: 32px;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      box-shadow: 0 26px 70px rgba(15, 23, 42, 0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: transform var(--transition), opacity var(--transition), visibility var(--transition);
+    }
+
+    .officer-seal-popup-backdrop.show .officer-seal-popup {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .officer-seal-popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      background: linear-gradient(135deg, #4f8f67 0%, #4b9469 100%);
+      color: #fff;
+    }
+
+    .officer-seal-popup-header h3 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .officer-seal-popup-close {
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .officer-seal-popup-close:hover,
+    .officer-seal-popup-close:focus-visible {
+      background: rgba(255, 255, 255, 0.28);
+      outline: none;
+    }
+
+    .officer-seal-popup-body {
+      padding: 22px 26px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      overflow-y: auto;
+      max-height: calc(min(86vh, 760px) - 78px);
+    }
+
+    .officer-seal-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid rgba(226, 232, 240, 0.95);
+    }
+
+    .officer-seal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .officer-seal-field label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #6366f1;
+    }
+
+    .officer-seal-field textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px 13px;
+      border: 2px solid #dbe4f0;
+      border-radius: 14px;
+      font-size: 0.76rem;
+      line-height: 1.28;
+      font-family: inherit;
+      resize: vertical;
+      background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+      color: var(--text-primary);
+      transition: var(--transition);
+    }
+
+    .officer-seal-field textarea:focus {
+      outline: none;
+      border-color: #5aa072;
+      box-shadow: 0 0 0 4px rgba(90, 160, 114, 0.16);
+    }
+
+    .officer-seal-size-control {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-top: 8px;
+    }
+
+    .officer-seal-size-control label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .officer-seal-size-control input[type="range"] {
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .officer-seal-size-control span {
+      min-width: 72px;
+      text-align: right;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .seal-preview-section {
+      text-align: center;
+    }
+
+    .seal-preview-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .seal-preview {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+      justify-items: center;
+    }
+
+    .seal-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 224px;
+      height: 140px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.02);
+      color: #000;
+      font-weight: 800;
+      line-height: 1.2;
+      text-align: center;
+      word-break: break-word;
+      overflow: hidden;
+    }
+
+    .seal-item-text {
+      white-space: pre-wrap;
+    }
+
+    .officer-seal-save-btn {
+      width: 100%;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #4f8f67 0%, #3f7e58 100%);
+      color: #fff;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .officer-seal-save-btn:hover,
+    .officer-seal-save-btn:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(79, 143, 103, 0.28);
+      outline: none;
+    }
+
+    .preset-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(16, 34, 53, 0.34);
+      backdrop-filter: blur(8px);
+      z-index: 49;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .preset-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .preset-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1100;
+      display: none;
+      backdrop-filter: blur(4px);
+    }
+    .preset-backdrop.open { display: block; }
+
+    .preset-panel {
+      position: fixed;
+      top: 0; right: -450px;
+      width: 420px;
+      height: 100%;
+      background: white;
+      z-index: 1200;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid #e5e7eb;
+    }
+    .preset-panel.open { right: 0; }
+
+    .preset-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid #e5e7eb;
+      background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.04));
+    }
+
+    .preset-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .preset-header h3 i {
+      color: #6366f1;
+    }
+
+    .preset-close {
+      background: #f3f4f6;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 10px;
+      cursor: pointer;
+      color: #6b7280;
+      transition: all 0.2s ease;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preset-close:hover {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .preset-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preset-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .preset-item:hover {
+      background: white;
+      border-color: #6366f1;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transform: translateX(-4px);
+    }
+
+    .preset-item .preset-name {
+      font-weight: 600;
+      color: #1f2937;
+      font-size: 0.95rem;
+    }
+
+    .preset-item .preset-date {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .preset-item .preset-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .preset-item .preset-actions button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+    }
+
+    .preset-load {
+      background: rgba(99,102,241,0.1);
+      color: #6366f1;
+    }
+
+    .preset-load:hover {
+      background: #6366f1;
+      color: white;
+    }
+
+    .preset-delete {
+      background: rgba(239,68,68,0.1);
+      color: #ef4444;
+    }
+
+    .preset-delete:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    .preset-empty {
+      text-align: center;
+      padding: 40px;
+      color: #9ca3af;
+    }
+
+    .preset-empty i {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .toast {
+      position: fixed;
+      top: 92px;
+      right: 24px;
+      z-index: 60;
+      min-width: 240px;
+      max-width: min(420px, calc(100vw - 48px));
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(16, 34, 53, 0.96);
+      color: #fff;
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      transform: translateY(-8px);
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    @media (max-width: 1260px) {
+      .address-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 880px) {
+      .topbar {
+        padding: 16px 18px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .slide-menu {
+        width: min(320px, 88vw);
+      }
+
+      .brand-copy p {
+        white-space: normal;
+      }
+
+      .page {
+        padding-top: 132px;
+      }
+
+      .layout,
+      .preview-shell {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .field-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+
+      .field,
+      .field.span-2,
+      .field.span-4,
+      .field.span-6,
+      .field.span-8 {
+        grid-column: span 6;
+      }
+
+      .preview-toolbar,
+      .toolbar-group,
+      .toolbar-meta {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .sheet {
+        padding: 13mm 10mm 12mm;
+      }
+
+      .meta-grid,
+      .two-col-split,
+      .address-columns,
+      .footer-grid,
+      .signature-strip,
+      .triple-line,
+      .signature-table {
+        grid-template-columns: 1fr;
+      }
+
+      .signature-cell {
+        border-right: 0;
+      }
+
+      .signature-cell:last-child {
+        border-bottom: 0;
+      }
+
+      .action-bar {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      body::before,
+      body::after,
+      .topbar,
+      .slide-menu-toggle,
+      .slide-menu-backdrop,
+      .slide-menu,
+      .officer-seal-popup-backdrop,
+      .action-bar,
+      .preview-toolbar,
+      .preset-backdrop,
+      .preset-panel,
+      .toast,
+      #input-page {
+        display: none !important;
+      }
+
+      #preview-page {
+        display: block !important;
+        padding-top: 0;
+      }
+
+      .preview-shell {
+        padding: 0;
+        max-width: none;
+      }
+
+      .preview-stack {
+        gap: 0;
+      }
+
+      .sheet {
+        width: 210mm;
+        min-height: 297mm;
+        border-radius: 0;
+        box-shadow: none;
+        margin: 0;
+        page-break-after: always;
+        break-after: page;
+      }
+
+      .sheet:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+
+      .signature-table {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .signature-cell {
+        border-right: 1px solid #111;
+      }
+
+      .signature-cell:last-child {
+        border-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="slide-menu-toggle" id="slideMenuToggle" type="button" title="Open Quick Navigation" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+  <div class="slide-menu-backdrop" id="slideMenuBackdrop"></div>
+  <aside class="slide-menu" id="slideMenu" aria-hidden="true">
+    <div class="slide-menu-header">
+      <h3><i class="fas fa-compass"></i> Quick Navigation</h3>
+      <button class="slide-menu-close" id="slideMenuClose" type="button" aria-label="Close quick navigation"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="slide-menu-body">
+      <div class="drawer-input-group">
+        <label for="slideBranchInput">Branch Name</label>
+        <input id="slideBranchInput" name="branchName" form="cibForm" type="text" placeholder="Kashinathpur Branch" />
+      </div>
+      <div class="drawer-input-group">
+        <label for="slideBranchDistrictInput">Branch District</label>
+        <input id="slideBranchDistrictInput" name="branchDistrict" form="cibForm" type="text" placeholder="Pabna" />
+      </div>
+      <div class="drawer-input-group">
+        <label for="slideBranchCodeInput">Branch Code</label>
+        <input id="slideBranchCodeInput" name="branchCode" form="cibForm" type="text" placeholder="187" />
+      </div>
+      <ul class="slide-menu-nav">
+        <li>
+          <button id="slideMenuOfficerSeal" type="button"><i class="fas fa-stamp"></i> Officer Seal</button>
+        </li>
+        <li>
+          <button type="button" data-action="save-preset"><i class="fas fa-save"></i> Save Preset</button>
+        </li>
+        <li>
+          <button type="button" data-action="open-presets"><i class="fas fa-folder-open"></i> Presets</button>
+        </li>
+      </ul>
+      <div style="padding:6px; border-top:1px solid var(--border-color); margin-top:4px; display:flex; justify-content:center;">
+        <div class="developer-credit small footer-rgb" style="margin:0;"><span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <nav class="topbar">
+    <div class="brand">
+      <div class="brand-mark">CI</div>
+      <div class="brand-copy">
+        <h1>CIB Inquiry</h1>
+      </div>
+    </div>
+    <div class="nav-cluster">
+      <button type="button" class="nav-btn active" data-page-target="input-page">Information Input</button>
+      <button type="button" class="nav-btn" data-page-target="preview-page">Form Preview</button>
+    </div>
+  </nav>
+
+  <main class="page active" id="input-page">
+    <div class="layout">
+      <form id="cibForm" class="editor-shell" autocomplete="off">
+        <input type="hidden" name="bankName" value="United Commercial Bank PLC" />
+        <section class="form-card" id="banking-section">
+          <div class="section-top">
+            <i class="fas fa-building section-icon"></i>
+            <div>
+              <h2>Bank &amp; Facility Details</h2>
+            </div>
+            
+          </div>
+          
+
+          <div class="field-grid">
+            <div class="field-subsection">
+              <div class="field-subsection-title">Inquiry &amp; Bank</div>
+            </div>
+
+            <div class="field span-3">
+              <label for="inquiryDate">Date</label>
+              <input id="inquiryDate" name="inquiryDate" type="date" />
+            </div>
+            <div class="field span-3">
+              <label for="fiCode">FI Code</label>
+              <input id="fiCode" name="fiCode" type="text" placeholder="Enter FI code" />
+            </div>
+            <div class="field span-3">
+              <label for="facility">Facility</label>
+              <select id="facility" name="facility">
+                <option value="Sanctioning">Sanctioning</option>
+                <option value="Renewal">Renewal</option>
+                <option value="Rescheduling">Rescheduling</option>
+              </select>
+            </div>
+
+            <div class="field-subsection">
+              <div class="field-subsection-title">Financing Details</div>
+            </div>
+
+            <div class="field span-6">
+              <label for="financingType">Type of Financing</label>
+              <input id="financingType" name="financingType" type="text" placeholder="Enter financing type" />
+            </div>
+            <div class="field span-6">
+              <label for="totalRequested">Amount/Credit Limit</label>
+              <input id="totalRequested" name="totalRequested" type="text" placeholder="Enter requested amount" />
+            </div>
+
+            <div class="field-subsection">
+              <div class="field-subsection-title">Installment &amp; Payment</div>
+            </div>
+
+            <div class="field span-4">
+              <label for="installmentNumber">Number of Installment</label>
+              <input id="installmentNumber" name="installmentNumber" type="text" placeholder="Enter number" />
+            </div>
+            <div class="field span-4">
+              <label for="installmentAmount">Installment Amount</label>
+              <input id="installmentAmount" name="installmentAmount" type="text" placeholder="Enter amount" />
+            </div>
+            <div class="field span-4">
+              <label for="paymentPeriodicity">Periodicity of Payment</label>
+              <input id="paymentPeriodicity" name="paymentPeriodicity" type="text" placeholder="e.g., Monthly" />
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card" id="individual-section">
+          <div class="section-top">
+            <i class="fas fa-user section-icon"></i>
+            <div>
+              <h2>Individual Information</h2>
+            </div>
+            
+          </div>
+          <div class="field-grid">
+            <div class="field-subsection">
+              <div class="field-subsection-title">Role & Status</div>
+            </div>
+            <div class="field span-3">
+              <label for="companyOrOwn">Company or Own</label>
+              <select id="companyOrOwn" name="companyOrOwn">
+                <option value="aforementioned company's name">aforementioned company's name</option>
+                <option value="name">name</option>
+              </select>
+            </div>
+            <div class="field span-3" data-own-name-hidden>
+              <label for="individualInformation">Individual Information</label>
+              <select id="individualInformation" name="individualInformation">
+                <option value="">Select individual</option>
+                <option value="Borrower">Borrower</option>
+                <option value="CO-borrower">CO-borrower</option>
+                <option value="Guarantor">Guarantor</option>
+                <option value="Owner">Owner</option>
+              </select>
+            </div>
+            <div class="field span-6" data-own-name-hidden>
+              <label for="roleInInstitution">Role in the Institution</label>
+              <select id="roleInInstitution" name="roleInInstitution">
+                <option value="">No Role</option>
+                <option value="Chairman">Chairman</option>
+                <option value="Managing Director">Managing Director</option>
+                <option value="Sponsor Director">Sponsor Director</option>
+                <option value="Elected Director">Elected Director</option>
+                <option value="Nominated Director (by Govt.)">Nominated Director (by Govt.)</option>
+                <option value="Nominated Director (by Pvt. Institution)">Nominated Director (by Pvt. Institution)</option>
+                <option value="Shareholder">Shareholder</option>
+                <option value="Partner">Partner</option>
+                <option value="Owner of Proprietorship">Owner of Proprietorship</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+
+            <div class="field-subsection">
+              <div class="field-subsection-title">Personal Details</div>
+            </div>
+            <div class="field span-2">
+              <label for="customerTitle">Title</label>
+              <input id="customerTitle" name="customerTitle" type="text" placeholder="e.g., Mr., Mrs." />
+            </div>
+            <div class="field span-4">
+              <label for="customerName">Customer Name</label>
+              <input id="customerName" name="customerName" type="text" placeholder="Enter customer name" />
+            </div>
+            <div class="field span-2">
+              <label for="gender">Gender</label>
+              <select id="gender" name="gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+
+            <div class="field-subsection">
+              <div class="field-subsection-title">Birth Information</div>
+            </div>
+            <div class="field span-4">
+              <label for="dob">Date of Birth</label>
+              <input id="dob" name="dob" type="date" />
+            </div>
+            <div class="field span-4">
+              <label for="districtOfBirth">District of Birth</label>
+              <input id="districtOfBirth" name="districtOfBirth" type="text" placeholder="Pabna" />
+            </div>
+            <div class="field span-4">
+              <label for="countryOfBirth">Country of Birth</label>
+              <input id="countryOfBirth" name="countryOfBirth" type="text" placeholder="Bangladesh" />
+            </div>
+
+            <div class="field-subsection">
+              <div class="field-subsection-title">Family Information</div>
+            </div>
+            <div class="field span-2">
+              <label for="fatherTitle">Father's Title</label>
+              <input id="fatherTitle" name="fatherTitle" type="text" placeholder="e.g., Mr., Dr." />
+            </div>
+            <div class="field span-4">
+              <label for="fatherName">Father's Name</label>
+              <input id="fatherName" name="fatherName" type="text" placeholder="Enter father's name" />
+            </div>
+            <div class="field span-2">
+              <label for="motherTitle">Mother's Title</label>
+              <input id="motherTitle" name="motherTitle" type="text" placeholder="e.g., Ms., Mrs." />
+            </div>
+            <div class="field span-4">
+              <label for="motherName">Mother's Name</label>
+              <input id="motherName" name="motherName" type="text" placeholder="Enter mother's name" />
+            </div>
+            <div class="field span-2">
+              <label for="spouseTitle">Spouse's Title</label>
+              <input id="spouseTitle" name="spouseTitle" type="text" placeholder="e.g., Mr., Mrs." />
+            </div>
+            <div class="field span-4">
+              <label for="spouseName">Spouse's Name</label>
+              <input id="spouseName" name="spouseName" type="text" placeholder="Enter spouse's name" />
+            </div>
+
+            <div class="field-subsection">
+              <div class="field-subsection-title">Identity & Contact</div>
+            </div>
+            <div class="field span-4">
+              <label for="nid">NID Number</label>
+              <input id="nid" name="nid" type="text" inputmode="numeric" placeholder="17 digit NID" />
+            </div>
+            <div class="field span-4">
+              <label for="tin">TIN / ETIN</label>
+              <input id="tin" name="tin" type="text" inputmode="numeric" placeholder="12 digit TIN" />
+            </div>
+            <div class="field span-4">
+              <label for="telephone">Telephone Number</label>
+              <input id="telephone" name="telephone" type="text" placeholder="Enter mobile number" />
+            </div>
+
+            <div class="field-subsection">
+              <div class="field-subsection-title">Other ID Documents</div>
+            </div>
+            <div class="field span-3">
+              <label for="otherIdType">ID Type</label>
+              <select id="otherIdType" name="otherIdType">
+                <option value="">Select type</option>
+                <option value="Passport">Passport</option>
+                <option value="Driving License">Driving License</option>
+                <option value="Birth registration">Birth registration</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field span-3">
+              <label for="otherIdNumber">ID Number</label>
+              <input id="otherIdNumber" name="otherIdNumber" type="text" placeholder="Enter ID number" />
+            </div>
+            <div class="field span-3">
+              <label for="otherIdIssueDate">Issue Date</label>
+              <input id="otherIdIssueDate" name="otherIdIssueDate" type="date" />
+            </div>
+            <div class="field span-3">
+              <label for="otherIdIssueCountry">Issue Country</label>
+              <input id="otherIdIssueCountry" name="otherIdIssueCountry" type="text" placeholder="e.g., Bangladesh" />
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card" id="address-section">
+          <div class="section-top">
+            <i class="fas fa-map-location-dot section-icon"></i>
+            <div>
+              <h2>Address Details</h2>
+            </div>
+            
+          </div>
+          <div class="address-grid">
+            <div class="address-panel">
+              <h3>Permanent Address</h3>
+              <div class="field-grid">
+                <div class="field span-12">
+                  <label for="permanentVillage">Street No/Village</label>
+                  <input id="permanentVillage" name="permanentVillage" type="text" placeholder="Enter village" />
+                </div>
+                <div class="field span-12">
+                  <label for="permanentPo">PO</label>
+                  <input id="permanentPo" name="permanentPo" type="text" placeholder="Enter PO" />
+                </div>
+                <div class="field span-12">
+                  <label for="permanentUpazila">PS/Upazila</label>
+                  <input id="permanentUpazila" name="permanentUpazila" type="text" placeholder="Enter upazila" />
+                </div>
+                <div class="field span-12">
+                  <label for="permanentDistrict">District</label>
+                  <input id="permanentDistrict" name="permanentDistrict" type="text" placeholder="Enter district" />
+                </div>
+                <div class="field span-6">
+                  <label for="permanentPostalCode">Postal Code</label>
+                  <input id="permanentPostalCode" name="permanentPostalCode" type="text" placeholder="Enter postal code" />
+                </div>
+                <div class="field span-6">
+                  <label for="permanentCountry">Country</label>
+                  <input id="permanentCountry" name="permanentCountry" type="text" placeholder="Bangladesh" />
+                </div>
+              </div>
+            </div>
+
+            <div class="address-panel">
+              <h3>Present Address</h3>
+              <div class="field-grid">
+                <div class="field span-12">
+                  <label for="presentVillage">Street No/Village</label>
+                  <input id="presentVillage" name="presentVillage" type="text" placeholder="Enter village" />
+                </div>
+                <div class="field span-12">
+                  <label for="presentPo">PO</label>
+                  <input id="presentPo" name="presentPo" type="text" placeholder="Enter PO" />
+                </div>
+                <div class="field span-12">
+                  <label for="presentUpazila">PS/Upazila</label>
+                  <input id="presentUpazila" name="presentUpazila" type="text" placeholder="Enter upazila" />
+                </div>
+                <div class="field span-12">
+                  <label for="presentDistrict">District</label>
+                  <input id="presentDistrict" name="presentDistrict" type="text" placeholder="Enter district" />
+                </div>
+                <div class="field span-6">
+                  <label for="presentPostalCode">Postal Code</label>
+                  <input id="presentPostalCode" name="presentPostalCode" type="text" placeholder="Enter postal code" />
+                </div>
+                <div class="field span-6">
+                  <label for="presentCountry">Country</label>
+                  <input id="presentCountry" name="presentCountry" type="text" placeholder="Bangladesh" />
+                </div>
+              </div>
+            </div>
+
+            <div class="address-panel" data-company-only>
+              <h3>Business Address</h3>
+              <div class="field-grid">
+                <div class="field span-12">
+                  <label for="businessVillage">Street No/Village</label>
+                  <input id="businessVillage" name="businessVillage" type="text" placeholder="Enter business location" />
+                </div>
+                <div class="field span-12">
+                  <label for="businessPo">PO</label>
+                  <input id="businessPo" name="businessPo" type="text" placeholder="Enter PO" />
+                </div>
+                <div class="field span-12">
+                  <label for="businessUpazila">PS/Upazila</label>
+                  <input id="businessUpazila" name="businessUpazila" type="text" placeholder="Enter upazila" />
+                </div>
+                <div class="field span-12">
+                  <label for="businessDistrict">District</label>
+                  <input id="businessDistrict" name="businessDistrict" type="text" placeholder="Enter district" />
+                </div>
+                <div class="field span-6">
+                  <label for="businessPostalCode">Postal Code</label>
+                  <input id="businessPostalCode" name="businessPostalCode" type="text" placeholder="Enter postal code" />
+                </div>
+                <div class="field span-6">
+                  <label for="businessCountry">Country</label>
+                  <input id="businessCountry" name="businessCountry" type="text" placeholder="Bangladesh" />
+                </div>
+              </div>
+            </div>
+
+            <div class="address-panel" data-company-only>
+              <h3>Factory Address</h3>
+              <div class="field-grid">
+                <div class="field span-12">
+                  <label for="factoryVillage">Street No/Village</label>
+                  <input id="factoryVillage" name="factoryVillage" type="text" placeholder="Enter factory location" />
+                </div>
+                <div class="field span-12">
+                  <label for="factoryPo">PO</label>
+                  <input id="factoryPo" name="factoryPo" type="text" placeholder="Enter PO" />
+                </div>
+                <div class="field span-12">
+                  <label for="factoryUpazila">PS/Upazila</label>
+                  <input id="factoryUpazila" name="factoryUpazila" type="text" placeholder="Enter PS/Upazila" />
+                </div>
+                <div class="field span-12">
+                  <label for="factoryDistrict">District</label>
+                  <input id="factoryDistrict" name="factoryDistrict" type="text" placeholder="Enter district" />
+                </div>
+                <div class="field span-6">
+                  <label for="factoryPostalCode">Postal Code</label>
+                  <input id="factoryPostalCode" name="factoryPostalCode" type="text" placeholder="Enter postal code" />
+                </div>
+                <div class="field span-6">
+                  <label for="factoryCountry">Country</label>
+                  <input id="factoryCountry" name="factoryCountry" type="text" placeholder="e.g., Bangladesh" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card" id="sector-section">
+          <div class="section-top">
+            <i class="fas fa-chart-pie section-icon"></i>
+            <div>
+              <h2>Sector Details</h2>
+            </div>
+            
+          </div>
+
+          <div class="field-grid">
+            <div class="field span-6">
+              <label for="sectorType">Sector Type</label>
+              <select id="sectorType" name="sectorType">
+                <option value="Public">Public</option>
+                <option value="Private">Private</option>
+              </select>
+            </div>
+            <div class="field span-6">
+              <label for="sectorCode">Sector Code</label>
+              <input id="sectorCode" name="sectorCode" type="text" placeholder="Enter sector code" />
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card" id="institution-section" data-company-only>
+          <div class="section-top">
+            <i class="fas fa-landmark section-icon"></i>
+            <div>
+              <h2>Institution &amp; Organization Details</h2>
+            </div>
+            
+          </div>
+
+          <div class="field-grid">
+            <div class="field-subsection">
+              <div class="field-subsection-title">Legal Identity</div>
+            </div>
+
+            <div class="field span-6">
+              <label for="organizationName">Organization Name</label>
+              <input id="organizationName" name="organizationName" type="text" placeholder="Enter organization name" />
+            </div>
+            <div class="field span-3">
+              <label for="institutionType">Institution</label>
+              <select id="institutionType" name="institutionType">
+                <option value="">Select institution</option>
+                <option value="Proprietorship">Proprietorship</option>
+                <option value="Partnership">Partnership</option>
+                <option value="Company">Company</option>
+              </select>
+            </div>
+            <div class="field span-3">
+              <label for="legalForm">Legal Form</label>
+              <select id="legalForm" name="legalForm">
+                <option value="">Select legal form</option>
+                <option value="Proprietorship">Proprietorship</option>
+                <option value="Partnership">Partnership</option>
+                <option value="Pvt. Ltd. Co.">Pvt. Ltd. Co.</option>
+                <option value="Public Ltd. Co.">Public Ltd. Co.</option>
+                <option value="Co-operative">Co-operative</option>
+                <option value="Public sector">Public sector</option>
+                <option value="Multinational organization">Multinational organization</option>
+                <option value="NGO">NGO</option>
+                <option value="Trustee organization">Trustee organization</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+
+            <div class="field-subsection">
+              <div class="field-subsection-title">Registration</div>
+            </div>
+
+            <div class="field span-3">
+              <label for="rjscRegistrationNumber">RJSC Registration Number</label>
+              <input id="rjscRegistrationNumber" name="rjscRegistrationNumber" type="text" placeholder="Enter registration number" />
+            </div>
+            <div class="field span-3">
+              <label for="registrationDate">Registration Date</label>
+              <input id="registrationDate" name="registrationDate" type="date" />
+            </div>
+
+          </div>
+        </section>
+
+        <section class="form-card" id="liability-section" data-company-only>
+          <div class="section-top">
+            <i class="fas fa-chart-line section-icon"></i>
+            <div>
+              <h2>Company Liability Status</h2>
+            </div>
+            <span class="section-tag warm">Undertaking table</span>
+          </div>
+          <div class="field-grid">
+            <div class="field span-6">
+              <label for="companyAdditionalAddress">Additional Address</label>
+              <textarea id="companyAdditionalAddress" name="companyAdditionalAddress" placeholder="Optional address shown in the undertaking table"></textarea>
+            </div>
+            <div class="field span-6">
+              <label for="companyLoanStatus">Whether the company is availing any loan or not</label>
+              <select id="companyLoanStatus" name="companyLoanStatus">
+                <option value="">Not specified</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div class="field span-6">
+              <label for="companyBankFi">Name of the Bank/FI</label>
+              <textarea id="companyBankFi" name="companyBankFi" placeholder="Fill only if loan status is Yes&#10;Use one Bank/FI per line"></textarea>
+              <div class="sub-label">Add more Bank/FI names by writing one per line.</div>
+            </div>
+            <div class="field span-6">
+              <label for="companyBankBranch">Name of the Branch</label>
+              <textarea id="companyBankBranch" name="companyBankBranch" placeholder="Fill only if loan status is Yes&#10;Use one branch per line"></textarea>
+              <div class="sub-label">Add more branch names by writing one per line.</div>
+            </div>
+            <div class="field span-12">
+              <label for="additionalCompanyRows">Additional Company Rows</label>
+              <textarea id="additionalCompanyRows" name="additionalCompanyRows" placeholder="One company per line&#10;Optional format: Name | Main Address | Additional Address | Yes/No | Bank/FI 1; Bank/FI 2 | Branch 1; Branch 2"></textarea>
+              <div class="sub-label">The first row still uses the main organization above. Each extra line adds another row, and multiple Bank/FI or Branch values can be separated with semicolons.</div>
+              <div class="sub-label">format: Name | Main Address | Additional Address | Yes/No | Bank/FI 1; Bank/FI 2 | Branch 1; Branch 2</div>
+            </div>
+          </div>
+        </section>
+      </form>
+    </div>
+  </main>
+
+  <main class="page" id="preview-page">
+    <div class="preview-shell">
+      <div class="preview-toolbar">
+        <div class="toolbar-group" id="previewFilterGroup" data-own-name-hidden>
+          <label for="previewFilter">Preview Set</label>
+          <select id="previewFilter">
+            <option value="all">All Pages</option>
+            <option value="undertaking">Undertaking</option>
+            <option value="form1">Form-1</option>
+            <option value="form2">Form-2</option>
+          </select>
+        </div>
+        <div class="toolbar-meta">
+          <span class="status-pill">Draft <strong id="draftStateBadge">ready</strong></span>
+          <span class="status-pill">Current set <strong id="currentSetBadge">All Pages</strong></span>
+        </div>
+      </div>
+      <div class="preview-stack" id="previewStack"></div>
+    </div>
+  </main>
+
+  <div class="action-bar">
+    <button type="button" class="action-btn primary" data-action="print-pack"><i class="fas fa-print"></i> Print</button>
+    <button type="button" class="action-btn danger" data-action="clear-form"><i class="fas fa-trash"></i> Clear Form</button>
+  </div>
+
+  <div class="preset-backdrop" id="presetBackdrop"></div>
+  <div class="preset-panel" id="presetPanel" aria-hidden="true">
+    <div class="preset-header">
+      <h3><i class="fas fa-folder-open"></i> Saved Presets</h3>
+      <button class="preset-close" id="presetCloseBtn"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="preset-list" id="presetList"></div>
+  </div>
+
+  <textarea id="officerSealOfficerData" name="officerSealOfficer" form="cibForm" hidden></textarea>
+  <textarea id="officerSealHeadOfBranchData" name="officerSealHeadOfBranch" form="cibForm" hidden></textarea>
+  <input id="officerSealSizeData" name="officerSealSize" form="cibForm" type="hidden" />
+
+  <div class="officer-seal-popup-backdrop" id="officerSealBackdrop">
+    <div class="officer-seal-popup" role="dialog" aria-modal="true" aria-labelledby="officerSealTitle">
+      <div class="officer-seal-popup-header">
+        <h3 id="officerSealTitle"><i class="fas fa-stamp"></i> Officer Seal</h3>
+        <button class="officer-seal-popup-close" id="officerSealClose" type="button" aria-label="Close officer seal popup"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="officer-seal-popup-body">
+        <div class="officer-seal-fields">
+          <div class="officer-seal-field">
+            <label for="officerSealOfficerInput"><i class="fas fa-user-tie"></i> Officer</label>
+            <textarea id="officerSealOfficerInput" placeholder="Name&#10;Designation&#10;Bank/Organization&#10;Branch&#10;ID/Reference"></textarea>
+          </div>
+          <div class="officer-seal-field">
+            <label for="officerSealHeadOfBranchInput"><i class="fas fa-user-tie"></i> Head of Branch</label>
+            <textarea id="officerSealHeadOfBranchInput" placeholder="Name&#10;Designation&#10;Bank/Organization&#10;Branch&#10;ID/Reference"></textarea>
+          </div>
+        </div>
+        <div class="officer-seal-size-control">
+          <label for="officerSealSizeInput">Seal Size</label>
+          <input id="officerSealSizeInput" type="range" min="80" max="220" value="140" />
+          <span id="officerSealSizeValue">140px</span>
+        </div>
+        <div class="seal-preview-section">
+          <div class="seal-preview-title"><i class="fas fa-square"></i> Seal Preview</div>
+          <div class="seal-preview">
+            <div class="seal-item" id="sealPreviewOfficer"><div class="seal-item-text">Officer</div></div>
+            <div class="seal-item" id="sealPreviewHeadOfBranch"><div class="seal-item-text">Head of Branch</div></div>
+          </div>
+        </div>
+        <button type="button" class="officer-seal-save-btn" id="saveOfficerSealBtn"><i class="fas fa-save"></i> Save Officer Seals</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    (() => {
+      const STORAGE_KEYS = {
+        draft: 'cib_inquiry_draft_v1',
+        presets: 'cib_inquiry_presets_v1',
+        previewFilter: 'cib_inquiry_preview_filter_v1'
+      };
+
+      const INDIVIDUAL_OPTIONS = ['Borrower', 'CO-borrower', 'Guarantor', 'Owner'];
+      const INSTITUTION_PARTY_OPTIONS = ['Borrower', 'CO-borrower', 'Guarantor', 'Owner Company'];
+      const ROLE_OPTIONS = [
+        'Chairman',
+        'Managing Director',
+        'Sponsor Director',
+        'Elected Director',
+        'Nominated Director (by Govt.)',
+        'Nominated Director (by Pvt. Institution)',
+        'Shareholder',
+        'Partner',
+        'Owner of Proprietorship',
+        'Others'
+      ];
+      const GENDER_OPTIONS = ['Male', 'Female'];
+      const SECTOR_OPTIONS = ['Public', 'Private'];
+      const INSTITUTION_OPTIONS = ['Proprietorship', 'Partnership', 'Company'];
+      const LEGAL_FORM_OPTIONS = [
+        'Proprietorship',
+        'Partnership',
+        'Pvt. Ltd. Co.',
+        'Public Ltd. Co.',
+        'Co-operative',
+        'Public sector',
+        'Multinational organization',
+        'NGO',
+        'Trustee organization',
+        'Others'
+      ];
+
+      const previewLabels = {
+        all: 'All Pages',
+        undertaking: 'Undertaking',
+        form1: 'Form-1',
+        form2: 'Form-2'
+      };
+
+      const COMPANY_NAME_MODE_FIELDS = [
+        'individualInformation',
+        'roleInInstitution',
+        'businessVillage',
+        'businessPo',
+        'businessUpazila',
+        'businessDistrict',
+        'businessPostalCode',
+        'businessCountry',
+        'factoryVillage',
+        'factoryPo',
+        'factoryUpazila',
+        'factoryDistrict',
+        'factoryPostalCode',
+        'factoryCountry',
+        'organizationName',
+        'institutionType',
+        'legalForm',
+        'rjscRegistrationNumber',
+        'registrationDate',
+        'companyAdditionalAddress',
+        'companyLoanStatus',
+        'companyBankFi',
+        'companyBankBranch',
+        'additionalCompanyRows'
+      ];
+
+      const FIXED_BANK_NAME = 'United Commercial Bank PLC';
+
+      const form = document.getElementById('cibForm');
+      const previewStack = document.getElementById('previewStack');
+      const previewFilter = document.getElementById('previewFilter');
+      const presetPanel = document.getElementById('presetPanel');
+      const presetBackdrop = document.getElementById('presetBackdrop');
+      const presetList = document.getElementById('presetList');
+      const toast = document.getElementById('toast');
+      const filledFieldsValue = document.getElementById('filledFieldsValue');
+      const lastSavedValue = document.getElementById('lastSavedValue');
+      const currentSetBadge = document.getElementById('currentSetBadge');
+      const draftStateBadge = document.getElementById('draftStateBadge');
+      const slideMenu = document.getElementById('slideMenu');
+      const slideMenuBackdrop = document.getElementById('slideMenuBackdrop');
+      const slideMenuToggle = document.getElementById('slideMenuToggle');
+      const slideMenuClose = document.getElementById('slideMenuClose');
+      const slideMenuOfficerSeal = document.getElementById('slideMenuOfficerSeal');
+      const drawerInputs = [
+        document.getElementById('slideBranchInput'),
+        document.getElementById('slideBranchDistrictInput'),
+        document.getElementById('slideBranchCodeInput')
+      ].filter(Boolean);
+      const companyOnlySections = Array.from(document.querySelectorAll('[data-company-only]'));
+      const ownNameHiddenFields = Array.from(document.querySelectorAll('[data-own-name-hidden]'));
+      const formTwoPreviewOption = previewFilter?.querySelector('option[value="form2"]') || null;
+      const officerSealBackdrop = document.getElementById('officerSealBackdrop');
+      const officerSealClose = document.getElementById('officerSealClose');
+      const officerSealOfficerData = document.getElementById('officerSealOfficerData');
+      const officerSealHeadOfBranchData = document.getElementById('officerSealHeadOfBranchData');
+      const officerSealSizeData = document.getElementById('officerSealSizeData');
+      const officerSealOfficerInput = document.getElementById('officerSealOfficerInput');
+      const officerSealHeadOfBranchInput = document.getElementById('officerSealHeadOfBranchInput');
+      const officerSealSizeInput = document.getElementById('officerSealSizeInput');
+      const officerSealSizeValue = document.getElementById('officerSealSizeValue');
+      const sealPreviewOfficer = document.getElementById('sealPreviewOfficer');
+      const sealPreviewHeadOfBranch = document.getElementById('sealPreviewHeadOfBranch');
+      const saveOfficerSealBtn = document.getElementById('saveOfficerSealBtn');
+
+      let state = sanitizeStateForCompanyMode(loadDraft());
+      let toastTimer = null;
+      let lastSavedAt = 'Loaded';
+
+      bindEvents();
+      applyStateToForm(state);
+      previewFilter.value = loadPreviewFilter();
+      renderEverything();
+
+      function bindEvents() {
+        document.querySelectorAll('.nav-btn').forEach(button => {
+          button.addEventListener('click', () => switchPage(button.dataset.pageTarget));
+        });
+
+        document.querySelectorAll('.slide-menu [data-page-target]').forEach(button => {
+          button.addEventListener('click', () => {
+            switchPage(button.dataset.pageTarget);
+            closeSlideMenu();
+          });
+        });
+
+        if (slideMenuToggle) {
+          slideMenuToggle.addEventListener('click', openSlideMenu);
+        }
+        if (slideMenuClose) {
+          slideMenuClose.addEventListener('click', closeSlideMenu);
+        }
+        if (slideMenuBackdrop) {
+          slideMenuBackdrop.addEventListener('click', closeSlideMenu);
+        }
+        if (slideMenuOfficerSeal) {
+          slideMenuOfficerSeal.addEventListener('click', () => {
+            closeSlideMenu();
+            openOfficerSealPopup();
+          });
+        }
+
+        drawerInputs.forEach(input => {
+          input.addEventListener('input', handleFormUpdate);
+          input.addEventListener('change', handleFormUpdate);
+        });
+
+        [officerSealOfficerInput, officerSealHeadOfBranchInput].filter(Boolean).forEach(input => {
+          input.addEventListener('input', updateOfficerSealPreviews);
+        });
+
+        if (officerSealSizeInput) {
+          officerSealSizeInput.addEventListener('input', updateOfficerSealPreviews);
+        }
+        if (officerSealClose) {
+          officerSealClose.addEventListener('click', closeOfficerSealPopup);
+        }
+        if (officerSealBackdrop) {
+          officerSealBackdrop.addEventListener('click', event => {
+            if (event.target === officerSealBackdrop) {
+              closeOfficerSealPopup();
+            }
+          });
+        }
+        if (saveOfficerSealBtn) {
+          saveOfficerSealBtn.addEventListener('click', saveOfficerSeals);
+        }
+
+        form.addEventListener('input', handleFormUpdate);
+        form.addEventListener('change', handleFormUpdate);
+
+        document.querySelectorAll('[data-jump]').forEach(button => {
+          button.addEventListener('click', () => {
+            switchPage('input-page');
+            closeSlideMenu();
+            window.requestAnimationFrame(() => {
+              const section = document.getElementById(button.dataset.jump);
+              if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            });
+          });
+        });
+
+        document.querySelectorAll('[data-preview-target]').forEach(button => {
+          button.addEventListener('click', () => {
+            const target = button.dataset.previewTarget;
+            previewFilter.value = target;
+            persistPreviewFilter();
+            switchPage('preview-page');
+            closeSlideMenu();
+            renderEverything();
+          });
+        });
+
+        previewFilter.addEventListener('change', () => {
+          persistPreviewFilter();
+          applyPreviewFilter(previewFilter.value);
+          syncPreviewButtons();
+          currentSetBadge.textContent = previewLabels[previewFilter.value] || 'All Pages';
+        });
+
+        document.querySelectorAll('[data-action]').forEach(button => {
+          button.addEventListener('click', () => handleAction(button.dataset.action));
+        });
+
+        document.getElementById('presetCloseBtn').addEventListener('click', closePresetPanel);
+        presetBackdrop.addEventListener('click', closePresetPanel);
+        presetList.addEventListener('click', handlePresetListClick);
+        document.addEventListener('keydown', event => {
+          if (event.key === 'Escape') {
+            closeSlideMenu();
+            closePresetPanel();
+            closeOfficerSealPopup();
+          }
+        });
+      }
+
+      function openSlideMenu() {
+        if (!slideMenu || !slideMenuBackdrop) {
+          return;
+        }
+        slideMenu.classList.add('open');
+        slideMenuBackdrop.classList.add('open');
+        slideMenu.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeSlideMenu() {
+        if (!slideMenu || !slideMenuBackdrop) {
+          return;
+        }
+        slideMenu.classList.remove('open');
+        slideMenuBackdrop.classList.remove('open');
+        slideMenu.setAttribute('aria-hidden', 'true');
+      }
+
+      function handleAction(action) {
+        closeSlideMenu();
+
+        if (action === 'clear-form') {
+          const confirmed = window.confirm('Clear the current CIB Inquiry data and keep only the base defaults?');
+          if (!confirmed) {
+            return;
+          }
+          state = makeBaseState();
+          applyStateToForm(state);
+          saveDraft(false);
+          renderEverything();
+          showToast('Form cleared.');
+          return;
+        }
+
+        if (action === 'save-preset') {
+          savePreset();
+          return;
+        }
+
+        if (action === 'open-presets') {
+          openPresetPanel();
+          return;
+        }
+
+        if (action === 'print-pack') {
+          requestAnimationFrame(() => window.print());
+        }
+      }
+
+      function handleFormUpdate() {
+        const previousOwnNameMode = isOwnNameMode(state.companyOrOwn);
+        state = sanitizeStateForCompanyMode(readFormState());
+        const nextOwnNameMode = isOwnNameMode(state.companyOrOwn);
+
+        if (previousOwnNameMode !== nextOwnNameMode) {
+          applyStateToForm(state);
+        }
+
+        saveDraft(false);
+        renderEverything();
+      }
+
+      function readFormState() {
+        const next = makeBaseState();
+        const data = new FormData(form);
+
+        for (const [key, value] of data.entries()) {
+          next[key] = typeof value === 'string' ? value : '';
+        }
+
+        next.branchName = document.getElementById('slideBranchInput')?.value || next.branchName;
+        next.branchDistrict = document.getElementById('slideBranchDistrictInput')?.value || next.branchDistrict;
+        next.branchCode = document.getElementById('slideBranchCodeInput')?.value || next.branchCode;
+
+        next.bankName = FIXED_BANK_NAME;
+
+        return next;
+      }
+
+      function applyStateToForm(data) {
+        document.querySelectorAll('#cibForm [name], [form="cibForm"][name]').forEach(element => {
+          if (!element.name) {
+            return;
+          }
+          element.value = data[element.name] ?? '';
+        });
+      }
+
+      function renderEverything() {
+        syncCompanyOnlyUI();
+        renderPreview();
+        updateMetrics();
+        syncPreviewButtons();
+      }
+
+      function renderPreview() {
+        const model = buildModel(state);
+        const pages = [
+          buildUndertakingPage(model),
+          buildFormOnePage(model)
+        ];
+
+        if (!model.isOwnNameMode) {
+          pages.push(buildFormTwoPage(model));
+        }
+
+        previewStack.innerHTML = pages.join('');
+
+        applyPreviewFilter(previewFilter.value);
+        currentSetBadge.textContent = previewLabels[previewFilter.value] || 'All Pages';
+      }
+
+      function syncCompanyOnlyUI() {
+        const ownNameMode = isOwnNameMode(state.companyOrOwn);
+
+        companyOnlySections.forEach(section => {
+          section.hidden = ownNameMode;
+        });
+
+        ownNameHiddenFields.forEach(field => {
+          field.hidden = ownNameMode;
+        });
+
+        if (formTwoPreviewOption) {
+          formTwoPreviewOption.hidden = ownNameMode;
+        }
+
+        if (ownNameMode && previewFilter.value === 'form2') {
+          previewFilter.value = 'all';
+          persistPreviewFilter();
+        }
+      }
+
+      function applyPreviewFilter(filterValue) {
+        previewStack.querySelectorAll('.sheet').forEach(sheet => {
+          const shouldShow = filterValue === 'all' || sheet.dataset.previewKey === filterValue;
+          sheet.hidden = !shouldShow;
+        });
+      }
+
+      function switchPage(pageId) {
+        document.querySelectorAll('.page').forEach(page => {
+          page.classList.toggle('active', page.id === pageId);
+        });
+
+        document.querySelectorAll('.nav-btn').forEach(button => {
+          button.classList.toggle('active', button.dataset.pageTarget === pageId);
+        });
+      }
+
+      function updateMetrics() {
+        const meaningfulKeys = Object.keys(state).filter(key => {
+          const value = state[key];
+          return typeof value === 'string' && value.trim() !== '';
+        });
+
+        const totalFilled = meaningfulKeys.filter(key => key !== 'bankName').length;
+
+        if (filledFieldsValue) {
+          filledFieldsValue.textContent = String(totalFilled);
+        }
+        if (lastSavedValue) {
+          lastSavedValue.textContent = lastSavedAt;
+        }
+        if (draftStateBadge) {
+          draftStateBadge.textContent = 'saved locally';
+        }
+      }
+
+      function syncPreviewButtons() {
+        document.querySelectorAll('[data-preview-target]').forEach(button => {
+          button.classList.toggle('active', button.dataset.previewTarget === previewFilter.value);
+        });
+      }
+
+      function saveDraft(showMessage) {
+        try {
+          localStorage.setItem(STORAGE_KEYS.draft, JSON.stringify(state));
+          lastSavedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          if (showMessage) {
+            showToast('Draft saved locally.');
+          }
+        } catch (error) {
+          if (showMessage) {
+            showToast('Unable to save locally in this browser.');
+          }
+        }
+      }
+
+      function loadDraft() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEYS.draft);
+          if (!raw) {
+            return makeBaseState();
+          }
+
+          const parsed = JSON.parse(raw);
+          return { ...makeBaseState(), ...parsed, bankName: FIXED_BANK_NAME };
+        } catch (error) {
+          return makeBaseState();
+        }
+      }
+
+      function persistPreviewFilter() {
+        try {
+          localStorage.setItem(STORAGE_KEYS.previewFilter, previewFilter.value);
+        } catch (error) {
+        }
+      }
+
+      function loadPreviewFilter() {
+        try {
+          const value = localStorage.getItem(STORAGE_KEYS.previewFilter);
+          return value && previewLabels[value] ? value : 'all';
+        } catch (error) {
+          return 'all';
+        }
+      }
+
+      function savePreset() {
+        const name = window.prompt('Preset name');
+        if (!name) {
+          return;
+        }
+
+        const cleanedName = name.trim();
+        if (!cleanedName) {
+          return;
+        }
+
+        const presets = getPresets();
+        presets.unshift({
+          id: `preset-${Date.now()}`,
+          name: cleanedName,
+          createdAt: new Date().toISOString(),
+          data: state
+        });
+
+        try {
+          localStorage.setItem(STORAGE_KEYS.presets, JSON.stringify(presets.slice(0, 30)));
+          renderPresetList();
+          openPresetPanel();
+          showToast(`Preset "${cleanedName}" saved.`);
+        } catch (error) {
+          showToast('Unable to save preset locally.');
+        }
+      }
+
+      function getPresets() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEYS.presets);
+          if (!raw) {
+            return [];
+          }
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function renderPresetList() {
+        const presets = getPresets();
+
+        if (!presets.length) {
+          presetList.innerHTML = '<div style="text-align:center; padding:40px; color:#9ca3af;"><i class="fas fa-folder-open" style="font-size:2rem; margin-bottom:10px; display:block;"></i>No presets saved yet.</div>';
+          return;
+        }
+
+        presetList.innerHTML = '';
+        presets.forEach((preset, idx) => {
+          const item = document.createElement('div');
+          item.className = 'preset-item';
+          item.innerHTML = `
+            <div>
+              <div class="preset-name">${escapeHtml(preset.name)}</div>
+              <div class="preset-date">${escapeHtml(formatDateTime(preset.createdAt))}</div>
+            </div>
+            <div class="preset-actions">
+              <button class="preset-load" data-preset-action="load" data-preset-id="${escapeHtml(preset.id)}" title="Load"><i class="fas fa-download"></i></button>
+              <button class="preset-delete" data-preset-action="delete" data-preset-id="${escapeHtml(preset.id)}" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+          `;
+          presetList.appendChild(item);
+        });
+      }
+
+      function handlePresetListClick(event) {
+        const button = event.target.closest('[data-preset-action]');
+        if (!button) {
+          return;
+        }
+
+        const presetId = button.dataset.presetId;
+        const action = button.dataset.presetAction;
+        const presets = getPresets();
+        const index = presets.findIndex(preset => preset.id === presetId);
+
+        if (index === -1) {
+          return;
+        }
+
+        if (action === 'load') {
+          state = sanitizeStateForCompanyMode({ ...makeBaseState(), ...presets[index].data, bankName: FIXED_BANK_NAME });
+          applyStateToForm(state);
+          saveDraft(false);
+          renderEverything();
+          closePresetPanel();
+          showToast(`Preset "${presets[index].name}" loaded.`);
+          return;
+        }
+
+        if (action === 'save-over') {
+          const confirmed = window.confirm(`Overwrite preset "${presets[index].name}" with the current form data?`);
+          if (!confirmed) {
+            return;
+          }
+          presets[index] = {
+            ...presets[index],
+            createdAt: new Date().toISOString(),
+            data: state
+          };
+          localStorage.setItem(STORAGE_KEYS.presets, JSON.stringify(presets));
+          renderPresetList();
+          showToast(`Preset "${presets[index].name}" updated.`);
+          return;
+        }
+
+        if (action === 'delete') {
+          const confirmed = window.confirm(`Delete preset "${presets[index].name}"?`);
+          if (!confirmed) {
+            return;
+          }
+          presets.splice(index, 1);
+          localStorage.setItem(STORAGE_KEYS.presets, JSON.stringify(presets));
+          renderPresetList();
+          showToast('Preset deleted.');
+        }
+      }
+
+      function openPresetPanel() {
+        renderPresetList();
+        presetPanel.classList.add('open');
+        presetBackdrop.classList.add('open');
+        presetPanel.setAttribute('aria-hidden', 'false');
+      }
+
+      function closePresetPanel() {
+        presetPanel.classList.remove('open');
+        presetBackdrop.classList.remove('open');
+        presetPanel.setAttribute('aria-hidden', 'true');
+      }
+
+      function openOfficerSealPopup() {
+        if (officerSealOfficerInput) {
+          officerSealOfficerInput.value = state.officerSealOfficer || '';
+        }
+        if (officerSealHeadOfBranchInput) {
+          officerSealHeadOfBranchInput.value = state.officerSealHeadOfBranch || '';
+        }
+        if (officerSealSizeInput) {
+          officerSealSizeInput.value = normalizeOfficerSealSize(state.officerSealSize);
+        }
+
+        updateOfficerSealPreviews();
+        officerSealBackdrop?.classList.add('show');
+      }
+
+      function closeOfficerSealPopup() {
+        officerSealBackdrop?.classList.remove('show');
+      }
+
+      function updateOfficerSealPreviews() {
+        const officerText = officerSealOfficerInput?.value || 'Officer';
+        const headOfBranchText = officerSealHeadOfBranchInput?.value || 'Head of Branch';
+        const sealSize = normalizeOfficerSealSize(officerSealSizeInput?.value);
+        const sealWidth = Math.round(sealSize * 1.6);
+        const fontSizeRem = 0.65 * (sealSize / 140);
+        const paddingPx = Math.max(8, Math.round(sealSize * 0.06));
+
+        if (officerSealSizeValue) {
+          officerSealSizeValue.textContent = `${sealSize}px`;
+        }
+
+        [
+          { element: sealPreviewOfficer, text: officerText },
+          { element: sealPreviewHeadOfBranch, text: headOfBranchText }
+        ].forEach(item => {
+          if (!item.element) {
+            return;
+          }
+
+          const textElement = item.element.querySelector('.seal-item-text');
+          if (textElement) {
+            textElement.textContent = item.text;
+          }
+
+          item.element.style.width = `${sealWidth}px`;
+          item.element.style.height = `${sealSize}px`;
+          item.element.style.fontSize = `${fontSizeRem}rem`;
+          item.element.style.padding = `${paddingPx}px`;
+        });
+      }
+
+      function saveOfficerSeals() {
+        if (officerSealOfficerData) {
+          officerSealOfficerData.value = officerSealOfficerInput?.value || '';
+        }
+        if (officerSealHeadOfBranchData) {
+          officerSealHeadOfBranchData.value = officerSealHeadOfBranchInput?.value || '';
+        }
+        if (officerSealSizeData) {
+          officerSealSizeData.value = String(normalizeOfficerSealSize(officerSealSizeInput?.value));
+        }
+
+        state = sanitizeStateForCompanyMode(readFormState());
+        saveDraft(false);
+        renderEverything();
+        closeOfficerSealPopup();
+        showToast('Officer seals saved.');
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2600);
+      }
+
+      function buildModel(data) {
+        const inquiryDateDisplay = formatDate(data.inquiryDate);
+        const birthDateDisplay = formatDate(data.dob);
+        const otherIdIssueDateDisplay = formatDate(data.otherIdIssueDate);
+        const registrationDateDisplay = formatDate(data.registrationDate);
+        const permanentStreet = joinParts(data.permanentVillage, data.permanentPo, data.permanentUpazila);
+        const presentStreet = joinParts(data.presentVillage, data.presentPo, data.presentUpazila);
+        const businessStreet = joinParts(data.businessVillage, data.businessPo, data.businessUpazila);
+        const factoryStreet = joinParts(data.factoryVillage, data.factoryPo, data.factoryUpazila);
+        const companyMainAddress = joinParts(data.businessVillage, data.businessPo, data.businessUpazila, data.businessDistrict);
+        const undertakingRole = normalizeUndertakingRole(data.individualInformation);
+        const institutionParty = data.individualInformation === 'Owner' ? 'Owner Company' : data.individualInformation;
+        const selfReference = data.companyOrOwn || "aforementioned company's name";
+        const undertakingCompanies = buildUndertakingCompanies(data, companyMainAddress);
+
+        return {
+          ...data,
+          isOwnNameMode: isOwnNameMode(data.companyOrOwn),
+          officerSealSizePx: normalizeOfficerSealSize(data.officerSealSize),
+          inquiryDateDisplay,
+          birthDateDisplay,
+          otherIdIssueDateDisplay,
+          registrationDateDisplay,
+          permanentStreet,
+          presentStreet,
+          businessStreet,
+          factoryStreet,
+          companyMainAddress,
+          undertakingRole,
+          institutionParty,
+          selfReference,
+          undertakingCompanies,
+          inquiryDateDigits: digitsOnly(inquiryDateDisplay),
+          birthDateDigits: digitsOnly(birthDateDisplay),
+          nidDigits: digitsOnly(data.nid),
+          tinDigits: digitsOnly(data.tin),
+          factoryAddressMissing: !data.factoryVillage && !data.factoryDistrict && !data.factoryPostalCode && !data.factoryCountry
+        };
+      }
+
+      function normalizeOfficerSealSize(value) {
+        const parsed = parseInt(value, 10);
+
+        if (Number.isNaN(parsed)) {
+          return 140;
+        }
+
+        return Math.min(220, Math.max(80, parsed));
+      }
+
+      function renderOfficerSeal(textValue, sizeValue) {
+        const trimmed = String(textValue || '').trim();
+
+        if (!trimmed) {
+          return '';
+        }
+
+        const sealHeight = normalizeOfficerSealSize(sizeValue);
+        const sealWidth = Math.round(sealHeight * 1.6);
+        const fontSizeRem = 0.65 * (sealHeight / 140);
+        const paddingPx = Math.max(8, Math.round(sealHeight * 0.06));
+
+        return `
+            <div class="print-seal" style="width: min(${sealWidth}px, 100%); height: ${sealHeight}px; font-size: ${fontSizeRem}rem; padding: ${paddingPx}px ${paddingPx}px 0;">
+            <div class="print-seal-text">${textMultiline(trimmed)}</div>
+          </div>
+        `;
+      }
+
+      function buildUndertakingCompanies(data, companyMainAddress) {
+        const primaryCompany = {
+          companyName: readableText(data.organizationName),
+          mainAddress: readableText(companyMainAddress),
+          additionalAddress: readableText(data.companyAdditionalAddress),
+          loanStatus: normalizeCompanyLoanStatus(data.companyLoanStatus, data.companyBankFi, data.companyBankBranch),
+          bankFi: readableText(data.companyBankFi),
+          branch: readableText(data.companyBankBranch)
+        };
+
+        const companies = [];
+        if (hasUndertakingCompanyData(primaryCompany)) {
+          companies.push(primaryCompany);
+        }
+
+        parseAdditionalUndertakingCompanies(data.additionalCompanyRows).forEach(company => {
+          if (hasUndertakingCompanyData(company)) {
+            companies.push(company);
+          }
+        });
+
+        if (!companies.length) {
+          companies.push(primaryCompany);
+        }
+
+        return companies;
+      }
+
+      function parseAdditionalUndertakingCompanies(value) {
+        return String(value || '')
+          .split(/\r?\n/)
+          .map(line => line.trim())
+          .filter(Boolean)
+          .map(line => {
+            const parts = line.split('|').map(part => readableText(part.trim()));
+            const [companyName = '', mainAddress = '', additionalAddress = '', loanStatus = '', bankFi = '', branch = ''] = parts;
+            const normalizedBankFi = normalizeDelimitedMultiline(bankFi);
+            const normalizedBranch = normalizeDelimitedMultiline(branch);
+
+            return {
+              companyName,
+              mainAddress,
+              additionalAddress,
+              loanStatus: normalizeCompanyLoanStatus(loanStatus, normalizedBankFi, normalizedBranch),
+              bankFi: normalizedBankFi,
+              branch: normalizedBranch
+            };
+          });
+      }
+
+      function normalizeDelimitedMultiline(value) {
+        return String(value || '')
+          .split(';')
+          .map(part => readableText(part.trim()))
+          .filter(Boolean)
+          .join('\n');
+      }
+
+      function normalizeCompanyLoanStatus(value, bankFi = '', branch = '') {
+        const normalizedValue = String(value || '').trim().toLowerCase();
+
+        if (normalizedValue === 'yes' || normalizedValue === 'y') {
+          return 'Yes';
+        }
+
+        if (normalizedValue === 'no' || normalizedValue === 'n') {
+          return 'No';
+        }
+
+        if (String(bankFi || '').trim() || String(branch || '').trim()) {
+          return 'Yes';
+        }
+
+        return '';
+      }
+
+      function hasUndertakingCompanyData(company) {
+        return [company.companyName, company.mainAddress, company.additionalAddress, company.loanStatus, company.bankFi, company.branch]
+          .some(value => String(value || '').trim() !== '');
+      }
+
+      function renderUndertakingCompanyRows(companies) {
+        return companies.map((company, index) => `
+                <tr>
+                  <td class="center">${String(index + 1).padStart(2, '0')}.</td>
+                  <td>${text(company.companyName)}</td>
+                  <td>${text(company.mainAddress)}</td>
+                  <td>${text(company.additionalAddress)}</td>
+                  <td>${company.loanStatus === 'Yes' ? textMultiline(company.bankFi) : '&nbsp;'}</td>
+                  <td>${company.loanStatus === 'Yes' ? textMultiline(company.branch) : '&nbsp;'}</td>
+                  <td class="center">${company.loanStatus === 'No' ? 'No' : '&nbsp;'}</td>
+                </tr>
+              `).join('');
+      }
+
+      function buildUndertakingPage(model) {
+        const bankDisplay = bankNameForPrint(model.bankName);
+        const branchDisplay = (model.branchName || '').trim().endsWith('Branch') ? model.branchName : model.branchName ? model.branchName + ' Branch' : '';
+        const permanentAddressSentence = formatLabeledAddress(
+          readableText(model.permanentVillage),
+          readableText(model.permanentPo),
+          readableText(model.permanentUpazila),
+          readableText(model.permanentDistrict),
+          model.permanentPostalCode,
+          readableText(model.permanentCountry)
+        );
+        const businessAddressSentence = formatLabeledAddress(
+          readableText(model.businessVillage),
+          readableText(model.businessPo),
+          readableText(model.businessUpazila),
+          readableText(model.businessDistrict),
+          model.businessPostalCode,
+          readableText(model.businessCountry)
+        );
+        const undertakingRows = renderUndertakingCompanyRows(model.undertakingCompanies);
+        const officerSeal = renderOfficerSeal(model.officerSealOfficer, model.officerSealSizePx);
+
+        return `
+          <section class="sheet ref-sheet undertaking-page" data-preview-key="undertaking">
+            <div class="ref-head">
+              <div class="ref-title">UNDERTAKING</div>
+              <div class="ref-annex">
+                <div>Annex-K</div>
+                <div>Attachment-Ka</div>
+              </div>
+            </div>
+
+            <div class="to-block">
+              <div>To</div>
+              <div>The Manager</div>
+              <div>${text(bankDisplay)}</div>
+              <div>${text(branchDisplay)}</div>
+              <div>${text(readableText(model.branchDistrict))}</div>
+            </div>
+
+            <div class="subject-line"><span>Subject:</span> Provision of information on the ownership of companies and their bank liabilities.</div>
+
+            <div class="official-paragraph">
+              <p>Dear Sir,</p>
+              <p>I, ${escapeHtml(valueOrDots(readableText(model.customerName)))}, ${escapeHtml(valueOrDots(model.undertakingRole, 'owner'))} of ${escapeHtml(valueOrDots(readableText(model.organizationName)))}, am applying for ${escapeHtml(valueOrDots(lowerText(model.facility), 'sanctioning'))} of a loan in my own ${escapeHtml(valueOrDots(model.selfReference, "aforementioned company's name"))}. My father's name: ${escapeHtml(valueOrDots(readableText(model.fatherName)))}, My mother's name: ${escapeHtml(valueOrDots(readableText(model.motherName)))}, ${model.gender === 'Male' && !readableText(model.spouseName) ? `husband's name (in case of married woman): ${escapeHtml(valueOrDots('……………………'))}` : `spouse's name: ${escapeHtml(valueOrDots(readableText(model.spouseName)))}`}, Permanent address: ${escapeHtml(permanentAddressSentence)}, Business address: ${escapeHtml(businessAddressSentence)}, Date of Birth: ${escapeHtml(valueOrDots(model.birthDateDisplay))}, District of Birth: ${escapeHtml(valueOrDots(readableText(model.districtOfBirth)))}, Country of Birth: ${escapeHtml(valueOrDots(readableText(model.countryOfBirth)))}, National ID Number: ${escapeHtml(valueOrDots(model.nid))}, Other ID documents (${escapeHtml(model.otherIdType || 'Passport/Driving License/Birth Registration Certificate')}): ID number ${escapeHtml(valueOrDots(model.otherIdNumber))}, ID issue date ${escapeHtml(valueOrDots(model.otherIdIssueDateDisplay))}, ID issue country ${escapeHtml(valueOrDots(readableText(model.otherIdIssueCountry)))}, TIN ${escapeHtml(valueOrDots(model.tin))}, Gender: ${escapeHtml(valueOrDots(model.gender))}, Telephone Number: ${escapeHtml(valueOrDots(model.telephone))} give you for your kind consideration. The list of companies under the ownership of mine along with their bank liability status is given in the following table:</p>
+            </div>
+
+            <table class="official-table undertaking-company-table">
+              <colgroup>
+                <col style="width: 8%;" />
+                <col style="width: 20%;" />
+                <col style="width: 22%;" />
+                <col style="width: 19%;" />
+                <col style="width: 11%;" />
+                <col style="width: 10%;" />
+                <col style="width: 10%;" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th rowspan="3">Serial no.</th>
+                  <th rowspan="3">Name of the Company</th>
+                  <th rowspan="3">Main Address</th>
+                  <th rowspan="3">Additional Address</th>
+                  <th colspan="3">Whether the company is availing any loan or not</th>
+                </tr>
+                <tr>
+                  <th colspan="2">Yes</th>
+                  <th rowspan="2">No</th>
+                </tr>
+                <tr>
+                  <th>Name of the bank/FI</th>
+                  <th>Name of the Branch</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${undertakingRows}
+              </tbody>
+            </table>
+
+            <p class="undertaking-note">Apart from stated above, if any liability in my own name or my company's name is found, I will be bound to obey any decision made by the authority concerned relating to sanctioning/renewal/rescheduling of the loan applied for and I will be punishable by law for providing this false or fabricated information.</p>
+
+            <div class="signature-table">
+              <div class="signature-cell${officerSeal ? ' has-print-seal' : ''}">
+                ${officerSeal}
+                <div class="signature-box-label">Seal and Signature of the bank official who certified the borrower</div>
+              </div>
+              <div class="signature-cell">
+                <div class="signature-box-label">Customer's Signature:</div>
+                <div>Name: ${text(readableText(model.customerName))}</div>
+                <div>Name of the Borrowing organization: ${text(readableText(model.organizationName))}</div>
+              </div>
+            </div>
+
+            <div class="footnote">*If necessary, extra paper could be used for list of companies.</div>
+          </section>
+        `;
+      }
+
+      function buildFormOnePage(model) {
+        const bankDisplay = bankNameForPrint(model.bankName);
+        const officerSeal = renderOfficerSeal(model.officerSealOfficer, model.officerSealSizePx);
+        const headOfBranchSeal = renderOfficerSeal(model.officerSealHeadOfBranch, model.officerSealSizePx);
+
+        return `
+          <section class="sheet ref-sheet cib-form-page form1-page" data-preview-key="form1">
+            <div class="ref-head">
+              <div class="ref-title">CIB ONLINE INQUIRY FORM - 1</div>
+              <div class="ref-annex">Annex - N</div>
+            </div>
+
+            <div class="form-intro">
+              <span class="label">Individual's (</span>
+              ${model.individualInformation
+                ? renderOptionSequence(INDIVIDUAL_OPTIONS, model.individualInformation)
+                : '<span>........</span>'}
+              <span class="label">) Information</span>
+            </div>
+
+            <div class="meta-grid top-meta-grid">
+              <div>
+                <div class="field-line"><span class="label">Name of Bank/FI:</span><span class="fill-line" style="min-width: 225px;">${text(bankDisplay)}</span></div>
+                <div class="field-line"><span class="label">FI Code:</span><span class="fill-line" style="min-width: 118px;">${text(model.fiCode)}</span></div>
+                <div class="field-line"><span class="required-label">*Type of Financing:</span><span class="fill-line" style="min-width: 195px;">${text(model.financingType)}</span></div>
+              </div>
+              <div>
+                <div class="field-line"><span class="label">Branch Code:</span><span class="fill-line" style="min-width: 88px;">${text(model.branchCode)}</span></div>
+                <div class="field-line"><span class="required-label">*Total Requested:</span><span class="fill-line" style="min-width: 132px;">${text(model.totalRequested)}</span></div>
+                <div class="field-line"><span class="label">Amount/Credit Limit:</span><span class="fill-line" style="min-width: 126px;">&nbsp;</span></div>
+              </div>
+            </div>
+
+            <div class="section-caption slim-caption">Installment contract data:</div>
+            <div class="meta-grid installment-grid">
+              <div>
+                <div class="field-line"><span class="label">Number of Installment:</span><span class="fill-line" style="min-width: 70px;">${text(model.installmentNumber)}</span></div>
+                <div class="field-line"><span class="label">Periodicity of payment</span><span class="fill-line" style="min-width: 74px;">${text(model.paymentPeriodicity)}</span></div>
+              </div>
+              <div>
+                <div class="field-line"><span class="label">Installment Amount:</span><span class="fill-line" style="min-width: 82px;">${text(model.installmentAmount)}</span></div>
+              </div>
+            </div>
+
+            <div class="selection-line role-row">
+              <span class="label">Role in the Institution</span>
+              ${renderOptionSequence(ROLE_OPTIONS, model.roleInInstitution)}
+            </div>
+            <div class="small-note">(If the individual is an owner/director/partner of any company then select a role)</div>
+
+            <div class="section-caption">Individual Subject Data:</div>
+            <div class="small-note">(Name has to be filled up according to valid document(s) like NID/other ID documents)</div>
+
+            <div class="parent-lines" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px;">
+              <div>
+                <div class="field-line"><span class="label">Title:</span><span class="fill-line" style="min-width: 82px;">${text(model.customerTitle)}</span></div>
+                <div class="field-line"><span class="label">Father's Title:</span><span class="fill-line" style="min-width: 56px;">${text(model.fatherTitle)}</span></div>
+                <div class="field-line"><span class="label">Mother's Title:</span><span class="fill-line" style="min-width: 56px;">${text(model.motherTitle)}</span></div>
+                <div class="field-line"><span class="label">Spouse's Title:</span><span class="fill-line" style="min-width: 56px;">${text(model.spouseTitle)}</span></div>
+              </div>
+              <div>
+                <div class="field-line"><span class="required-label">*Name:</span><span class="fill-line upper strong" style="min-width: 280px;">${text(model.customerName)}</span></div>
+                <div class="field-line"><span class="required-label">*Father's Name:</span><span class="fill-line upper" style="min-width: 220px;">${text(model.fatherName)}</span></div>
+                <div class="field-line"><span class="required-label">*Mother's Name:</span><span class="fill-line upper" style="min-width: 216px;">${text(model.motherName)}</span></div>
+                <div class="field-line"><span class="label">Spouse's Name:</span><span class="fill-line upper" style="min-width: 220px;">${text(model.spouseName)}</span></div>
+              </div>
+            </div>
+
+            <div class="digit-line"><span class="label">NID Number:</span></div>
+            <div class="digit-line">${renderDigitBoxes(model.nidDigits, 17)}</div>
+
+            <div class="digit-line"><span class="label">ETIN:</span></div>
+            <div class="digit-line">${renderDigitBoxes(model.tinDigits, 12, [4, 8], true)}</div>
+
+            <div class="two-col-split address-grid-ref" style="margin-top: 4px;">
+              <div>
+                <div class="digit-line"><span class="required-label">*Date of Birth:</span></div>
+                <div class="digit-line">${renderDigitBoxes(model.birthDateDigits, 8, [2, 4], true)}</div>
+                <div class="field-line"><span class="required-label">*District of Birth:</span><span class="fill-line upper" style="min-width: 124px;">${text(model.districtOfBirth)}</span></div>
+
+                <div class="section-caption address-block">*Permanent Address:</div>
+                <div class="field-line"><span class="required-label">*District:</span><span class="fill-line upper" style="min-width: 116px;">${text(model.permanentDistrict)}</span></div>
+                <div class="field-line"><span class="label">Postal code:</span><span class="fill-line" style="min-width: 70px;">${text(model.permanentPostalCode)}</span></div>
+
+                <div class="section-caption address-block">Present Address:</div>
+                <div class="field-line"><span class="required-label">*District:</span><span class="fill-line upper" style="min-width: 116px;">${text(model.presentDistrict)}</span></div>
+                <div class="field-line"><span class="label">Postal code:</span><span class="fill-line" style="min-width: 70px;">${text(model.presentPostalCode)}</span></div>
+              </div>
+              <div>
+                <div class="selection-line"><span class="required-label">*Gender:</span>${renderOptionSequence(GENDER_OPTIONS, model.gender)}</div>
+                <div class="field-line"><span class="required-label">*Country of Birth:</span><span class="fill-line" style="min-width: 126px;">${text(model.countryOfBirth)}</span></div>
+                <div style="height: 1.4em;"></div>
+                <div class="field-line address-block"><span class="required-label">*Street name and number:</span><span class="fill-line upper" style="min-width: 232px;">${text(model.permanentStreet)}</span></div>
+                <div class="field-line"><span class="required-label">*Country:</span><span class="fill-line" style="min-width: 124px;">${text(model.permanentCountry)}</span></div>
+
+                <div class="field-line address-block"><span class="required-label">*Street name and number:</span><span class="fill-line upper" style="min-width: 232px;">${text(model.presentStreet)}</span></div>
+                <div class="field-line"><span class="required-label">*Country:</span><span class="fill-line" style="min-width: 124px;">${text(model.presentCountry)}</span></div>
+              </div>
+            </div>
+
+            <div class="footer-grid bottom-detail-grid">
+              <div>
+                <div class="section-caption">Other ID</div>
+                <div class="field-line"><span class="label">ID Type:</span><span class="fill-line" style="min-width: 190px;">${text(model.otherIdType || 'Passport/Driving License/Birth registration')}</span></div>
+                <div class="field-line"><span class="label">ID issue date:</span><span class="fill-line" style="min-width: 118px;">${text(model.otherIdIssueDateDisplay)}</span></div>
+                <div class="field-line"><span class="label">Telephone number:</span><span class="fill-line" style="min-width: 134px;">${text(model.telephone)}</span></div>
+              </div>
+              <div>
+                <div class="field-line"><span class="label">ID number:</span><span class="fill-line" style="min-width: 164px;">${text(model.otherIdNumber)}</span></div>
+                <div class="field-line"><span class="label">ID issue country:</span><span class="fill-line" style="min-width: 132px;">${text(model.otherIdIssueCountry)}</span></div>
+                <div style="height: 1.4em;"></div>
+                <div class="selection-line"><span class="required-label">*Sector Type:</span>${renderOptionSequence(SECTOR_OPTIONS, model.sectorType)}</div>
+                <div class="field-line"><span class="required-label">*Sector code:</span><span class="fill-line" style="min-width: 114px;">${text(model.sectorCode)}</span></div>
+              </div>
+            </div>
+
+            <div class="date-sign-row">
+              <div class="field-line"><span class="label">Date:</span><span class="fill-line" style="min-width: 118px;">${text(model.inquiryDateDisplay)}</span></div>
+              <div class="customer-signature-label">Signature of the Customer</div>
+            </div>
+
+            <div class="seal-row">
+              <div class="signature-entry no-line${headOfBranchSeal ? ' has-print-seal' : ''}">${headOfBranchSeal}<div>Seal and Signature of the</div><div>Manager</div></div>
+              <div class="signature-entry no-line${officerSeal ? ' has-print-seal' : ''}">${officerSeal}<div>Seal and Signature of the</div><div>Authorized Officer</div></div>
+            </div>
+
+            <div class="footnote">* indicates mandatory field</div>
+          </section>
+        `;
+      }
+
+      function buildFormTwoPage(model) {
+        const bankDisplay = bankNameForPrint(model.bankName);
+        const institutionSubjectValue = model.institutionType === 'Company' ? 'Company etc.' : model.institutionType;
+        const officerSeal = renderOfficerSeal(model.officerSealOfficer, model.officerSealSizePx);
+        const headOfBranchSeal = renderOfficerSeal(model.officerSealHeadOfBranch, model.officerSealSizePx);
+
+        return `
+          <section class="sheet ref-sheet cib-form-page form2-page" data-preview-key="form2">
+            <div class="ref-head">
+              <div class="ref-title">CIB ONLINE INQUIRY FORM - 2</div>
+              <div class="ref-annex">Annex - N</div>
+            </div>
+
+            <div class="form-intro">
+              <span class="label">Institution's (</span>
+              ${renderOptionSequence(INSTITUTION_PARTY_OPTIONS, model.institutionParty)}
+              <span class="label">) Information</span>
+            </div>
+
+            <div class="meta-grid top-meta-grid">
+              <div>
+                <div class="field-line"><span class="label">Name of Bank/FI:</span><span class="fill-line" style="min-width: 225px;">${text(bankDisplay)}</span></div>
+                <div class="field-line"><span class="label">FI Code:</span><span class="fill-line" style="min-width: 118px;">${text(model.fiCode)}</span></div>
+                <div class="field-line"><span class="required-label">*Type of Financing:</span><span class="fill-line" style="min-width: 195px;">${text(model.financingType)}</span></div>
+              </div>
+              <div>
+                <div class="field-line"><span class="label">Branch Code:</span><span class="fill-line" style="min-width: 88px;">${text(model.branchCode)}</span></div>
+                <div class="field-line"><span class="required-label">*Total Requested:</span><span class="fill-line" style="min-width: 132px;">${text(model.totalRequested)}</span></div>
+                <div class="field-line"><span class="label">Amount/Credit Limit:</span><span class="fill-line" style="min-width: 126px;">&nbsp;</span></div>
+              </div>
+            </div>
+
+            <div class="section-caption slim-caption">Installment contract data:</div>
+            <div class="meta-grid installment-grid">
+              <div>
+                <div class="field-line"><span class="label">Number of Installment:</span><span class="fill-line" style="min-width: 70px;">${text(model.installmentNumber)}</span></div>
+                <div class="field-line"><span class="label">Periodicity of payment</span><span class="fill-line" style="min-width: 74px;">${text(model.paymentPeriodicity)}</span></div>
+              </div>
+              <div>
+                <div class="field-line"><span class="label">Installment Amount:</span><span class="fill-line" style="min-width: 82px;">${text(model.installmentAmount)}</span></div>
+              </div>
+            </div>
+
+            <div class="selection-line institution-subject-line">
+              <span class="label">Institution (</span>
+              ${renderOptionSequence(['Proprietorship', 'Partnership', 'Company etc.'], institutionSubjectValue)}
+              <span class="label">) Subject Data:</span>
+            </div>
+
+            <div class="field-line name-line"><span class="label">Title:</span><span class="fill-line" style="min-width: 82px;">&nbsp;</span><span class="required-label">*Trade Name:</span><span class="fill-line upper strong" style="min-width: 300px;">${text(model.organizationName)}</span></div>
+            <div class="small-note">(Trade name has to be filled up according to valid documentation(s), for Example-Trade License / Partnership Deed / MOA, etc.)</div>
+
+            <div class="selection-line legal-form-row"><span class="required-label">*Legal form:</span>${renderOptionSequence(LEGAL_FORM_OPTIONS, model.legalForm)}</div>
+
+            <div class="digit-line"><span class="label">ETIN:</span></div>
+            <div class="digit-line">${renderDigitBoxes(model.tinDigits, 12, [4, 8], true)}</div>
+
+            <div class="parent-lines" style="margin-top: 4px;">
+              <div class="field-line"><span class="label">RJSC Registration number (If available):</span><span class="fill-line" style="min-width: 206px;">${text(model.rjscRegistrationNumber)}</span></div>
+              <div class="field-line"><span class="label">Registration date:</span><span class="fill-line" style="min-width: 130px;">${text(model.registrationDateDisplay)}</span></div>
+            </div>
+
+            <div class="two-col-split address-grid-ref" style="margin-top: 8px;">
+              <div>
+                <div class="section-caption">*Business Address:</div>
+                <div class="field-line"><span class="required-label">*District:</span><span class="fill-line upper" style="min-width: 116px;">${text(model.businessDistrict)}</span></div>
+                <div class="field-line"><span class="label">Postal code:</span><span class="fill-line" style="min-width: 70px;">${text(model.businessPostalCode)}</span></div>
+              </div>
+              <div>
+                <div class="field-line address-block"><span class="required-label">*Street name and number:</span><span class="fill-line upper" style="min-width: 232px;">${text(model.businessStreet)}</span></div>
+                <div class="field-line"><span class="required-label">*Country:</span><span class="fill-line" style="min-width: 124px;">${text(model.businessCountry)}</span></div>
+              </div>
+            </div>
+
+            <div class="two-col-split address-grid-ref" style="margin-top: 8px;">
+              <div>
+                <div class="section-caption">*Factory Address: ${model.factoryAddressMissing ? 'N/A' : ''}</div>
+                <div class="field-line"><span class="required-label">*District:</span><span class="fill-line upper" style="min-width: 116px;">${text(model.factoryDistrict)}</span></div>
+                <div class="field-line"><span class="label">Postal code:</span><span class="fill-line" style="min-width: 70px;">${text(model.factoryPostalCode)}</span></div>
+              </div>
+              <div>
+                <div class="field-line address-block"><span class="required-label">*Street name and number:</span><span class="fill-line upper" style="min-width: 232px;">${text(model.factoryStreet)}</span></div>
+                <div class="field-line"><span class="required-label">*Country:</span><span class="fill-line" style="min-width: 124px;">${text(model.factoryCountry)}</span></div>
+              </div>
+            </div>
+
+            <div class="footer-grid bottom-detail-grid">
+              <div>
+                <div class="selection-line"><span class="required-label">*Sector Type:</span>${renderOptionSequence(SECTOR_OPTIONS, model.sectorType)}</div>
+                <div class="field-line"><span class="label">Telephone number:</span><span class="fill-line" style="min-width: 134px;">${text(model.telephone)}</span></div>
+              </div>
+              <div>
+                <div class="field-line"><span class="required-label">*Sector code:</span><span class="fill-line" style="min-width: 114px;">${text(model.sectorCode)}</span></div>
+              </div>
+            </div>
+
+            <div class="date-sign-row">
+              <div class="field-line"><span class="label">Date:</span><span class="fill-line" style="min-width: 118px;">${text(model.inquiryDateDisplay)}</span></div>
+              <div class="customer-signature-label">Signature of the Customer</div>
+            </div>
+
+            <div class="seal-row">
+              <div class="signature-entry no-line${headOfBranchSeal ? ' has-print-seal' : ''}">${headOfBranchSeal}<div>Seal and Signature of the</div><div>Manager</div></div>
+              <div class="signature-entry no-line${officerSeal ? ' has-print-seal' : ''}">${officerSeal}<div>Seal and Signature of the</div><div>Authorized Officer</div></div>
+            </div>
+
+            <div class="footnote">* indicates mandatory field</div>
+          </section>
+        `;
+      }
+
+      function makeBaseState() {
+        return {
+          inquiryDate: '',
+          bankName: FIXED_BANK_NAME,
+          branchName: 'Kashinathpur Branch',
+          branchDistrict: 'Pabna',
+          branchCode: '187',
+          fiCode: '',
+          facility: 'Sanctioning',
+          financingType: '',
+          totalRequested: '',
+          installmentNumber: 'N/A',
+          installmentAmount: 'N/A',
+          paymentPeriodicity: 'N/A',
+          officerSealOfficer: '',
+          officerSealHeadOfBranch: '',
+          officerSealSize: '140',
+          individualInformation: 'Owner',
+          roleInInstitution: 'Owner of Proprietorship',
+          companyOrOwn: "aforementioned company's name",
+          customerTitle: '',
+          customerName: '',
+          gender: 'Male',
+          dob: '',
+          districtOfBirth: '',
+          countryOfBirth: 'Bangladesh',
+          fatherTitle: '',
+          fatherName: '',
+          motherTitle: '',
+          motherName: '',
+          spouseTitle: '',
+          spouseName: '',
+          nid: '',
+          tin: '',
+          telephone: '',
+          otherIdType: '',
+          otherIdNumber: '',
+          otherIdIssueDate: '',
+          otherIdIssueCountry: '',
+          permanentVillage: '',
+          permanentPo: '',
+          permanentUpazila: '',
+          permanentDistrict: '',
+          permanentPostalCode: '',
+          permanentCountry: 'Bangladesh',
+          presentVillage: '',
+          presentPo: '',
+          presentUpazila: '',
+          presentDistrict: '',
+          presentPostalCode: '',
+          presentCountry: 'Bangladesh',
+          businessVillage: '',
+          businessPo: '',
+          businessUpazila: '',
+          businessDistrict: '',
+          businessPostalCode: '',
+          businessCountry: 'Bangladesh',
+          organizationName: '',
+          institutionType: 'Proprietorship',
+          legalForm: 'Proprietorship',
+          sectorType: 'Public',
+          sectorCode: '',
+          rjscRegistrationNumber: '',
+          registrationDate: '',
+          companyAdditionalAddress: '',
+          additionalCompanyRows: '',
+          factoryVillage: '',
+          factoryPo: '',
+          factoryUpazila: '',
+          factoryDistrict: '',
+          factoryPostalCode: '',
+          factoryCountry: '',
+          companyLoanStatus: '',
+          companyBankFi: '',
+          companyBankBranch: ''
+        };
+      }
+
+
+
+      function sanitizeStateForCompanyMode(data) {
+        const next = { ...data };
+
+        if (!isOwnNameMode(next.companyOrOwn)) {
+          return next;
+        }
+
+        COMPANY_NAME_MODE_FIELDS.forEach(fieldName => {
+          next[fieldName] = '';
+        });
+
+        return next;
+      }
+
+      function isOwnNameMode(value) {
+        return String(value || '').trim().toLowerCase() === 'name';
+      }
+
+      function joinParts(...parts) {
+        return parts.filter(part => part && String(part).trim() !== '').join(', ');
+      }
+
+      function formatLabeledAddress(village, po, upazila, district, postalCode, country) {
+        return [
+          `Street No/Village: ${valueOrNA(village)}`,
+          `PO: ${valueOrNA(po)}`,
+          `PS/Upazila: ${valueOrNA(upazila)}`,
+          `District: ${valueOrNA(district)}`,
+          `Postal code: ${valueOrNA(postalCode)}`,
+          `Country: ${valueOrNA(country)}`
+        ].join(', ');
+      }
+
+      function normalizeUndertakingRole(value) {
+        if (!value) {
+          return '..........';
+        }
+        return value.toLowerCase();
+      }
+
+      function formatDate(value) {
+        if (!value) {
+          return '';
+        }
+
+        if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+          const [year, month, day] = value.split('-');
+          return `${day}-${month}-${year}`;
+        }
+
+        return value;
+      }
+
+      function formatDateTime(value) {
+        if (!value) {
+          return 'Unknown date';
+        }
+
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+          return value;
+        }
+
+        return date.toLocaleString([], {
+          year: 'numeric',
+          month: 'short',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+
+      function digitsOnly(value) {
+        return String(value || '').replace(/\D/g, '');
+      }
+
+      function renderDigitBoxes(value, count, breaks = [], compact = false) {
+        const digits = String(value || '').slice(0, count).padEnd(count, ' ');
+        const content = Array.from({ length: count }, (_, index) => {
+          const cell = digits[index] === ' ' ? '&nbsp;' : escapeHtml(digits[index]);
+          const gap = breaks.includes(index) ? '<span class="digit-gap"></span>' : '';
+          return `${gap}<span class="digit-box">${cell}</span>`;
+        }).join('');
+
+        return `<span class="digit-row${compact ? ' compact-box' : ''}">${content}</span>`;
+      }
+
+      function renderOptionSequence(options, selected) {
+        return `<span class="option-sequence">${options.map((option, index) => {
+          const active = option === selected ? ' selected' : '';
+          const separator = index < options.length - 1 ? '<span class="sep">/</span>' : '';
+          return `<span class="opt${active}">${escapeHtml(option)}</span>${separator}`;
+        }).join(' ')}</span>`;
+      }
+
+      function lowerText(value) {
+        return String(value || '').trim().toLowerCase();
+      }
+
+      function bankNameForPrint(value) {
+        const trimmed = String(value || FIXED_BANK_NAME).trim();
+        return trimmed.endsWith('.') ? trimmed : `${trimmed}.`;
+      }
+
+      function readableText(value) {
+        const trimmed = String(value || '').trim();
+        if (!trimmed) {
+          return '';
+        }
+        if (trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed)) {
+          return trimmed.toLowerCase().replace(/\b\w/g, letter => letter.toUpperCase());
+        }
+        return trimmed;
+      }
+
+      function valueOrDots(value, dots = '........') {
+        const trimmed = String(value || '').trim();
+        return trimmed || dots;
+      }
+
+      function text(value) {
+        return value ? escapeHtml(String(value)) : '&nbsp;';
+      }
+
+      function textMultiline(value) {
+        const trimmed = String(value || '').trim();
+        if (!trimmed) {
+          return '&nbsp;';
+        }
+
+        return escapeHtml(trimmed).replace(/\r?\n/g, '<br />');
+      }
+
+      function textOrNA(value) {
+        return escapeHtml(valueOrNA(value));
+      }
+
+      function upperTextOrBlank(value) {
+        return value ? escapeHtml(String(value).toUpperCase()) : '&nbsp;';
+      }
+
+      function valueOrNA(value) {
+        return value && String(value).trim() !== '' ? String(value) : 'N/A';
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+    })();
+  </script>
+</body>
+</html>
