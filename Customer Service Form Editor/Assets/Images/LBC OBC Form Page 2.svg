@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1123 794" width="1123" height="794">
+  <rect width="1123" height="794" fill="#ffffff"/>
+
+  <g fill="#000000" font-family="Times New Roman, Times, serif">
+    <!-- Branch name top right -->
+    <text x="1006" y="58" font-size="14" font-weight="700" text-anchor="start">Branch</text>
+
+    <!-- UCB Title -->
+    <text x="1078" y="34" font-size="24" font-weight="700" text-anchor="end" fill="#003366">United Commercial Bank PLC.</text>
+
+    <!-- Left side content -->
+    <text x="40" y="85" font-size="12">To,</text>
+
+    <!-- Dear Sir -->
+    <text x="60" y="184" font-size="12">Dear Sir (s)</text>
+
+    <!-- Body text line 1 -->
+    <text x="80" y="209" font-size="11.5">We enclose Cheques/Drafts/Bill/Travelers' Cheques for collection as</text>
+    <text x="40" y="224" font-size="11.5">per instructions Marked "X"</text>
+
+    <!-- Checkbox section -->
+    <rect x="12" y="244" width="468" height="22" fill="none" stroke="#000" stroke-width="0.5"/>
+    <text x="45" y="259" font-size="10.5">Credit the proceeds to our account no.</text>
+    <text x="310" y="259" font-size="10.5">under advice to us.</text>
+
+    <rect x="12" y="266" width="468" height="22" fill="none" stroke="#000" stroke-width="0.5"/>
+    <text x="45" y="281" font-size="10.5">Authorise us to debit your account with us.</text>
+
+    <rect x="12" y="288" width="468" height="22" fill="none" stroke="#000" stroke-width="0.5"/>
+    <text x="45" y="301" font-size="10.5">Remit proceeds</text>
+    <rect x="12" y="310" width="468" height="22" fill="none" stroke="#000" stroke-width="0.5"/>
+    <text x="45" y="324" font-size="10.5">for crediting our account No.</text>
+    <text x="340" y="324" font-size="10.5">under advice to us.</text>
+
+    <rect x="12" y="332" width="468" height="22" fill="none" stroke="#000" stroke-width="0.5"/>
+    <text x="45" y="346" font-size="10.5">Remit Proceeds to us by your Draft/Pay order.(MICR)</text>
+
+    <rect x="12" y="354" width="468" height="22" fill="none" stroke="#000" stroke-width="0.5"/>
+    <text x="45" y="368" font-size="10.5">Please Issue Proceed Realisation Certificate (PRC)</text>
+
+    <rect x="12" y="376" width="468" height="22" fill="none" stroke="#000" stroke-width="0.5"/>
+    <text x="45" y="391" font-size="10.5">Please Pay Cash</text>
+
+    <!-- Encls (dynamic overlay) -->
+
+    <!-- Yours Faithfully -->
+    <text x="250" y="494" font-size="12">Yours Faithfully</text>
+
+    <!-- Right side table headers -->
+    <text x="560" y="108" font-size="11" text-anchor="middle">Our</text>
+    <text x="560" y="121" font-size="11" text-anchor="middle">Reference</text>
+
+    <text x="720" y="108" font-size="11" text-anchor="middle">Particulars</text>
+
+    <text x="858" y="101" font-size="11" text-anchor="middle">Curr-</text>
+    <text x="858" y="114" font-size="11" text-anchor="middle">ency</text>
+
+    <text x="993" y="111" font-size="11" text-anchor="middle">Amount</text>
+
+    <!-- TOTAL label -->
+    <text x="849" y="592" font-size="12" font-weight="700" text-anchor="middle">TOTAL</text>
+
+    <!-- S.F 52 -->
+    <text x="45" y="700" font-size="12">S.F 52</text>
+
+    <!-- Authorised signature -->
+    <text x="260" y="700" font-size="12">Authorised signature</text>
+  </g>
+
+  <!-- Right side table border -->
+  <g stroke="#000000" stroke-width="1" fill="none">
+    <!-- Left checkbox column divider -->
+    <line x1="40" y1="244" x2="40" y2="398"/>
+
+    <!-- Main table outline -->
+    <rect x="500" y="84" width="580" height="487"/>
+    <!-- Column lines -->
+    <line x1="610" y1="84" x2="610" y2="571"/>
+    <line x1="830" y1="84" x2="830" y2="571"/>
+    <line x1="888" y1="84" x2="888" y2="571"/>
+    <!-- Header bottom line -->
+    <line x1="500" y1="131" x2="1080" y2="131"/>
+    <!-- Row lines for 4 entries -->
+    <line x1="500" y1="241" x2="1080" y2="241"/>
+    <line x1="500" y1="351" x2="1080" y2="351"/>
+    <line x1="500" y1="461" x2="1080" y2="461"/>
+    <!-- Total area -->
+    <rect x="810" y="571" width="78" height="33"/>
+    <rect x="888" y="571" width="192" height="33"/>
+  </g>
+</svg>

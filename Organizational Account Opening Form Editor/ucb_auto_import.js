@@ -1,7 +1,9 @@
 window.UCB_AUTO_IMPORT_DATA = {
-  "exportedAt": "2026-02-27T17:38:52.618Z",
+  "exportedAt": "2026-06-02T18:53:10.768Z",
   "form": {
-    "branchName": "",
+    "branchName": "serajgonj",
+    "todayDate": "2026-06-03",
+    "todayDateMode": "auto",
     "accountTitle": "",
     "accountTitleBn": "",
     "businessPhone": "",
@@ -42,8 +44,8 @@ window.UCB_AUTO_IMPORT_DATA = {
     "monthlyIncome": "",
     "monthlyEquivalent": "",
     "sourceOfFund": "Proprietor",
-    "accountNumber": "",
-    "accountNumberNoSpace": "",
+    "accountNumber": "7862112",
+    "accountNumberNoSpace": "7862112",
     "amlTrackingNumber": "",
     "accountOwnership": "single",
     "secondApplicantName": "",
@@ -574,6 +576,10 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "35.5354%",
       "left": "44.8%"
     },
+    "2_attestedSeal_50": {
+      "top": "57.4771%",
+      "left": "25.2%"
+    },
     "3_accountNumber_0": {
       "top": "3.86438%",
       "left": "53.5%"
@@ -649,6 +655,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "6_officer1Seal_9": {
       "top": "88.8555%",
       "left": "73.2%"
+    },
+    "6_verifiedSeal_10": {
+      "top": "42.4326%",
+      "left": "26.6%"
     },
     "24_accountTitle_0": {
       "top": "28.5795%",
@@ -1078,6 +1088,10 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "38.1993%",
       "left": "41.1%"
     },
+    "25_attestedSeal_50": {
+      "top": "59.7085%",
+      "left": "24.6%"
+    },
     "26_accountNumber_0": {
       "top": "5.01632%",
       "left": "53.3%"
@@ -1153,6 +1167,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "29_officer1Seal_9": {
       "top": "91.0466%",
       "left": "73.2%"
+    },
+    "29_verifiedSeal_10": {
+      "top": "41.7847%",
+      "left": "26.8%"
     },
     "7_todayDate_0": {
       "top": "18.8065%",
@@ -1981,6 +1999,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "41_officer3Seal_20": {
       "top": "81.0078%",
       "left": "69.4%"
+    },
+    "41_verifiedSeal_21": {
+      "top": "59.6366%",
+      "left": "23.9%"
     },
     "50_branchName_0": {
       "top": "6.99036%",

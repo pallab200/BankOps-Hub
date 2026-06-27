@@ -1423,6 +1423,28 @@ body::after {
   font-weight: 400;
 }
 
+.overlay[data-field="verifiedSeal"],
+.overlay[data-field="attestedSeal"] {
+  width: 120px;
+  height: 120px;
+  display: block;
+  background: transparent;
+}
+
+.overlay[data-field="verifiedSeal"] svg,
+.overlay[data-field="attestedSeal"] svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.overlay[data-field="verifiedSeal"].editing,
+.overlay[data-field="attestedSeal"].editing {
+  padding: 0;
+  background: rgba(255, 243, 205, 0.3);
+}
+
 /* Toast Notification - Enhanced */
 .overlay[data-field="dob"],
 .overlay[data-field="nomineeDob"] {
@@ -2794,15 +2816,26 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   .slide-menu-toggle, .slide-menu-backdrop, .slide-menu { display: none !important; }
   .account-type-popup-backdrop { display: none !important; }
   .officer-seal-popup-backdrop { display: none !important; }
-  /* Ensure officer seals appear in print */
-  .overlay[data-field*="Seal"] {
+  .overlay[data-field="officer1Seal"],
+  .overlay[data-field="officer2Seal"],
+  .overlay[data-field="officer3Seal"],
+  .overlay[data-field="verifiedSeal"],
+  .overlay[data-field="attestedSeal"] {
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+  .overlay[data-field="officer1Seal"],
+  .overlay[data-field="officer2Seal"],
+  .overlay[data-field="officer3Seal"] {
     background: rgba(0, 0, 0, 0.02) !important;
     color: #000 !important;
+  }
+  .overlay[data-field="verifiedSeal"],
+  .overlay[data-field="attestedSeal"] {
+    background: transparent !important;
   }
 }
   </style>
@@ -4769,6 +4802,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer1Seal', top: '80%', left: '68%', label: 'Officer 1 Seal', sealType: 'officer1' },
       { field: 'officer2Seal', top: '80%', left: '78%', label: 'Officer 2 Seal', sealType: 'officer2' },
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
+      { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
     ],
     3: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -4794,6 +4828,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'thirdApplicantDate', top: '6%', left: '85%', label: 'Date' },
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' }, 
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal' },
     ]
     ,
     7: [
@@ -5165,6 +5200,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer1Seal', top: '80%', left: '68%', label: 'Officer 1 Seal', sealType: 'officer1' },
       { field: 'officer2Seal', top: '80%', left: '78%', label: 'Officer 2 Seal', sealType: 'officer2' },
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
+      { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
     ],
     20: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -5189,6 +5225,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'thirdApplicantDate', top: '6%', left: '85%', label: 'Date' },
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' }, 
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal' },
     ],
     // Guardian preview page overlays (page 48)
     48: [
@@ -5334,6 +5371,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer1Seal', top: '80%', left: '68%', label: 'Officer 1 Seal', sealType: 'officer1' },
       { field: 'officer2Seal', top: '80%', left: '78%', label: 'Officer 2 Seal', sealType: 'officer2' },
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
+      { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
     ],
     26: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -5360,6 +5398,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'thirdApplicantDate', top: '6%', left: '85%', label: 'Date' },
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' },
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal' },
     ],
     // Taqwa Imperial Pages 30-35 (copy of Conventional pages 1-6)
     30: [
@@ -5452,6 +5491,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer1Seal', top: '80%', left: '68%', label: 'Officer 1 Seal', sealType: 'officer1' },
       { field: 'officer2Seal', top: '80%', left: '78%', label: 'Officer 2 Seal', sealType: 'officer2' },
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
+      { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
     ],
     32: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -5478,6 +5518,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'thirdApplicantDate', top: '6%', left: '85%', label: 'Date' },
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' },
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal' },
     ]
   };
 
@@ -5573,6 +5614,86 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     // join digits with gap, then join components with gap as well
     const parts = [dd, mm, yyyy].map(part => part.split('').join(gap));
     return parts.join(gap);
+  }
+
+  const VERIFIED_SEAL_FIELD = 'verifiedSeal';
+  const ATTESTED_SEAL_FIELD = 'attestedSeal';
+  const TRIANGLE_SEAL_SIZE = 120;
+
+  function createTriangleSealSvg(statusText) {
+    return `
+    <svg viewBox="0 0 400 400" aria-hidden="true" focusable="false">
+      <polygon
+        points="200,40 61.4,280 338.6,280"
+        fill="none"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-linejoin="miter"></polygon>
+      <polygon
+        points="200,40 61.4,280 338.6,280"
+        fill="none"
+        stroke="#000000"
+        stroke-width="2.5"
+        stroke-linejoin="miter"
+        transform="translate(10 10) scale(0.95)"></polygon>
+      <polygon
+        points="200,40 61.4,280 338.6,280"
+        fill="none"
+        stroke="#000000"
+        stroke-width="2"
+        stroke-linejoin="miter"
+        transform="translate(70 70) scale(0.65)"></polygon>
+      <g
+        fill="#000000"
+        font-family="'Times New Roman', Times, serif"
+        font-size="28"
+        font-weight="600"
+        dominant-baseline="central"
+        text-anchor="middle">
+        <text x="200" y="264" letter-spacing="3">UCB PLC</text>
+        <text transform="translate(144.6, 168) rotate(-60)" letter-spacing="1.5">Signature</text>
+        <text transform="translate(255.4, 168) rotate(60)" letter-spacing="1.5">${statusText}</text>
+      </g>
+    </svg>`;
+  }
+
+  const VERIFIED_SEAL_SVG = createTriangleSealSvg('Verified');
+  const ATTESTED_SEAL_SVG = createTriangleSealSvg('Admitted');
+
+  function isVerifiedSealField(fieldName) {
+    return fieldName === VERIFIED_SEAL_FIELD;
+  }
+
+  function isAttestedSealField(fieldName) {
+    return fieldName === ATTESTED_SEAL_FIELD;
+  }
+
+  function renderTriangleSealOverlay(overlay, svgMarkup) {
+    if (!overlay) return;
+    overlay.innerHTML = svgMarkup;
+    overlay.style.display = 'block';
+    overlay.style.width = TRIANGLE_SEAL_SIZE + 'px';
+    overlay.style.height = TRIANGLE_SEAL_SIZE + 'px';
+    overlay.style.padding = '0';
+    overlay.style.border = 'none';
+    overlay.style.borderRadius = '0';
+    overlay.style.background = 'transparent';
+    overlay.style.whiteSpace = 'normal';
+    overlay.style.letterSpacing = 'normal';
+    overlay.style.lineHeight = 'normal';
+    overlay.style.boxShadow = 'none';
+    overlay.style.overflow = 'visible';
+    overlay.classList.remove('overlay-empty');
+  }
+
+  function renderVerifiedSealOverlay(overlay) {
+    if (!overlay || !isVerifiedSealField(overlay.dataset.field)) return;
+    renderTriangleSealOverlay(overlay, VERIFIED_SEAL_SVG);
+  }
+
+  function renderAttestedSealOverlay(overlay) {
+    if (!overlay || !isAttestedSealField(overlay.dataset.field)) return;
+    renderTriangleSealOverlay(overlay, ATTESTED_SEAL_SVG);
   }
 
   // Convert number to words using Indian numbering (supports up to crores)
@@ -5755,6 +5876,16 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       // Prefer value from collected form data, fall back to the actual input element's value
       const value = (data[field] !== undefined && data[field] !== null) ? data[field] : ((boundEl && boundEl.value) || '');
       let displayValue = '';
+
+      if (isVerifiedSealField(field)) {
+        renderVerifiedSealOverlay(overlay);
+        return;
+      }
+
+      if (isAttestedSealField(field)) {
+        renderAttestedSealOverlay(overlay);
+        return;
+      }
 
       // Ticks: some tick overlays are conditional based on account type
       if (overlay.dataset.field && overlay.dataset.field.startsWith('tick')) {

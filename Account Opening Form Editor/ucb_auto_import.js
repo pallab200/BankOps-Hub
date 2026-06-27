@@ -1,7 +1,7 @@
 window.UCB_AUTO_IMPORT_DATA = {
-  "exportedAt": "2026-02-27T17:40:45.376Z",
+  "exportedAt": "2026-05-29T09:36:38.300Z",
   "form": {
-    "branchName": "",
+    "branchName": "serajgonj",
     "fullNameEn": "",
     "fullNameBn": "",
     "dob": "",
@@ -106,6 +106,8 @@ window.UCB_AUTO_IMPORT_DATA = {
     "credibleSourceOfFunds": "",
     "sourceOfFundsVerify": "FACE TO FACE CONVERSATION",
     "beneficialOwners": "no",
+    "todayDate": "2026-05-29",
+    "todayDateAuto": "true",
     "boNameEn": "",
     "boNameBn": "",
     "boAmlTrackingNumber": "",
@@ -506,6 +508,10 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "81.1522%",
       "left": "70.2%"
     },
+    "2_attestedSeal_30": {
+      "top": "59.9245%",
+      "left": "24.9%"
+    },
     "3_accountNumber_0": {
       "top": "4.22873%",
       "left": "53.5%"
@@ -569,6 +575,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "6_thirdApplicantName_8": {
       "top": "55.3599%",
       "left": "80.2%"
+    },
+    "6_verifiedSeal_9": {
+      "top": "42.1448%",
+      "left": "23.6%"
     },
     "18_fullNameEn_0": {
       "top": "46.0695%",
@@ -906,6 +916,10 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "80.6478%",
       "left": "69.8%"
     },
+    "19_attestedSeal_30": {
+      "top": "59.8526%",
+      "left": "24.3%"
+    },
     "20_accountNumber_0": {
       "top": "4.29783%",
       "left": "53.5%"
@@ -969,6 +983,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "23_thirdApplicantName_8": {
       "top": "55.3599%",
       "left": "80.2%"
+    },
+    "23_verifiedSeal_9": {
+      "top": "43.8723%",
+      "left": "22.1%"
     },
     "24_fullNameEn_0": {
       "top": "48.085%",
@@ -1318,6 +1336,10 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "81.3677%",
       "left": "70.1%"
     },
+    "25_attestedSeal_30": {
+      "top": "61.7961%",
+      "left": "24.4%"
+    },
     "26_accountNumber_0": {
       "top": "4.15386%",
       "left": "53%"
@@ -1389,6 +1411,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "29_thirdApplicantName_8": {
       "top": "72.3479%",
       "left": "80.2%"
+    },
+    "29_verifiedSeal_9": {
+      "top": "59.6366%",
+      "left": "21.5%"
     },
     "30_fullNameEn_0": {
       "top": "48.085%",
@@ -1738,6 +1764,10 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "81.5117%",
       "left": "69.8%"
     },
+    "31_attestedSeal_30": {
+      "top": "61.4362%",
+      "left": "24.3%"
+    },
     "32_accountNumber_0": {
       "top": "4.15386%",
       "left": "53.2%"
@@ -1809,6 +1839,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "35_thirdApplicantName_8": {
       "top": "72.4199%",
       "left": "80.4%"
+    },
+    "35_verifiedSeal_9": {
+      "top": "59.5646%",
+      "left": "21.8%"
     },
     "40_cif_0": {
       "top": "14.3704%",

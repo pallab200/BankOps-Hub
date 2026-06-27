@@ -1,14 +1,14 @@
 window.RTGS_AUTO_IMPORT_DATA = {
-  "exportedAt": "2026-03-10T15:53:32.375Z",
+  "exportedAt": "2026-06-09T17:27:28.941Z",
   "formValues": {
-    "branchName": "serajgonj",
-    "accountNumber": "1872750000000068",
-    "cifNumber": "187000007",
+    "branchName": "",
+    "accountNumber": "",
+    "cifNumber": "",
     "routingNumber": "",
-    "dateTime": "10-03-2026 & 12:00 AM",
-    "senderName": "M/S GOLAM MOSTAFA",
+    "dateTime": "",
+    "senderName": "",
     "recvName": "",
-    "senderContact": "01712289504",
+    "senderContact": "",
     "amount": "",
     "reason": "business purpose",
     "recvBank": "",
@@ -651,6 +651,22 @@ window.RTGS_AUTO_IMPORT_DATA = {
     "beftn::1::officer1Seal::50": {
       "left": 7.37701,
       "top": 94.5466
+    },
+    "beftn::1::verifiedSeal::53": {
+      "left": 31.1148,
+      "top": 43.9532
+    },
+    "beftn::2::verifiedSeal::54": {
+      "left": 30.7049,
+      "top": 47.3604
+    },
+    "rtgs::1::verifiedSeal::53": {
+      "left": 46.9813,
+      "top": 53.5167
+    },
+    "rtgs::2::verifiedSeal::54": {
+      "left": 42.1803,
+      "top": 63.0926
     }
   },
   "senders": [],

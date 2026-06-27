@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" width="794" height="1123">
+  <rect width="794" height="1123" fill="#ffffff"/>
+
+  <g fill="#000000" font-family="Times New Roman, Times, serif">
+
+    <text x="40" y="330" font-size="14" font-weight="700">Sub:</text>
+
+    <text x="40" y="378" font-size="13">Dear Sir,</text>
+
+    <text x="60" y="493" font-size="13">S.I</text>
+    <text x="254" y="493" font-size="13" text-anchor="middle">Branch Details</text>
+    <text x="519" y="493" font-size="13" text-anchor="middle">Cheque/Bill/PO/DD NO.</text>
+    <text x="679" y="493" font-size="13" text-anchor="middle">Amount</text>
+
+    <text x="40" y="773" font-size="13">With regards,</text>
+    <text x="40" y="799" font-size="13">Yours faithfully,</text>
+
+    <text x="40" y="950" font-size="13">Specimen Signature</text>
+    <text x="40" y="972" font-size="13">1.</text>
+    <text x="40" y="998" font-size="13">2.</text>
+
+    <text x="358" y="1003" font-size="13" font-weight="700">Attested.</text>
+  </g>
+
+  <g stroke="#000000" stroke-width="1" fill="none">
+    <rect x="40" y="470" width="712" height="253"/>
+    <line x1="80" y1="470" x2="80" y2="723"/>
+    <line x1="138" y1="470" x2="138" y2="723"/>
+    <line x1="434" y1="470" x2="434" y2="723"/>
+    <line x1="605" y1="470" x2="605" y2="723"/>
+    <line x1="40" y1="503" x2="752" y2="503"/>
+    <line x1="40" y1="547" x2="752" y2="547"/>
+    <line x1="40" y1="591" x2="752" y2="591"/>
+    <line x1="40" y1="635" x2="752" y2="635"/>
+    <line x1="40" y1="679" x2="752" y2="679"/>
+  </g>
+</svg>

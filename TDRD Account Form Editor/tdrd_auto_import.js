@@ -1,5 +1,5 @@
 window.TDRD_AUTO_IMPORT_DATA = {
-  "exportedAt": "2026-04-10T09:23:34.582Z",
+  "exportedAt": "2026-06-06T15:08:17.418Z",
   "form": {
     "accountNumber": "",
     "cifNumber": "",
@@ -94,8 +94,8 @@ window.TDRD_AUTO_IMPORT_DATA = {
     "sectorCode": "",
     "combinedApplicants": "",
     "combinedApplicantsBn": "",
-    "branchName": "",
     "todayDate": "",
+    "branchName": "",
     "staticOne": "1",
     "staticFour": "4",
     "staticThreePage3": "3",
@@ -336,8 +336,8 @@ window.TDRD_AUTO_IMPORT_DATA = {
       {
         "page": "1",
         "field": "sameAsLinkedAccountPersonalNote",
-        "leftPercent": 41.2,
-        "topPercent": 72.6497
+        "leftPercent": 24.2,
+        "topPercent": 72.7491
       },
       {
         "page": "1",
@@ -368,6 +368,12 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "field": "officerSeal1",
         "leftPercent": 73,
         "topPercent": 89.5589
+      },
+      {
+        "page": "1",
+        "field": "verifiedSeal",
+        "leftPercent": 55.0666,
+        "topPercent": 69.255
       },
       {
         "page": "2",
@@ -736,6 +742,12 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "topPercent": 65.009
       },
       {
+        "page": "2",
+        "field": "verifiedSeal",
+        "leftPercent": 41.5333,
+        "topPercent": 20.5298
+      },
+      {
         "page": "3",
         "field": "accountNumber",
         "leftPercent": 53.1333,
@@ -914,6 +926,18 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "field": "kycAmlTrackingNumber",
         "leftPercent": 19.2667,
         "topPercent": 70.0003
+      },
+      {
+        "page": "3",
+        "field": "verifiedSeal",
+        "leftPercent": 40.8666,
+        "topPercent": 6.06139
+      },
+      {
+        "page": "3",
+        "field": "attestedSeal",
+        "leftPercent": 25.4,
+        "topPercent": 51.6543
       },
       {
         "page": "4",
@@ -1334,8 +1358,8 @@ window.TDRD_AUTO_IMPORT_DATA = {
       {
         "page": "5",
         "field": "sameAsLinkedAccountPersonalNote",
-        "leftPercent": 39.8,
-        "topPercent": 71.7699
+        "leftPercent": 23.2,
+        "topPercent": 72.2978
       },
       {
         "page": "5",
@@ -1390,6 +1414,18 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "field": "isrCustomer",
         "leftPercent": 86.9333,
         "topPercent": 33.6923
+      },
+      {
+        "page": "5",
+        "field": "verifiedSeal",
+        "leftPercent": 53.9333,
+        "topPercent": 69.4983
+      },
+      {
+        "page": "8",
+        "field": "verifiedSeal",
+        "leftPercent": 42,
+        "topPercent": 79
       },
       {
         "page": "6",
@@ -1758,6 +1794,12 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "topPercent": 65.6739
       },
       {
+        "page": "6",
+        "field": "verifiedSeal",
+        "leftPercent": 63,
+        "topPercent": 24.5809
+      },
+      {
         "page": "7",
         "field": "officerSeal1",
         "leftPercent": 9.33333,
@@ -1802,8 +1844,8 @@ window.TDRD_AUTO_IMPORT_DATA = {
       {
         "page": "7",
         "field": "sameAsLinkedAccountNomineeNote",
-        "leftPercent": 17.0001,
-        "topPercent": 8.52093
+        "leftPercent": 2.53344,
+        "topPercent": 8.56892
       },
       {
         "page": "7",
@@ -1924,6 +1966,18 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "field": "kycAmlTrackingNumber",
         "leftPercent": 18.4,
         "topPercent": 72.4486
+      },
+      {
+        "page": "7",
+        "field": "verifiedSeal",
+        "leftPercent": 31.4,
+        "topPercent": 5.38549
+      },
+      {
+        "page": "7",
+        "field": "attestedSeal",
+        "leftPercent": 24.8001,
+        "topPercent": 51.9344
       },
       {
         "page": "8",
@@ -3146,25 +3200,5 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "topPercent": 79.6336
       }
     ]
-  },
-  "presets": [
-    {
-      "type": "FDR",
-      "product": "Retail Ayma Fixed Deposit -Exclusive- 180 Days",
-      "interestRate": "10.75",
-      "tenorYears": "",
-      "tenorMonths": "",
-      "tenorDays": "180"
-    },
-    {
-      "type": "DPS",
-      "schemeName": "Retail UCB AYMA Super Flex Deposit Scheme 05 Years",
-      "years": "5"
-    },
-    {
-      "type": "DPS",
-      "schemeName": "Retail UCB AYMA Super Flex Deposit Scheme 03 Years",
-      "years": "3"
-    }
-  ]
+  }
 };

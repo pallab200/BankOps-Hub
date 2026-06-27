@@ -846,6 +846,33 @@ body::after {
   contain: layout style paint;
 }
 
+.overlay[data-field="verifiedSeal"],
+.overlay[data-field="attestedSeal"] {
+  width: 120px;
+  height: 120px;
+  display: block;
+  background: transparent;
+}
+
+.overlay[data-field="verifiedSeal"].hidden-seal,
+.overlay[data-field="attestedSeal"].hidden-seal {
+  display: none !important;
+}
+
+.overlay[data-field="verifiedSeal"] svg,
+.overlay[data-field="attestedSeal"] svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.overlay[data-field="verifiedSeal"].editing,
+.overlay[data-field="attestedSeal"].editing {
+  padding: 0;
+  background: rgba(255, 243, 205, 0.3);
+}
+
 /* Checkbox / tick overlays — larger so ticks are more visible */
 .overlay-check {
   font-size: 22px;
@@ -3338,6 +3365,27 @@ body::after {
             dpsSchemePopup.value = data.schemeName || '';
           }
         }
+        // restore FDR Product Details to popup inputs
+        if (data && data.productName) {
+          const p = document.getElementById('fdrProductName');
+          if (p) p.value = data.productName;
+        }
+        if (data && data.productInterestRate) {
+          const p = document.getElementById('fdrInterestRate');
+          if (p) p.value = data.productInterestRate;
+        }
+        if (data && data.tenorYears) {
+          const p = document.getElementById('fdrTenorYears');
+          if (p) p.value = data.tenorYears;
+        }
+        if (data && data.tenorMonths) {
+          const p = document.getElementById('fdrTenorMonths');
+          if (p) p.value = data.tenorMonths;
+        }
+        if (data && data.tenorDays) {
+          const p = document.getElementById('fdrTenorDays');
+          if (p) p.value = data.tenorDays;
+        }
       } catch (e) {}
     } else {
       // No form data saved, but still try to restore branch name from BRANCH_KEY
@@ -3384,6 +3432,21 @@ body::after {
       // Also save to BRANCH_KEY separately so it survives form clears
       try { localStorage.setItem(BRANCH_KEY, slideBranchInput.value); } catch (e) {}
     }
+    // Explicitly save FDR/DPS popup inputs (they live outside the form)
+    const _fdrProd = document.getElementById('fdrProductName');
+    const _fdrRate = document.getElementById('fdrInterestRate');
+    const _fdrYr = document.getElementById('fdrTenorYears');
+    const _fdrMo = document.getElementById('fdrTenorMonths');
+    const _fdrDy = document.getElementById('fdrTenorDays');
+    const _dpsScheme = document.getElementById('dpsSchemeName');
+    const _dpsYr = document.getElementById('dpsYears');
+    if (_fdrProd && _fdrProd.value) data['productName'] = _fdrProd.value;
+    if (_fdrRate && _fdrRate.value) data['productInterestRate'] = _fdrRate.value;
+    if (_fdrYr && _fdrYr.value) data['tenorYears'] = _fdrYr.value;
+    if (_fdrMo && _fdrMo.value) data['tenorMonths'] = _fdrMo.value;
+    if (_fdrDy && _fdrDy.value) data['tenorDays'] = _fdrDy.value;
+    if (_dpsScheme && _dpsScheme.value) data['schemeName'] = _dpsScheme.value;
+    if (_dpsYr && _dpsYr.value) data['dpsYears'] = _dpsYr.value;
     localStorage.setItem(FORM_KEY, JSON.stringify(data));
   }
 
@@ -3802,6 +3865,44 @@ body::after {
 
   const sameAsLinkedAccountPersonal = document.getElementById('sameAsLinkedAccountPersonal');
   const sameAsLinkedAccountNominee = document.getElementById('sameAsLinkedAccountNominee');
+  const personalVerifiedSealPages = ['1', '2', '5', '6'];
+
+  function getAccountNumberFourthDigit(accountValue) {
+    const accountNumber = accountValue !== undefined
+      ? accountValue
+      : ((form.elements['accountNumber'] && form.elements['accountNumber'].value) || '');
+    return accountNumber.length > 3 ? accountNumber[3] : '';
+  }
+
+  function getPersonalVerifiedSealTargetPages(accountValue) {
+    const fourthDigit = getAccountNumberFourthDigit(accountValue);
+
+    if (fourthDigit === '1' || fourthDigit === '2') return ['1', '5'];
+    if (fourthDigit === '3') return ['2', '6'];
+    return [];
+  }
+
+  function updateVerifiedSealVisibility(accountValue) {
+    const nomineeChecked = !!(sameAsLinkedAccountNominee && sameAsLinkedAccountNominee.checked);
+    const personalChecked = !!(sameAsLinkedAccountPersonal && sameAsLinkedAccountPersonal.checked);
+    const personalTargetPages = personalChecked ? getPersonalVerifiedSealTargetPages(accountValue) : [];
+
+    document.querySelectorAll('.overlay[data-field="verifiedSeal"]').forEach(ov => {
+      const page = ov.parentElement ? ov.parentElement.getAttribute('data-page') : '';
+
+      if (page === '3' || page === '7') {
+        ov.classList.toggle('hidden-seal', !nomineeChecked);
+        return;
+      }
+
+      if (personalVerifiedSealPages.includes(page)) {
+        ov.classList.toggle('hidden-seal', !personalTargetPages.includes(page));
+        return;
+      }
+
+      ov.classList.remove('hidden-seal');
+    });
+  }
 
   function getPrimaryNameMode(accountValue) {
     const accountNumber = accountValue !== undefined
@@ -3933,7 +4034,7 @@ body::after {
   if (sameAsLinkedAccountPersonal) {
     sameAsLinkedAccountPersonal.addEventListener('change', function() {
       const accountVal = (form.elements['accountNumber'] && form.elements['accountNumber'].value) || '';
-      const fourthChar = accountVal.length > 3 ? accountVal[3] : '';
+      const fourthChar = getAccountNumberFourthDigit(accountVal);
       const debitVal = (form.elements['debitMyAccount'] && form.elements['debitMyAccount'].value) ? form.elements['debitMyAccount'].value : '';
       const overlayText = this.checked && accountVal ? 'Same as Link Account: ' + debitVal : '';
       
@@ -3981,6 +4082,7 @@ body::after {
       toggleSectionsForSameAsPersonal(this.checked);
       updatePrimaryApplicantSectionVisibility(accountVal);
       try { updateOverlays(); } catch (e) {}
+      try { updateVerifiedSealVisibility(accountVal); } catch (e) {}
       saveFormData();
     });
     // keep overlay updated when debitMyAccount changes
@@ -4013,10 +4115,10 @@ body::after {
       const overlayText = 'Same as Link Account: ' + debitVal;
       
       if (this.checked) {
-        // Show on page 3 only
+        // Show on page 3 (conventional) and page 7 (taqwa)
         document.querySelectorAll('.overlay[data-field="sameAsLinkedAccountNomineeNote"]').forEach(ov => {
           const page = ov.parentElement.getAttribute('data-page');
-          if (page === '3') {
+          if (page === '3' || page === '7') {
             ov.textContent = overlayText;
             ov.style.display = 'block';
           }
@@ -4033,6 +4135,7 @@ body::after {
         setTickOverlay('tickSameAsLinkedAccountNominee', false);
         toggleNomineeSection(false);
       }
+      try { updateVerifiedSealVisibility(); } catch (e) {}
       saveFormData();
     });
     // keep overlay updated when debitMyAccount changes
@@ -4068,13 +4171,13 @@ body::after {
   function ensureStorageVersion() {
     try {
       const stored = localStorage.getItem(APP_VERSION_KEY);
-      // If the app version changed, clear overlay positions but PRESERVE form data
+      // If the app version changed, clear overlay positions but PRESERVE form data and presets
       if (stored !== APP_VERSION) {
-        // Only clear overlay positions and presets, NOT form data (FORM_KEY)
-        const keysToClear = [OVERLAY_KEY, 'deposit_account_type_presets_v1'];
+        // Only clear overlay positions, NOT form data or presets
+        const keysToClear = [OVERLAY_KEY];
         keysToClear.forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
         try { localStorage.setItem(APP_VERSION_KEY, APP_VERSION); } catch (e) {}
-        // Editor storage version changed - form data preserved
+        // Editor storage version changed - form data and presets preserved
       }
 
       // Additionally, detect overlay configuration schema changes by hashing overlayConfig
@@ -4231,6 +4334,83 @@ body::after {
     return String(text).split('').join(nbsp);
   }
 
+  const VERIFIED_SEAL_FIELD = 'verifiedSeal';
+  const ATTESTED_SEAL_FIELD = 'attestedSeal';
+  const VERIFIED_SEAL_SIZE = 120;
+
+  function createTriangleSealSvg(statusText) {
+    return `
+    <svg viewBox="0 0 400 400" aria-hidden="true" focusable="false">
+      <polygon
+        points="200,40 61.4,280 338.6,280"
+        fill="none"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-linejoin="miter"></polygon>
+      <polygon
+        points="200,40 61.4,280 338.6,280"
+        fill="none"
+        stroke="#000000"
+        stroke-width="2.5"
+        stroke-linejoin="miter"
+        transform="translate(10 10) scale(0.95)"></polygon>
+      <polygon
+        points="200,40 61.4,280 338.6,280"
+        fill="none"
+        stroke="#000000"
+        stroke-width="2"
+        stroke-linejoin="miter"
+        transform="translate(70 70) scale(0.65)"></polygon>
+      <g
+        fill="#000000"
+        font-family="'Times New Roman', Times, serif"
+        font-size="28"
+        font-weight="600"
+        dominant-baseline="central"
+        text-anchor="middle">
+        <text x="200" y="264" letter-spacing="3">UCB PLC</text>
+        <text transform="translate(144.6, 168) rotate(-60)" letter-spacing="1.5">Signature</text>
+        <text transform="translate(255.4, 168) rotate(60)" letter-spacing="1.5">${statusText}</text>
+      </g>
+    </svg>`;
+  }
+
+  const VERIFIED_SEAL_SVG = createTriangleSealSvg('Verified');
+  const ATTESTED_SEAL_SVG = createTriangleSealSvg('Admitted');
+
+  function isSealField(fieldName) {
+    return fieldName === VERIFIED_SEAL_FIELD || fieldName === ATTESTED_SEAL_FIELD;
+  }
+
+  function isVerifiedSealField(fieldName) {
+    return fieldName === VERIFIED_SEAL_FIELD;
+  }
+
+  function isAttestedSealField(fieldName) {
+    return fieldName === ATTESTED_SEAL_FIELD;
+  }
+
+  function renderTriangleSealOverlay(overlay, svgMarkup) {
+    if (!overlay) return;
+    overlay.innerHTML = svgMarkup;
+    overlay.style.display = '';
+    overlay.style.width = VERIFIED_SEAL_SIZE + 'px';
+    overlay.style.height = VERIFIED_SEAL_SIZE + 'px';
+    overlay.style.padding = '0';
+    overlay.style.whiteSpace = 'normal';
+    overlay.style.letterSpacing = 'normal';
+  }
+
+  function renderVerifiedSealOverlay(overlay) {
+    if (!overlay || !isVerifiedSealField(overlay.dataset.field)) return;
+    renderTriangleSealOverlay(overlay, VERIFIED_SEAL_SVG);
+  }
+
+  function renderAttestedSealOverlay(overlay) {
+    if (!overlay || !isAttestedSealField(overlay.dataset.field)) return;
+    renderTriangleSealOverlay(overlay, ATTESTED_SEAL_SVG);
+  }
+
   // Create an overlay DOM element from data and attach drag/delete handlers
   function createOverlayElement(data) {
     // data: { page, field, leftPercent, topPercent }
@@ -4357,13 +4537,20 @@ body::after {
       displayText = formatDateForOverlay(displayText);
     }
     
-    overlay.textContent = displayText;
     overlay.setAttribute('data-field', data.field || '');
     // Preserve the configured label on the DOM so update logic can fall back to it
     if (data.label) overlay.setAttribute('data-label', data.label);
     overlay.setAttribute('data-page', data.page);
     overlay.style.left = (data.leftPercent || 0) + '%';
     overlay.style.top = (data.topPercent || 0) + '%';
+
+    if (isVerifiedSealField(data.field)) {
+      renderVerifiedSealOverlay(overlay);
+    } else if (isAttestedSealField(data.field)) {
+      renderAttestedSealOverlay(overlay);
+    } else {
+      overlay.textContent = displayText;
+    }
     
     // Apply letter-spacing for specific fields (but NOT accountNumber/cifNumber/eTinIndividual on page 9, NOT accountNumber on page 15)
     if (fieldsWithNBSPSpacing.includes(data.field)) {
@@ -4454,7 +4641,7 @@ body::after {
     // Hide overlay if it has no meaningful content (excluding tick overlays and static fields)
     const staticFields = ['staticOne', 'staticTwo', 'staticFour', 'staticFourPage2', 'staticThreePage3', 'staticFourPage3', 'staticFourPage4', 'staticFourPage4Second', 'naPage10_1', 'naPage10_2', 'tickPage10_1', 'tickPage10_2', 'tickPage10_3'];
     const fieldsToAlwaysShow = ['schemeName', 'dpsYears', 'frequency'];
-    const shouldCheckEmpty = !isTickOverlay && !staticFields.includes(data.field) && !fieldsToAlwaysShow.includes(data.field);
+    const shouldCheckEmpty = !isTickOverlay && !isSealField(data.field) && !staticFields.includes(data.field) && !fieldsToAlwaysShow.includes(data.field);
     if (shouldCheckEmpty && (!displayText || displayText === data.field)) {
       overlay.style.display = 'none';
     }
@@ -4552,8 +4739,14 @@ body::after {
   ]);
   const sameAsLinkedPersonalHiddenOverlayPrefixes = ['tickOrg_', 'tickBusiness_', 'tickGender_', 'tickId_'];
 
-  function shouldHideOverlayForSameAsLinkedPersonal(fieldName) {
+  function shouldHideOverlayForSameAsLinkedPersonal(fieldName, page) {
     if (!isSameAsLinkedAccountPersonalChecked() || !fieldName) return false;
+    
+    // Hide fullNameEn and fullNameBn on page 6 (taqwa) when checkbox is ticked
+    if ((fieldName === 'fullNameEn' || fieldName === 'fullNameBn') && page === '6') {
+      return true;
+    }
+    
     if (sameAsLinkedPersonalHiddenOverlayFields.has(fieldName)) return true;
     return sameAsLinkedPersonalHiddenOverlayPrefixes.some(prefix => fieldName.startsWith(prefix));
   }
@@ -4565,6 +4758,17 @@ body::after {
     const data = {};
     for (let [key, value] of formData.entries()) {
       data[key] = value;
+    }
+
+    // branchName lives outside the <form> (in the slide menu), so FormData misses it.
+    // Supplement it here from the slide input or localStorage fallback.
+    if (!data['branchName'] || data['branchName'] === '') {
+      const _slideB = document.getElementById('slideBranchInput');
+      if (_slideB && _slideB.value) {
+        data['branchName'] = _slideB.value;
+      } else {
+        try { data['branchName'] = localStorage.getItem(BRANCH_KEY) || ''; } catch (e) {}
+      }
     }
 
     // Get account type
@@ -4616,7 +4820,17 @@ body::after {
       const page = overlay.dataset.page;
       if (!field) return;
 
-      if (shouldHideOverlayForSameAsLinkedPersonal(field)) {
+      if (isVerifiedSealField(field)) {
+        renderVerifiedSealOverlay(overlay);
+        return;
+      }
+
+      if (isAttestedSealField(field)) {
+        renderAttestedSealOverlay(overlay);
+        return;
+      }
+
+      if (shouldHideOverlayForSameAsLinkedPersonal(field, page)) {
         overlay.textContent = '';
         overlay.style.display = 'none';
         return;
@@ -5195,7 +5409,8 @@ body::after {
       { field: 'registrationAuthority', top: '16%', left: '10%', label: 'Registration Authority', page: '1' },
       { field: 'registeredAddress', top: '18%', left: '10%', label: 'Registered Address', page: '1' },
       { field: 'vatBin', top: '20%', left: '10%', label: 'VAT Registration No./BIN', page: '1' },
-      { field: 'sameAsLinkedAccountPersonalNote', top: '46%', left: '35%', label: 'Same as Link Account', page: '1' },      
+      { field: 'sameAsLinkedAccountPersonalNote', top: '46%', left: '35%', label: 'Same as Link Account', page: '1' },
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal', page: '1' },
       { field: 'businessAddress', top: '22%', left: '10%', label: 'Business/Office Address', page: '2' },
       { field: 'eTin', top: '20%', left: '40%', label: 'E-TIN', page: '1' },
       // Organization type tick overlays on page 2
@@ -5287,6 +5502,7 @@ body::after {
       { field: 'nomineePhone', top: '33.5%', left: '35%', label: 'Nominee Phone', page: '3' },
       { field: 'nomineeEmail', top: '33.5%', left: '55%', label: 'Nominee Email', page: '3' },
       { field: 'sameAsLinkedAccountPersonalNote', top: '46%', left: '35%', label: 'Same as Link Account', page: '2' },
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal', page: '2' },
       // Individual present address subfields
       { field: 'presentHouse', top: '36.5%', left: '10%', label: 'House', page: '2' },
       { field: 'presentArea', top: '36.5%', left: '28%', label: 'Area', page: '2' },
@@ -5310,6 +5526,8 @@ body::after {
       { field: 'tickModeSingle', top: '54%', left: '62%', label: '', page: '3' },
       { field: 'tickModeJoint', top: '56%', left: '62%', label: '', page: '3' },
       { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (EN)', page: '3' },
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal', page: '3' },
+      { field: 'attestedSeal', top: '79%', left: '65%', label: 'Attested Seal', page: '3' },
       // Page 4: Static number overlays
       { field: 'staticFourPage4', top: '44%', left: '10%', label: '4', page: '4' },
       { field: 'staticFourPage4Second', top: '44%', left: '14%', label: '4', page: '4' },
@@ -5353,6 +5571,7 @@ body::after {
       { field: 'registeredAddress', top: '18%', left: '10%', label: 'Registered Address', page: '5' },
       { field: 'vatBin', top: '20%', left: '10%', label: 'VAT Registration No./BIN', page: '5' },
       { field: 'sameAsLinkedAccountPersonalNote', top: '46%', left: '35%', label: 'Same as Link Account', page: '5' },
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal', page: '5' },
       { field: 'eTin', top: '20%', left: '40%', label: 'E-TIN', page: '5' },
       { field: 'schemeName', top: '30%', left: '40%', label: 'Scheme Name', page: '5' },
       { field: 'dpsYears', top: '32%', left: '40%', label: 'Duration (Years)', page: '5' },
@@ -5416,6 +5635,7 @@ body::after {
       { field: 'mobileNumber', top: '35.5%', left: '10%', label: 'Mobile Number', page: '6' },
       { field: 'email', top: '35.5%', left: '40%', label: 'Email Address', page: '6' },
       { field: 'sameAsLinkedAccountPersonalNote', top: '46%', left: '35%', label: 'Same as Link Account', page: '6' },
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal', page: '6' },
       { field: 'presentHouse', top: '36.5%', left: '10%', label: 'House', page: '6' },
       { field: 'presentArea', top: '36.5%', left: '28%', label: 'Area', page: '6' },
       { field: 'presentPostOffice', top: '36.5%', left: '46%', label: 'Post Office', page: '6' },
@@ -5441,6 +5661,8 @@ body::after {
       { field: 'tickModeSingle', top: '54%', left: '62%', label: '', page: '7' },
       { field: 'tickModeJoint', top: '56%', left: '62%', label: '', page: '7' },
       { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (EN)', page: '7' },
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal', page: '7' },
+      { field: 'attestedSeal', top: '79%', left: '65%', label: 'Attested Seal', page: '7' },
       { field: 'rmCode', top: '38%', left: '35%', label: 'RM Code', page: '7' },
       { field: 'secondApplicant', top: '41%', left: '35%', label: '2nd Applicant', page: '7' },
       { field: 'thirdApplicant', top: '43%', left: '35%', label: '3rd Applicant', page: '7' },
@@ -5674,11 +5896,49 @@ body::after {
     } catch (e) {}
   }
 
+  function normalizeConfiguredSealOverlays(all, type) {
+    if (!Array.isArray(all[type])) return;
+
+    const validSealKeys = new Set(
+      (overlayConfig[type] || [])
+        .filter(item => isSealField(item.field))
+        .map(item => item.field + '_' + (item.page || '1'))
+    );
+
+    if (!validSealKeys.size) return;
+
+    const seenSealKeys = new Set();
+    const filtered = [];
+    let changed = false;
+
+    all[type].forEach(item => {
+      if (!isSealField(item.field)) {
+        filtered.push(item);
+        return;
+      }
+
+      const key = item.field + '_' + (item.page || '1');
+      if (!validSealKeys.has(key) || seenSealKeys.has(key)) {
+        changed = true;
+        return;
+      }
+
+      seenSealKeys.add(key);
+      filtered.push(item);
+    });
+
+    if (changed) {
+      all[type] = filtered;
+      saveOverlayPositionsObject(all);
+    }
+  }
+
   // Render overlays for the currently selected form type
   function renderOverlaysForCurrentType() {
     clearOverlays();
     const all = loadOverlayPositions();
     const type = getCurrentFormType();
+    try { normalizeConfiguredSealOverlays(all, type); } catch (e) {}
     // Remove legacy single 'tenor' overlays from saved positions (migration)
     try {
       const list = all[type] || [];
@@ -5757,6 +6017,8 @@ body::after {
     try { setTickOverlay('tickOne', true); } catch (e) {}
     try { setTickOverlay('tickTextbox', true); } catch (e) {}
     try { syncTodayDate(); } catch (e) {}
+    // Initialize verified seal visibility across personal and nominee pages based on current form state
+    try { updateVerifiedSealVisibility(); } catch (e) {}
   }
   
   // Ensure account number and CIF overlays on page 1
@@ -6111,18 +6373,8 @@ body::after {
   // Clear saved positions for both form types to force re-seed from config
   // Ensure storage version; clears persisted editor data if version mismatch
   try { ensureStorageVersion(); } catch (e) {}
-  // Clear form data on app open/refresh - start fresh each time, but preserve branchName
-  try {
-    const savedData = JSON.parse(localStorage.getItem(FORM_KEY) || '{}');
-    const preservedBranchName = savedData.branchName || '';
-    localStorage.removeItem(FORM_KEY);
-    // Restore branchName if it was saved
-    if (preservedBranchName) {
-      localStorage.setItem(FORM_KEY, JSON.stringify({ branchName: preservedBranchName }));
-    }
-  } catch (e) {
-    try { localStorage.removeItem(FORM_KEY); } catch (e2) {}
-  }
+  // Preserve form data across reopens - only clear non-essential fields, keep branchName and Product Details
+  // (Product Details and branchName survive app reopens so users don't have to re-enter them)
   try {
     const all = loadOverlayPositions();
     ['conventional', 'taqwa'].forEach(type => {
@@ -6343,6 +6595,8 @@ body::after {
           ov.textContent = '';
         });
       }
+
+      try { updateVerifiedSealVisibility(val); } catch (e) {}
     });
     try { updatePrimaryApplicantSectionVisibility(accountNumberInput.value || ''); } catch (e) {}
   }
@@ -8396,9 +8650,23 @@ body::after {
       const obj = window.TDRD_AUTO_IMPORT_DATA;
       const imported = obj && obj.form ? obj.form : obj;
 
+      // Preserve Product Details from localStorage if the import file has them empty
+      const productFields = ['productName', 'productInterestRate', 'tenorYears', 'tenorMonths', 'tenorDays', 'schemeName', 'dpsYears', 'accountType'];
+      let savedProductData = {};
+      try {
+        const existingSaved = JSON.parse(localStorage.getItem(FORM_KEY) || '{}');
+        productFields.forEach(f => {
+          if (existingSaved[f]) savedProductData[f] = existingSaved[f];
+        });
+      } catch (e) {}
+
       // Apply form values
       Object.keys(imported).forEach(key => {
         if (key === 'todayDate') return;
+        // Skip product fields if import has empty value but we have saved data
+        if (productFields.includes(key) && (!imported[key] || imported[key] === '') && savedProductData[key]) {
+          return;
+        }
         const el = form.elements[key];
         if (!el) return;
         if (el.type === 'checkbox') {
@@ -8408,14 +8676,44 @@ body::after {
         }
       });
 
+      // Restore product fields from localStorage if they weren't in the import
+      productFields.forEach(f => {
+        if (savedProductData[f] && (!imported[f] || imported[f] === '')) {
+          const el = form.elements[f];
+          if (el) {
+            el.value = savedProductData[f];
+          } else {
+            // Create hidden input for the field
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = f;
+            hidden.value = savedProductData[f];
+            form.appendChild(hidden);
+          }
+          // Also restore to popup inputs
+          if (f === 'productName') { const p = document.getElementById('fdrProductName'); if (p) p.value = savedProductData[f]; }
+          if (f === 'productInterestRate') { const p = document.getElementById('fdrInterestRate'); if (p) p.value = savedProductData[f]; }
+          if (f === 'tenorYears') { const p = document.getElementById('fdrTenorYears'); if (p) p.value = savedProductData[f]; }
+          if (f === 'tenorMonths') { const p = document.getElementById('fdrTenorMonths'); if (p) p.value = savedProductData[f]; }
+          if (f === 'tenorDays') { const p = document.getElementById('fdrTenorDays'); if (p) p.value = savedProductData[f]; }
+          if (f === 'schemeName') { const p = document.getElementById('dpsSchemeName'); if (p) p.value = savedProductData[f]; }
+          if (f === 'dpsYears') { const p = document.getElementById('dpsYears'); if (p) p.value = savedProductData[f]; }
+        }
+      });
+
       // If overlay positions present, store them
       if (obj && obj.overlayPositions) {
         try { localStorage.setItem(OVERLAY_KEY, JSON.stringify(obj.overlayPositions)); } catch (e) {}
       }
 
-      // If presets present, store them
+      // If presets present in import AND no presets exist in localStorage yet, store them
       if (obj && obj.presets) {
-        try { localStorage.setItem(PRESETS_KEY, JSON.stringify(obj.presets)); } catch (e) {}
+        try {
+          const existingPresets = localStorage.getItem(PRESETS_KEY);
+          if (!existingPresets || existingPresets === '[]' || existingPresets === 'null') {
+            localStorage.setItem(PRESETS_KEY, JSON.stringify(obj.presets));
+          }
+        } catch (e) {}
       }
 
       saveFormData();

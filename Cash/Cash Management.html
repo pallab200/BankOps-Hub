@@ -3407,6 +3407,26 @@
         </head>
 
         <style>
+            /* Highlight style for the one-line voucher/cheque display inside the With Change popup */
+            #withChangePopupDiff {
+                font-size: 1.05rem;
+                font-weight: 900;
+                color: #0b2545;
+                background: linear-gradient(90deg, rgba(99,102,241,0.06), rgba(16,185,129,0.04));
+                padding: 8px 12px;
+                border-radius: 10px;
+                border: 1px solid rgba(99,102,241,0.12);
+                box-shadow: 0 6px 18px rgba(11, 20, 60, 0.08);
+                display: inline-block;
+                min-width: 200px;
+                text-align: left;
+            }
+            @media (max-width: 768px) {
+                #withChangePopupDiff { font-size: 0.98rem; min-width: 140px; }
+            }
+        </style>
+
+        <style>
             /* Print-specific styling to match PDF layout for Electricity Bill */
             @media print {
                 .print-page {
@@ -3466,8 +3486,11 @@
 
             <!-- Generated In-Hand styles (moved from runtime injection to head to prevent FOUC) -->
             <style data-generated="in-hand-styles">
-                    .in-hand-calc-box { background: linear-gradient(180deg, rgba(59,130,246,0.05), rgba(59,130,246,0.02)); border-radius: 8px; padding: 2px 4px; max-height: none; overflow: visible; }
-                    .in-hand-calc-box h3 { color: #2563EB; margin: 0 0 2px 0; font-size: 0.88rem; }
+                    .in-hand-calc-box { background: linear-gradient(180deg, rgba(59,130,246,0.05), rgba(59,130,246,0.02)); border-radius: 8px; padding: 2px 4px; max-height: none; overflow: visible; gap: 0.25rem !important; }
+                    .in-hand-calc-box h3 { color: #2563EB; margin: 0 0 1.8px 0; font-size: 0.88rem; }
+                    .in-hand-calc-box .space-y-2 > * + * { margin-top: 0.3rem !important; }
+                    .in-hand-calc-box .grid { gap: 0.225rem !important; margin-bottom: 0.225rem !important; }
+                    .in-hand-calc-box .border-b { padding-bottom: 0.225rem !important; }
                     .in-hand-deno-box { background: linear-gradient(180deg, rgba(14,165,233,0.04), rgba(14,165,233,0.01)); border-radius: 12px; padding: 6px; }
                     .in-hand-deno-box h3 { color: #0EA5E9; }
                     .in-hand-calc-box .in-hand-input, .in-hand-calc-box .input-field { border: 1px solid rgba(0,0,0,0.08); box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); padding: 2px 4px; border-radius: 6px; font-size: 0.72rem; height: 20px; }
@@ -4973,8 +4996,13 @@
                         </table>
                     </div>
                 </div>
-                <div class="with-change-popup-actions">
-                    <button id="withChangePopupActionBtn" type="button" class="main-button btn-received btn-animate">Received With Change</button>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div id="withChangePopupDiff" class="value">Voucher Amount : 0</div>
+                    </div>
+                    <div class="with-change-popup-actions">
+                        <button id="withChangePopupActionBtn" type="button" class="main-button btn-received btn-animate">Received With Change</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -6060,14 +6088,14 @@
                 item.setAttribute('role', 'button');
                 item.setAttribute('aria-expanded', 'false');
                 item.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-baseline gap-3">
-                            <span class="${idx === 0 ? 'text-xl font-extrabold' : 'font-bold'}">${displayTime}</span>
-                            <span class="${idx === 0 ? 'text-sm font-extrabold' : 'text-xs font-medium'}">${typeText}</span>
+                    <div class="flex items-center justify-between gap-2 flex-nowrap">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="${idx === 0 ? 'text-base font-extrabold whitespace-nowrap' : 'font-bold'}">${displayTime}</span>
+                            <span class="${idx === 0 ? 'text-xs font-extrabold whitespace-nowrap' : 'text-xs font-medium'}">${typeText}</span>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-nowrap">
                             <div>
-                                <span class="${idx === 0 ? 'text-xl font-extrabold' : 'font-extrabold'} ${amountColor}">${amountSign} ${formatNumber(tx.totalAmount)}</span>
+                                <span class="${idx === 0 ? 'text-base font-extrabold whitespace-nowrap' : 'font-extrabold'} ${amountColor}">${amountSign} ${formatNumber(tx.totalAmount)}</span>
                             </div>
                             <div class="recent-transaction-actions" role="group" aria-label="Transaction actions">
                                 <button type="button" class="recent-transaction-action-btn recent-transaction-edit-btn" title="Edit transaction" aria-label="Edit transaction">
@@ -9102,6 +9130,7 @@
             const withChangePopupTitle = document.getElementById('withChangePopupTitle');
             const withChangePopupSummaryLabel = document.getElementById('withChangePopupSummaryLabel');
             const withChangePopupTotal = document.getElementById('withChangePopupTotal');
+            const withChangePopupDiff = document.getElementById('withChangePopupDiff');
             const withChangePopupClose = document.getElementById('withChangePopupClose');
             const withChangePopupActionBtn = document.getElementById('withChangePopupActionBtn');
             const withChangeDenominationRowsLeft = document.getElementById('withChangeDenominationRowsLeft');
@@ -9246,7 +9275,7 @@
             }
 
             function updateWithChangePopupAmounts() {
-                if (!withChangePopup) return;
+                if (!withChangePopup) return 0;
 
                 let total = 0;
                 withChangePopup.querySelectorAll('.with-change-popup-count').forEach(input => {
@@ -9264,6 +9293,16 @@
 
                 if (withChangePopupTotal) {
                     withChangePopupTotal.textContent = formatNumber(total);
+                }
+
+                // Compute difference between Calculation total and popup total
+                const calcTotalEl = document.getElementById('inHandCalcTotal');
+                const calcTotal = parseNumber(calcTotalEl?.textContent || '0');
+                const diff = calcTotal - total;
+
+                if (withChangePopupDiff) {
+                    const label = (activeWithChangeMode === 'payment') ? 'Cheque Amount' : 'Voucher Amount';
+                    withChangePopupDiff.textContent = `${label} : ${formatNumber(diff)}`;
                 }
 
                 return total;

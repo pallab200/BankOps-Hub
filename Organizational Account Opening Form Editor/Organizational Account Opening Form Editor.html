@@ -4425,6 +4425,62 @@ input:checked + .slider:before {
     }
   }
 
+  const VERIFIED_SEAL_FIELD = 'verifiedSeal';
+  const ATTESTED_SEAL_FIELD = 'attestedSeal';
+  const TRIANGLE_SEAL_SIZE = 120;
+
+  function createTriangleSealSvg(statusText) {
+    return `
+    <svg viewBox="0 0 400 400" aria-hidden="true" focusable="false">
+      <polygon
+        points="200,40 61.4,280 338.6,280"
+        fill="none"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-linejoin="miter"></polygon>
+      <polygon
+        points="200,40 61.4,280 338.6,280"
+        fill="none"
+        stroke="#000000"
+        stroke-width="2.5"
+        stroke-linejoin="miter"
+        transform="translate(10 10) scale(0.95)"></polygon>
+      <polygon
+        points="200,40 61.4,280 338.6,280"
+        fill="none"
+        stroke="#000000"
+        stroke-width="2"
+        stroke-linejoin="miter"
+        transform="translate(70 70) scale(0.65)"></polygon>
+      <g
+        fill="#000000"
+        font-family="'Times New Roman', Times, serif"
+        font-size="28"
+        font-weight="600"
+        dominant-baseline="central"
+        text-anchor="middle">
+        <text x="200" y="264" letter-spacing="3">UCB PLC</text>
+        <text transform="translate(144.6, 168) rotate(-60)" letter-spacing="1.5">Signature</text>
+        <text transform="translate(255.4, 168) rotate(60)" letter-spacing="1.5">${statusText}</text>
+      </g>
+    </svg>`;
+  }
+
+  const VERIFIED_SEAL_SVG = createTriangleSealSvg('Verified');
+  const ATTESTED_SEAL_SVG = createTriangleSealSvg('Admitted');
+
+  function renderTriangleSealOverlay(overlay, svgMarkup) {
+    if (!overlay) return;
+    overlay.innerHTML = svgMarkup;
+    overlay.style.display = '';
+    overlay.style.width = TRIANGLE_SEAL_SIZE + 'px';
+    overlay.style.height = TRIANGLE_SEAL_SIZE + 'px';
+    overlay.style.padding = '0';
+    overlay.style.whiteSpace = 'normal';
+    overlay.style.letterSpacing = 'normal';
+    overlay.classList.remove('overlay-empty');
+  }
+
   // Overlay Definitions for each page
   const overlayConfig = {
     1: [
@@ -4540,7 +4596,8 @@ input:checked + .slider:before {
       { field: 'identityDocumentType_2', top: '22%', left: '62%', label: '' },
       { field: 'identityDocumentType_3', top: '22%', left: '66%', label: '' },
       { field: 'identityDocumentType_4', top: '22%', left: '70%', label: '' },
-      
+      { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
+    
     ],
     3: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -4569,6 +4626,8 @@ input:checked + .slider:before {
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' }, 
       { field: 'officer1Seal', top: '80%', left: '68%', label: 'Officer 1 Seal', sealType: 'officer1' },
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal' },
+      
     ]
     ,
     7: [
@@ -4919,7 +4978,8 @@ input:checked + .slider:before {
       { field: 'identityDocumentType_2', top: '22%', left: '62%', label: '' },
       { field: 'identityDocumentType_3', top: '22%', left: '66%', label: '' },
       { field: 'identityDocumentType_4', top: '22%', left: '70%', label: '' },
-      
+      { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
+
     ],
     26: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -4948,6 +5008,8 @@ input:checked + .slider:before {
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' }, 
       { field: 'officer1Seal', top: '85%', left: '78%', label: 'Officer 1 Seal', sealType: 'officer1' },
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal' },
+
     ],
     // Nominee Form Page 41
     41: [
@@ -4972,6 +5034,8 @@ input:checked + .slider:before {
       { field: 'officer1Seal', top: '80%', left: '68%', label: 'Officer 1 Seal', sealType: 'officer1' },
       { field: 'officer2Seal', top: '80%', left: '78%', label: 'Officer 2 Seal', sealType: 'officer2' },
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
+      { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal' },
+
     ]
     ,
     // Physical Verification page overlays (page 50)
@@ -6617,8 +6681,12 @@ input:checked + .slider:before {
         overlay.textContent = displayValue;
         overlay.classList.remove('overlay-empty');
       } else {
-        // Special handling for seal overlays
-        if (field === 'officer1Seal' || field === 'officer2Seal' || field === 'officer3Seal') {
+        // Special handling for signature and officer seals
+        if (field === VERIFIED_SEAL_FIELD) {
+          renderTriangleSealOverlay(overlay, VERIFIED_SEAL_SVG);
+        } else if (field === ATTESTED_SEAL_FIELD) {
+          renderTriangleSealOverlay(overlay, ATTESTED_SEAL_SVG);
+        } else if (field === 'officer1Seal' || field === 'officer2Seal' || field === 'officer3Seal') {
           // Render seal stamp using saved size
           const savedSeals = JSON.parse(localStorage.getItem('ucb_org_officer_seals_v1') || '{}');
           const sealKey = field.replace('Seal', ''); // officer1, officer2, or officer3

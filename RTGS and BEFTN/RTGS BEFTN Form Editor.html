@@ -329,6 +329,7 @@ button:active, .btn:active {
 .overlay[data-field="recvAccount"]:not(.no-space){letter-spacing:1.52em;font-family:monospace}
 .overlay[data-field="recvAccount"]{top:410px;left:60px}
 /* New overlays: in-words and date */
+.overlay[data-field="inWords"],.overlay[data-field="inWords2"]{max-width:70%;white-space:normal;line-height:1.35;font-size:0.75rem}
 .overlay[data-field="inWords"]{top:200px;left:60px}
 .overlay[data-field="date"]{top:20px;left:420px}
 .overlay[data-field="routingNumber"]{top:230px;left:420px}
@@ -726,11 +727,25 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
     transition:var(--transition-fast);
   }
   .officer-seal-save-btn:hover { background:linear-gradient(135deg,#047857 0%,#065f46 100%); transform:translateY(-1px); }
+  .overlay[data-field="verifiedSeal"] {
+    width:120px;
+    height:120px;
+    display:block;
+    padding:0;
+    background:transparent;
+    white-space:normal;
+  }
+  .overlay[data-field="verifiedSeal"] svg {
+    width:100%;
+    height:100%;
+    display:block;
+    pointer-events:none;
+  }
   @media print {
-    .overlay[data-field="officer1Seal"], .overlay[data-field="officer2Seal"] {
+    .overlay[data-field="officer1Seal"], .overlay[data-field="officer2Seal"], .overlay[data-field="verifiedSeal"] {
       display:block !important; opacity:1 !important; visibility:visible !important;
       -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;
-      background:rgba(0,0,0,0.02) !important; color:#000 !important;
+      background:transparent !important; color:#000 !important;
     }
   }
   </style>
@@ -1030,7 +1045,7 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
             <div class="overlay tpl-beftn" data-field="currencyAmount2" style="top:260px;left:600px"></div>
             <div class="overlay tpl-beftn" data-field="inWords2" style="top:290px;left:120px"></div>
             <div class="overlay tpl-beftn" data-field="date" style="top:12px;left:620px"></div>
-            <div class="overlay tpl-beftn" data-field="dateTime" style="top:12px;left:640px"></div>
+            <div class="overlay tpl-beftn" data-field="dateTime" data-hide-on="beftn" style="top:12px;left:640px;display:none"></div>
             <!-- RTGS tick marks (7 ticks) -->
             <div class="overlay tpl-rtgs" data-field="tick1" style="top:100px;left:100px"></div>
             <div class="overlay tpl-rtgs" data-field="tick2" style="top:150px;left:100px"></div>
@@ -1049,12 +1064,13 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
             <div class="overlay" data-field="officer1Seal" style="top:570px;left:40px"></div>
             <div class="overlay" data-field="officer1Seal" style="top:570px;left:280px"></div>
             <div class="overlay" data-field="officer2Seal" style="top:570px;left:540px"></div>
+            <div class="overlay" data-field="verifiedSeal" style="top:63%;left:68%"></div>
           </div>
 
           <div class="page active" data-page="2">
             <img class="form-image" src="images/rtgs-2.jpg" alt="RTGS form page 2">
             <!-- overlays for page 2 -->
-          <!-- page 2 intentionally left clean (no overlays) -->
+            <div class="overlay" data-field="verifiedSeal" style="top:66%;left:68%"></div>
           </div>
         </div>
         
@@ -1118,7 +1134,7 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
 const CONFIG = {
   // Font sizes for print output (in pixels)
   PRINT_FONT_SIZE: 100,
-  PRINT_FONT_SIZE_SMALL: 10,
+  PRINT_FONT_SIZE_SMALL: 12,
   
   // Canvas rendering multipliers (relative to canvas width)
   CANVAS_ACCOUNT_MULTIPLIER: 0.18,
@@ -1143,6 +1159,77 @@ const CONFIG = {
   // Default font family
   FONT_FAMILY: '"Times New Roman", Times, serif'
 };
+
+const VERIFIED_SEAL_FIELD = 'verifiedSeal';
+const VERIFIED_SEAL_SIZE = 120;
+const VERIFIED_SEAL_SVG = `
+<svg viewBox="0 0 400 400" aria-hidden="true" focusable="false">
+  <polygon
+    points="200,40 61.4,280 338.6,280"
+    fill="none"
+    stroke="#000000"
+    stroke-width="3"
+    stroke-linejoin="miter"></polygon>
+  <polygon
+    points="200,40 61.4,280 338.6,280"
+    fill="none"
+    stroke="#000000"
+    stroke-width="2.5"
+    stroke-linejoin="miter"
+    transform="translate(10 10) scale(0.95)"></polygon>
+  <polygon
+    points="200,40 61.4,280 338.6,280"
+    fill="none"
+    stroke="#000000"
+    stroke-width="2"
+    stroke-linejoin="miter"
+    transform="translate(70 70) scale(0.65)"></polygon>
+  <g
+    fill="#000000"
+    font-family="'Times New Roman', Times, serif"
+    font-size="28"
+    font-weight="600"
+    dominant-baseline="central"
+    text-anchor="middle">
+    <text x="200" y="264" letter-spacing="3">UCB PLC</text>
+    <text transform="translate(144.6, 168) rotate(-60)" letter-spacing="1.5">Signature</text>
+    <text transform="translate(255.4, 168) rotate(60)" letter-spacing="1.5">Verified</text>
+  </g>
+</svg>`.trim();
+
+function isVerifiedSealField(fieldName) {
+  return fieldName === VERIFIED_SEAL_FIELD;
+}
+
+function getVerifiedSealMarkup() {
+  return VERIFIED_SEAL_SVG;
+}
+
+let verifiedSealImagePromise = null;
+
+function getVerifiedSealImage() {
+  if (!verifiedSealImagePromise) {
+    verifiedSealImagePromise = loadImage(`data:image/svg+xml;charset=UTF-8,${encodeURIComponent(getVerifiedSealMarkup())}`);
+  }
+  return verifiedSealImagePromise;
+}
+
+function renderVerifiedSealOverlay(overlay) {
+  if (!overlay || !isVerifiedSealField(overlay.dataset && overlay.dataset.field)) return;
+  overlay.innerHTML = getVerifiedSealMarkup();
+  overlay.style.display = 'block';
+  overlay.style.width = VERIFIED_SEAL_SIZE + 'px';
+  overlay.style.height = VERIFIED_SEAL_SIZE + 'px';
+  overlay.style.padding = '0';
+  overlay.style.background = 'transparent';
+  overlay.style.whiteSpace = 'normal';
+  overlay.style.letterSpacing = 'normal';
+  overlay.classList.remove('overlay-empty');
+}
+
+function getVerifiedSealPrintOverlay(left, top) {
+  return `<div class="print-overlay" style="left:${left};top:${top};width:${VERIFIED_SEAL_SIZE}px;height:${VERIFIED_SEAL_SIZE}px;padding:0;background:transparent;text-transform:none;font-weight:400;">${getVerifiedSealMarkup()}</div>`;
+}
 
 // Helper: Generate overlay style string for print
 function getOverlayStyle(field, template, options = {}) {
@@ -1261,8 +1348,8 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
     return `<div class="print-overlay" style="left:${left};top:${top};${extraStyle}">${escapeHtmlFn(displayText)}</div>`;
   }
   
-  // InWords - split long text
-  if ((field === 'inWords' || field === 'inWords2') && displayText.length > 60) {
+  // InWords - split long text (RTGS only, BEFTN inWords2 stays single line)
+  if (field === 'inWords' && displayText.length > 40) {
     const mid = Math.floor(displayText.length / 2);
     let splitIdx = displayText.lastIndexOf(' ', mid);
     if (splitIdx === -1) splitIdx = displayText.indexOf(' ', mid);
@@ -1395,6 +1482,7 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
     overlays[f].push(el);
     el.textContent = '';
   });
+  if(overlays[VERIFIED_SEAL_FIELD]) overlays[VERIFIED_SEAL_FIELD].forEach(renderVerifiedSealOverlay);
 
   // number -> words helper (Indian numbering: Lakh, Crore)
   function numberToWords(num){
@@ -1526,7 +1614,18 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
         try{
           let v = values[k] || '';
           if(v && String(v).trim() !== ''){
-            el.textContent = v;
+            // Split long inWords into 2 lines for better fitting (RTGS only)
+            if(k === 'inWords' && v.length > 40){
+              const mid = Math.floor(v.length / 2);
+              let splitIdx = v.lastIndexOf(' ', mid);
+              if(splitIdx === -1) splitIdx = v.indexOf(' ', mid);
+              if(splitIdx === -1) splitIdx = mid;
+              const first = v.slice(0, splitIdx).trim();
+              const second = v.slice(splitIdx).trim();
+              el.innerHTML = first + '<br>' + second;
+            } else {
+              el.textContent = v;
+            }
             el.classList.remove('overlay-empty');
           }else{
             // Show a readable placeholder (field name) when the overlay is empty
@@ -1537,6 +1636,9 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
         }catch(e){}
       });
     });
+    try{
+      if(overlays[VERIFIED_SEAL_FIELD]) overlays[VERIFIED_SEAL_FIELD].forEach(renderVerifiedSealOverlay);
+    }catch(e){}
     // Render officer seal overlays with stamp styling
     try{
       const _seals = (()=>{ try{ return JSON.parse(localStorage.getItem('rtgs_officer_seals_v1') || '{}'); }catch(e){ return {}; } })();
@@ -2179,6 +2281,8 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
       });
       // show/hide template-specific overlays
       document.querySelectorAll('.tpl-beftn').forEach(el => {
+        // Keep dateTime hidden from BEFTN preview (data-hide-on="beftn")
+        if(el.dataset && el.dataset.field === 'dateTime') { el.style.display = 'none'; return; }
         el.style.display = (currentTemplate === 'beftn') ? '' : 'none';
       });
       // tpl-rtgs overlays should only show for RTGS template
@@ -2645,6 +2749,8 @@ async function renderPagesToImage(pages){
   const overlays = Array.from(page.querySelectorAll('.overlay'));
   // Precompute date overlays order for per-instance spacing (first, second, third)
   const dateOverlays = overlays.filter(x => x.dataset && x.dataset.field === 'date');
+  const pageRect = page.getBoundingClientRect();
+  const sealDrawPromises = [];
     // helper: draw text with explicit letter-spacing (canvas does not support letter-spacing natively)
     function drawTextWithLetterSpacing(ctx, text, x, y, letterSpacing){
       let cx = x;
@@ -2663,6 +2769,22 @@ async function renderPagesToImage(pages){
       // If overlay has the 'overlay-empty' marker (placeholder shown in-editor), treat it as empty for printing
       try{ if(o.classList && o.classList.contains('overlay-empty')) return; }catch(e){}
       const field = o.dataset.field;
+      if(isVerifiedSealField(field)){
+        const leftStr = o.style.left || getComputedStyle(o).left || '0px';
+        const topStr = o.style.top || getComputedStyle(o).top || '0px';
+        const left = parsePercentOrPx(leftStr, cw);
+        const top = parsePercentOrPx(topStr, ch);
+        const displayWidth = parseFloat(o.style.width || getComputedStyle(o).width) || VERIFIED_SEAL_SIZE;
+        const displayHeight = parseFloat(o.style.height || getComputedStyle(o).height) || VERIFIED_SEAL_SIZE;
+        const drawWidth = pageRect.width ? Math.round((displayWidth / pageRect.width) * cw) : displayWidth;
+        const drawHeight = pageRect.height ? Math.round((displayHeight / pageRect.height) * ch) : displayHeight;
+        sealDrawPromises.push(
+          getVerifiedSealImage()
+            .then(sealImg => { ctx.drawImage(sealImg, left, top, drawWidth, drawHeight); })
+            .catch(() => {})
+        );
+        return;
+      }
       const isSealField = (field === 'officer1Seal' || field === 'officer2Seal');
       const rawText = isSealField ? (o.innerText || o.textContent || '').toString().trim() : (o.textContent || '').toString().trim();
       if(!rawText) return;
@@ -2802,8 +2924,8 @@ async function renderPagesToImage(pages){
       // optional small black shadow for contrast
       ctx.shadowColor = 'rgba(255,255,255,0.6)';
       ctx.shadowBlur = 0;
-      // Special-case: split long in-words into 2 lines for better fitting
-      if((field === 'inWords' || field === 'inWords2') && txt.length > 40){
+      // Special-case: split long in-words into 2 lines for better fitting (RTGS inWords only)
+      if(field === 'inWords' && txt.length > 40){
         // split on nearest space around the middle
         const mid = Math.floor(txt.length/2);
         let splitIdx = txt.lastIndexOf(' ', mid);
@@ -2822,6 +2944,7 @@ async function renderPagesToImage(pages){
     });
 
     canvasList.push(canvas);
+    await Promise.all(sealDrawPromises);
   }
 
   if(canvasList.length === 0) throw new Error('No page canvases created');
@@ -2860,14 +2983,6 @@ function loadImage(src){
         j.onerror = () => reject(new Error('Image failed to load: ' + src));
         j.src = src;
         return;
-      }
-      // CIF number: for RTGS add a subtle per-character spacing (approx +0.1em)
-      if(field === 'cifNumber' && currentTemplate === 'rtgs'){
-        try{
-          const cifSpacingPx = Math.max(0, Math.round(fontSize * 0.10));
-          drawTextWithLetterSpacing(ctx, txt, left, top, cifSpacingPx);
-          return;
-        }catch(e){}
       }
       reject(new Error('Image failed to load: ' + src));
     };
@@ -2924,8 +3039,9 @@ function fallbackPrintHTML(pages){
       try{ const hide = o.dataset && o.dataset.hideOn ? String(o.dataset.hideOn).split(',').map(s=>s.trim()) : []; if(hide.includes(tpl)) return; }catch(e){}
       // do not render placeholders marked as overlay-empty in printed/fallback HTML
       try{ if(o.classList && o.classList.contains('overlay-empty')) return; }catch(e){}
+      const field = o.dataset && o.dataset.field;
       const text = (o.textContent||'').toString().trim();
-      if(!text) return;
+      if(!text && !isVerifiedSealField(field)) return;
       // prefer inline style percent if available
       let left = '';
       let top = '';
@@ -2945,7 +3061,9 @@ function fallbackPrintHTML(pages){
     // If this overlay is the account number, add spacing between characters and a large letter-spacing for print
   let displayText = text.toUpperCase();
   let extraStyle = '';
-  if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
+  if (isVerifiedSealField(field)){
+    pageHtml += getVerifiedSealPrintOverlay(left, top);
+  } else if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
     displayText = displayText.split('').join(' ');
     // For BEFTN: increase accountNumberBeftn letter-spacing more than regular accountNumber
     if(tpl === 'beftn'){
@@ -3023,8 +3141,8 @@ function fallbackPrintHTML(pages){
       pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-weight:800;text-align:center;">${escapeHtml(displayText)}</div>`;
     }
   } else {
-    // Special-case: split long inWords into two lines for printable HTML
-      if((o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')) && displayText.length > 60){
+    // Special-case: split long inWords into two lines for printable HTML (RTGS only)
+      if((o.dataset && o.dataset.field === 'inWords') && displayText.length > 40){
       const mid = Math.floor(displayText.length/2);
       let splitIdx = displayText.lastIndexOf(' ', mid);
       if(splitIdx === -1) splitIdx = displayText.indexOf(' ', mid);
@@ -3091,8 +3209,9 @@ function fallbackPrintToIframe(pages, template){
       try{ const hide = o.dataset && o.dataset.hideOn ? String(o.dataset.hideOn).split(',').map(s=>s.trim()) : []; if(hide.includes(tpl)) return; }catch(e){}
       // Skip overlays that are only placeholders (class 'overlay-empty') so they won't appear in printed fallback HTML
       try{ if(o.classList && o.classList.contains('overlay-empty')) return; }catch(e){}
+      const field = o.dataset && o.dataset.field;
       const text = (o.textContent||'').toString().trim();
-      if(!text) return;
+      if(!text && !isVerifiedSealField(field)) return;
       let left = '';
       let top = '';
       if(o.style.left && o.style.left.includes('%')) left = o.style.left;
@@ -3100,7 +3219,9 @@ function fallbackPrintToIframe(pages, template){
       if(!left || !top){ try{ const pct = computePercent(o, imgEl); left = pct.left.toFixed(2) + '%'; top = pct.top.toFixed(2) + '%'; }catch(e){ left='0%'; top='0%'; } }
       let displayText = text.toUpperCase();
       let extraStyle = '';
-      if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
+      if (isVerifiedSealField(field)){
+        pageHtml += getVerifiedSealPrintOverlay(left, top);
+      } else if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
         displayText = displayText.split('').join(' ');
         if(tpl === 'beftn'){
           if(o.dataset.field === 'accountNumberBeftn') extraStyle = `letter-spacing:${CONFIG.BEFTN_ACCOUNT_SPACING}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`; else extraStyle = `letter-spacing:${CONFIG.BEFTN_ACCOUNT_SPACING_ALT}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
@@ -3159,7 +3280,7 @@ function fallbackPrintToIframe(pages, template){
           pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-weight:800;text-align:center;">${escapeHtml(displayText)}</div>`;
         }
       } else {
-        if((o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')) && displayText.length > 60){
+        if((o.dataset && o.dataset.field === 'inWords') && displayText.length > 40){
           const mid = Math.floor(displayText.length/2);
           let splitIdx = displayText.lastIndexOf(' ', mid);
           if(splitIdx === -1) splitIdx = displayText.indexOf(' ', mid);
@@ -3243,8 +3364,9 @@ function openPreviewWindow(pages){
       try{ const hide = o.dataset && o.dataset.hideOn ? String(o.dataset.hideOn).split(',').map(s=>s.trim()) : []; if(hide.includes(tpl)) return; }catch(e){}
       // Skip placeholder overlays in preview window if they only contain the placeholder label
       try{ if(o.classList && o.classList.contains('overlay-empty')) return; }catch(e){}
+      const field = o.dataset && o.dataset.field;
       const text = (o.textContent||'').toString().trim();
-      if(!text) return;
+      if(!text && !isVerifiedSealField(field)) return;
       let left = o.style.left || getComputedStyle(o).left || '0px';
       let top = o.style.top || getComputedStyle(o).top || '0px';
       // Ensure % units if they are missing from style
@@ -3254,7 +3376,9 @@ function openPreviewWindow(pages){
       // Format account number with spaced characters and add large letter-spacing for print preview
       let displayText = text.toUpperCase();
       let extraStyle = '';
-      if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
+      if (isVerifiedSealField(field)){
+        pageHtml += getVerifiedSealPrintOverlay(left, top);
+      } else if (o.dataset && (o.dataset.field === 'accountNumber' || o.dataset.field === 'accountNumberBeftn') && !o.classList.contains('no-space')){
         displayText = displayText.split('').join(' ');
         // For BEFTN preview: make accountNumberBeftn spacing larger than regular accountNumber
         if(tpl === 'beftn'){
@@ -3324,8 +3448,8 @@ function openPreviewWindow(pages){
       pageHtml += `<div class="print-overlay" style="left:${left};top:${top};font-weight:800;text-align:center;">${escapeHtml(displayText)}</div>`;
     }
   } else {
-    // Special-case: split long inWords into two lines for preview
-    if((o.dataset && (o.dataset.field === 'inWords' || o.dataset.field === 'inWords2')) && displayText.length > 60){
+    // Special-case: split long inWords into two lines for preview (RTGS only)
+    if((o.dataset && o.dataset.field === 'inWords') && displayText.length > 40){
       const mid = Math.floor(displayText.length/2);
       let splitIdx = displayText.lastIndexOf(' ', mid);
       if(splitIdx === -1) splitIdx = displayText.indexOf(' ', mid);
