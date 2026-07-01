@@ -1,0 +1,391 @@
+`,
+                        `- সুদ: **${formatBDT(details.comparisonInterest)}**`,
+                        `- মেয়াদান্তে মোট টাকা: **${formatBDT(details.comparisonMaturity)}**`
+                    );
+                }
+
+                return lines.join('\n');
+            }
+
+            const lines = [
+                details.assumedBangladeshBasis
+                    ? `Here’s the simple version: I used a **${details.basis}-day year**, which is common for short-tenor FD/FDR calculations in many Bangladeshi banks.`
+                    : `Here’s the simple version using a **${details.basis}-day year**.`,
+                '',
+                '### Step 1: Interest',
+                `Interest = Principal × Rate × Days / ${details.basis}`,
+                `= ${chatFormatCalcNumber(details.principal, 2)} × ${ratePercentText} × ${details.days}/${details.basis}`,
+                `= ${chatFormatCalcNumber(details.principal, 2)} × ${rateDecimalText} × ${timeFractionText}`,
+                `= **${interestText}**`,
+                '',
+                '### Step 2: Maturity amount',
+                'Maturity amount = Principal + Interest',
+                `= ${principalText} + ${interestText}`,
+                `= **${maturityText}**`
+            ];
+
+            if (details.derivedFromMonths) {
+                lines.push('', `Note: ${chatFormatCalcNumber(details.days / 30, 2)} month(s) was converted to ${chatFormatCalcNumber(details.days, 0)} days for this simple-interest calculation.`);
+            }
+
+            if (details.includeComparison) {
+                lines.push(
+                    '',
+                    `If you use a **${details.comparisonBasis}-day year** instead:`,
+                    `- Interest: **${formatBDT(details.comparisonInterest)}**`,
+                    `- Maturity amount: **${formatBDT(details.comparisonMaturity)}**`
+                );
+            }
+
+            return lines.join('\n');
+        }
+
+        function chatTryBuildFinancialCalculationReply(questionText, contextText = '') {
+            const normalizedQuestion = chatNormalizeDigits(questionText);
+            const normalizedContext = chatNormalizeDigits(contextText);
+            const combinedText = `${normalizedQuestion}\n${normalizedContext}`;
+
+            if (/(?:loan|emi|installment|credit card|mortgage)/i.test(combinedText)) {
+                return null;
+            }
+
+            const looksLikeCalculation = chatLooksLikeFdCalculation(combinedText) || /(?:\bp\s*=|\br\s*=|\bt\s*=)/i.test(combinedText);
+            if (!looksLikeCalculation) {
+                return null;
+            }
+
+            const principal = chatExtractPrincipalAmount(normalizedQuestion) ?? chatExtractPrincipalAmount(normalizedContext);
+            let ratePercent = chatExtractRatePercent(normalizedQuestion);
+            if (ratePercent === null) {
+                ratePercent = chatExtractRatePercent(normalizedContext);
+            }
+            if (ratePercent !== null && ratePercent > 0 && ratePercent <= 1 && !/%/.test(normalizedQuestion)) {
+                ratePercent *= 100;
+            }
+
+            const tenor = chatExtractTenorDays(normalizedQuestion) ?? chatExtractTenorDays(normalizedContext);
+            if (principal === null || ratePercent === null || !tenor) {
+                return null;
+            }
+
+            const questionHas360 = chatHas360Basis(normalizedQuestion);
+            const questionHas365 = chatHas365Basis(normalizedQuestion);
+            const contextHas360 = chatHas360Basis(normalizedContext);
+            const contextHas365 = chatHas365Basis(normalizedContext);
+
+            let basis = 360;
+            if (questionHas365 && !questionHas360) {
+                basis = 365;
+            } else if (questionHas360) {
+                basis = 360;
+            } else if (contextHas365 && !contextHas360) {
+                basis = 365;
+            } else if (contextHas360) {
+                basis = 360;
+            }
+
+            const comparisonRequested = (questionHas360 && questionHas365)
+                || /(?:compare|difference|instead|rather than|vs\.?|versus|if\s+a?\s*365|if\s+a?\s*360)/i.test(normalizedQuestion);
+            const comparisonBasis = basis === 360 ? 365 : 360;
+            const interest = detailsRound(principal * (ratePercent / 100) * (tenor.days / basis));
+            const maturity = detailsRound(principal + interest);
+            const comparisonInterest = detailsRound(principal * (ratePercent / 100) * (tenor.days / comparisonBasis));
+            const comparisonMaturity = detailsRound(principal + comparisonInterest);
+            const assumedBangladeshBasis = basis === 360
+                && !questionHas360
+                && !questionHas365
+                && !contextHas360
+                && !contextHas365
+                && /(?:bangladesh|bangladeshi|bank|বাংলাদেশ|ব্যাংক|fd|fdr|fixed deposit)/i.test(combinedText);
+
+            return chatBuildFdCalculationReply({
+                principal,
+                ratePercent,
+                days: tenor.days,
+                basis,
+                interest,
+                maturity,
+                includeComparison: comparisonRequested,
+                comparisonBasis,
+                comparisonInterest,
+                comparisonMaturity,
+                assumedBangladeshBasis,
+                derivedFromMonths: tenor.derivedFromMonths
+            }, chatContainsBangla(questionText));
+        }
+
+        function detailsRound(value) {
+            return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+        }
+
+        async function chatSendMessage() {
+            const message = chatElements.input.value.trim();
+            if (!message || chatState.isProcessing) return;
+            const relevantChunks = chatState.chunks.length ? chatFindRelevantChunks(message) : [];
+            const calculationContext = relevantChunks.map(chunk => `[${chunk.source}]\n${chunk.text}`).join('\n\n---\n\n');
+            const calculationReply = chatTryBuildFinancialCalculationReply(message, calculationContext);
+
+            if (calculationReply) {
+                addChatUserMessage(message);
+                chatElements.input.value = '';
+                chatState.chatHistory.push({ role: 'user', content: message });
+                chatState.chatHistory.push({ role: 'assistant', content: calculationReply });
+                addChatBotMessage(calculationReply, relevantChunks.length ? relevantChunks.map(chunk => chunk.source) : null);
+                return;
+            }
+
+            if (chatState.chunks.length === 0) {
+                showChatError('Hey, load some documents first so I have something to work with! 📂');
+                return;
+            }
+            if (chatState.apiKeys.length === 0) {
+                showChatError('Add a Gemini or OpenRouter API key in DocuChat settings first.');
+                return;
+            }
+            
+            addChatUserMessage(message);
+            chatElements.input.value = '';
+
+            if (relevantChunks.length === 0) {
+                const noResultReplies = [
+                    'Hmm, I couldn\'t find anything about that in the docs I have. Want to try rephrasing?',
+                    'I\'ve looked through everything but nothing quite matches that. Could you ask it differently?',
+                    'That\'s a good question, but I don\'t see anything related in the loaded documents.',
+                    'No luck on that one — the documents don\'t seem to cover it. Try loading more files maybe?'
+                ];
+                addChatBotMessage(noResultReplies[Math.floor(Math.random() * noResultReplies.length)]);
+                return;
+            }
+            
+            const typingId = showChatTyping();
+            chatState.isProcessing = true;
+            
+            try {
+                const context = relevantChunks.map(chunk => `[${chunk.source}]\n${chunk.text}`).join('\n\n---\n\n');
+                chatState.chatHistory.push({ role: 'user', content: message });
+                const response = await chatCallAI(message, context);
+                chatState.chatHistory.push({ role: 'assistant', content: response });
+                removeChatTyping(typingId);
+                addChatBotMessage(response, relevantChunks.map(c => c.source));
+            } catch (error) {
+                removeChatTyping(typingId);
+                addChatBotMessage('Oops, something went wrong on my end — ' + (error.message || 'API hiccup') + '. Mind trying again?', null, true);
+            }
+            
+            chatState.isProcessing = false;
+        }
+
+        function chatBuildOpenRouterHeaders(apiKey) {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'X-Title': 'BankOps Hub DocuChat'
+            };
+
+            if (/^https?:/i.test(window.location.href)) {
+                headers['HTTP-Referer'] = window.location.href;
+            }
+
+            return headers;
+        }
+
+        async function chatCallAI(question, documentText) {
+            if (!chatState.apiKeys.length) {
+                throw new Error('Add a Gemini or OpenRouter API key in DocuChat settings first.');
+            }
+
+            const systemPrompt = `You are a friendly, warm human colleague who happens to have read all the loaded documents thoroughly. Talk naturally like a real person — use casual but professional language, contractions ("I'd", "you'll", "that's"), and a conversational tone. Feel free to say things like "Good question!", "Hmm, let me think...", "So basically...", or "From what I can see...". Keep answers clear and helpful but never robotic. Show personality — be approachable, occasionally use light humor where appropriate, and respond the way a knowledgeable coworker would over a chat. You have access to conversation history, so refer to previous messages naturally. If the information isn't in the documents, be honest and say something like: "Hmm, I couldn't find anything about that in the documents I've got. Maybe try loading more files?"
+
+BANGLA LANGUAGE SUPPORT:
+- You can read and understand Bangla (বাংলা) text from documents.
+- If the user asks a question in Bangla, respond in Bangla.
+- If the document content is in Bangla, present and quote it accurately in Bangla.
+- You are fully fluent in both English and Bangla. Naturally switch between languages based on the user's preference.
+- When translating or summarizing Bangla content, preserve the original Bangla terms where important.
+
+FORMATTING RULES — use Markdown formatting to make your responses visually clear and easy to scan:
+- Use **bold** for key terms, names, amounts, or important phrases.
+- Use bullet points (- item) or numbered lists (1. item) when listing things.
+- Use tables (| Col1 | Col2 |) when comparing data, showing structured info, or presenting multiple fields/values side by side.
+- Use > blockquotes for direct quotes from documents.
+- Use headings (## or ###) to organize longer answers into sections.
+- Use \`code\` for account numbers, reference IDs, or technical values.
+- Keep formatting purposeful — don't over-format short simple answers. A one-liner doesn't need a table.
+
+CALCULATION RULES:
+- When the question is about money math, explain it in a human way.
+- Always show the assumption or basis first, then the formula, then the number substitution, then the final amount.
+- For FD/FDR questions quoted in days, never hide whether you used a 360-day or 365-day year.
+- If the bank convention or document context points to a Bangladeshi short-tenor FD/FDR calculation, prefer a 360-day year unless the question explicitly says otherwise.`;
+            const userPrompt = `DOCUMENTS:\n${documentText}\n\nQUESTION:\n${question}`;
+            
+            const messages = [
+                { role: 'system', content: systemPrompt }
+            ];
+            
+            // Include recent conversation history (last 8 messages to avoid token limits)
+            const recentHistory = chatState.chatHistory.slice(-8);
+            for (const msg of recentHistory) {
+                messages.push(msg);
+            }
+            
+            messages.push({ role: 'user', content: userPrompt });
+
+            // Try all available API keys on rate limit
+            const totalKeys = chatState.apiKeys.length;
+            let lastError = null;
+            for (let attempt = 0; attempt < totalKeys; attempt++) {
+                const activeKey = chatState.activeApiKeyEntry;
+                const providerConfig = chatGetProviderConfig(activeKey?.provider);
+                let response;
+
+                if (activeKey?.provider === 'openrouter-nemotron') {
+                    response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                        method: 'POST',
+                        headers: chatBuildOpenRouterHeaders(activeKey.key),
+                        body: JSON.stringify({
+                            model: providerConfig.model,
+                            messages,
+                            temperature: 0.7,
+                            max_tokens: 1024
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const content = data.choices?.[0]?.message?.content;
+                        const text = typeof content === 'string'
+                            ? content.trim()
+                            : Array.isArray(content)
+                                ? content.map(part => typeof part === 'string' ? part : (part?.text || '')).join('').trim()
+                                : '';
+
+                        if (text) {
+                            return text;
+                        }
+                        throw new Error('Invalid response from OpenRouter API');
+                    }
+                } else {
+                    const requestBody = JSON.stringify({
+                        contents: [{
+                            role: 'user',
+                            parts: [{
+                                text: userPrompt
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 1024
+                        },
+                        systemInstruction: {
+                            parts: [{
+                                text: systemPrompt
+                            }]
+                        }
+                    });
+
+                    response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${providerConfig.model}:generateContent?key=${activeKey.key}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: requestBody
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const text = data.candidates?.[0]?.content?.parts
+                            ?.map(part => part?.text || '')
+                            .join('')
+                            .trim();
+
+                        if (text) {
+                            return text;
+                        }
+                        throw new Error('Invalid response from Gemini API');
+                    }
+                }
+
+                const errorData = await response.json().catch(() => ({}));
+                lastError = errorData.error?.message || `Error: ${response.status}`;
+
+                // Rate limit (429) or resource exhausted → swap to next key and retry
+                if (response.status === 429 || (errorData.error?.status === 'RESOURCE_EXHAUSTED')) {
+                    chatState.swapApiKey();
+                    console.warn(`Rate limited on ${providerConfig.badge}, swapping to API key #${chatState.apiKeyIndex + 1}`);
+                    continue;
+                }
+
+                // Any other error → throw immediately
+                throw new Error(lastError);
+            }
+            throw new Error(lastError || 'All configured AI API keys are rate limited. Please try again later.');
+        }
+
+        function addChatUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'chat-msg user';
+            div.innerHTML = `
+                <div class="chat-msg-avatar">👤</div>
+                <div class="chat-msg-bubble">${escapeHtmlChat(text)}</div>
+            `;
+            chatElements.messages.appendChild(div);
+            chatElements.messages.scrollTop = chatElements.messages.scrollHeight;
+        }
+
+        // Lightweight markdown-to-HTML renderer for bot messages
+        function chatMarkdownToHtml(md) {
+            // Escape HTML entities first for safety
+            let html = md.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            // Code blocks (```...```)
+            html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+                return `<pre><code>${code.trim()}</code></pre>`;
+            });
+
+            // Inline code (`...`)
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+            // Tables: detect lines with | separators
+            html = html.replace(/((?:^\|.+\|\s*$\n?)+)/gm, (tableBlock) => {
+                const rows = tableBlock.trim().split('\n').filter(r => r.trim());
+                if (rows.length < 2) return tableBlock;
+                const parseRow = (row) => row.split('|').slice(1, -1).map(c => c.trim());
+                const headerCells = parseRow(rows[0]);
+                // Check if row[1] is separator (---)
+                const isSep = /^[\|\s:\-]+$/.test(rows[1]);
+                let thead = '<thead><tr>' + headerCells.map(c => `<th>${c}</th>`).join('') + '</tr></thead>';
+                const bodyRows = rows.slice(isSep ? 2 : 1);
+                let tbody = '<tbody>' + bodyRows.map(r => {
+                    const cells = parseRow(r);
+                    return '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+                }).join('') + '</tbody>';
+                return `<table>${thead}${tbody}</table>`;
+            });
+
+            // Blockquotes
+            html = html.replace(/^&gt;\s?(.+)$/gm, '<blockquote>$1</blockquote>');
+            html = html.replace(/<\/blockquote>\n<blockquote>/g, '\n');
+
+            // Headers
+            html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+            // Horizontal rules
+            html = html.replace(/^---$/gm, '<hr>');
+
+            // Bold + italic
+            html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+            // Bold
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            // Italic
+            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+            // Unordered lists (- or * at start of line)
+            html = html.replace(/((?:^[\-\*]\s+.+$\n?)+)/gm, (block) => {
+                const items = block.trim().split('\n').map(l => l.replace(/^[\-\*]\s+/, ''));
+                return '<ul>' + items.map(i => `<li>${i}</li>`).join('') + '</ul>';
+            });
+
+            // Ordered lists (1. 2. etc at start of line)
+            html = html.replace(/((?:^\d+\.\s+.+$\n?)+)/gm, (block) => {
+                const items = block

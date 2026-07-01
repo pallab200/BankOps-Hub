@@ -1097,9 +1097,255 @@
                 width: 180px;
             }
         }
+
+        /* ════════════════════════════════════════════════════════
+           ✦ 2026 MOTION LAYER — Senior polish enhancements
+           Additive only. No DOM structure changes.
+           ════════════════════════════════════════════════════════ */
+
+        /* ── Animated Aurora Background ── */
+        .aurora-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .aurora-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.55;
+            will-change: transform;
+        }
+        .aurora-blob.blob-1 {
+            width: 46vw; height: 46vw; max-width: 620px; max-height: 620px;
+            top: -12%; left: -8%;
+            background: radial-gradient(circle at 30% 30%, rgba(124, 58, 237, 0.55), transparent 70%);
+            animation: blobFloat1 22s ease-in-out infinite;
+        }
+        .aurora-blob.blob-2 {
+            width: 42vw; height: 42vw; max-width: 560px; max-height: 560px;
+            top: 30%; right: -10%;
+            background: radial-gradient(circle at 60% 40%, rgba(244, 114, 182, 0.45), transparent 70%);
+            animation: blobFloat2 26s ease-in-out infinite;
+        }
+        .aurora-blob.blob-3 {
+            width: 38vw; height: 38vw; max-width: 520px; max-height: 520px;
+            bottom: -14%; left: 25%;
+            background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.30), transparent 70%);
+            animation: blobFloat3 30s ease-in-out infinite;
+        }
+        .aurora-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(124, 58, 237, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124, 58, 237, 0.035) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 80%);
+            animation: gridDrift 40s linear infinite;
+        }
+        @keyframes blobFloat1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(8vw, 6vh) scale(1.12); }
+            66% { transform: translate(-4vw, 10vh) scale(0.92); }
+        }
+        @keyframes blobFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-9vw, 8vh) scale(0.9); }
+            66% { transform: translate(5vw, -6vh) scale(1.15); }
+        }
+        @keyframes blobFloat3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(6vw, -10vh) scale(1.1); }
+        }
+        @keyframes gridDrift {
+            from { background-position: 0 0, 0 0; }
+            to { background-position: 48px 48px, 48px 48px; }
+        }
+
+        /* ── Scroll Progress Bar ── */
+        #scrollProgress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            width: 0%;
+            z-index: 9999;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--success));
+            box-shadow: 0 0 12px rgba(124, 58, 237, 0.6);
+            transition: width 0.12s ease-out;
+            pointer-events: none;
+        }
+
+        /* ── Scroll-reveal entrances (scoped to static sections) ── */
+        .sections .section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .sections .section.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .sections .app-card {
+            opacity: 0;
+            transform: translateY(26px) scale(0.97);
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        border-color 0.4s ease;
+        }
+        .sections .app-card.in-view {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        /* Staggered delay within each grid */
+        .sections .app-grid .app-card:nth-child(1).in-view { transition-delay: 0.04s; }
+        .sections .app-grid .app-card:nth-child(2).in-view { transition-delay: 0.10s; }
+        .sections .app-grid .app-card:nth-child(3).in-view { transition-delay: 0.16s; }
+        .sections .app-grid .app-card:nth-child(4).in-view { transition-delay: 0.22s; }
+        .sections .app-grid .app-card:nth-child(5).in-view { transition-delay: 0.28s; }
+        .sections .app-grid .app-card:nth-child(6).in-view { transition-delay: 0.34s; }
+        .sections .app-grid .app-card:nth-child(7).in-view { transition-delay: 0.40s; }
+
+        /* ── Cursor-tracking spotlight on cards ── */
+        .app-card::after {
+            background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%),
+                rgba(124, 58, 237, 0.14), transparent 60%);
+        }
+        .app-card.is-pointing::after { opacity: 1; }
+
+        /* 3D tilt feel */
+        .app-card {
+            transform-style: preserve-3d;
+            perspective: 900px;
+        }
+        .app-card.is-tilting {
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Glow ring that traces the card on hover */
+        .app-card .card-glow {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--primary), var(--accent), var(--primary-light));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .app-card:hover .card-glow { opacity: 0.7; }
+
+        /* Badge subtle pop (text untouched) */
+        .app-count-badge {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .section-header:hover .app-count-badge {
+            transform: scale(1.12);
+        }
+
+        /* ── Button ripple ── */
+        .ripple-ink {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            background: rgba(255, 255, 255, 0.45);
+            pointer-events: none;
+            animation: rippleExpand 0.6s ease-out forwards;
+            z-index: 2;
+        }
+        @keyframes rippleExpand {
+            to { transform: scale(2.6); opacity: 0; }
+        }
+
+        /* ── Search bar focus glow ── */
+        #appSearchInput:focus {
+            border-color: var(--primary) !important;
+            background: #ffffff !important;
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12),
+                        0 8px 24px rgba(124, 58, 237, 0.14) !important;
+        }
+        #appSearchInput {
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        /* ── Refined chevron motion ── */
+        .section-chevron {
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, color 0.3s ease;
+        }
+        .section-header:hover .section-chevron {
+            background: rgba(124, 58, 237, 0.15);
+            color: var(--primary);
+        }
+
+        /* ── Custom scrollbar ── */
+        ::-webkit-scrollbar { width: 12px; height: 12px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-light), var(--primary));
+            border-radius: 10px;
+            border: 3px solid var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+        }
+
+        /* ── Open button icon nudge ── */
+        .open-btn i { transition: transform 0.3s ease; }
+        .open-btn:hover i { transform: translateX(3px) rotate(8deg); }
+
+        /* ── Section icon shine sweep (uses box-shadow, preserves FA ::before) ── */
+        .section-icon {
+            overflow: hidden;
+            background-clip: padding-box;
+        }
+        .section-header:hover .section-icon {
+            animation: iconShine 0.7s ease forwards;
+        }
+        @keyframes iconShine {
+            0% { box-shadow: inset -60px 0 40px -20px rgba(255, 255, 255, 0); }
+            50% { box-shadow: inset 0px 0 40px -20px rgba(255, 255, 255, 0.55); }
+            100% { box-shadow: inset 60px 0 40px -20px rgba(255, 255, 255, 0); }
+        }
+
+        /* ── Respect reduced motion ── */
+        @media (prefers-reduced-motion: reduce) {
+            .aurora-blob, .aurora-grid { animation: none !important; }
+            .sections .section,
+            .sections .app-card {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Animated Aurora Background -->
+    <div class="aurora-bg" aria-hidden="true">
+        <span class="aurora-blob blob-1"></span>
+        <span class="aurora-blob blob-2"></span>
+        <span class="aurora-blob blob-3"></span>
+        <div class="aurora-grid"></div>
+    </div>
+
+    <!-- Scroll Progress Indicator -->
+    <div id="scrollProgress" aria-hidden="true"></div>
+
     <!-- Welcome Screen -->
     <div id="welcomeScreen">
         <div class="welcome-particles">
@@ -1329,7 +1575,7 @@
                     <div class="section-left">
                         <i class="fas fa-user-circle section-icon"></i>
                         <div>
-                            <div class="section-title">Customer Service <span class="app-count-badge" style="display: inline-flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, 0.15); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 12px; margin-left: 8px;">7 apps</span></div>
+                            <div class="section-title">Customer Service <span class="app-count-badge" style="display: inline-flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, 0.15); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 12px; margin-left: 8px;">6 apps</span></div>
                             <div class="section-note">Front-desk tools — account opening, RTGS/BEFTN forms and customer requests.</div>
                         </div>
                     </div>
@@ -4961,6 +5207,166 @@ CALCULATION RULES:
         (async function tryRestoreChatFolder() {
             await chatTryRestoreSavedFolder({ requestPermission: false, loadFiles: true });
         })();
+    </script>
+
+    <!-- ✦ 2026 Motion Layer — interaction enhancements (additive, guarded) -->
+    <script>
+    (function () {
+        'use strict';
+        var prefersReduced = false;
+        try {
+            prefersReduced = window.matchMedia &&
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        } catch (e) {}
+
+        var canHover = false;
+        try {
+            canHover = window.matchMedia &&
+                window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        } catch (e) {}
+
+        /* ── 1. Scroll progress bar ── */
+        function initScrollProgress() {
+            var bar = document.getElementById('scrollProgress');
+            if (!bar) return;
+            var ticking = false;
+            function update() {
+                var h = document.documentElement;
+                var max = (h.scrollHeight - h.clientHeight) || 1;
+                var pct = Math.min(100, Math.max(0, (h.scrollTop || window.pageYOffset) / max * 100));
+                bar.style.width = pct + '%';
+                ticking = false;
+            }
+            window.addEventListener('scroll', function () {
+                if (!ticking) {
+                    ticking = true;
+                    (window.requestAnimationFrame || function (cb) { setTimeout(cb, 16); })(update);
+                }
+            }, { passive: true });
+            update();
+        }
+
+        /* ── 2. Scroll-reveal entrances ── */
+        var revealStarted = false;
+        function revealAll() {
+            var nodes = document.querySelectorAll('.sections .section, .sections .app-card');
+            for (var i = 0; i < nodes.length; i++) nodes[i].classList.add('in-view');
+        }
+        function startReveal() {
+            if (revealStarted) return;
+            revealStarted = true;
+            if (prefersReduced || !('IntersectionObserver' in window)) {
+                revealAll();
+                return;
+            }
+            try {
+                var io = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (en) {
+                        if (en.isIntersecting) {
+                            en.target.classList.add('in-view');
+                            io.unobserve(en.target);
+                        }
+                    });
+                }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+                var nodes = document.querySelectorAll('.sections .section, .sections .app-card');
+                for (var i = 0; i < nodes.length; i++) io.observe(nodes[i]);
+            } catch (e) {
+                revealAll();
+            }
+            // Safety net: guarantee visibility
+            setTimeout(revealAll, 2000);
+        }
+
+        /* ── 3. Cursor spotlight + 3D tilt on cards ── */
+        function attachCardFX(card) {
+            if (card.__fx) return;
+            card.__fx = true;
+
+            // gradient border glow element
+            if (!card.querySelector('.card-glow')) {
+                var glow = document.createElement('span');
+                glow.className = 'card-glow';
+                card.appendChild(glow);
+            }
+            if (!canHover || prefersReduced) return;
+
+            card.addEventListener('pointerenter', function () {
+                card.classList.add('is-pointing', 'is-tilting');
+            });
+            card.addEventListener('pointermove', function (e) {
+                var r = card.getBoundingClientRect();
+                if (!r.width || !r.height) return;
+                var px = (e.clientX - r.left) / r.width;
+                var py = (e.clientY - r.top) / r.height;
+                card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+                card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+                var rotY = (px - 0.5) * 9;
+                var rotX = (0.5 - py) * 9;
+                card.style.transform =
+                    'translateY(-8px) scale(1.012) rotateX(' + rotX.toFixed(2) +
+                    'deg) rotateY(' + rotY.toFixed(2) + 'deg)';
+            });
+            card.addEventListener('pointerleave', function () {
+                card.classList.remove('is-pointing', 'is-tilting');
+                card.style.transform = '';
+            });
+        }
+        function scanCards() {
+            var cards = document.querySelectorAll('.app-card');
+            for (var i = 0; i < cards.length; i++) attachCardFX(cards[i]);
+        }
+
+        /* ── 4. Button ripple ── */
+        function initRipples() {
+            document.addEventListener('pointerdown', function (e) {
+                var btn = e.target.closest && e.target.closest('.open-btn, .utility-btn, .data-btn');
+                if (!btn || prefersReduced) return;
+                var r = btn.getBoundingClientRect();
+                var size = Math.max(r.width, r.height);
+                var ink = document.createElement('span');
+                ink.className = 'ripple-ink';
+                ink.style.width = ink.style.height = size + 'px';
+                ink.style.left = (e.clientX - r.left - size / 2) + 'px';
+                ink.style.top = (e.clientY - r.top - size / 2) + 'px';
+                btn.appendChild(ink);
+                setTimeout(function () { if (ink.parentNode) ink.parentNode.removeChild(ink); }, 650);
+            }, { passive: true });
+        }
+
+        /* ── 5. Watch for dynamically created cards (search results) ── */
+        function watchDynamicCards() {
+            var target = document.getElementById('searchResults');
+            if (!target || !('MutationObserver' in window)) return;
+            try {
+                new MutationObserver(function () { scanCards(); })
+                    .observe(target, { childList: true, subtree: true });
+            } catch (e) {}
+        }
+
+        function boot() {
+            try { initScrollProgress(); } catch (e) {}
+            try { scanCards(); } catch (e) {}
+            try { initRipples(); } catch (e) {}
+            try { watchDynamicCards(); } catch (e) {}
+
+            // Gate reveal until the welcome screen clears for a graceful entrance
+            var welcome = document.getElementById('welcomeScreen');
+            if (welcome && getComputedStyle(welcome).display !== 'none') {
+                setTimeout(startReveal, 3100);
+                window.addEventListener('scroll', startReveal, { once: true, passive: true });
+            } else {
+                startReveal();
+            }
+            // Hard safety: always reveal eventually
+            window.addEventListener('load', function () { setTimeout(revealAll, 3600); });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', boot);
+        } else {
+            boot();
+        }
+    })();
     </script>
 </body>
 </html>
