@@ -3,198 +3,199 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Image to Combined Image</title>
-    <link rel="stylesheet" href="css/fontawesome.min.css">
-    <link rel="stylesheet" href="css/fontawesome-fix.css">
+    <title>NID Stack & Enhance</title>
+    <link rel="stylesheet" href="css/fontawesome.min.css" />
+    <link rel="stylesheet" href="css/fontawesome-fix.css" />
     <link rel="stylesheet" href="styles.css" />
-    <style>
-      :root { --primary: #6366f1; --primary-dark: #4f46e5; --accent: #ec4899; --border-color: #e2e8f0; }
-      .gradient-title {
-        background: linear-gradient(135deg, var(--primary, #6366f1) 0%, var(--accent, #ec4899) 100%);
-        background-size: 200% 200%;
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: transparent;
-        animation: gradientShift 8s ease infinite;
-        font-weight: 900 !important;
-        display: inline-block;
-      }
-      @keyframes gradientShift {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-      }
-      .primary-btn { 
-        padding: 12px 28px; 
-        border-radius: 10px; 
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
-        color: #fff; 
-        border: 0; 
-        font-weight: 700; 
-        box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .primary-btn:hover { 
-        transform: translateY(-2px); 
-        box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
-      }
-      .secondary-btn {
-        padding: 12px 28px;
-        border-radius: 10px;
-        border: 2px solid var(--border-color);
-        background: white;
-        color: var(--text-primary);
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .secondary-btn:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
-      }
-      .upload-card:hover {
-        border-color: var(--primary) !important;
-        box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15) !important;
-      }
-      .dropzone:hover {
-        opacity: 0.8;
-      }
-      .crop-btn:hover {
-        background: var(--primary-dark) !important;
-        transform: scale(1.02);
-      }
-      .thumbwrap:hover {
-        box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2) !important;
-        transform: translateY(-2px);
-      }
-      .app-header i { color: var(--primary, #6366f1); font-style: normal; display: inline-block; }
-    </style>
   </head>
   <body>
     <div class="container">
       <header class="app-header">
-        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
-          <i class="fas fa-id-card-alt" style="font-size: 2rem; color: var(--primary,#6366f1);"></i>
-          <h1 class="gradient-title" style="margin: 0; font-size: 2rem;">NID Stack & Enhance</h1>
+        <div class="app-header__row">
+          <i class="fas fa-id-card-alt" aria-hidden="true"></i>
+          <h1>NID Stack & Enhance</h1>
         </div>
-        <p class="lead" style="margin: 0; font-size: 1.05rem; line-height: 1.6;">Upload front and back NID photos, crop each as needed, tweak brightness/contrast/saturation/sharpness, then export a single high-quality PDF.</p>
+        <p class="lead">
+          Upload front and back NID photos, crop each as needed, tweak
+          brightness/contrast/saturation/sharpness, then export a single
+          high-quality PDF.
+        </p>
       </header>
 
-      <section class="upload-section">
-        <div style="margin-bottom: 32px;">
-          <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin: 0 0 8px 0; display: flex; align-items: center; gap: 12px;">
-            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-              <i class="fas fa-cloud-upload-alt" style="color: white; font-size: 1.3rem;"></i>
-            </div>
+      <!-- Section 1: Upload -->
+      <section class="upload-section" aria-labelledby="uploadHeading">
+        <div class="section-heading">
+          <h2 id="uploadHeading">
+            <span class="section-icon">
+              <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
+            </span>
             Upload Images
           </h2>
-          <p style="margin: 8px 0 0 52px; color: var(--text-secondary); font-size: 0.95rem;">Add NID photos - drag & drop or click</p>
+          <p>Add NID photos — drag &amp; drop or click</p>
         </div>
-        <div class="inputs" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
-          <div class="upload-card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(236, 72, 153, 0.05)); border: 2px dashed var(--border-color); border-radius: 16px; padding: 24px; transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden;">
-            <div style="position: absolute; top: 0; right: 0; width: 120px; height: 120px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1)); border-radius: 0 0 0 100%; pointer-events: none;"></div>
-            <label class="dropzone" id="drop1" style="display: block; text-align: center;">
-              <div id="preview1-container" style="display: none; margin-bottom: 16px;">
-                <img id="preview1" style="max-width: 100%; max-height: 160px; border-radius: 8px; object-fit: contain; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" />
+
+        <div class="inputs">
+          <!-- Front (required) -->
+          <div class="upload-card">
+            <label class="dropzone" id="drop1" for="file1">
+              <div class="upload-preview hidden" id="preview1-container">
+                <img id="preview1" alt="NID front image preview" />
               </div>
               <div class="dropzone-header">
-                <div style="width: 56px; height: 56px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
-                  <i class="fas fa-image" style="font-size: 1.8rem; color: white;"></i>
-                </div>
-                <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Image 1 (Front)</h3>
-                <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary);">NID Front Side</p>
+                <span class="upload-icon">
+                  <i class="fas fa-image" aria-hidden="true"></i>
+                </span>
+                <h3>Image 1 (Front)</h3>
+                <p>NID Front Side</p>
+                <span class="badge badge--required">Required</span>
               </div>
-              <input id="file1" type="file" accept="image/*" style="display: none;" />
-              <button id="crop1" type="button" class="crop-btn" style="margin-top: 16px; width: 100%; padding: 10px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;"><i class="fas fa-crop"></i>Crop Image 1</button>
+              <input
+                id="file1"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
+                class="sr-only"
+                aria-label="Upload NID front image (required)"
+              />
             </label>
+            <button id="crop1" type="button" class="crop-btn">
+              <i class="fas fa-crop" aria-hidden="true"></i>Crop Image 1 (Front)
+            </button>
           </div>
 
-          <div class="upload-card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(236, 72, 153, 0.05)); border: 2px dashed var(--border-color); border-radius: 16px; padding: 24px; transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden;">
-            <div style="position: absolute; top: 0; right: 0; width: 120px; height: 120px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1)); border-radius: 0 0 0 100%; pointer-events: none;"></div>
-            <label class="dropzone" id="drop2" style="display: block; text-align: center;">
-              <div id="preview2-container" style="display: none; margin-bottom: 16px;">
-                <img id="preview2" style="max-width: 100%; max-height: 160px; border-radius: 8px; object-fit: contain; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" />
+          <!-- Back (optional) -->
+          <div class="upload-card">
+            <label class="dropzone" id="drop2" for="file2">
+              <div class="upload-preview hidden" id="preview2-container">
+                <img id="preview2" alt="NID back image preview" />
               </div>
               <div class="dropzone-header">
-                <div style="width: 56px; height: 56px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
-                  <i class="fas fa-image" style="font-size: 1.8rem; color: white;"></i>
-                </div>
-                <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Image 2 (Back)</h3>
-                <span style="display: inline-block; font-size: 0.8rem; color: var(--text-secondary); background: var(--border-color); padding: 4px 12px; border-radius: 20px; margin-top: 4px;">Optional</span>
+                <span class="upload-icon">
+                  <i class="fas fa-image" aria-hidden="true"></i>
+                </span>
+                <h3>Image 2 (Back)</h3>
+                <p>NID Back Side</p>
+                <span class="badge badge--optional">Optional</span>
               </div>
-              <input id="file2" type="file" accept="image/*" style="display: none;" />
-              <button id="crop2" type="button" class="crop-btn" style="margin-top: 16px; width: 100%; padding: 10px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;"><i class="fas fa-crop"></i>Crop Image 2</button>
+              <input
+                id="file2"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
+                class="sr-only"
+                aria-label="Upload NID back image (optional)"
+              />
             </label>
+            <button id="crop2" type="button" class="crop-btn">
+              <i class="fas fa-crop" aria-hidden="true"></i>Crop Image 2 (Back)
+            </button>
           </div>
         </div>
       </section>
 
-      <section class="options-section" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(236, 72, 153, 0.08)); border-radius: 16px; padding: 28px; border: 1px solid var(--border-color);">
-        <div style="margin-bottom: 24px;">
-          <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--text-primary); margin: 0 0 8px 0; display: flex; align-items: center; gap: 12px;">
-            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-              <i class="fas fa-sliders-h" style="color: white; font-size: 1.2rem;"></i>
-            </div>
+      <!-- Section 2: Combine Settings -->
+      <section class="options-section" aria-labelledby="combineSettingsHeading">
+        <div class="section-heading">
+          <h2 id="combineSettingsHeading">
+            <span class="section-icon">
+              <i class="fas fa-sliders-h" aria-hidden="true"></i>
+            </span>
             Combine Settings
           </h2>
-          <p style="margin: 8px 0 0 52px; color: var(--text-secondary); font-size: 0.9rem;">Customize how images are combined</p>
+          <p>Customize how images are combined</p>
         </div>
-        <div class="options" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-          <div class="option-item" style="background: white; padding: 16px; border-radius: 12px; border: 2px solid var(--border-color);">
-            <label style="font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-primary); margin-bottom: 12px;">
-              <div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-arrows-alt-h" style="color: white; font-size: 0.9rem;"></i>
-              </div>
+
+        <div class="options">
+          <div class="option-item">
+            <label for="spacing">
+              <span class="option-icon">
+                <i class="fas fa-arrows-alt-h" aria-hidden="true"></i>
+              </span>
               Spacing
             </label>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <input id="spacing" type="number" value="10" min="0" style="padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; flex: 1; font-size: 1rem;" />
-              <span style="color: var(--text-secondary); font-weight: 600; min-width: 20px;">px</span>
+            <div class="field-row">
+              <input
+                id="spacing"
+                type="number"
+                value="10"
+                min="0"
+                max="500"
+                step="1"
+                aria-describedby="spacingUnit"
+              />
+              <span class="unit" id="spacingUnit">px</span>
             </div>
           </div>
-          <div class="option-item" style="background: white; padding: 16px; border-radius: 12px; border: 2px solid var(--border-color);">
-            <label style="font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-primary); margin-bottom: 12px;">
-              <div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-palette" style="color: white; font-size: 0.9rem;"></i>
-              </div>
-              Background
+
+          <div class="option-item">
+            <label for="bgcolor">
+              <span class="option-icon">
+                <i class="fas fa-palette" aria-hidden="true"></i>
+              </span>
+              Background Color
             </label>
-            <input id="bgcolor" type="color" value="#ffffff" style="width: 100%; height: 48px; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; padding: 4px;" />
+            <input id="bgcolor" type="color" value="#ffffff" />
           </div>
         </div>
       </section>
 
-      <div class="action-section" style="margin-top: 28px;">
-        <div class="buttons" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
-          <button id="combine" class="primary-btn" style="padding: 12px 28px; font-weight: 700; font-size: 1rem; box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25); transition: all 0.3s ease;"><i class="fas fa-layer-group"></i>Combine Images</button>
-          <button id="clear" class="secondary-btn" style="padding: 12px 28px; font-weight: 700; font-size: 1rem; border: 2px solid var(--border-color); background: white; color: var(--text-primary); cursor: pointer; border-radius: 10px; transition: all 0.3s ease;"><i class="fas fa-redo"></i>Clear All</button>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-left: auto;">
-            <button id="downloadPdf" class="hidden primary-btn" style="padding: 12px 28px; font-weight: 700; font-size: 1rem; box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);"><i class="fas fa-file-pdf"></i>Download as PDF</button>
-          </div>
+      <!-- Section 3: Actions -->
+      <section class="action-section" aria-labelledby="actionsHeading">
+        <div class="section-heading">
+          <h2 id="actionsHeading">
+            <span class="section-icon">
+              <i class="fas fa-bolt" aria-hidden="true"></i>
+            </span>
+            Actions
+          </h2>
+          <p>Combine your images or start over</p>
         </div>
-        <div id="progress" class="progress hidden" style="margin-top: 16px; height: 4px; background: var(--border-color); border-radius: 4px; overflow: hidden;"><div id="progressBar" style="height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: width 0.3s ease;"></div></div>
-      </div>
 
-      <section class="preview-section">
+        <div class="buttons">
+          <button id="combine" type="button" class="primary-btn">
+            <i class="fas fa-layer-group" aria-hidden="true"></i>Combine Images
+          </button>
+          <button id="clear" type="button" class="secondary-btn">
+            <i class="fas fa-redo" aria-hidden="true"></i>Clear All
+          </button>
+          <button id="downloadPdf" type="button" class="primary-btn hidden">
+            <i class="fas fa-file-pdf" aria-hidden="true"></i>Download Combined PDF
+          </button>
+        </div>
+
+        <div
+          id="progress"
+          class="progress hidden"
+          role="progressbar"
+          aria-label="Operation progress"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <div
+          id="messageRegion"
+          class="message-region"
+          role="status"
+          aria-live="polite"
+        ></div>
+      </section>
+
+      <!-- Section 4: Preview -->
+      <section class="preview-section" aria-labelledby="previewHeading">
+        <h2 id="previewHeading" class="sr-only">Preview</h2>
+
         <div class="preview-main">
-          <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0 0 16px 0; display: flex; align-items: center; gap: 12px; color: var(--text-primary);">
-            <div style="width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-              <i class="fas fa-eye" style="color: white; font-size: 1.1rem;"></i>
-            </div>
+          <h3>
+            <span class="preview-icon">
+              <i class="fas fa-eye" aria-hidden="true"></i>
+            </span>
             Combined Preview
           </h3>
           <div class="canvas-wrapper">
             <div class="canvas-placeholder" id="previewCanvasPlaceholder">
               <div class="placeholder-glow-ring">
-                <i class="fas fa-layer-group"></i>
+                <i class="fas fa-layer-group" aria-hidden="true"></i>
               </div>
               <div class="placeholder-text">
                 <span class="placeholder-title">No Combined Preview</span>
@@ -202,193 +203,182 @@
               </div>
               <div class="placeholder-dots"><span></span><span></span><span></span></div>
             </div>
-            <canvas id="previewCanvas" style="display:none;"></canvas>
+            <canvas id="previewCanvas" class="hidden" aria-label="Combined image preview"></canvas>
           </div>
         </div>
-        <div class="preview-inputs" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(236, 72, 153, 0.05)); border-radius: 16px; padding: 24px;">
-          <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0 0 20px 0; display: flex; align-items: center; gap: 12px; color: var(--text-primary);">
-            <div style="width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-              <i class="fas fa-images" style="color: white; font-size: 1.1rem;"></i>
-            </div>
+
+        <div class="preview-inputs">
+          <h3>
+            <span class="preview-icon">
+              <i class="fas fa-images" aria-hidden="true"></i>
+            </span>
             Input Images
           </h3>
-          <div class="thumbs-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px;">
-            <div class="thumbwrap" style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; border: 2px solid var(--border-color);">
+          <div class="thumbs-container">
+            <div class="thumbwrap">
               <div class="thumb-placeholder" id="thumb1Placeholder">
-                <i class="fas fa-id-card"></i>
+                <i class="fas fa-id-card" aria-hidden="true"></i>
                 <span>Image 1 · Front</span>
               </div>
-              <img id="thumb1" class="thumb" alt="Image 1 preview" style="width: 100%; height: 120px; object-fit: cover; display: none;"/>
-              <div class="cropinfo" id="cropInfo1" style="padding: 8px 12px; font-size: 0.8rem; color: var(--text-secondary); text-align: center; background: var(--border-color); min-height: 24px;"></div>
+              <img id="thumb1" class="thumb hidden" alt="Image 1 (front) thumbnail" />
+              <div class="cropinfo" id="cropInfo1"></div>
             </div>
-            <div class="thumbwrap" style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; border: 2px solid var(--border-color);">
+            <div class="thumbwrap">
               <div class="thumb-placeholder" id="thumb2Placeholder">
-                <i class="fas fa-id-card-alt"></i>
+                <i class="fas fa-id-card-alt" aria-hidden="true"></i>
                 <span>Image 2 · Back</span>
               </div>
-              <img id="thumb2" class="thumb" alt="Image 2 preview" style="width: 100%; height: 120px; object-fit: cover; display: none;"/>
-              <div class="cropinfo" id="cropInfo2" style="padding: 8px 12px; font-size: 0.8rem; color: var(--text-secondary); text-align: center; background: var(--border-color); min-height: 24px;"></div>
+              <img id="thumb2" class="thumb hidden" alt="Image 2 (back) thumbnail" />
+              <div class="cropinfo" id="cropInfo2"></div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="adjustments">
-        <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 2px solid var(--border-color);">
-          <i class="fas fa-sliders-h" style="color: var(--primary); font-size: 1.2rem;"></i>Adjust Combined Image
+      <!-- Section 5: Adjustments -->
+      <section class="adjustments" aria-labelledby="adjustmentsHeading">
+        <h2 id="adjustmentsHeading">
+          <i class="fas fa-sliders-h" aria-hidden="true"></i>Adjust Combined Image
         </h2>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+
+        <div class="adjustments-grid">
           <div>
             <div class="adjustment-controls-card">
-          <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0 0 16px 0; color: var(--text-primary);">Image Adjustments</h3>
-          <div class="adj-controls">
-            <div class="control-group">
-              <label style="font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <i class="fas fa-sun" style="color: var(--primary);"></i>
-                Brightness: <span id="adjBrightVal" style="min-width: 45px; font-weight: 700; color: var(--primary);">100%</span>
-              </label>
-              <input id="adjBrightness" type="range" min="0" max="200" value="100" style="width: 100%;" />
+              <h3>Image Adjustments</h3>
+              <div class="adj-controls">
+                <div class="control-group">
+                  <label for="adjBrightness">
+                    <i class="fas fa-sun" aria-hidden="true"></i>
+                    Brightness:
+                    <span id="adjBrightVal" class="value">100%</span>
+                  </label>
+                  <input id="adjBrightness" type="range" min="0" max="200" value="100" />
+                </div>
+                <div class="control-group">
+                  <label for="adjContrast">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                    Contrast:
+                    <span id="adjContrastVal" class="value">100%</span>
+                  </label>
+                  <input id="adjContrast" type="range" min="0" max="200" value="100" />
+                </div>
+                <div class="control-group">
+                  <label for="adjSaturation">
+                    <i class="fas fa-tint" aria-hidden="true"></i>
+                    Saturation:
+                    <span id="adjSatVal" class="value">100%</span>
+                  </label>
+                  <input id="adjSaturation" type="range" min="0" max="200" value="100" />
+                </div>
+                <div class="control-group">
+                  <label for="adjSharp">
+                    <i class="fas fa-magic" aria-hidden="true"></i>
+                    Sharpness:
+                    <span id="adjSharpVal" class="value">0</span>
+                  </label>
+                  <input id="adjSharp" type="range" min="0" max="100" value="0" />
+                </div>
+              </div>
             </div>
-            <div class="control-group">
-              <label style="font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <i class="fas fa-adjust" style="color: var(--primary);"></i>
-                Contrast: <span id="adjContrastVal" style="min-width: 45px; font-weight: 700; color: var(--primary);">100%</span>
-              </label>
-              <input id="adjContrast" type="range" min="0" max="200" value="100" style="width: 100%;" />
-            </div>
-            <div class="control-group">
-              <label style="font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <i class="fas fa-tint" style="color: var(--primary);"></i>
-                Saturation: <span id="adjSatVal" style="min-width: 45px; font-weight: 700; color: var(--primary);">100%</span>
-              </label>
-              <input id="adjSaturation" type="range" min="0" max="200" value="100" style="width: 100%;" />
-            </div>
-            <div class="control-group">
-              <label style="font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <i class="fas fa-magic" style="color: var(--primary);"></i>
-                Sharpness: <span id="adjSharpVal" style="min-width: 45px; font-weight: 700; color: var(--primary);">0</span>
-              </label>
-              <input id="adjSharp" type="range" min="0" max="100" value="0" style="width: 100%;" />
-            </div>
-          </div>
-        </div>
 
-        <div class="filter-card">
-          <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0 0 16px 0; color: var(--text-primary);">Filters</h3>
-          <div class="filter-controls">
-            <div style="flex: 1;">
-              <label style="font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <i class="fas fa-filter" style="color: var(--primary);"></i>
-                Select Filter:
-              </label>
-              <select id="filterSelect" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem; cursor: pointer;">
-                <option value="none">None</option>
-                <option value="lighten">Lighten</option>
-                <option value="document">Document (scan-like)</option>
-                <option value="grayscale">Grayscale</option>
-              </select>
+            <div class="filter-card">
+              <h3>Filters</h3>
+              <div class="filter-controls">
+                <div class="filter-field">
+                  <label for="filterSelect">
+                    <i class="fas fa-filter" aria-hidden="true"></i>
+                    Select Filter:
+                  </label>
+                  <select id="filterSelect">
+                    <option value="none">None</option>
+                    <option value="lighten">Lighten</option>
+                    <option value="document">Document (scan-like)</option>
+                    <option value="grayscale">Grayscale</option>
+                  </select>
+                </div>
+                <div class="filter-actions">
+                  <button id="applyFilter" type="button" class="primary-btn">
+                    <i class="fas fa-check" aria-hidden="true"></i>Apply
+                  </button>
+                  <button id="resetFilter" type="button" class="secondary-btn">
+                    <i class="fas fa-undo" aria-hidden="true"></i>Reset
+                  </button>
+                </div>
+              </div>
             </div>
-            <div style="display: flex; gap: 8px; align-items: flex-end;">
-              <button id="applyFilter" class="primary-btn"><i class="fas fa-check"></i>Apply</button>
-              <button id="resetFilter" class="secondary-btn"><i class="fas fa-undo"></i>Reset</button>
-            </div>
-          </div>
-        </div>
 
-        <div class="adj-buttons">
-          <button id="applyAdj" class="primary-btn"><i class="fas fa-check-circle"></i>Apply Adjustments</button>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button id="downloadAdjPdf" class="hidden primary-btn"><i class="fas fa-file-pdf"></i>Download as PDF</button>
+            <div class="adj-buttons">
+              <button id="applyAdj" type="button" class="primary-btn">
+                <i class="fas fa-check-circle" aria-hidden="true"></i>Apply Adjustments
+              </button>
+              <button id="downloadAdjPdf" type="button" class="primary-btn hidden">
+                <i class="fas fa-file-pdf" aria-hidden="true"></i>Download Adjusted PDF
+              </button>
+            </div>
           </div>
-        </div>
-          </div>
-          
+
           <div>
             <div class="adj-preview">
-          <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0 0 16px 0; color: var(--text-primary); display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-check-circle" style="color: var(--primary);"></i>Adjusted Preview
-          </h3>
-          <div class="canvas-wrapper">
-            <div class="canvas-placeholder" id="adjustedCanvasPlaceholder">
-              <div class="placeholder-glow-ring" style="background: linear-gradient(135deg, var(--primary-dark), var(--accent));">
-                <i class="fas fa-magic"></i>
+              <h3>
+                <i class="fas fa-check-circle" aria-hidden="true"></i>Adjusted Preview
+              </h3>
+              <div class="canvas-wrapper">
+                <div class="canvas-placeholder" id="adjustedCanvasPlaceholder">
+                  <div class="placeholder-glow-ring">
+                    <i class="fas fa-magic" aria-hidden="true"></i>
+                  </div>
+                  <div class="placeholder-text">
+                    <span class="placeholder-title">No Adjusted Preview</span>
+                    <span class="placeholder-sub">Apply adjustments to see result</span>
+                  </div>
+                  <div class="placeholder-dots"><span></span><span></span><span></span></div>
+                </div>
+                <canvas id="adjustedCanvas" class="hidden" aria-label="Adjusted image preview"></canvas>
               </div>
-              <div class="placeholder-text">
-                <span class="placeholder-title">No Adjusted Preview</span>
-                <span class="placeholder-sub">Apply adjustments to see result</span>
-              </div>
-              <div class="placeholder-dots"><span></span><span></span><span></span></div>
             </div>
-            <canvas id="adjustedCanvas" style="display:none;"></canvas>
-          </div>
-        </div>
           </div>
         </div>
       </section>
-
-      <p class="notes"></p>
     </div>
 
     <!-- Cropping modal -->
     <div id="cropModal" class="modal hidden" aria-hidden="true">
-      <div class="modal-content" role="dialog" aria-modal="true">
+      <div
+        class="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cropTitle"
+      >
         <div class="modal-header">
-          <i class="fas fa-crop-alt" style="color: var(--primary); margin-right: 10px;"></i>
-          <h3 id="cropTitle" style="margin: 0; flex: 1; font-size: 1.3rem; font-weight: 700;">Crop Image</h3>
+          <i class="fas fa-crop-alt" aria-hidden="true"></i>
+          <h3 id="cropTitle">Crop Image</h3>
         </div>
         <div class="modal-body">
-          <canvas id="cropCanvas"></canvas>
-          <p class="modal-note"><i class="fas fa-info-circle" style="color: var(--primary); margin-right: 6px;"></i>Drag the corner handles to resize, drag inside the rectangle to move. Or draw a new rectangle to replace.</p>
+          <canvas id="cropCanvas" aria-label="Crop editor canvas"></canvas>
+          <p class="modal-note">
+            <i class="fas fa-info-circle" aria-hidden="true"></i>Drag the corner
+            handles to resize, drag inside the rectangle to move. Use arrow keys
+            to nudge the active handle.
+          </p>
         </div>
         <div class="modal-actions">
-          <button id="applyCrop" class="primary-btn"><i class="fas fa-check"></i>Apply Crop</button>
-          <button id="cancelCrop" class="secondary-btn"><i class="fas fa-times"></i>Cancel</button>
+          <button id="applyCrop" type="button" class="primary-btn">
+            <i class="fas fa-check" aria-hidden="true"></i>Apply Crop
+          </button>
+          <button id="cancelCrop" type="button" class="secondary-btn">
+            <i class="fas fa-times" aria-hidden="true"></i>Cancel
+          </button>
         </div>
       </div>
     </div>
-    <footer class="neon-footer" style="margin-top:28px; text-align:center;">
-      <div class="footer-rgb" style="display:flex;align-items:center;justify-content:center;gap:10px;">
-        <span class="rgb-text">Developed by Tanzil Ahmed — EID 7966.</span>
-      </div>
-      <style>
-        .footer-rgb .rgb-text{
-            padding:8px 14px;
-            border-radius:999px;
-            font-weight:600;
-            background: linear-gradient(90deg,
-                #5b21b6 0%,
-                #7c3aed 12%,
-                #ec4899 24%,
-                #fb7185 36%,
-                #f97316 48%,
-                #f59e0b 60%,
-                #06b6d4 72%,
-                #0ea5a1 84%,
-                #5b21b6 100%
-            );
-            background-size:300% 300%;
-            -webkit-background-clip:text;
-            background-clip:text;
-            color:transparent;
-            -webkit-text-fill-color:transparent;
-            animation: rgbShift 6s linear infinite;
-            text-align:center;
-        }
-        @keyframes rgbShift{
-            0%{background-position:0% 50%}
-            50%{background-position:100% 50%}
-            100%{background-position:0% 50%}
-        }
-        @media (max-width:520px){
-            .footer-rgb .rgb-text{font-size:0.92rem}
-        }
-      </style>
+
+    <footer class="app-footer">
+      <span>Developed by Tanzil Ahmed — EID 7966.</span>
     </footer>
 
     <script src="libs/pdf.min.js"></script>
     <script src="libs/jspdf.umd.min.js"></script>
     <script src="libs/html2canvas.min.js"></script>
-    <script src="script.js"></script>
+    <script src="app.bundle.js"></script>
   </body>
 </html>

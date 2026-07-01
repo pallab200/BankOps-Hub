@@ -2298,6 +2298,8 @@ body::after {
           <option value="charge-document">Charge Document</option>
           <option value="fund-transfer-request">Fund Transfer Request</option>
           <option value="renewal-form">Renewal Form</option>
+          <option value="cash-secured-loan">Cash Secured Loan Application</option>
+          <option value="declaration-settlement">Declaration for Settlement</option>
         </select>
       </div>
       <div class="preview-actions">
@@ -3468,7 +3470,7 @@ body::after {
   </div>
 
   <!-- Renewal Form Preview -->
-  <div id="renewalFormContainer" style="display: none; max-width: 1000px; margin: 0 auto;">
+  <div id="renewalFormContainer" style="display: none; max-width: 1000px; margin: 0 auto; text-transform: uppercase;">
     <div class="form-page" style="padding: 0; overflow: visible; position: relative; margin-bottom: 0; border-radius: 0; box-shadow: none;">
       <img src="Assets/Images/Retail Secured Overdraft Renewal Form/Retail Secured Overdraft Renewal Form_page-0001.jpg" style="width: 100%; height: auto; display: block;" alt="Renewal Form Page 1">
       <!-- Date -->
@@ -3596,6 +3598,80 @@ body::after {
       <div class="overlay" data-field="rn3officer3Seal" style="position: absolute; bottom: 10%; left: 65%; width: 140px; height: 100px;"></div>
     </div>
   </div>
+
+  <!-- Cash Secured Loan Application Form Preview -->
+  <div id="cashSecuredLoanContainer" style="display: none; max-width: 1000px; margin: 0 auto; text-transform: uppercase;">
+    <div class="form-page" style="padding: 0; overflow: visible; position: relative; margin-bottom: 0; border-radius: 0; box-shadow: none;">
+      <img src="Assets/Images/Cash  Secured Loan Application Form/RCSL Application Form Final_page-0001.jpg" style="width: 100%; height: auto; display: block;" alt="Cash Secured Loan Page 1">
+    </div>
+    <div class="form-page" style="padding: 0; overflow: visible; position: relative; margin-bottom: 0; border-radius: 0; box-shadow: none;">
+      <img src="Assets/Images/Cash  Secured Loan Application Form/RCSL Application Form Final_page-0002.jpg" style="width: 100%; height: auto; display: block;" alt="Cash Secured Loan Page 2">
+    </div>
+    <div class="form-page" style="padding: 0; overflow: visible; position: relative; margin-bottom: 0; border-radius: 0; box-shadow: none;">
+      <img src="Assets/Images/Cash  Secured Loan Application Form/RCSL Application Form Final_page-0003.jpg" style="width: 100%; height: auto; display: block;" alt="Cash Secured Loan Page 3">
+    </div>
+    <div class="form-page" style="padding: 0; overflow: visible; position: relative; margin-bottom: 0; border-radius: 0; box-shadow: none;">
+      <img src="Assets/Images/Cash  Secured Loan Application Form/RCSL Application Form Final_page-0004.jpg" style="width: 100%; height: auto; display: block;" alt="Cash Secured Loan Page 4">
+    </div>
+    <div class="form-page" style="padding: 0; overflow: visible; position: relative; margin-bottom: 0; border-radius: 0; box-shadow: none;">
+      <img src="Assets/Images/Cash  Secured Loan Application Form/RCSL Application Form Final_page-0005.jpg" style="width: 100%; height: auto; display: block;" alt="Cash Secured Loan Page 5">
+    </div>
+  </div>
+
+  <!-- Declaration for Settlement Preview -->
+  <div id="declarationSettlementContainer" style="display: none; max-width: 1000px; margin: 0 auto; text-transform: uppercase;">
+    <div class="form-page" style="padding: 0; overflow: visible; position: relative; margin-bottom: 0; border-radius: 0; box-shadow: none;">
+      <img src="Assets/Images/Declaration for Settlement/Declaration for Settlement_page-0001.jpg" style="width: 100%; height: auto; display: block;" alt="Declaration for Settlement">
+      <!-- Date -->
+      <div class="overlay" data-field="dsDate" style="position: absolute; top: 8%; left: 70%; font-size: 12px; font-weight: bold;"><span class="overlay-value" id="dsDate"></span></div>
+      <!-- Branch Name -->
+      <div class="overlay" data-field="dsBranchName" style="position: absolute; top: 12%; left: 20%; font-size: 12px; font-weight: bold;"><span class="overlay-value" id="dsBranchName"></span></div>
+      <!-- Applicant Name -->
+      <div class="overlay" data-field="dsApplicantName" style="position: absolute; top: 20%; left: 10%; font-size: 12px; font-weight: bold;"><span class="overlay-value" id="dsApplicantName"></span></div>
+      <!-- CASA A/C Number -->
+      <div class="overlay" data-field="dsCasaAccount" style="position: absolute; top: 24%; left: 30%; font-size: 12px; font-weight: bold;"><span class="overlay-value" id="dsCasaAccount"></span></div>
+      <!-- Security Details (without serial number) -->
+      <div class="overlay" data-field="dsSecAccount1" style="position: absolute; top: 40%; left: 5%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecAccount1"></span></div>
+      <div class="overlay" data-field="dsSecFavouring1" style="position: absolute; top: 40%; left: 20%; font-size: 0.3rem;"><span class="overlay-value" id="dsSecFavouring1"></span></div>
+      <div class="overlay" data-field="dsSecBranch1" style="position: absolute; top: 40%; left: 32%; font-size: 0.3rem;"><span class="overlay-value" id="dsSecBranch1"></span></div>
+      <div class="overlay" data-field="dsSecIssueDate1" style="position: absolute; top: 40%; left: 45%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecIssueDate1"></span></div>
+      <div class="overlay" data-field="dsSecMaturity1" style="position: absolute; top: 40%; left: 55%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecMaturity1"></span></div>
+      <div class="overlay" data-field="dsSecFace1" style="position: absolute; top: 40%; left: 72%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecFace1"></span></div>
+      <div class="overlay" data-field="dsSecPresent1" style="position: absolute; top: 40%; left: 86%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecPresent1"></span></div>
+      <div class="overlay" data-field="dsSecAccount2" style="position: absolute; top: 43%; left: 5%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecAccount2"></span></div>
+      <div class="overlay" data-field="dsSecFavouring2" style="position: absolute; top: 43%; left: 20%; font-size: 0.3rem;"><span class="overlay-value" id="dsSecFavouring2"></span></div>
+      <div class="overlay" data-field="dsSecBranch2" style="position: absolute; top: 43%; left: 32%; font-size: 0.3rem;"><span class="overlay-value" id="dsSecBranch2"></span></div>
+      <div class="overlay" data-field="dsSecIssueDate2" style="position: absolute; top: 43%; left: 45%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecIssueDate2"></span></div>
+      <div class="overlay" data-field="dsSecMaturity2" style="position: absolute; top: 43%; left: 55%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecMaturity2"></span></div>
+      <div class="overlay" data-field="dsSecFace2" style="position: absolute; top: 43%; left: 72%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecFace2"></span></div>
+      <div class="overlay" data-field="dsSecPresent2" style="position: absolute; top: 43%; left: 86%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecPresent2"></span></div>
+      <div class="overlay" data-field="dsSecAccount3" style="position: absolute; top: 46%; left: 5%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecAccount3"></span></div>
+      <div class="overlay" data-field="dsSecFavouring3" style="position: absolute; top: 46%; left: 20%; font-size: 0.3rem;"><span class="overlay-value" id="dsSecFavouring3"></span></div>
+      <div class="overlay" data-field="dsSecBranch3" style="position: absolute; top: 46%; left: 32%; font-size: 0.3rem;"><span class="overlay-value" id="dsSecBranch3"></span></div>
+      <div class="overlay" data-field="dsSecIssueDate3" style="position: absolute; top: 46%; left: 45%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecIssueDate3"></span></div>
+      <div class="overlay" data-field="dsSecMaturity3" style="position: absolute; top: 46%; left: 55%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecMaturity3"></span></div>
+      <div class="overlay" data-field="dsSecFace3" style="position: absolute; top: 46%; left: 72%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecFace3"></span></div>
+      <div class="overlay" data-field="dsSecPresent3" style="position: absolute; top: 46%; left: 86%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecPresent3"></span></div>
+      <div class="overlay" data-field="dsSecAccount4" style="position: absolute; top: 49%; left: 5%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecAccount4"></span></div>
+      <div class="overlay" data-field="dsSecFavouring4" style="position: absolute; top: 49%; left: 20%; font-size: 0.3rem;"><span class="overlay-value" id="dsSecFavouring4"></span></div>
+      <div class="overlay" data-field="dsSecBranch4" style="position: absolute; top: 49%; left: 32%; font-size: 0.3rem;"><span class="overlay-value" id="dsSecBranch4"></span></div>
+      <div class="overlay" data-field="dsSecIssueDate4" style="position: absolute; top: 49%; left: 45%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecIssueDate4"></span></div>
+      <div class="overlay" data-field="dsSecMaturity4" style="position: absolute; top: 49%; left: 55%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecMaturity4"></span></div>
+      <div class="overlay" data-field="dsSecFace4" style="position: absolute; top: 49%; left: 72%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecFace4"></span></div>
+      <div class="overlay" data-field="dsSecPresent4" style="position: absolute; top: 49%; left: 86%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecPresent4"></span></div>
+      <div class="overlay" data-field="dsSecAccount5" style="position: absolute; top: 52%; left: 5%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecAccount5"></span></div>
+      <div class="overlay" data-field="dsSecFavouring5" style="position: absolute; top: 52%; left: 20%; font-size: 0.3rem;"><span class="overlay-value" id="dsSecFavouring5"></span></div>
+      <div class="overlay" data-field="dsSecBranch5" style="position: absolute; top: 52%; left: 32%; font-size: 0.3rem;"><span class="overlay-value" id="dsSecBranch5"></span></div>
+      <div class="overlay" data-field="dsSecIssueDate5" style="position: absolute; top: 52%; left: 45%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecIssueDate5"></span></div>
+      <div class="overlay" data-field="dsSecMaturity5" style="position: absolute; top: 52%; left: 55%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecMaturity5"></span></div>
+      <div class="overlay" data-field="dsSecFace5" style="position: absolute; top: 52%; left: 72%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecFace5"></span></div>
+      <div class="overlay" data-field="dsSecPresent5" style="position: absolute; top: 52%; left: 86%; font-size: 0.65rem;"><span class="overlay-value" id="dsSecPresent5"></span></div>
+      <!-- Officer Seal -->
+      <div class="overlay" data-field="dsofficer1Seal" style="position: absolute; bottom: 10%; left: 5%; width: 140px; height: 100px;"></div>
+      <!-- Head of Branch Seal -->
+      <div class="overlay" data-field="dsofficer3Seal" style="position: absolute; bottom: 10%; left: 60%; width: 140px; height: 100px;"></div>
+    </div>
+  </div>
   </div>
 
   <!-- Branch Details Popup -->
@@ -3684,6 +3760,8 @@ body::after {
       <option value="charge-document">Charge Document</option>
       <option value="fund-transfer-request">Fund Transfer Request</option>
       <option value="renewal-form">Renewal Form</option>
+      <option value="cash-secured-loan">Cash Secured Loan Application</option>
+      <option value="declaration-settlement">Declaration for Settlement</option>
     </select>
     <button type="button" class="btn btn-success" onclick="printForm()">
       <i class="fas fa-print"></i> Print Form
@@ -4123,6 +4201,20 @@ body::after {
         const renewalPages = Array.from(renewalContainer.querySelectorAll('.form-page'));
         if (renewalPages.length > 0) {
           printPagesInIframe(renewalPages, 'Renewal Form Print', 1000, false);
+        }
+      } else if (printType === 'cash-secured-loan') {
+        updateCashSecuredLoan();
+        const cslContainer = document.getElementById('cashSecuredLoanContainer');
+        const cslPages = Array.from(cslContainer.querySelectorAll('.form-page'));
+        if (cslPages.length > 0) {
+          printPagesInIframe(cslPages, 'Cash Secured Loan Application Print', 1000, false);
+        }
+      } else if (printType === 'declaration-settlement') {
+        updateDeclarationSettlement();
+        const dsContainer = document.getElementById('declarationSettlementContainer');
+        const dsPages = Array.from(dsContainer.querySelectorAll('.form-page'));
+        if (dsPages.length > 0) {
+          printPagesInIframe(dsPages, 'Declaration for Settlement Print', 1000, false);
         }
       } else {
         refreshPrintableData();
@@ -5174,44 +5266,46 @@ body::after {
       document.getElementById('nocMargin').textContent = margin;
       document.getElementById('nocSecTypeRow').textContent = securityType;
       document.getElementById('nocRateSOD').textContent = (() => {
-        let maxRate = 0;
+        let twRate = 0;
+        let twFace = 0;
         for (let i = 1; i <= 5; i++) {
           const r = parseFloat(document.querySelector(`input[name="secInterestRate${i}"]`)?.value) || 0;
-          if (r > maxRate) maxRate = r;
+          const fv = parseFloat(document.querySelector(`input[name="secFaceValue${i}"]`)?.value) || 0;
+          if (r > 0 && fv > 0) { twRate += r * fv; twFace += fv; }
         }
+        const avgRate = twFace > 0 ? twRate / twFace : 0;
         const spread = parseFloat(interestSpread) || 0;
-        if (maxRate > 0 || spread > 0) {
-          return (maxRate + spread) + '%';
+        if (avgRate > 0 || spread > 0) {
+          return (avgRate + spread).toFixed(2) + '%';
         }
         return '___________';
       })();
 
-      // Collect unique interest rates from security detail rows
+      // Calculate weighted average interest rate from security detail rows
+      let totalWeightedRate = 0;
+      let totalFaceForRate = 0;
       const uniqueRates = [];
       for (let i = 1; i <= 5; i++) {
-        const rate = (document.querySelector(`input[name="secInterestRate${i}"]`)?.value || '').trim();
-        if (rate && !uniqueRates.includes(rate)) {
-          uniqueRates.push(rate);
+        const rate = parseFloat((document.querySelector(`input[name="secInterestRate${i}"]`)?.value || '').trim()) || 0;
+        const faceVal = parseFloat((document.querySelector(`input[name="secFaceValue${i}"]`)?.value || '').trim()) || 0;
+        if (rate > 0 && faceVal > 0) {
+          totalWeightedRate += rate * faceVal;
+          totalFaceForRate += faceVal;
+        }
+        const rateStr = (document.querySelector(`input[name="secInterestRate${i}"]`)?.value || '').trim();
+        if (rateStr && !uniqueRates.includes(rateStr)) {
+          uniqueRates.push(rateStr);
         }
       }
-      let rateTDRD = '___________';
-      let rateTDRDInline = '___';
-      if (uniqueRates.length === 1) {
-        rateTDRD = uniqueRates[0] + '%';
-        rateTDRDInline = uniqueRates[0];
-      } else if (uniqueRates.length === 2) {
-        rateTDRD = uniqueRates[0] + '% and ' + uniqueRates[1] + '%';
-        rateTDRDInline = uniqueRates[0] + '% and ' + uniqueRates[1];
-      } else if (uniqueRates.length > 2) {
-        rateTDRD = uniqueRates.slice(0, -1).map(r => r + '%').join(', ') + ' and ' + uniqueRates[uniqueRates.length - 1] + '%';
-        rateTDRDInline = uniqueRates.slice(0, -1).map(r => r + '%').join(', ') + ' and ' + uniqueRates[uniqueRates.length - 1];
-      }
+      const weightedAvgRate = totalFaceForRate > 0 ? (totalWeightedRate / totalFaceForRate).toFixed(2) : 0;
+      let rateTDRD = totalFaceForRate > 0 ? weightedAvgRate + '%' : '___________';
+      let rateTDRDInline = totalFaceForRate > 0 ? weightedAvgRate : '___';
 
       document.getElementById('nocRateTDRD').textContent = rateTDRD;
-      // Calculate Rate of Interest on SOD for inline paragraph (max interest rate + spread)
-      const maxSecRate = uniqueRates.length > 0 ? Math.max(...uniqueRates.map(r => parseFloat(r) || 0)) : 0;
+      // Calculate Rate of Interest on SOD (weighted average + spread)
+      const maxSecRate = totalFaceForRate > 0 ? parseFloat(weightedAvgRate) : 0;
       const spreadVal = parseFloat(interestSpread) || 0;
-      const rateSODInline = (maxSecRate > 0 || spreadVal > 0) ? (maxSecRate + spreadVal) : '___';
+      const rateSODInline = (maxSecRate > 0 || spreadVal > 0) ? (maxSecRate + spreadVal).toFixed(2) : '___';
       document.getElementById('nocInterestSOD').textContent = rateSODInline;
       document.getElementById('nocInterestTDRD').textContent = rateTDRDInline;
 
@@ -5317,22 +5411,24 @@ body::after {
         favouring = uniqueFavourings.slice(0, -1).join(', ') + ' and ' + uniqueFavourings[uniqueFavourings.length - 1];
       }
 
-      // Unique interest rates
+      // Weighted average interest rate
+      let appTotalWeightedRate = 0;
+      let appTotalFaceForRate = 0;
       const uniqueRates = [];
       for (let i = 1; i <= 5; i++) {
-        const rate = (document.querySelector(`input[name="secInterestRate${i}"]`)?.value || '').trim();
-        if (rate && !uniqueRates.includes(rate)) {
-          uniqueRates.push(rate);
+        const rate = parseFloat((document.querySelector(`input[name="secInterestRate${i}"]`)?.value || '').trim()) || 0;
+        const fv = parseFloat((document.querySelector(`input[name="secFaceValue${i}"]`)?.value || '').trim()) || 0;
+        if (rate > 0 && fv > 0) {
+          appTotalWeightedRate += rate * fv;
+          appTotalFaceForRate += fv;
+        }
+        const rateStr = (document.querySelector(`input[name="secInterestRate${i}"]`)?.value || '').trim();
+        if (rateStr && !uniqueRates.includes(rateStr)) {
+          uniqueRates.push(rateStr);
         }
       }
-      let rateTDRD = '___________';
-      if (uniqueRates.length === 1) {
-        rateTDRD = uniqueRates[0];
-      } else if (uniqueRates.length === 2) {
-        rateTDRD = uniqueRates[0] + '% and ' + uniqueRates[1];
-      } else if (uniqueRates.length > 2) {
-        rateTDRD = uniqueRates.slice(0, -1).map(r => r + '%').join(', ') + ' and ' + uniqueRates[uniqueRates.length - 1];
-      }
+      const appWeightedAvgRate = appTotalFaceForRate > 0 ? (appTotalWeightedRate / appTotalFaceForRate).toFixed(2) : 0;
+      let rateTDRD = appTotalFaceForRate > 0 ? appWeightedAvgRate : '___________';
 
       // Calculate margin
       let margin = '___________';
@@ -5354,9 +5450,9 @@ body::after {
         faceValueLac = (faceVal / 100000).toFixed(2);
       }
 
-      // Calculate max interest rate for subject
-      const maxRate = uniqueRates.length > 0 ? Math.max(...uniqueRates.map(r => parseFloat(r) || 0)) : 0;
-      const rateSOD = (maxRate > 0 || (parseFloat(interestSpread) || 0) > 0) ? (maxRate + (parseFloat(interestSpread) || 0)) : '___';
+      // Calculate weighted average rate for subject
+      const maxRate = appTotalFaceForRate > 0 ? parseFloat(appWeightedAvgRate) : 0;
+      const rateSOD = (maxRate > 0 || (parseFloat(interestSpread) || 0) > 0) ? (maxRate + (parseFloat(interestSpread) || 0)).toFixed(2) : '___';
 
       // Build subject line
       const loanType = document.getElementById('loanTypeSelect')?.value || 'sanction';
@@ -5990,6 +6086,252 @@ body::after {
     }
 
     // =============================================
+    // Cash Secured Loan Application Form
+    // =============================================
+    function updateCashSecuredLoan() {
+      // Clone overlays from main Retail Secured Overdraft pages onto Cash Secured Loan pages
+      const cslContainer = document.getElementById('cashSecuredLoanContainer');
+      const mainPages = document.querySelectorAll('.preview-container .form-page[data-page]');
+      const cslPages = cslContainer.querySelectorAll('.form-page');
+
+      // For each CSL page, clone overlays from the corresponding main form page
+      const cslExcludeFields = ['jointLoanPurpose','passportExpiryDate','jointPassportExpiryDate','secWEDB','secUDPB','secUDIB','secICBUnitCert'];
+      cslPages.forEach((cslPage, idx) => {
+        const mainPage = mainPages[idx];
+        if (!mainPage) return;
+
+        // Remove previously cloned overlays (keep img)
+        cslPage.querySelectorAll('.overlay.cloned-overlay').forEach(el => el.remove());
+
+        // Clone each overlay from main page (except excluded fields)
+        mainPage.querySelectorAll('.overlay[data-field]').forEach(overlay => {
+          const fieldName = overlay.getAttribute('data-field');
+          if (cslExcludeFields.includes(fieldName)) return;
+          const clone = overlay.cloneNode(true);
+          clone.classList.add('cloned-overlay');
+          // Use a unique data-field name for CSL so positions are saved separately
+          clone.setAttribute('data-field', 'csl_' + fieldName);
+          clone.style.position = 'absolute';
+          cslPage.appendChild(clone);
+        });
+      });
+
+      // Apply saved positions to cloned overlays (using csl_ prefixed keys)
+      const savedPositions = localStorage.getItem(POSITIONS_STORAGE_KEY);
+      if (savedPositions) {
+        try {
+          const positions = JSON.parse(savedPositions);
+          cslContainer.querySelectorAll('.overlay[data-field]').forEach(overlay => {
+            const fieldName = overlay.getAttribute('data-field');
+            if (positions[fieldName]) {
+              overlay.style.top = positions[fieldName].top;
+              overlay.style.left = positions[fieldName].left;
+              overlay.style.width = positions[fieldName].width;
+            } else {
+              // Fall back to the original field position (without csl_ prefix)
+              const origField = fieldName.replace(/^csl_/, '');
+              if (positions[origField]) {
+                overlay.style.top = positions[origField].top;
+                overlay.style.left = positions[origField].left;
+                overlay.style.width = positions[origField].width;
+              }
+            }
+          });
+        } catch(e) {}
+      }
+
+      // Now update overlays to fill values - copy values from original overlays to clones
+      cslContainer.querySelectorAll('.overlay.cloned-overlay[data-field]').forEach(clone => {
+        const cslField = clone.getAttribute('data-field');
+        const origField = cslField.replace(/^csl_/, '');
+        const origOverlay = document.querySelector('.preview-container .overlay[data-field="' + origField + '"]');
+        if (origOverlay) {
+          // Copy the inner HTML (values, seals, etc.)
+          const origValue = origOverlay.querySelector('.overlay-value');
+          const cloneValue = clone.querySelector('.overlay-value');
+          if (origValue && cloneValue) {
+            cloneValue.innerHTML = origValue.innerHTML;
+            cloneValue.style.cssText = origValue.style.cssText;
+          } else if (!cloneValue) {
+            // For officer seals and other direct-text overlays
+            clone.innerHTML = origOverlay.innerHTML;
+            clone.style.width = origOverlay.style.width;
+            clone.style.height = origOverlay.style.height;
+            clone.style.fontSize = origOverlay.style.fontSize;
+            clone.style.fontWeight = origOverlay.style.fontWeight;
+            clone.style.textAlign = origOverlay.style.textAlign;
+            clone.style.whiteSpace = origOverlay.style.whiteSpace;
+            clone.style.lineHeight = origOverlay.style.lineHeight;
+            clone.style.display = origOverlay.style.display;
+            clone.style.alignItems = origOverlay.style.alignItems;
+            clone.style.justifyContent = origOverlay.style.justifyContent;
+          }
+          // Copy visibility
+          if (origOverlay.classList.contains('overlay-empty')) {
+            clone.classList.add('overlay-empty');
+          } else {
+            clone.classList.remove('overlay-empty');
+          }
+          // Copy display style (for hidden joint fields etc)
+          if (origOverlay.style.display === 'none') {
+            clone.style.display = 'none';
+          }
+        }
+      });
+
+      // Render officer seals directly on CSL pages
+      const savedSeals = JSON.parse(localStorage.getItem(OFFICER_SEALS_KEY) || '{}');
+      const sealSize = parseInt(savedSeals.size || 140, 10) || 140;
+      const widthVal = Math.round(sealSize * 1.6);
+      const fontSizeRem = 0.65 * (sealSize / 140);
+      const branchName = document.getElementById('slideBranchInput')?.value?.trim() || '';
+      cslContainer.querySelectorAll('.overlay.cloned-overlay[data-field]').forEach(overlay => {
+        const cslField = overlay.getAttribute('data-field');
+        const origField = cslField.replace(/^csl_/, '');
+        if (!origField.match(/officer[123]Seal$/)) return;
+        const sealKey = origField.replace(/^(p\d|ft|rn\d|csl\d?)/, '');
+        const rawKey = sealKey.replace('Seal', '');
+        const key = rawKey.charAt(0).toLowerCase() + rawKey.slice(1);
+        const officerNum = parseInt(key.replace('officer', '')) || 0;
+        const sealData = savedSeals[key] || {};
+        let sealText = '';
+        if (typeof sealData === 'object') {
+          const lines = [];
+          if (sealData.name) lines.push(sealData.name);
+          if (sealData.designation) {
+            let desig = sealData.designation;
+            if (officerNum === 2) desig += ' & Manager Operation';
+            if (officerNum === 3) desig += ' & Head of Branch';
+            lines.push(desig);
+          }
+          lines.push('United Commercial Bank PLC');
+          if (branchName) lines.push(branchName + ' Branch');
+          if (sealData.eid) lines.push('EID: ' + sealData.eid);
+          sealText = lines.length > 1 ? lines.join('\n') : '';
+        }
+        if (sealText && sealText.trim()) {
+          overlay.style.width = widthVal + 'px';
+          overlay.style.height = sealSize + 'px';
+          overlay.style.display = 'flex';
+          overlay.style.alignItems = 'center';
+          overlay.style.justifyContent = 'center';
+          overlay.style.textAlign = 'center';
+          overlay.style.fontSize = fontSizeRem + 'rem';
+          overlay.style.fontWeight = '800';
+          overlay.style.color = '#000';
+          overlay.style.lineHeight = '1.2';
+          overlay.style.whiteSpace = 'pre-wrap';
+          overlay.style.wordBreak = 'break-word';
+          overlay.textContent = sealText;
+          overlay.classList.remove('overlay-empty');
+        }
+      });
+
+      if (typeof renderAllVerifiedSeals === 'function') renderAllVerifiedSeals();
+
+      // Signature Verified Seal on CSL page 1
+      const cslPage1 = cslContainer.querySelector('.form-page:first-child');
+      const ownership = document.querySelector('select[name="accountOwnership"]')?.value || '';
+      const fullName = document.querySelector('input[name="fullName"]')?.value?.trim() || '';
+      const jointFullName = document.querySelector('input[name="jointFullName"]')?.value?.trim() || '';
+
+      // Remove previous CSL seals
+      cslPage1.querySelectorAll('.csl-verified-seal').forEach(el => el.remove());
+
+      // Add 2nd applicant seal if joint
+      if (ownership === 'joint' && jointFullName) {
+        const seal2 = document.createElement('div');
+        seal2.className = 'overlay cloned-overlay csl-verified-seal';
+        seal2.setAttribute('data-field', 'csl_verifiedSealP1Joint');
+        seal2.style.cssText = 'position:absolute; bottom:20%; right:20%; width:100px; height:100px;';
+        seal2.innerHTML = '<div style="width:100px;height:100px;">' + VERIFIED_SEAL_SVG + '</div>';
+        cslPage1.appendChild(seal2);
+      }
+    }
+
+    // =============================================
+    // Declaration for Settlement
+    // =============================================
+    function updateDeclarationSettlement() {
+      const branchName = document.getElementById('slideBranchInput')?.value || '';
+      const fullName = document.querySelector('input[name="fullName"]')?.value || '';
+      const jointFullName = document.querySelector('input[name="jointFullName"]')?.value || '';
+      const ownership = document.querySelector('select[name="accountOwnership"]')?.value || '';
+      const casaAccount = document.querySelector('input[name="casaAccountNumber"]')?.value || '';
+      const todayDateInput = document.getElementById('todayDateInput');
+      const todayDate = todayDateInput && todayDateInput.value ? convertYYYYMMDDToDDMMYYYY(todayDateInput.value) : '';
+
+      const applicantName = (ownership === 'joint' && jointFullName) ? toTitleCase(fullName) + ' and ' + toTitleCase(jointFullName) : toTitleCase(fullName);
+
+      document.getElementById('dsDate').textContent = todayDate;
+      document.getElementById('dsBranchName').textContent = branchName;
+      document.getElementById('dsApplicantName').textContent = applicantName;
+      document.getElementById('dsCasaAccount').textContent = casaAccount;
+
+      // Security Details (without serial number)
+      for (let i = 1; i <= 5; i++) {
+        const acct = document.querySelector('input[name="secAccountNumber' + i + '"]')?.value || '';
+        const fav = document.querySelector('input[name="secFavouring' + i + '"]')?.value || '';
+        const branch = document.querySelector('input[name="secIssuingBranch' + i + '"]')?.value || '';
+        const issDate = document.querySelector('input[name="secIssueDate' + i + '"]')?.value || '';
+        const matDate = document.querySelector('input[name="secMaturityDate' + i + '"]')?.value || '';
+        const intRate = document.querySelector('input[name="secInterestRate' + i + '"]')?.value || '';
+        const faceVal = document.querySelector('input[name="secFaceValue' + i + '"]')?.value || '';
+        const presVal = document.querySelector('input[name="secPresentValue' + i + '"]')?.value || '';
+        document.getElementById('dsSecAccount' + i).textContent = acct;
+        document.getElementById('dsSecFavouring' + i).textContent = fav;
+        document.getElementById('dsSecBranch' + i).textContent = branch;
+        document.getElementById('dsSecIssueDate' + i).textContent = issDate;
+        document.getElementById('dsSecMaturity' + i).textContent = matDate;
+        document.getElementById('dsSecFace' + i).textContent = faceVal;
+        document.getElementById('dsSecPresent' + i).textContent = presVal;
+      }
+
+      // Officer Seals (Officer and Head of Branch)
+      const savedSeals = JSON.parse(localStorage.getItem(OFFICER_SEALS_KEY) || '{}');
+      const sealSize = parseInt(savedSeals.size || 140, 10) || 140;
+      const widthVal = Math.round(sealSize * 1.6);
+      const fontSizeRem = 0.65 * (sealSize / 140);
+
+      ['dsofficer1Seal', 'dsofficer3Seal'].forEach(fieldName => {
+        const overlay = document.querySelector('.overlay[data-field="' + fieldName + '"]');
+        if (!overlay) return;
+        const num = fieldName.includes('3') ? 3 : 1;
+        const sealData = savedSeals['officer' + num] || {};
+        let sealText = '';
+        if (typeof sealData === 'object') {
+          const lines = [];
+          if (sealData.name) lines.push(sealData.name);
+          if (sealData.designation) {
+            let desig = sealData.designation;
+            if (num === 3) desig += ' & Head of Branch';
+            lines.push(desig);
+          }
+          lines.push('United Commercial Bank PLC');
+          if (branchName) lines.push(branchName + ' Branch');
+          if (sealData.eid) lines.push('EID: ' + sealData.eid);
+          sealText = lines.length > 1 ? lines.join('\n') : '';
+        }
+        if (sealText && sealText.trim()) {
+          overlay.style.width = widthVal + 'px';
+          overlay.style.height = sealSize + 'px';
+          overlay.style.display = 'flex';
+          overlay.style.alignItems = 'center';
+          overlay.style.justifyContent = 'center';
+          overlay.style.textAlign = 'center';
+          overlay.style.fontSize = fontSizeRem + 'rem';
+          overlay.style.fontWeight = '800';
+          overlay.style.color = '#000';
+          overlay.style.lineHeight = '1.2';
+          overlay.style.whiteSpace = 'pre-wrap';
+          overlay.style.wordBreak = 'break-word';
+          overlay.textContent = sealText;
+          overlay.classList.remove('overlay-empty');
+        }
+      });
+    }
+
+    // =============================================
     // Signature Verified Seal
     // =============================================
     const TRIANGLE_SEAL_SIZE = 120;
@@ -6155,7 +6497,7 @@ body::after {
 
       document.querySelectorAll('.overlay[data-field$="officer1Seal"], .overlay[data-field$="officer2Seal"], .overlay[data-field$="officer3Seal"]').forEach(overlay => {
         const field = overlay.getAttribute('data-field');
-        const rawKey = field.replace(/^(p\d|ft|rn\d)/, '').replace('Seal', '');
+        const rawKey = field.replace(/^(p\d|ft|rn\d|csl\d?)/, '').replace('Seal', '');
         const sealKey = rawKey.charAt(0).toLowerCase() + rawKey.slice(1);
         const officerNum = parseInt(sealKey.replace('officer', '')) || 0;
         const sealData = savedSeals[sealKey] || {};
@@ -6735,14 +7077,25 @@ body::after {
       const previewContainer = document.querySelector('.preview-container');
       const nocFormContainer = document.getElementById('nocFormContainer');
 
+      function hideAllFormContainers() {
+        previewContainer.style.display = 'none';
+        nocFormContainer.style.display = 'none';
+        document.getElementById('applicationFormContainer').style.display = 'none';
+        document.getElementById('branchSanctionFormContainer').style.display = 'none';
+        document.getElementById('cibInquiryFormContainer').style.display = 'none';
+        document.getElementById('cibInquiryForm2ndContainer').style.display = 'none';
+        document.getElementById('chargeDocumentContainer').style.display = 'none';
+        document.getElementById('fundTransferRequestContainer').style.display = 'none';
+        document.getElementById('renewalFormContainer').style.display = 'none';
+        document.getElementById('cashSecuredLoanContainer').style.display = 'none';
+        document.getElementById('declarationSettlementContainer').style.display = 'none';
+      }
+
       if (formTypeSelect) {
         formTypeSelect.addEventListener('change', function() {
+          hideAllFormContainers();
           if (this.value === 'noc-form') {
-            previewContainer.style.display = 'none';
             nocFormContainer.style.display = 'block';
-            document.getElementById('applicationFormContainer').style.display = 'none';
-            document.getElementById('branchSanctionFormContainer').style.display = 'none';
-            document.getElementById('cibInquiryFormContainer').style.display = 'none';
             document.getElementById('cibInquiryForm2ndContainer').style.display = 'none';
             document.getElementById('chargeDocumentContainer').style.display = 'none';
             document.getElementById('fundTransferRequestContainer').style.display = 'none';
@@ -6834,7 +7187,23 @@ body::after {
             document.getElementById('chargeDocumentContainer').style.display = 'none';
             document.getElementById('fundTransferRequestContainer').style.display = 'none';
             document.getElementById('renewalFormContainer').style.display = 'block';
+            document.getElementById('cashSecuredLoanContainer').style.display = 'none';
             updateRenewalForm();
+          } else if (this.value === 'cash-secured-loan') {
+            previewContainer.style.display = 'none';
+            nocFormContainer.style.display = 'none';
+            document.getElementById('applicationFormContainer').style.display = 'none';
+            document.getElementById('branchSanctionFormContainer').style.display = 'none';
+            document.getElementById('cibInquiryFormContainer').style.display = 'none';
+            document.getElementById('cibInquiryForm2ndContainer').style.display = 'none';
+            document.getElementById('chargeDocumentContainer').style.display = 'none';
+            document.getElementById('fundTransferRequestContainer').style.display = 'none';
+            document.getElementById('renewalFormContainer').style.display = 'none';
+            document.getElementById('cashSecuredLoanContainer').style.display = 'block';
+            updateCashSecuredLoan();
+          } else if (this.value === 'declaration-settlement') {
+            document.getElementById('declarationSettlementContainer').style.display = 'block';
+            updateDeclarationSettlement();
           } else {
             previewContainer.style.display = 'block';
             nocFormContainer.style.display = 'none';

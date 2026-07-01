@@ -778,6 +778,77 @@
             }
         }
 
+        // Image preprocessing for better OCR accuracy
+        function preprocessImageForOCR(canvas) {
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            // Step 1: Convert to grayscale
+            for (let i = 0; i < data.length; i += 4) {
+                const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+                data[i] = gray;
+                data[i + 1] = gray;
+                data[i + 2] = gray;
+            }
+
+            // Step 2: Increase contrast (stretch histogram)
+            let min = 255, max = 0;
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i] < min) min = data[i];
+                if (data[i] > max) max = data[i];
+            }
+            const range = max - min || 1;
+            for (let i = 0; i < data.length; i += 4) {
+                const val = Math.round(((data[i] - min) / range) * 255);
+                data[i] = val;
+                data[i + 1] = val;
+                data[i + 2] = val;
+            }
+
+            // Step 3: Adaptive binarization (Otsu's method)
+            // Calculate histogram
+            const histogram = new Array(256).fill(0);
+            for (let i = 0; i < data.length; i += 4) {
+                histogram[data[i]]++;
+            }
+            const totalPixels = data.length / 4;
+
+            // Otsu's threshold
+            let sum = 0;
+            for (let i = 0; i < 256; i++) sum += i * histogram[i];
+            let sumB = 0, wB = 0, wF = 0;
+            let maxVariance = 0, threshold = 128;
+
+            for (let t = 0; t < 256; t++) {
+                wB += histogram[t];
+                if (wB === 0) continue;
+                wF = totalPixels - wB;
+                if (wF === 0) break;
+
+                sumB += t * histogram[t];
+                const mB = sumB / wB;
+                const mF = (sum - sumB) / wF;
+                const variance = wB * wF * (mB - mF) * (mB - mF);
+
+                if (variance > maxVariance) {
+                    maxVariance = variance;
+                    threshold = t;
+                }
+            }
+
+            // Apply binarization with slight bias toward keeping text
+            for (let i = 0; i < data.length; i += 4) {
+                const val = data[i] < threshold ? 0 : 255;
+                data[i] = val;
+                data[i + 1] = val;
+                data[i + 2] = val;
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            return canvas;
+        }
+
         // Render PDF pages to canvas images for OCR
         async function extractTextFromPDFWithOCR(file) {
             try {
@@ -790,8 +861,8 @@
                     updateStatus(`Rendering page ${i}/${totalPages} for OCR...`, 'processing');
                     const page = await pdf.getPage(i);
                     
-                    // Render page to canvas at 2x scale for better OCR accuracy
-                    const viewport = page.getViewport({ scale: 2.0 });
+                    // Render page to canvas at 3x scale for much better OCR accuracy
+                    const viewport = page.getViewport({ scale: 3.0 });
                     const canvas = document.createElement('canvas');
                     const context = canvas.getContext('2d');
                     canvas.height = viewport.height;
@@ -799,12 +870,18 @@
 
                     await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-                    // OCR the rendered canvas
+                    // Preprocess for better OCR
+                    preprocessImageForOCR(canvas);
+
+                    // OCR the rendered canvas with optimized settings
                     updateStatus(`OCR processing page ${i}/${totalPages}...`, 'processing');
                     const { data: { text } } = await Tesseract.recognize(
                         canvas,
                         'eng+ben',
                         {
+                            tessedit_pageseg_mode: '6',
+                            tessedit_ocr_engine_mode: '2',
+                            preserve_interword_spaces: '1',
                             logger: m => {
                                 if (m.status === 'recognizing text') {
                                     const pageProgress = Math.round(m.progress * 100);
@@ -930,8 +1007,73 @@ ${paragraphs}
                     
                     const page = await pdf.getPage(i);
                     const textContent = await page.getTextContent();
-                    const pageText = textContent.items.map(item => item.str).join(' ');
-                    fullText += pageText + '\n\n';
+                    
+                    // Reconstruct text with proper line breaks and spacing
+                    // Sort items by vertical position (top to bottom) then horizontal (left to right)
+                    const items = textContent.items.filter(item => item.str.trim() !== '');
+                    
+                    if (items.length === 0) {
+                        fullText += '\n';
+                        continue;
+                    }
+
+                    // Group items by their Y position (same line detection)
+                    const lineThreshold = 5; // pixels tolerance for same line
+                    const lines = [];
+                    let currentLine = [items[0]];
+                    
+                    // Sort by Y descending (PDF coordinates), then X ascending
+                    items.sort((a, b) => {
+                        const yDiff = b.transform[5] - a.transform[5];
+                        if (Math.abs(yDiff) < lineThreshold) {
+                            return a.transform[4] - b.transform[4];
+                        }
+                        return yDiff;
+                    });
+
+                    for (let j = 1; j < items.length; j++) {
+                        const prevY = currentLine[0].transform[5];
+                        const currY = items[j].transform[5];
+                        
+                        if (Math.abs(prevY - currY) < lineThreshold) {
+                            currentLine.push(items[j]);
+                        } else {
+                            // Sort current line by X position
+                            currentLine.sort((a, b) => a.transform[4] - b.transform[4]);
+                            lines.push(currentLine);
+                            currentLine = [items[j]];
+                        }
+                    }
+                    // Push last line
+                    currentLine.sort((a, b) => a.transform[4] - b.transform[4]);
+                    lines.push(currentLine);
+
+                    // Build page text with proper spacing
+                    let pageText = '';
+                    for (const line of lines) {
+                        let lineText = '';
+                        for (let k = 0; k < line.length; k++) {
+                            const item = line[k];
+                            if (k > 0) {
+                                // Calculate gap between items
+                                const prevItem = line[k - 1];
+                                const prevEnd = prevItem.transform[4] + (prevItem.width || 0);
+                                const currStart = item.transform[4];
+                                const gap = currStart - prevEnd;
+                                const spaceWidth = (item.height || 12) * 0.3;
+                                
+                                if (gap > spaceWidth * 3) {
+                                    lineText += '\t'; // Large gap = tab
+                                } else if (gap > spaceWidth * 0.5) {
+                                    lineText += ' '; // Normal gap = space
+                                }
+                            }
+                            lineText += item.str;
+                        }
+                        pageText += lineText + '\n';
+                    }
+                    
+                    fullText += pageText + '\n';
                 }
                 
                 return fullText;
@@ -944,26 +1086,61 @@ ${paragraphs}
             return new Promise((resolve, reject) => {
                 const lang = 'eng+ben';
                 
-                Tesseract.recognize(
-                    file,
-                    lang,
-                    {
-                        logger: m => {
-                            if (m.status === "recognizing text") {
-                                const progress = Math.round(m.progress * 100);
-                                progressFill.style.width = progress + '%';
-                                updateStatus(`Recognizing text... ${progress}%`, 'processing');
-                            } else if (m.status === "loading language traineddata") {
-                                updateStatus('Loading language data...', 'processing');
-                            }
+                // Load image into canvas for preprocessing
+                const img = new Image();
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    img.onload = async () => {
+                        try {
+                            // Create high-resolution canvas (upscale small images)
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            
+                            // Upscale to at least 2000px width for better OCR
+                            const scaleFactor = Math.max(2, 2000 / img.width);
+                            canvas.width = img.width * scaleFactor;
+                            canvas.height = img.height * scaleFactor;
+                            
+                            // Use high quality rendering
+                            ctx.imageSmoothingEnabled = true;
+                            ctx.imageSmoothingQuality = 'high';
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            
+                            // Apply preprocessing for better OCR accuracy
+                            preprocessImageForOCR(canvas);
+                            
+                            updateStatus('Running OCR with enhanced accuracy...', 'processing');
+                            
+                            const { data: { text } } = await Tesseract.recognize(
+                                canvas,
+                                lang,
+                                {
+                                    tessedit_pageseg_mode: '6',
+                                    tessedit_ocr_engine_mode: '2',
+                                    preserve_interword_spaces: '1',
+                                    logger: m => {
+                                        if (m.status === "recognizing text") {
+                                            const progress = Math.round(m.progress * 100);
+                                            progressFill.style.width = progress + '%';
+                                            updateStatus(`Recognizing text... ${progress}%`, 'processing');
+                                        } else if (m.status === "loading language traineddata") {
+                                            updateStatus('Loading language data...', 'processing');
+                                        }
+                                    }
+                                }
+                            );
+                            
+                            progressFill.style.width = '100%';
+                            resolve(text);
+                        } catch (err) {
+                            reject(new Error(`Image OCR failed: ${err.message}`));
                         }
-                    }
-                ).then(({ data: { text } }) => {
-                    progressFill.style.width = '100%';
-                    resolve(text);
-                }).catch(err => {
-                    reject(new Error(`Image OCR failed: ${err.message}`));
-                });
+                    };
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => reject(new Error('Failed to read image file'));
+                reader.readAsDataURL(file);
             });
         }
 
@@ -989,20 +1166,25 @@ ${paragraphs}
             try {
                 let extractedText;
                 
-                if (currentMode === 'word') {
-                    // Word conversion mode: always use OCR
-                    if (currentFileType === 'pdf') {
-                        extractedText = await extractTextFromPDFWithOCR(file);
+                if (currentFileType === 'pdf') {
+                    // For PDFs: try embedded text layer first (much more accurate for digital PDFs)
+                    updateStatus('Trying embedded text extraction...', 'processing');
+                    const embeddedText = await extractTextFromPDF(file);
+                    
+                    // Check if embedded text is meaningful (more than just whitespace/short fragments)
+                    const cleanText = embeddedText.replace(/\s+/g, ' ').trim();
+                    if (cleanText.length > 50) {
+                        // Digital PDF with proper text layer — use it directly
+                        extractedText = embeddedText;
+                        updateStatus('Text extracted from PDF text layer (high accuracy)', 'success');
                     } else {
-                        extractedText = await extractTextFromImage(file);
+                        // Scanned PDF or image-based PDF — fall back to OCR
+                        updateStatus('No embedded text found, using OCR...', 'processing');
+                        extractedText = await extractTextFromPDFWithOCR(file);
                     }
                 } else {
-                    // Text extraction mode: use OCR for both PDF and images
-                    if (currentFileType === 'pdf') {
-                        extractedText = await extractTextFromPDFWithOCR(file);
-                    } else {
-                        extractedText = await extractTextFromImage(file);
-                    }
+                    // Image files always need OCR
+                    extractedText = await extractTextFromImage(file);
                 }
                 
                 output.value = extractedText;
@@ -1010,7 +1192,7 @@ ${paragraphs}
                 progressFill.style.width = '100%';
 
                 if (currentMode === 'word') {
-                    updateStatus('OCR Complete! Generating Word document...', 'processing');
+                    updateStatus('Extraction Complete! Generating Word document...', 'processing');
                     // Auto-download Word document
                     const fileInput = document.getElementById('imageInput');
                     let baseName = 'converted-document';

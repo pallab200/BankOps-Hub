@@ -1,0 +1,4 @@
+# DOM glue / controller modules live here.
+# e.g. uploadController.js, cropController.js, combineController.js,
+# adjustmentController.js, filterController.js, exportController.js,
+# resetController.js, messages.js, progress.js

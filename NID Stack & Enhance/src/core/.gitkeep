@@ -1,0 +1,3 @@
+# Pure, testable core modules (no DOM access) live here.
+# e.g. validation.js, cropGeometry.js, combineLayout.js, imageAdjust.js,
+# filters.js, pdfLayout.js, appState.js

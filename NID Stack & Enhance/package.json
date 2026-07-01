@@ -1,0 +1,17 @@
+{
+  "name": "nid-stack-enhance",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "NID Stack & Enhance - client-side NID card stacking and PDF export tool",
+  "scripts": {
+    "test": "node ./node_modules/vitest/vitest.mjs --run",
+    "build": "node ./node_modules/esbuild/bin/esbuild src/main.js --bundle --outfile=app.bundle.js --format=iife --target=es2020"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.2",
+    "fast-check": "^3.23.1",
+    "jsdom": "^25.0.1",
+    "vitest": "^2.1.8"
+  }
+}
