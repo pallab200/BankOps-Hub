@@ -2302,11 +2302,13 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   z-index: 1002;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: var(--transition-normal);
 }
 .slide-menu-backdrop.show {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .slide-menu {
@@ -7849,17 +7851,9 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   // Developer mode toggle — show/hide Import, Export, Information Input, Form Preview
   const devModeToggle = document.getElementById('devModeToggle');
   if (devModeToggle) {
-    // Restore saved state from localStorage
-    try {
-      const savedDev = localStorage.getItem('UCB_DEV_MODE');
-      if (savedDev === 'true') {
-        devModeToggle.checked = true;
-        document.body.classList.add('developer-mode');
-      } else {
-        devModeToggle.checked = false;
-        document.body.classList.remove('developer-mode');
-      }
-    } catch (e) {}
+    // Always start with developer mode OFF on app open
+    devModeToggle.checked = false;
+    document.body.classList.remove('developer-mode');
     
     // Listen for toggle changes on the checkbox itself
     devModeToggle.addEventListener('change', function(e) {
@@ -7871,10 +7865,6 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         document.body.classList.remove('developer-mode');
         console.log('[DEV MODE] Developer mode OFF');
       }
-      try { 
-        localStorage.setItem('UCB_DEV_MODE', this.checked ? 'true' : 'false'); 
-        console.log('[DEV MODE] Saved state:', this.checked ? 'true' : 'false');
-      } catch (e) {}
     });
     
     // Make the slider clickable - clicking slider toggles the checkbox
@@ -8242,7 +8232,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     transectionProfileField.addEventListener('input', syncTransectionProfile);
     transectionProfileField.addEventListener('change', syncTransectionProfile);
     // propagate on load
-    syncTransectionProfile();
+    try { syncTransectionProfile(); } catch (e) { console.error('[INIT] syncTransectionProfile error:', e); }
   }
 
   // Compute and populate the Total Probable Deposit/Withdrawal summary fields
@@ -8414,7 +8404,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   });
 
   // Initialize
-  initializeOverlays();
+  try { initializeOverlays(); } catch (e) { console.error('[INIT] initializeOverlays error:', e); }
   loadFormData();
   // If loading from storage changed the main branch field, keep slide input in sync
   try {
@@ -8434,7 +8424,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   try { handleOwnershipChange(); } catch (e) {}
   try { handleNomineeSameAddress(); } catch (e) {}
   try { handleGuardianSameAddress(); } catch (e) {}
-  updateOverlays();
+  try { updateOverlays(); } catch (e) { console.error('[INIT] updateOverlays error:', e); }
 
   // Set initial nav visibility: show the button to switch to the other page
   try { switchPage('info'); } catch (e) { /* ignore if switchPage not ready */ }
@@ -8955,6 +8945,31 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   }
 
 })();
+  </script>
+  <script>
+  // Fallback: ensure slide menu toggle works even if main script encounters errors
+  (function() {
+    try {
+      var toggle = document.getElementById('slideMenuToggle');
+      var menu = document.getElementById('slideMenu');
+      var backdrop = document.getElementById('slideMenuBackdrop');
+      var closeBtn = document.getElementById('slideMenuClose');
+      if (toggle && menu && backdrop) {
+        toggle.addEventListener('click', function() {
+          menu.classList.add('open');
+          backdrop.classList.add('show');
+        });
+        if (closeBtn) closeBtn.addEventListener('click', function() {
+          menu.classList.remove('open');
+          backdrop.classList.remove('show');
+        });
+        backdrop.addEventListener('click', function() {
+          menu.classList.remove('open');
+          backdrop.classList.remove('show');
+        });
+      }
+    } catch(e) { console.error('Slide menu fallback error:', e); }
+  })();
   </script>
   <script>
     (function() {

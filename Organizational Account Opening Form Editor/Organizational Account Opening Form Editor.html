@@ -7503,14 +7503,9 @@ input:checked + .slider:before {
   // Developer mode toggle — show/hide Import, Export, Information Input, Form Preview
   const devModeToggle = document.getElementById('devModeToggle');
   if (devModeToggle) {
-    // Restore saved state
-    try {
-      const savedDev = localStorage.getItem('UCB_DEV_MODE');
-      if (savedDev === 'true') {
-        devModeToggle.checked = true;
-        document.body.classList.add('developer-mode');
-      }
-    } catch (e) {}
+    // Always start with developer mode OFF
+    devModeToggle.checked = false;
+    document.body.classList.remove('developer-mode');
     
     // Make the slider span clickable (since input is hidden)
     const sliderEl = devModeToggle.nextElementSibling;

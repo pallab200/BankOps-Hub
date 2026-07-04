@@ -3887,14 +3887,10 @@ function openPreviewWindow(pages){
   // Developer Mode Toggle
   const devModeToggle = document.getElementById('devModeToggle');
   if (devModeToggle) {
-    // Restore saved state
-    try {
-      const savedDev = localStorage.getItem('RTGS_DEV_MODE');
-      if (savedDev === 'true') {
-        devModeToggle.checked = true;
-        document.body.classList.add('developer-mode');
-      }
-    } catch (e) {}
+    // Always start with developer mode OFF when app opens
+    devModeToggle.checked = false;
+    document.body.classList.remove('developer-mode');
+    try { localStorage.setItem('RTGS_DEV_MODE', 'false'); } catch (e) {}
 
     // Make the slider span clickable (since input is hidden)
     const sliderEl = devModeToggle.nextElementSibling;

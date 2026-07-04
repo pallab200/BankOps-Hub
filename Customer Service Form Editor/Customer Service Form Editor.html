@@ -6672,17 +6672,9 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   // Developer mode toggle — show/hide Import, Export, Information Input, Form Preview
   const devModeToggle = document.getElementById('devModeToggle');
   if (devModeToggle) {
-    // Restore saved state from localStorage
-    try {
-      const savedDev = localStorage.getItem('CSF_DEV_MODE');
-      if (savedDev === 'true') {
-        devModeToggle.checked = true;
-        document.body.classList.add('developer-mode');
-      } else {
-        devModeToggle.checked = false;
-        document.body.classList.remove('developer-mode');
-      }
-    } catch (e) {}
+    // Always start with developer mode OFF
+    devModeToggle.checked = false;
+    document.body.classList.remove('developer-mode');
     
     // Listen for toggle changes on the checkbox itself
     devModeToggle.addEventListener('change', function(e) {

@@ -1908,6 +1908,7 @@
                             <select id="ic-duration-unit" class="ic-select" onchange="calculateInterest()">
                                 <option value="years">Years</option>
                                 <option value="months">Months</option>
+                                <option value="days">Days</option>
                             </select>
                         </div>
                     </div>
@@ -2715,7 +2716,7 @@
                 const p = parseFloat(document.getElementById('ic-principal').value);
                 const n = parseFloat(document.getElementById('ic-compounds').value) || 1;
                 if (!isFinite(p) || p <= 0) { setResult({amount:0, principal:0, before:0, interest:0, tax:0, net:0}); return; }
-                const years = (durationUnit === 'months') ? (durationInput / 12) : durationInput;
+                const years = (durationUnit === 'days') ? (durationInput / 360) : (durationUnit === 'months') ? (durationInput / 12) : durationInput;
                 const A = p * Math.pow(1 + r / n, n * years);
                 const interest = A - p;
 
@@ -2733,7 +2734,7 @@
             } else if (type === 'rd') {
                 const monthly = parseFloat(document.getElementById('ic-rd-amount').value);
                 if (!isFinite(monthly) || monthly <= 0) { setResult({amount:0, principal:0, before:0, interest:0, tax:0, net:0}); return; }
-                const nMonths = (durationUnit === 'months') ? Math.round(durationInput) : Math.round(durationInput * 12);
+                const nMonths = (durationUnit === 'days') ? Math.round(durationInput / 30) : (durationUnit === 'months') ? Math.round(durationInput) : Math.round(durationInput * 12);
                 const i = r / 12; // monthly rate
                 let M;
                 if (i === 0) {
@@ -2760,7 +2761,7 @@
             } else if (type === 'loan') {
                 const principal = parseFloat(document.getElementById('ic-principal').value);
                 if (!isFinite(principal) || principal <= 0) { setLoanResult({emi:0, principal:0, totalPayment:0, totalInterest:0}); return; }
-                const years = (durationUnit === 'months') ? (durationInput / 12) : durationInput;
+                const years = (durationUnit === 'days') ? (durationInput / 360) : (durationUnit === 'months') ? (durationInput / 12) : durationInput;
                 const N = Math.round(years * 12);
                 const monthlyRate = r / 12;
                 let EMI;

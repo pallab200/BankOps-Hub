@@ -1,7 +1,7 @@
 window.UCB_AUTO_IMPORT_DATA = {
   "exportedAt": "2026-05-29T09:36:38.300Z",
   "form": {
-    "branchName": "serajgonj",
+    "branchName": "",
     "fullNameEn": "",
     "fullNameBn": "",
     "dob": "",

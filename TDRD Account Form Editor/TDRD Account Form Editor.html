@@ -9108,18 +9108,12 @@ body::after {
   });
 
   // Developer mode toggle — show/hide Import, Export, Information Input, Form Preview
+  // Default: always start with developer mode OFF when app opens
   const devModeToggle = document.getElementById('devModeToggle');
   if (devModeToggle) {
-    try {
-      const savedDev = localStorage.getItem('TDRD_DEV_MODE');
-      if (savedDev === 'true') {
-        devModeToggle.checked = true;
-        document.body.classList.add('developer-mode');
-      } else {
-        devModeToggle.checked = false;
-        document.body.classList.remove('developer-mode');
-      }
-    } catch (e) {}
+    devModeToggle.checked = false;
+    document.body.classList.remove('developer-mode');
+    try { localStorage.setItem('TDRD_DEV_MODE', 'false'); } catch (e) {}
     
     devModeToggle.addEventListener('change', function(e) {
       if (this.checked) {
