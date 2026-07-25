@@ -74,7 +74,7 @@
         }
         
         body > main,
-        body > div:not(#welcomeScreen):not(#interest-modal):not(#select-options-modal):not(#chatSettingsModal):not(#chatApiKeyInputModal):not(#chatPopup):not(#chatFab) {
+        body > div:not(#welcomeScreen):not(#interest-modal):not(#select-options-modal):not(#chatSettingsModal):not(#chatPopup):not(#chatFab) {
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
@@ -3619,45 +3619,35 @@
     <div class="chat-settings-modal" id="chatSettingsModal">
         <div class="chat-settings-panel">
             <div class="chat-settings-header">
-                <h2>🔑 API Key Settings</h2>
+                <h2>⚙️ DocuChat Settings</h2>
                 <button class="chat-settings-close" onclick="chatCloseSettings()">×</button>
             </div>
             <div class="chat-settings-content">
+                <!-- Single OpenRouter API Key -->
                 <div class="chat-api-keys-section">
                     <div class="chat-api-keys-header">
-                        <h3>AI Provider API Keys</h3>
-                        <span class="chat-api-keys-count" id="chatApiKeyCount">0/5</span>
+                        <h3>🔑 OpenRouter API Key</h3>
+                        <span class="chat-api-keys-count" id="chatApiKeyCount" style="background:#10b981;">All Models</span>
                     </div>
-                    <div class="chat-api-key-list" id="chatApiKeyList"></div>
-                    <button class="chat-add-api-key-btn" id="chatAddKeyBtn" onclick="chatOpenAddKeyModal()">+ Add New API Key</button>
+                    <p style="font-size:0.8rem;color:#6b7280;margin-bottom:12px;">One key works for all models. Get yours free at <a href="https://openrouter.ai" target="_blank" style="color:#6366f1;">openrouter.ai</a></p>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <input type="password" id="chatSingleApiKeyInput" placeholder="sk-or-v1-..." spellcheck="false"
+                            style="flex:1;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-family:monospace;font-size:0.85rem;outline:none;transition:border 0.2s;"
+                            onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e2e8f0'">
+                        <button onclick="chatSaveSingleKey()" style="padding:10px 18px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:white;border:none;border-radius:10px;font-weight:600;cursor:pointer;white-space:nowrap;font-size:0.85rem;">Save</button>
+                        <button onclick="chatClearSingleKey()" id="chatClearKeyBtn" style="padding:10px 14px;background:#fee2e2;color:#dc2626;border:none;border-radius:10px;font-weight:600;cursor:pointer;font-size:0.85rem;display:none;">Clear</button>
+                    </div>
+                    <div id="chatKeyStatus" style="margin-top:8px;font-size:0.8rem;color:#6b7280;"></div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- API Key Input Modal -->
-    <div class="chat-api-key-modal" id="chatApiKeyInputModal">
-        <div class="chat-api-key-input-panel">
-            <h3 id="chatApiKeyInputTitle">Add New API Key</h3>
-            <div class="chat-form-group">
-                <label for="chatProviderSelect">Provider / Model</label>
-                <select id="chatProviderSelect" onchange="chatHandleProviderChange()">
-                    <option value="gemini">Google Gemini - gemini-2.5-flash</option>
-                    <option value="openrouter-nemotron">OpenRouter - nvidia/nemotron-3-super-120b-a12b:free</option>
-                </select>
-                <div class="chat-provider-hint" id="chatProviderHint"></div>
-            </div>
-            <div class="chat-form-group">
-                <label for="chatApiKeyInput">API Key</label>
-                <input type="password" id="chatApiKeyInput" placeholder="Enter your Gemini API key..." spellcheck="false">
-            </div>
-            <div class="chat-form-group">
-                <label for="chatApiKeyName">Nickname (Optional)</label>
-                <input type="text" id="chatApiKeyName" placeholder="e.g., Production, Backup, etc.">
-            </div>
-            <div class="chat-form-actions">
-                <button class="submit" id="chatApiKeySaveBtn" onclick="chatSaveApiKey()">Save Key</button>
-                <button class="cancel" onclick="chatCancelApiKeyInput()">Cancel</button>
+                <!-- Model Selector -->
+                <div class="chat-api-keys-section" style="margin-top:20px;">
+                    <div class="chat-api-keys-header">
+                        <h3>🤖 Active Model</h3>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:8px;" id="chatModelList">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -3679,26 +3669,45 @@
         // DocuChat Popup Integration
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'lib/pdf.js/pdf.worker.min.js';
 
-        // API Key Management Variables
-        const CHAT_API_KEYS_STORAGE = 'docuChat_apiKeys';
-        let chatApiKeyEditingIndex = -1;
-        const CHAT_DEFAULT_PROVIDER = 'gemini';
+        const CHAT_API_KEY_STORAGE = 'docuChat_openrouterKey';
+        const CHAT_ACTIVE_MODEL_STORAGE = 'docuChat_activeModel';
+        const CHAT_DEFAULT_PROVIDER = 'auto';
+
         const CHAT_PROVIDER_CONFIG = Object.freeze({
-            gemini: {
-                label: 'Google Gemini',
-                badge: 'Gemini',
-                model: 'gemini-2.5-flash',
-                modelLabel: 'gemini-2.5-flash',
-                inputPlaceholder: 'Enter your Gemini API key...',
-                hint: 'Use your Gemini API key to keep DocuChat on Google Gemini 2.5 Flash.'
+            'auto': {
+                label: 'Auto (Recommended)',
+                badge: 'Auto',
+                model: 'auto',
+                modelLabel: 'Auto-detect model',
+                hint: 'Automatically routes to the best model based on task type and context size.'
             },
             'openrouter-nemotron': {
-                label: 'OpenRouter',
+                label: 'NVIDIA Nemotron Ultra 550B',
                 badge: 'OpenRouter',
-                model: 'nvidia/nemotron-3-super-120b-a12b:free',
-                modelLabel: 'nvidia/nemotron-3-super-120b-a12b:free',
-                inputPlaceholder: 'Enter your OpenRouter API key...',
-                hint: 'Use your OpenRouter API key to run NVIDIA Nemotron 3 Super 120B A12B (free).'
+                model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+                modelLabel: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+                hint: '550B params · 1M context · top-tier reasoning'
+            },
+            'openrouter-ling': {
+                label: 'Ling-3.0-flash',
+                badge: 'OpenRouter',
+                model: 'inclusionai/ling-3.0-flash:free',
+                modelLabel: 'inclusionai/ling-3.0-flash:free',
+                hint: '124B MoE · 262K context · fast responses'
+            },
+            'openrouter-cohere': {
+                label: 'Cohere North Mini Code',
+                badge: 'OpenRouter',
+                model: 'cohere/north-mini-code:free',
+                modelLabel: 'cohere/north-mini-code:free',
+                hint: '30B MoE · 256K context · code & agents'
+            },
+            'openrouter-gemma': {
+                label: 'Google Gemma 4 31B',
+                badge: 'OpenRouter',
+                model: 'google/gemma-4-31b-it:free',
+                modelLabel: 'google/gemma-4-31b-it:free',
+                hint: '31B · 262K context · multimodal · 140+ languages'
             }
         });
 
@@ -3706,75 +3715,104 @@
             return CHAT_PROVIDER_CONFIG[provider] || CHAT_PROVIDER_CONFIG[CHAT_DEFAULT_PROVIDER];
         }
 
-        function chatNormalizeApiKeyEntry(apiKeyObj, index = 0) {
-            if (typeof apiKeyObj === 'string') {
-                return {
-                    key: apiKeyObj.trim(),
-                    nickname: `API Key ${index + 1}`,
-                    provider: CHAT_DEFAULT_PROVIDER
-                };
-            }
-
-            const key = typeof apiKeyObj?.key === 'string' ? apiKeyObj.key.trim() : '';
-            const nickname = typeof apiKeyObj?.nickname === 'string' && apiKeyObj.nickname.trim()
-                ? apiKeyObj.nickname.trim()
-                : `API Key ${index + 1}`;
-            const provider = CHAT_PROVIDER_CONFIG[apiKeyObj?.provider]
-                ? apiKeyObj.provider
-                : CHAT_DEFAULT_PROVIDER;
-
-            return { key, nickname, provider };
+        // Load single API key
+        function chatLoadApiKey() {
+            return localStorage.getItem(CHAT_API_KEY_STORAGE) || '';
         }
 
-        // Load API keys from localStorage
-        function chatLoadApiKeys() {
-            try {
-                const stored = localStorage.getItem(CHAT_API_KEYS_STORAGE);
-                if (stored) {
-                    const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed)) {
-                        return parsed
-                            .map((entry, index) => chatNormalizeApiKeyEntry(entry, index))
-                            .filter(entry => entry.key);
-                    }
-                }
-            } catch (e) {
-                console.error('Failed to load API keys:', e);
-            }
-            // Return empty array - no default key
-            return [];
+        // Load active model
+        function chatLoadActiveModel() {
+            const stored = localStorage.getItem(CHAT_ACTIVE_MODEL_STORAGE);
+            return CHAT_PROVIDER_CONFIG[stored] ? stored : CHAT_DEFAULT_PROVIDER;
         }
 
-        // Save API keys to localStorage
-        function chatSaveApiKeysToStorage(keys) {
-            try {
-                const normalizedKeys = Array.isArray(keys)
-                    ? keys
-                        .map((entry, index) => chatNormalizeApiKeyEntry(entry, index))
-                        .filter(entry => entry.key)
-                    : [];
-                localStorage.setItem(CHAT_API_KEYS_STORAGE, JSON.stringify(normalizedKeys));
-            } catch (e) {
-                console.error('Failed to save API keys:', e);
-            }
+        // Save single API key
+        function chatSaveSingleKey() {
+            const input = document.getElementById('chatSingleApiKeyInput');
+            const key = input ? input.value.trim() : '';
+            if (!key) { chatUpdateKeyStatus('⚠️ Please enter a key.', '#f59e0b'); return; }
+            localStorage.setItem(CHAT_API_KEY_STORAGE, key);
+            chatState.apiKey = key;
+            chatUpdateKeyStatus('✅ Key saved!', '#10b981');
+            chatRefreshSettingsUI();
         }
+
+        // Clear single API key
+        function chatClearSingleKey() {
+            localStorage.removeItem(CHAT_API_KEY_STORAGE);
+            chatState.apiKey = '';
+            const input = document.getElementById('chatSingleApiKeyInput');
+            if (input) input.value = '';
+            chatUpdateKeyStatus('🗑️ Key cleared.', '#ef4444');
+            chatRefreshSettingsUI();
+        }
+
+        function chatUpdateKeyStatus(msg, color) {
+            const el = document.getElementById('chatKeyStatus');
+            if (el) { el.textContent = msg; el.style.color = color; }
+        }
+
+        // Set active model
+        function chatSetActiveModel(providerKey) {
+            if (!CHAT_PROVIDER_CONFIG[providerKey]) return;
+            localStorage.setItem(CHAT_ACTIVE_MODEL_STORAGE, providerKey);
+            chatState.activeProvider = providerKey;
+            chatRefreshSettingsUI();
+        }
+
+        // Refresh settings panel UI
+        function chatRefreshSettingsUI() {
+            const key = chatLoadApiKey();
+            const input = document.getElementById('chatSingleApiKeyInput');
+            const clearBtn = document.getElementById('chatClearKeyBtn');
+            const statusEl = document.getElementById('chatKeyStatus');
+            if (input && !input.value) input.value = key ? '••••••••••••' : '';
+            if (clearBtn) clearBtn.style.display = key ? 'block' : 'none';
+            if (statusEl && key) statusEl.textContent = '✅ Key saved · ' + key.slice(0,8) + '...';
+
+            // Render model list
+            const modelList = document.getElementById('chatModelList');
+            if (!modelList) return;
+            const activeModel = chatState.activeProvider;
+            modelList.innerHTML = Object.entries(CHAT_PROVIDER_CONFIG).map(([key, cfg]) => {
+                const isActive = key === activeModel;
+                return `<div onclick="chatSetActiveModel('${key}')" style="
+                    display:flex;align-items:center;gap:12px;padding:12px 14px;
+                    border-radius:10px;cursor:pointer;transition:all 0.2s;
+                    border:2px solid ${isActive ? '#6366f1' : '#e2e8f0'};
+                    background:${isActive ? 'rgba(99,102,241,0.06)' : '#fafafa'};">
+                    <div style="width:18px;height:18px;border-radius:50%;border:2px solid ${isActive ? '#6366f1' : '#d1d5db'};
+                        background:${isActive ? '#6366f1' : 'white'};flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                        ${isActive ? '<div style="width:8px;height:8px;border-radius:50%;background:white;"></div>' : ''}
+                    </div>
+                    <div>
+                        <div style="font-weight:600;font-size:0.875rem;color:${isActive ? '#4f46e5' : '#0f172a'};">${cfg.label}</div>
+                        <div style="font-size:0.75rem;color:#6b7280;">${cfg.hint}</div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // Legacy stubs (keep so old references don't break)
+        function chatNormalizeApiKeyEntry(obj, i=0) { return obj; }
+        function chatLoadApiKeys() { return []; }
+        function chatSaveApiKeysToStorage() {}
+        function chatOpenAddKeyModal() {}
+        function chatCancelApiKeyInput() {}
+        function chatSaveApiKey() {}
+        function chatHandleProviderChange() {}
+        function chatRenderApiKeys() {}
 
         const chatState = {
             documents: [],
             chunks: [],
             chatHistory: [],
-            apiKeys: chatLoadApiKeys(),
-            apiKeyIndex: 0,
-            get activeApiKeyEntry() { return this.apiKeys[this.apiKeyIndex] || null; },
-            get apiKey() { return this.activeApiKeyEntry?.key || ''; },
-            get provider() { return this.activeApiKeyEntry?.provider || CHAT_DEFAULT_PROVIDER; },
-            swapApiKey() {
-                if (!this.apiKeys.length) return;
-                this.apiKeyIndex = (this.apiKeyIndex + 1) % this.apiKeys.length;
-                const activeEntry = this.activeApiKeyEntry;
-                const providerConfig = chatGetProviderConfig(activeEntry?.provider);
-                console.log(`Switched to API key #${this.apiKeyIndex + 1} (${activeEntry?.nickname || 'Unknown'} - ${providerConfig.badge})`);
+            apiKey: chatLoadApiKey(),
+            activeProvider: chatLoadActiveModel(),
+            get activeApiKeyEntry() {
+                return { key: this.apiKey, provider: this.activeProvider };
             },
+            swapApiKey() {},
             isProcessing: false,
             documentLoadPromise: null,
             folderHandle: null,
@@ -3793,27 +3831,17 @@
             statusBar: document.getElementById('chatStatusBar'),
             statusText: document.getElementById('chatStatusText'),
             settingsModal: document.getElementById('chatSettingsModal'),
-            apiKeyModal: document.getElementById('chatApiKeyInputModal'),
-            apiKeyList: document.getElementById('chatApiKeyList'),
+            apiKeyModal: null,
+            apiKeyList: null,
             apiKeyCount: document.getElementById('chatApiKeyCount'),
-            apiKeyInput: document.getElementById('chatApiKeyInput'),
-            apiKeyName: document.getElementById('chatApiKeyName'),
-            providerSelect: document.getElementById('chatProviderSelect'),
-            providerHint: document.getElementById('chatProviderHint'),
-            apiKeySaveBtn: document.getElementById('chatApiKeySaveBtn'),
-            apiKeyInputTitle: document.getElementById('chatApiKeyInputTitle'),
-            addKeyBtn: document.getElementById('chatAddKeyBtn')
+            apiKeyInput: null,
+            apiKeyName: null,
+            providerSelect: null,
+            providerHint: null,
+            apiKeySaveBtn: null,
+            apiKeyInputTitle: null,
+            addKeyBtn: null
         };
-
-        function chatHandleProviderChange() {
-            const providerConfig = chatGetProviderConfig(chatElements.providerSelect?.value || CHAT_DEFAULT_PROVIDER);
-            if (chatElements.apiKeyInput) {
-                chatElements.apiKeyInput.placeholder = providerConfig.inputPlaceholder;
-            }
-            if (chatElements.providerHint) {
-                chatElements.providerHint.textContent = providerConfig.hint;
-            }
-        }
 
         chatHandleProviderChange();
 
@@ -3831,7 +3859,10 @@
                 modal.classList.remove('s-bd-in');
                 if (panel) panel.classList.remove('s-win-in');
             }, 520);
-            chatRefreshApiKeyList();
+            // Populate key input field and model list
+            const keyInput = document.getElementById('chatSingleApiKeyInput');
+            if (keyInput) keyInput.value = '';
+            chatRefreshSettingsUI();
         }
 
         function chatCloseSettings() {
@@ -3849,150 +3880,9 @@
         }
 
         function chatRefreshApiKeyList() {
-            chatElements.apiKeyList.innerHTML = '';
-            chatElements.apiKeyCount.textContent = `${chatState.apiKeys.length}/5`;
-            chatElements.addKeyBtn.disabled = chatState.apiKeys.length >= 5;
-
-            chatState.apiKeys.forEach((apiKeyObj, index) => {
-                const keyDisplay = apiKeyObj.key.substring(0, 20) + '...';
-                const isActive = index === chatState.apiKeyIndex;
-                const providerConfig = chatGetProviderConfig(apiKeyObj.provider);
-                const item = document.createElement('div');
-                item.className = 'chat-api-key-item';
-                item.innerHTML = `
-                    <div class="chat-api-key-info">
-                        <div class="chat-api-key-label-row">
-                            <div class="chat-api-key-label">${apiKeyObj.nickname || `API Key ${index + 1}`}</div>
-                            <span class="chat-api-key-provider">${providerConfig.badge}</span>
-                        </div>
-                        <div class="chat-api-key-value">${providerConfig.modelLabel} • ${keyDisplay}</div>
-                    </div>
-                    ${isActive ? '<span class="chat-api-key-active">✓ Active</span>' : ''}
-                    <div class="chat-api-key-actions">
-                        ${!isActive ? `<button class="chat-api-key-btn" onclick="chatSwitchApiKey(${index})" title="Use this key">Use</button>` : ''}
-                        <button class="chat-api-key-btn" onclick="chatEditApiKey(${index})" title="Edit">✎</button>
-                        <button class="chat-api-key-btn delete" onclick="chatDeleteApiKey(${index})" title="Delete">🗑</button>
-                    </div>
-                `;
-                chatElements.apiKeyList.appendChild(item);
-            });
+            // No-op: replaced by chatRefreshSettingsUI
         }
 
-        function _chatAnimOpenApiKeyModal() {
-            const modal = chatElements.apiKeyModal;
-            const panel = modal && modal.querySelector('.chat-api-key-input-panel');
-            if (!modal) return;
-            modal.classList.remove('ak-bd-out');
-            if (panel) panel.classList.remove('ak-win-out');
-            modal.classList.add('open');
-            void modal.offsetWidth;
-            modal.classList.add('ak-bd-in');
-            if (panel) panel.classList.add('ak-win-in');
-            setTimeout(() => {
-                modal.classList.remove('ak-bd-in');
-                if (panel) panel.classList.remove('ak-win-in');
-            }, 520);
-        }
-
-        function chatOpenAddKeyModal() {
-            if (chatState.apiKeys.length >= 5) {
-                alert('Maximum 5 API keys allowed');
-                return;
-            }
-            chatApiKeyEditingIndex = -1;
-            chatElements.apiKeyInputTitle.textContent = 'Add New API Key';
-            chatElements.providerSelect.value = chatState.activeApiKeyEntry?.provider || 'openrouter-nemotron';
-            chatHandleProviderChange();
-            chatElements.apiKeyInput.value = '';
-            chatElements.apiKeyInput.type = 'password';
-            chatElements.apiKeyName.value = '';
-            chatElements.apiKeySaveBtn.textContent = 'Save Key';
-            _chatAnimOpenApiKeyModal();
-            chatElements.apiKeyInput.focus();
-        }
-
-        function chatEditApiKey(index) {
-            chatApiKeyEditingIndex = index;
-            const apiKeyObj = chatState.apiKeys[index];
-            chatElements.apiKeyInputTitle.textContent = 'Edit API Key';
-            chatElements.providerSelect.value = apiKeyObj.provider || CHAT_DEFAULT_PROVIDER;
-            chatHandleProviderChange();
-            chatElements.apiKeyInput.value = apiKeyObj.key;
-            chatElements.apiKeyInput.type = 'text';
-            chatElements.apiKeyName.value = apiKeyObj.nickname || '';
-            chatElements.apiKeySaveBtn.textContent = 'Update Key';
-            _chatAnimOpenApiKeyModal();
-            chatElements.apiKeyInput.focus();
-        }
-
-        function chatCancelApiKeyInput() {
-            const modal = chatElements.apiKeyModal;
-            const panel = modal && modal.querySelector('.chat-api-key-input-panel');
-            if (modal) {
-                modal.classList.remove('ak-bd-in');
-                if (panel) panel.classList.remove('ak-win-in');
-                modal.classList.add('ak-bd-out');
-                if (panel) panel.classList.add('ak-win-out');
-                setTimeout(() => {
-                    modal.classList.remove('open', 'ak-bd-out');
-                    if (panel) panel.classList.remove('ak-win-out');
-                }, 300);
-            }
-            chatApiKeyEditingIndex = -1;
-            chatElements.providerSelect.value = chatState.activeApiKeyEntry?.provider || 'openrouter-nemotron';
-            chatHandleProviderChange();
-            chatElements.apiKeyInput.value = '';
-            chatElements.apiKeyName.value = '';
-        }
-
-        function chatSaveApiKey() {
-            const key = chatElements.apiKeyInput.value.trim();
-            const provider = chatElements.providerSelect.value || CHAT_DEFAULT_PROVIDER;
-            const providerConfig = chatGetProviderConfig(provider);
-            const nickname = chatElements.apiKeyName.value.trim() || `API Key ${chatState.apiKeys.length + 1}`;
-
-            if (!key) {
-                alert('Please enter an API key');
-                return;
-            }
-
-            if (chatApiKeyEditingIndex >= 0) {
-                // Edit existing
-                chatState.apiKeys[chatApiKeyEditingIndex] = chatNormalizeApiKeyEntry({ key, nickname, provider }, chatApiKeyEditingIndex);
-            } else {
-                // Add new
-                if (chatState.apiKeys.length >= 5) {
-                    alert('Maximum 5 API keys allowed');
-                    return;
-                }
-                chatState.apiKeys.push(chatNormalizeApiKeyEntry({ key, nickname, provider }, chatState.apiKeys.length));
-            }
-
-            chatSaveApiKeysToStorage(chatState.apiKeys);
-            chatCancelApiKeyInput();
-            chatRefreshApiKeyList();
-            showChatStatus(`${providerConfig.badge} API key saved!`, 'success');
-        }
-
-        function chatDeleteApiKey(index) {
-            if (confirm('Are you sure you want to delete this API key?')) {
-                chatState.apiKeys.splice(index, 1);
-                if (chatState.apiKeyIndex >= chatState.apiKeys.length) {
-                    chatState.apiKeyIndex = Math.max(0, chatState.apiKeys.length - 1);
-                }
-                chatSaveApiKeysToStorage(chatState.apiKeys);
-                chatRefreshApiKeyList();
-                showChatStatus('API key deleted', 'success');
-            }
-        }
-
-        function chatSwitchApiKey(index) {
-            chatState.apiKeyIndex = index;
-            chatRefreshApiKeyList();
-            const apiKeyObj = chatState.apiKeys[index];
-            const providerConfig = chatGetProviderConfig(apiKeyObj?.provider);
-            showChatStatus(`Switched to ${apiKeyObj?.nickname || 'API Key'} (${providerConfig.badge})`, 'success');
-        }
 
         function toggleChatPopup() {
             chatState.isOpen = !chatState.isOpen;
@@ -4031,17 +3921,14 @@
                 if (chatElements.settingsModal?.classList.contains('open')) {
                     chatCloseSettings();
                 }
-                if (chatElements.apiKeyModal?.classList.contains('open')) {
-                    chatCancelApiKeyInput();
-                }
             }
         });
 
-        // Handle Enter key in API key input modal
+        // Handle Enter key in API key input
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && chatElements.apiKeyModal?.classList.contains('open')) {
+            if (e.key === 'Enter' && document.getElementById('chatSingleApiKeyInput') === document.activeElement) {
                 e.preventDefault();
-                chatSaveApiKey();
+                chatSaveSingleKey();
             }
         });
 
@@ -4488,7 +4375,11 @@
         }
 
         function chatFindRelevantChunks(query, maxChunks = 5) {
-            const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+            const queryWords = query.toLowerCase().split(/\s+/)
+                .filter(w => {
+                    if (/[\u0980-\u09FF]/.test(w)) return w.length >= 1;
+                    return w.length > 2;
+                });
             const scoredChunks = chatState.chunks.map(chunk => {
                 const chunkLower = chunk.text.toLowerCase();
                 let score = 0;
@@ -4652,52 +4543,52 @@
             const principalText = summaryAmount(details.principal);
             const interestText = summaryAmount(details.interest);
             const maturityText = summaryAmount(details.maturity);
-            const ratePercentText = `${chatFormatCalcNumber(details.ratePercent, 4)}%`;
+            const ratePercentText = `${chatFormatCalcNumber(details.ratePercent, 4)}% p.a.`;
             const differenceText = summaryAmount(Math.abs(details.interest - details.comparisonInterest));
 
             if (wantsBangla) {
-                const lines = [
-                    'Result',
-                    `- Principal: ${principalText}`,
-                    `- Interest: ${interestText}`,
-                    `- Maturity Amount: ${maturityText}`,
-                    `- Rate used: ${ratePercentText} p.a.`,
-                    `- Basis used: ${details.basis}-day year`
-                ];
+                let reply = `### 📊 ফিক্সড ডিপোজিট (FD/FDR) হিসাবের ফলাফল (৩৬০ দিনের ভিত্তিতে)\n\n`;
+                reply += `| বিবরণ | পরিমাণ / মান |\n`;
+                reply += `| :--- | :--- |\n`;
+                reply += `| **আসল (Principal)** | ${principalText} |\n`;
+                reply += `| **সুদের হার (Rate of Interest)** | ${ratePercentText} |\n`;
+                reply += `| **মেয়াদ (Tenor)** | ${details.days} দিন |\n`;
+                reply += `| **বছর গণনার ভিত্তি (Year Basis)** | ${details.basis} দিন (ব্যাংকিং নিয়ম) |\n`;
+                reply += `| **মোট সুদ (Total Interest)** | **${interestText}** |\n`;
+                reply += `| **মেয়াদপূর্তিতে মোট (Maturity Amount)** | **${maturityText}** |\n`;
 
                 if (details.includeComparison) {
-                    lines.push(
-                        '',
-                        `${details.comparisonBasis}-day year ব্যবহার করলে:`,
-                        `- Interest: ${summaryAmount(details.comparisonInterest)}`,
-                        `- Maturity Amount: ${summaryAmount(details.comparisonMaturity)}`,
-                        `- Difference: ${differenceText}`
-                    );
+                    reply += `\n### ⚖️ বছর গণনার ভিত্তি তুলনা (${details.basis} দিন বনাম ${details.comparisonBasis} দিন)\n\n`;
+                    reply += `| বছর গণনার ভিত্তি | মোট সুদ (Interest) | মেয়াদপূর্তিতে মোট (Maturity) |\n`;
+                    reply += `| :--- | :--- | :--- |\n`;
+                    reply += `| **${details.basis} দিন (Default)** | ${interestText} | ${maturityText} |\n`;
+                    reply += `| **${details.comparisonBasis} দিন** | ${summaryAmount(details.comparisonInterest)} | ${summaryAmount(details.comparisonMaturity)} |\n`;
+                    reply += `| **পার্থক্য (Difference)** | **${differenceText}** | |\n`;
                 }
 
-                return lines.join('\n');
+                return reply;
             }
 
-            const lines = [
-                'Result',
-                `- Principal: ${principalText}`,
-                `- Interest: ${interestText}`,
-                `- Maturity Amount: ${maturityText}`,
-                `- Rate used: ${ratePercentText} p.a.`,
-                `- Basis used: ${details.basis}-day year`
-            ];
+            let reply = `### 📊 Fixed Deposit (FD/FDR) Calculation Result\n\n`;
+            reply += `| Description | Amount / Value |\n`;
+            reply += `| :--- | :--- |\n`;
+            reply += `| **Principal** | ${principalText} |\n`;
+            reply += `| **Interest Rate** | ${ratePercentText} |\n`;
+            reply += `| **Tenor** | ${details.days} days |\n`;
+            reply += `| **Year Basis** | ${details.basis} days (Standard Bank Convention) |\n`;
+            reply += `| **Total Interest** | **${interestText}** |\n`;
+            reply += `| **Maturity Amount** | **${maturityText}** |\n`;
 
             if (details.includeComparison) {
-                lines.push(
-                    '',
-                    `If you use a ${details.comparisonBasis}-day year instead:`,
-                    `- Interest: ${summaryAmount(details.comparisonInterest)}`,
-                    `- Maturity Amount: ${summaryAmount(details.comparisonMaturity)}`,
-                    `- Difference in interest: ${differenceText}`
-                );
+                reply += `\n### ⚖️ Comparison of Year Basis (${details.basis} vs ${details.comparisonBasis} Days)\n\n`;
+                reply += `| Year Basis | Total Interest | Maturity Amount |\n`;
+                reply += `| :--- | :--- | :--- |\n`;
+                reply += `| **${details.basis} Days (Default)** | ${interestText} | ${maturityText} |\n`;
+                reply += `| **${details.comparisonBasis} Days** | ${summaryAmount(details.comparisonInterest)} | ${summaryAmount(details.comparisonMaturity)} |\n`;
+                reply += `| **Difference** | **${differenceText}** | |\n`;
             }
 
-            return lines.join('\n');
+            return reply;
         }
 
         function chatTryBuildFinancialCalculationReply(questionText, contextText = '') {
@@ -4828,8 +4719,8 @@
                 showChatError('Hey, load some documents first so I have something to work with! 📂');
                 return;
             }
-            if (chatState.apiKeys.length === 0) {
-                showChatError('Add a Gemini or OpenRouter API key in DocuChat settings first.');
+            if (!chatState.apiKey) {
+                showChatError('Add your OpenRouter API key in DocuChat settings first.');
                 return;
             }
             
@@ -4837,14 +4728,18 @@
             chatElements.input.value = '';
 
             if (relevantChunks.length === 0) {
-                const noResultReplies = [
-                    'Hmm, I couldn\'t find anything about that in the docs I have. Want to try rephrasing?',
-                    'I\'ve looked through everything but nothing quite matches that. Could you ask it differently?',
-                    'That\'s a good question, but I don\'t see anything related in the loaded documents.',
-                    'No luck on that one — the documents don\'t seem to cover it. Try loading more files maybe?'
-                ];
-                addChatBotMessage(noResultReplies[Math.floor(Math.random() * noResultReplies.length)]);
-                return;
+                if (chatContainsBangla(message) && chatState.chunks.length > 0) {
+                    relevantChunks.push(...chatState.chunks.slice(0, 5));
+                } else {
+                    const noResultReplies = [
+                        'Hmm, I couldn\'t find anything about that in the docs I have. Want to try rephrasing?',
+                        'I\'ve looked through everything but nothing quite matches that. Could you ask it differently?',
+                        'That\'s a good question, but I don\'t see anything related in the loaded documents.',
+                        'No luck on that one — the documents don\'t seem to cover it. Try loading more files maybe?'
+                    ];
+                    addChatBotMessage(noResultReplies[Math.floor(Math.random() * noResultReplies.length)]);
+                    return;
+                }
             }
             
             const typingId = showChatTyping();
@@ -4881,8 +4776,8 @@
         }
 
         async function chatCallAI(question, documentText) {
-            if (!chatState.apiKeys.length) {
-                throw new Error('Add a Gemini or OpenRouter API key in DocuChat settings first.');
+            if (!chatState.apiKey) {
+                throw new Error('Add your OpenRouter API key in DocuChat settings first.');
             }
 
             const systemPrompt = `You are a friendly, warm human colleague who happens to have read all the loaded documents thoroughly. Talk naturally like a real person — use casual but professional language, contractions ("I'd", "you'll", "that's"), and a conversational tone. Feel free to say things like "Good question!", "Hmm, let me think...", "So basically...", or "From what I can see...". Keep answers clear and helpful but never robotic. Show personality — be approachable, occasionally use light humor where appropriate, and respond the way a knowledgeable coworker would over a chat. You have access to conversation history, so refer to previous messages naturally. If the information isn't in the documents, be honest and say something like: "Hmm, I couldn't find anything about that in the documents I've got. Maybe try loading more files?"
@@ -4922,23 +4817,64 @@ CALCULATION RULES:
             
             messages.push({ role: 'user', content: userPrompt });
 
-            // Try all available API keys on rate limit
-            const totalKeys = chatState.apiKeys.length;
-            let lastError = null;
-            for (let attempt = 0; attempt < totalKeys; attempt++) {
-                const activeKey = chatState.activeApiKeyEntry;
-                const providerConfig = chatGetProviderConfig(activeKey?.provider);
-                let response;
+            // Single API key + active model
+            const activeKey = chatState.activeApiKeyEntry;
+            const providerConfig = chatGetProviderConfig(activeKey?.provider);
 
-                if (activeKey?.provider === 'openrouter-nemotron') {
-                    response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            if (!activeKey?.key) {
+                throw new Error('No API key set. Please add your OpenRouter API key in Settings.');
+            }
+
+            let modelToUse = providerConfig.model;
+            if (modelToUse === 'auto') {
+                const combinedText = (question + ' ' + documentText).toLowerCase();
+                const totalLength = question.length + documentText.length;
+                
+                // If it is code-related, use Cohere North Mini Code
+                if (combinedText.includes('code') || combinedText.includes('function') || combinedText.includes('javascript') || combinedText.includes('html') || combinedText.includes('css') || combinedText.includes('programming')) {
+                    modelToUse = 'cohere/north-mini-code:free';
+                } 
+                // If the context is huge (>200k chars), use Nemotron 550B
+                else if (totalLength > 200000) {
+                    modelToUse = 'nvidia/nemotron-3-ultra-550b-a55b:free';
+                } 
+                // If it contains non-ASCII characters (e.g. Bangla), use Google Gemma 4 31B
+                else if (/[^\x00-\x7F]/.test(question + ' ' + documentText)) {
+                    modelToUse = 'google/gemma-4-31b-it:free';
+                }
+                // Otherwise use fast Flash model
+                else {
+                    modelToUse = 'inclusionai/ling-3.0-flash:free';
+                }
+                console.log(`Auto-selected model: ${modelToUse}`);
+            }
+
+            // We will attempt multiple models in sequence, falling back if the provider fails (e.g. rate limit, provider error)
+            const modelsToTry = [modelToUse];
+            
+            // Add fallback models if not already in the list
+            if (!modelsToTry.includes('openrouter/free')) {
+                modelsToTry.push('openrouter/free');
+            }
+            if (!modelsToTry.includes('nvidia/nemotron-3-ultra-550b-a55b:free')) {
+                modelsToTry.push('nvidia/nemotron-3-ultra-550b-a55b:free');
+            }
+            if (!modelsToTry.includes('inclusionai/ling-3.0-flash:free')) {
+                modelsToTry.push('inclusionai/ling-3.0-flash:free');
+            }
+
+            let lastError = null;
+            for (const currentModel of modelsToTry) {
+                try {
+                    console.log(`DocuChat calling model: ${currentModel}`);
+                    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                         method: 'POST',
                         headers: chatBuildOpenRouterHeaders(activeKey.key),
                         body: JSON.stringify({
-                            model: providerConfig.model,
+                            model: currentModel,
                             messages,
                             temperature: 0.7,
-                            max_tokens: 1024
+                            max_tokens: 4096
                         })
                     });
 
@@ -4950,65 +4886,20 @@ CALCULATION RULES:
                             : Array.isArray(content)
                                 ? content.map(part => typeof part === 'string' ? part : (part?.text || '')).join('').trim()
                                 : '';
-
-                        if (text) {
-                            return text;
-                        }
+                        if (text) return text;
                         throw new Error('Invalid response from OpenRouter API');
                     }
-                } else {
-                    const requestBody = JSON.stringify({
-                        contents: [{
-                            role: 'user',
-                            parts: [{
-                                text: userPrompt
-                            }]
-                        }],
-                        generationConfig: {
-                            temperature: 0.7,
-                            maxOutputTokens: 1024
-                        },
-                        systemInstruction: {
-                            parts: [{
-                                text: systemPrompt
-                            }]
-                        }
-                    });
 
-                    response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${providerConfig.model}:generateContent?key=${activeKey.key}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: requestBody
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        const text = data.candidates?.[0]?.content?.parts
-                            ?.map(part => part?.text || '')
-                            .join('')
-                            .trim();
-
-                        if (text) {
-                            return text;
-                        }
-                        throw new Error('Invalid response from Gemini API');
-                    }
+                    const errorData = await response.json().catch(() => ({}));
+                    lastError = errorData.error?.message || `Error: ${response.status}`;
+                    console.warn(`Model ${currentModel} failed: ${lastError}. Trying fallback...`);
+                } catch (e) {
+                    lastError = e.message;
+                    console.warn(`Model ${currentModel} connection failed: ${lastError}. Trying fallback...`);
                 }
-
-                const errorData = await response.json().catch(() => ({}));
-                lastError = errorData.error?.message || `Error: ${response.status}`;
-
-                // Rate limit (429) or resource exhausted → swap to next key and retry
-                if (response.status === 429 || (errorData.error?.status === 'RESOURCE_EXHAUSTED')) {
-                    chatState.swapApiKey();
-                    console.warn(`Rate limited on ${providerConfig.badge}, swapping to API key #${chatState.apiKeyIndex + 1}`);
-                    continue;
-                }
-
-                // Any other error → throw immediately
-                throw new Error(lastError);
             }
-            throw new Error(lastError || 'All configured AI API keys are rate limited. Please try again later.');
+
+            throw new Error(lastError || 'All models failed to respond.');
         }
 
         function addChatUserMessage(text) {
