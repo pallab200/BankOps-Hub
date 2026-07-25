@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Customer Service Form Editor</title>
-  <link rel="stylesheet" href="assets/font-awesome.min.css">
-  <link rel="stylesheet" href="assets/poppins-fonts.css">
+  <link rel="stylesheet" href="Assets/font-awesome.min.css">
+  <link rel="stylesheet" href="Assets/poppins-fonts.css">
   <!-- Auto-import: load saved form data from csf_auto_import.js (works with file:// protocol) -->
   <script src="csf_auto_import.js"></script>
   <style>
@@ -3275,22 +3275,22 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   //  CONFIGURATION — Image-based Form Types
   // =============================================
   const IMAGE_FORMS = [
-    { id: 'account-closure', name: 'Account Closure Form', src: 'assets/Images/Account Closure Form.jpg' },
-    { id: 'account-info-update', name: 'Account Information Update Form', src: 'assets/Images/Account Information Update Form.jpg' },
-    { id: 'nominee-information-update', name: 'Nominee Information Update', src: 'assets/Images/Nominee Information Update.jpg' },
-    { id: 'nominee-information-update-page2', name: 'Nominee Information Update Page 2', src: 'assets/Images/Account Information Update Form.jpg', hidden: true },
-    { id: 'nominee-information-update-page3', name: 'Nominee Information Update Page 3', src: 'assets/Images/New Change Request Form.jpg', hidden: true },
-    { id: 'account-statement', name: 'Account Statement_Certificate Request', src: 'assets/Images/Account Statement_Certificate Request.jpg' },
-    { id: 'dormant-activation', name: 'Dormant Account Activation Form', src: 'assets/Images/Dormant Account Activation Form.jpg' },
-    { id: 'new-change-request', name: 'New Change Request Form', src: 'assets/Images/New Change Request Form.jpg', hidden: true },
-    { id: 'egp-form', name: 'EGP Form', src: 'assets/Images/EGP Form.jpg' },
-    { id: 'fund-transfer', name: 'Fund Transfer Request Form', src: 'assets/Images/Fund Transfer Request Form.jpg' },
-    { id: 'letter-of-authorization', name: 'Letter of Authorization', src: 'assets/Images/Letter of Authorization.jpg' },
-    { id: 'lbc-obc', name: 'LBC / OBC Application', src: 'assets/Images/LBC OBC Form.svg' },
-    { id: 'lbc-obc-page2', name: 'LBC / OBC Page 2', src: 'assets/Images/LBC OBC Form Page 2.svg', landscape: true, hidden: true },
-    { id: 'solvency-certificate', name: 'Solvency Certificate', src: 'assets/Images/Solvency Certificate.svg' },
-    { id: 'td-rd-encashment', name: 'TD_RD Encashment Form', src: 'assets/Images/TD_RD Encashment Form.jpg' },
-    { id: 'withdraw-no-debit', name: 'Withdraw - No Debit', src: 'assets/Images/New Change Request Form.jpg' }
+    { id: 'account-closure', name: 'Account Closure Form', src: 'Assets/Images/Account Closure Form.jpg' },
+    { id: 'account-info-update', name: 'Account Information Update Form', src: 'Assets/Images/Account Information Update Form.jpg' },
+    { id: 'nominee-information-update', name: 'Nominee Information Update', src: 'Assets/Images/Nominee Information Update.jpg' },
+    { id: 'nominee-information-update-page2', name: 'Nominee Information Update Page 2', src: 'Assets/Images/Account Information Update Form.jpg', hidden: true },
+    { id: 'nominee-information-update-page3', name: 'Nominee Information Update Page 3', src: 'Assets/Images/New Change Request Form.jpg', hidden: true },
+    { id: 'account-statement', name: 'Account Statement_Certificate Request', src: 'Assets/Images/Account Statement_Certificate Request.jpg' },
+    { id: 'dormant-activation', name: 'Dormant Account Activation Form', src: 'Assets/Images/Dormant Account Activation Form.jpg' },
+    { id: 'new-change-request', name: 'New Change Request Form', src: 'Assets/Images/New Change Request Form.jpg', hidden: true },
+    { id: 'egp-form', name: 'EGP Form', src: 'Assets/Images/EGP Form.jpg' },
+    { id: 'fund-transfer', name: 'Fund Transfer Request Form', src: 'Assets/Images/Fund Transfer Request Form.jpg' },
+    { id: 'letter-of-authorization', name: 'Letter of Authorization', src: 'Assets/Images/Letter of Authorization.jpg' },
+    { id: 'lbc-obc', name: 'LBC / OBC Application', src: 'Assets/Images/LBC OBC Form.svg' },
+    { id: 'lbc-obc-page2', name: 'LBC / OBC Page 2', src: 'Assets/Images/LBC OBC Form Page 2.svg', landscape: true, hidden: true },
+    { id: 'solvency-certificate', name: 'Solvency Certificate', src: 'Assets/Images/Solvency Certificate.svg' },
+    { id: 'td-rd-encashment', name: 'TD_RD Encashment Form', src: 'Assets/Images/TD_RD Encashment Form.jpg' },
+    { id: 'withdraw-no-debit', name: 'Withdraw - No Debit', src: 'Assets/Images/New Change Request Form.jpg' }
   ];
 
   // =============================================
@@ -3547,7 +3547,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       // Only dynamic data overlays — static labels stay in SVG
       overlayConfig[f.id] = [
         { field: 'lbcObcP2BranchName', top: '5.2%', left: '76%', width: '13%', fontSize: '14px', fontWeight: '700', textTransform: 'none', textAlign: 'right', label: 'Branch' },
-        { field: 'lbcObcP2Logo', top: '1%', left: '38%', width: '6%', label: 'UCB Logo', isImage: true, imageSrc: 'assets/Images/Screenshot 2025-10-25 203250.png', imageHeight: '55px' },
+        { field: 'lbcObcP2Logo', top: '1%', left: '38%', width: '6%', label: 'UCB Logo', isImage: true, imageSrc: 'Assets/Images/Screenshot 2025-10-25 203250.png', imageHeight: '55px' },
         { field: 'lbcObcP2To', top: '12%', left: '3.5%', width: '28%', fontSize: '12px', textTransform: 'none', whiteSpace: 'pre-wrap', lineHeight: '1.35', label: 'Recipient' },
         { field: 'lbcObcP2Date', top: '10.3%', left: '33%', width: '14%', fontSize: '12px', textTransform: 'none', label: 'Date' },
         { field: 'lbcObcP2PayCashTick', top: '46.5%', left: '1.5%', width: '2%', fontSize: '16px', fontWeight: '700', textTransform: 'none', textAlign: 'center', label: 'X' },
@@ -6234,8 +6234,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const name = (data.statementCustomerName || 'form-data').replace(/[^a-zA-Z0-9]/g, '_');
-    a.download = name + '_' + new Date().toISOString().slice(0,10) + '.js';
+    a.download = 'csf_auto_import.js';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

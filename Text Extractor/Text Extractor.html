@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/unified-theme.css">
     <title>Text Extractor</title>
     <link rel="stylesheet" href="../css/fontawesome.min.css">
     <link rel="stylesheet" href="../css/fontawesome-fix.css">
@@ -37,6 +38,12 @@
             box-sizing: border-box;
         }
 
+        /* Override unified-theme background blobs - not needed here */
+        body::before,
+        body::after {
+            display: none !important;
+        }
+
         body {
             font-family: 'Poppins', 'Inter', 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
@@ -59,17 +66,19 @@
         .app-header::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            animation: shimmer 15s linear infinite;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+            pointer-events: none;
         }
 
         @keyframes shimmer {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
         }
 
         .header-content {
@@ -94,12 +103,12 @@
             margin-bottom: 10px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(10px);
-            animation: shimmerIcon 2.5s infinite;
+            animation: float 3s ease-in-out infinite;
         }
 
-        @keyframes shimmerIcon {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         .header-title {

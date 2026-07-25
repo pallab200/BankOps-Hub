@@ -1,5 +1,5 @@
 window.TDRD_AUTO_IMPORT_DATA = {
-  "exportedAt": "2026-06-06T15:08:17.418Z",
+  "exportedAt": "2026-07-15T07:13:04.173Z",
   "form": {
     "accountNumber": "",
     "cifNumber": "",
@@ -980,6 +980,12 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "field": "staticFourPage4Second",
         "leftPercent": 18.4,
         "topPercent": 92.9738
+      },
+      {
+        "page": "4",
+        "field": "verifiedSeal",
+        "leftPercent": 26.8,
+        "topPercent": 72.3613
       }
     ],
     "taqwa": [
@@ -1420,12 +1426,6 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "field": "verifiedSeal",
         "leftPercent": 53.9333,
         "topPercent": 69.4983
-      },
-      {
-        "page": "8",
-        "field": "verifiedSeal",
-        "leftPercent": 42,
-        "topPercent": 79
       },
       {
         "page": "6",
@@ -1978,6 +1978,12 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "field": "attestedSeal",
         "leftPercent": 24.8001,
         "topPercent": 51.9344
+      },
+      {
+        "page": "8",
+        "field": "verifiedSeal",
+        "leftPercent": 30.6,
+        "topPercent": 80.3679
       },
       {
         "page": "8",
@@ -3200,5 +3206,90 @@ window.TDRD_AUTO_IMPORT_DATA = {
         "topPercent": 79.6336
       }
     ]
-  }
+  },
+  "presets": [
+    {
+      "type": "DPS",
+      "schemeName": "Retail UCB Super Flex Deposit Scheme 3 Years",
+      "years": "3"
+    },
+    {
+      "type": "DPS",
+      "schemeName": "Retail UCB Super Flex Deposit Scheme 5 Years",
+      "years": "5"
+    },
+    {
+      "type": "DPS",
+      "schemeName": "Retail UCB Super Flex Deposit Scheme 10 Years",
+      "years": "10"
+    },
+    {
+      "type": "DPS",
+      "schemeName": "Retail UCB AYMA Super Flex Deposit Scheme 10 Years",
+      "years": "10"
+    },
+    {
+      "type": "DPS",
+      "schemeName": "Retail UCB AYMA Super Flex Deposit Scheme 03 Years",
+      "years": "3"
+    },
+    {
+      "type": "FDR",
+      "product": "Retail Fixed Deposit -Exclusive- 360 Days",
+      "interestRate": "10",
+      "tenorYears": "",
+      "tenorMonths": "",
+      "tenorDays": "360"
+    },
+    {
+      "type": "FDR",
+      "product": "Retail Fixed Deposit -Exclusive- 180 Days",
+      "interestRate": "10",
+      "tenorYears": "",
+      "tenorMonths": "",
+      "tenorDays": "180"
+    },
+    {
+      "type": "FDR",
+      "product": "Retail Fixed Deposit -Exclusive- 90 Days",
+      "interestRate": "9.75",
+      "tenorYears": "",
+      "tenorMonths": "",
+      "tenorDays": "90"
+    },
+    {
+      "type": "FDR",
+      "product": "Retail Ayma Fixed Deposit -Exclusive- 90 Days",
+      "interestRate": "9.75",
+      "tenorYears": "",
+      "tenorMonths": "",
+      "tenorDays": "90"
+    },
+    {
+      "type": "FDR",
+      "product": "Retail Ayma Fixed Deposit -Exclusive- 360 Days",
+      "interestRate": "10",
+      "tenorYears": "",
+      "tenorMonths": "",
+      "tenorDays": "360"
+    },
+    {
+      "type": "FDR",
+      "product": "Retail Ayma Fixed Deposit -Exclusive- 180 Days",
+      "interestRate": "10",
+      "tenorYears": "",
+      "tenorMonths": "",
+      "tenorDays": "180"
+    },
+    {
+      "type": "DPS",
+      "schemeName": "Retail UCB AYMA Super Flex Deposit Scheme 05 Years",
+      "years": "5"
+    },
+    {
+      "type": "DPS",
+      "schemeName": "Retail UCB AYMA Super Flex Deposit Scheme 03 Years",
+      "years": "3"
+    }
+  ]
 };

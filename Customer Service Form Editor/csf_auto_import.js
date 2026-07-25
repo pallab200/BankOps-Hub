@@ -1,164 +1,178 @@
-{
+var csfAutoImportData = {
   "branchName": "",
-  "branchCode": "042",
-  "nomineeCustomerNumber": "095029869",
-  "nomineeAccountNumber": "0953202000030622",
-  "nomineeCustomerName": "tanzil ahmed",
-  "nomineeOldName": "aaa",
-  "nomineeNewName": "bbb",
-  "nomineeOldDateOfBirth": "2026-05-08",
-  "nomineeNewDateOfBirth": "2026-05-09",
-  "nomineeOldRelationship": "ccc",
-  "nomineeNewRelationship": "ddd",
-  "nomineeOldAddress": "serajganj, serajganj, serajganj, serajganj, serajganj, serajganj, serajganj, serajganj,",
-  "nomineeNewAddress": "naogaon,naogaon,naogaon,naogaon,naogaon,naogaon,naogaon,naogaon,naogaon, ",
-  "nomineeShare": "100",
-  "nomineeFatherName": "momen",
-  "nomineeMotherName": "piara",
-  "nomineeSpouseName": "sabiha",
-  "nomineeOccupation": "service",
-  "nomineeMobileNumber": "01745740185",
-  "nomineeNationalId": "1234567890",
-  "nomineeSealSelect": "officer2",
-  "customerNumber": "123456789",
-  "withdrawAccountNumber": "0953202000030622",
-  "withdrawCustomerName": "tanzil ahmed",
-  "withdrawComment": "uhkhasjhkja",
-  "withdrawSealSelect": "officer2",
-  "closureCustomerNumber": "095029869",
-  "closureAccountNumber": "0953202000030622",
-  "closureCustomerName": "tanzil ahmed",
-  "closureReason": "hajhkhakhsh",
+  "branchCode": "",
+  "nomineeCustomerNumber": "",
+  "nomineeAccountNumber": "",
+  "nomineeCustomerName": "",
+  "nomineeOldName": "",
+  "nomineeNewName": "",
+  "nomineeOldDateOfBirth": "",
+  "nomineeNewDateOfBirth": "",
+  "nomineeOldRelationship": "",
+  "nomineeNewRelationship": "",
+  "nomineeOldAddress": "",
+  "nomineeNewAddress": "",
+  "nomineeShare": "",
+  "nomineeFatherName": "",
+  "nomineeMotherName": "",
+  "nomineeSpouseName": "",
+  "nomineeOccupation": "",
+  "nomineeMobileNumber": "",
+  "nomineeNationalId": "",
+  "nomineeFcubsFieldSelect": "STDCUSAC",
+  "nomineeSealSelect": "",
+  "customerNumber": "",
+  "withdrawAccountNumber": "",
+  "withdrawCustomerName": "",
+  "withdrawComment": "",
+  "withdrawSealSelect": "",
+  "closureCustomerNumber": "",
+  "closureAccountNumber": "",
+  "closureCustomerName": "",
+  "closureReason": "",
   "closureDebitCard": "",
   "closureChequeBook": "",
-  "closureModeOfPayment": "Transfer to A/C Number",
-  "closurePaymentAC": "0953202000030622",
-  "closureCancellationStandingInstruction": true,
-  "closureCancellationLocker": true,
-  "closureDebitCardDestroyed": true,
-  "closureChequeBookDestroyed": true,
-  "closureSealSelect": "officer2",
-  "accountUpdateCustomerNumber": "095029869",
-  "accountUpdateAccountNumber": "0953202000030622",
-  "accountUpdateCustomerName": "tanzil ahmed",
+  "closureModeOfPayment": "",
+  "closurePaymentAC": "",
+  "closureCancellationStandingInstruction": false,
+  "closureCancellationLocker": false,
+  "closureDebitCardDestroyed": false,
+  "closureChequeBookDestroyed": false,
+  "closureSealSelect": "",
+  "accountUpdateCustomerNumber": "",
+  "accountUpdateAccountNumber": "",
+  "accountUpdateCustomerName": "",
   "accountUpdateServiceOption": "",
   "accountUpdateOldMobileNumber": "",
   "accountUpdateNewMobileNumber": "",
   "accountUpdateNewEmailAddress": "",
-  "accountUpdateRemarks": "xxxx",
-  "accountUpdateSealSelect": "officer2",
-  "egpPurpose": "Purchase Tender Schedule",
+  "accountUpdateNameRectificationName": "",
+  "accountUpdateNameRectificationFatherName": "",
+  "accountUpdateNameRectificationMotherName": "",
+  "accountUpdateNameRectificationSpouseName": "",
+  "accountUpdateNameRectificationReason": "",
+  "accountUpdateDateOfBirth": "",
+  "accountUpdateAddressPresent": "",
+  "accountUpdateAddressPermanent": "",
+  "accountUpdateAddressWork": "",
+  "accountUpdateDocumentNID": "",
+  "accountUpdateDocumentPassport": "",
+  "accountUpdateDocumentETin": "",
+  "accountUpdateDocumentOthers": "",
+  "accountUpdateRemarks": "",
+  "accountUpdateSealSelect": "",
+  "egpPurpose": "",
   "egpTendersEmailId": "",
-  "egpTenderIdNumber": "123456,098765,567890,234567,987654,135678,098654,123456,098765,567890,234567,987654,135678,098654,123456,098765,567890,234567,987654,135678,098654",
-  "egpPaymentMode": "Debit Account",
-  "egpAmount": "1000",
-  "egpCustomerName": "tanzil ahmed",
-  "egpAccountNumber": "0953202000030622",
-  "senderAccountName": "tanzil ahmed",
-  "senderAccountNumber": "0953202000030622",
-  "receiverAccountName": "sabiha",
-  "receiverAccountNumber": "0953202000030623",
-  "transferAmount": "100000",
-  "transferAmountInWord": "one lac only",
-  "fundTransferSealSelect": "officer2",
-  "statementCustomerName": "tanzil ahmed",
-  "statementAccountNumber": "0953202000030622",
-  "statementPersonName": "gjgag",
-  "statementAccountStatementTick": true,
-  "statementGeneralCertificateTick": true,
-  "statementBalanceConfirmationTick": true,
-  "statementAccountTaxCertificateTick": true,
-  "statementLoanTaxCertificateTick": true,
-  "statementOthersCertificateTick": true,
-  "statementFromDate": "2025-01-24",
-  "statementToDate": "2026-02-24",
-  "statementLoanYear": "2026",
-  "statementOthersDescription": "xxxx",
-  "statementSealSelect": "officer3",
-  "letterCustomerName": "tanzil ahmed",
-  "letterAccountNumber": "0953202000030622",
-  "letterPersonName": "tanzil ahmedxx",
-  "letterNameType": "Chequebook",
-  "letterOthersDescription": "jhgjgjgj",
-  "letterSealSelect": "officer2",
-  "lbcObcRefNo": "UCBL/KASHI/GB/2026/385",
-  "lbcObcRecipientHeadBranch": "The Head of Branch",
-  "lbcObcRecipientBankName": "Janata Bank PLC",
-  "lbcObcRecipientBranchName": "Kashinathpur Branch",
-  "lbcObcRecipientDistrict": "Pabna",
+  "egpTenderIdNumber": "",
+  "egpPaymentMode": "",
+  "egpAmount": "",
+  "egpCustomerName": "",
+  "egpAccountNumber": "",
+  "senderAccountName": "",
+  "senderAccountNumber": "",
+  "receiverAccountName": "",
+  "receiverAccountNumber": "",
+  "transferAmount": "",
+  "transferAmountInWord": "",
+  "fundTransferSealSelect": "",
+  "statementCustomerName": "",
+  "statementAccountNumber": "",
+  "statementPersonName": "",
+  "statementAccountStatementTick": false,
+  "statementGeneralCertificateTick": false,
+  "statementBalanceConfirmationTick": false,
+  "statementAccountTaxCertificateTick": false,
+  "statementLoanTaxCertificateTick": false,
+  "statementOthersCertificateTick": false,
+  "statementFromDate": "",
+  "statementToDate": "",
+  "statementLoanYear": "",
+  "statementOthersDescription": "",
+  "statementSealSelect": "",
+  "letterCustomerName": "",
+  "letterAccountNumber": "",
+  "letterPersonName": "",
+  "letterNameType": "",
+  "letterOthersDescription": "",
+  "letterSealSelect": "",
+  "lbcObcRefNo": "",
+  "lbcObcRecipientHeadBranch": "",
+  "lbcObcRecipientBankName": "",
+  "lbcObcRecipientBranchName": "",
+  "lbcObcRecipientDistrict": "",
   "lbcObcCollectionType": "OBC",
-  "lbcObcDepositAccountText": "PABNA PROTISHSRUTI KASHINATHPUR BRANCH",
-  "lbcObcInstrumentType1": "Cheque",
-  "lbcObcLbcNo1": "53/25",
-  "lbcObcParticulars1": "Janata Bank PLC, Kashinathpur Branch, pabna",
-  "lbcObcInstrumentRefNo1": "SB 6000 4422650",
-  "lbcObcInstrumentRefDate1": "2026-04-11",
-  "lbcObcAmount1": "300000",
-  "lbcObcInstrumentType2": "Bill",
-  "lbcObcLbcNo2": "54/25",
-  "lbcObcParticulars2": "Janata Bank PLC, Kashinathpur Branch, pabna",
-  "lbcObcInstrumentRefNo2": "SB 6000 4422650",
-  "lbcObcInstrumentRefDate2": "2026-04-11",
-  "lbcObcAmount2": "135761",
-  "lbcObcInstrumentType3": "Pay order",
-  "lbcObcLbcNo3": "55/25",
-  "lbcObcParticulars3": "Janata Bank PLC, Kashinathpur Branch, pabna",
-  "lbcObcInstrumentRefNo3": "SB 6000 4422650",
-  "lbcObcInstrumentRefDate3": "2026-04-10",
-  "lbcObcAmount3": "500000",
-  "lbcObcInstrumentType4": "DD",
-  "lbcObcLbcNo4": "56/25",
-  "lbcObcParticulars4": "Janata Bank PLC, Kashinathpur Branch, pabna",
-  "lbcObcInstrumentRefNo4": "SB 6000 4422650",
-  "lbcObcInstrumentRefDate4": "2026-04-09",
-  "lbcObcAmount4": "100000",
-  "lbcObcSelectOfficerSeal": "officer2",
+  "lbcObcDepositAccountText": "",
+  "lbcObcInstrumentType1": "",
+  "lbcObcLbcNo1": "",
+  "lbcObcParticulars1": "",
+  "lbcObcInstrumentRefNo1": "",
+  "lbcObcInstrumentRefDate1": "",
+  "lbcObcAmount1": "",
+  "lbcObcInstrumentType2": "",
+  "lbcObcLbcNo2": "",
+  "lbcObcParticulars2": "",
+  "lbcObcInstrumentRefNo2": "",
+  "lbcObcInstrumentRefDate2": "",
+  "lbcObcAmount2": "",
+  "lbcObcInstrumentType3": "",
+  "lbcObcLbcNo3": "",
+  "lbcObcParticulars3": "",
+  "lbcObcInstrumentRefNo3": "",
+  "lbcObcInstrumentRefDate3": "",
+  "lbcObcAmount3": "",
+  "lbcObcInstrumentType4": "",
+  "lbcObcLbcNo4": "",
+  "lbcObcParticulars4": "",
+  "lbcObcInstrumentRefNo4": "",
+  "lbcObcInstrumentRefDate4": "",
+  "lbcObcAmount4": "",
+  "lbcObcSelectOfficerSeal": "",
   "lbcObcProvideOption": "Cash",
-  "lbcObcProvideTo": "Ruhul amin",
-  "lbcObcDesignation": "officer",
-  "solvencyAccountType": "savings",
+  "lbcObcProvideTo": "",
+  "lbcObcDesignation": "",
+  "solvencyAccountType": "current",
   "solvencyBalanceMode": "with-balance",
   "solvencyFinancialStatus": "sound-solvent",
-  "solvencyDispatchNo": "UCB/KNB/SOLVENCY/2026/260",
-  "solvencyBalance": "100000",
-  "solvencyBalanceDate": "2026-04-13",
-  "solvencyAccountNumber": "1872112000001458",
-  "solvencyOrganization": "M/S RATAN ENTERPRISE",
-  "solvencyCustomerName": "MD. GOLAM NABI",
-  "solvencyFatherName": "MD. ABDUL MATIN MIA",
-  "solvencyMotherName": "MST AMENA BEGUM",
-  "solvencyAddress": "HARIDEBPUR, KASHINATHPUR, BERA, PABNA",
-  "solvencyLeftOfficerName": "Md. Delowar Hossain",
-  "solvencyRightOfficerName": "Md. Saroar Reza",
-  "solvencyLeftOfficerDesignation": "SEO & Operation Manager",
-  "solvencyRightOfficerDesignation": "AVP & Head of Branch",
-  "dormantCustomerNumber": "095029869",
-  "dormantCustomerName": "Tanzil ahmed",
-  "dormantAccountNumber": "0953202000030622",
-  "dormantDormancyReason": "long time no",
-  "dormantInformationType": "No Change Information",
-  "dormantCustomerPhysicallyPresent": true,
-  "dormantNIDPhotoIDObtained": true,
-  "dormantNoChangeInformation": true,
-  "dormantCustomerInformationNeedsUpdate": true,
-  "dormantRecentPhotograph": "YES",
-  "dormantFreshIntroduction": "YES",
-  "dormantAllInfoAOF": "YES",
-  "dormantValidPhotoID": "YES",
-  "dormantNIDCardVerified": "YES",
-  "dormantContactPointVerified": "YES",
-  "dormantRiskAssessment": "YES",
-  "dormantFaceToFaceInterview": "YES",
-  "dormantSealSelect": "officer2",
-  "tdRdTodayDate": "09/05/26",
-  "tdRdCustomerName": "tanzil ahmed",
-  "tdRdMobileNumber": "01745740185",
-  "tdRdNumber": "0953202000030622",
-  "tdRdRequestType": "Premature Encashment",
-  "tdRdMaturityDate": "2026-03-06",
-  "tdRdPaymentOption": "Pay Order",
-  "tdRdPaymentAccountNumber": "0953202000030622",
-  "tdRdSealSelect": "officer2",
+  "solvencyDispatchNo": "",
+  "solvencyBalance": "",
+  "solvencyBalanceDate": "",
+  "solvencyAccountNumber": "",
+  "solvencyOrganization": "",
+  "solvencyCustomerName": "",
+  "solvencyFatherName": "",
+  "solvencyMotherName": "",
+  "solvencyAddress": "",
+  "solvencyLeftOfficerName": "",
+  "solvencyRightOfficerName": "",
+  "solvencyLeftOfficerDesignation": "",
+  "solvencyRightOfficerDesignation": "",
+  "dormantCustomerNumber": "",
+  "dormantCustomerName": "",
+  "dormantAccountNumber": "",
+  "dormantDormancyReason": "",
+  "dormantInformationType": "",
+  "dormantCustomerPhysicallyPresent": false,
+  "dormantNIDPhotoIDObtained": false,
+  "dormantNoChangeInformation": false,
+  "dormantCustomerInformationNeedsUpdate": false,
+  "dormantRecentPhotograph": "",
+  "dormantFreshIntroduction": "",
+  "dormantAllInfoAOF": "",
+  "dormantValidPhotoID": "",
+  "dormantNIDCardVerified": "",
+  "dormantContactPointVerified": "",
+  "dormantRiskAssessment": "",
+  "dormantFaceToFaceInterview": "",
+  "dormantSealSelect": "",
+  "tdRdTodayDate": "25/07/26",
+  "tdRdCustomerName": "",
+  "tdRdMobileNumber": "",
+  "tdRdNumber": "",
+  "tdRdRequestType": "",
+  "tdRdMaturityDate": "",
+  "tdRdPaymentOption": "",
+  "tdRdPaymentAccountNumber": "",
+  "tdRdSealSelect": "",
   "newctodaydate": "",
   "_textboxPositions": {
     "withdraw-no-debit": {
@@ -210,7 +224,7 @@
     "account-closure": {
       "0": {
         "top": "9.63779%",
-        "left": "7.4%"
+        "left": "7%"
       },
       "1": {
         "top": "6.77782%",
@@ -237,8 +251,8 @@
         "left": "41.8%"
       },
       "7": {
-        "top": "46.6564%",
-        "left": "28.2%"
+        "top": "28.0279%",
+        "left": "19.9%"
       },
       "8": {
         "top": "28.028%",
@@ -281,12 +295,16 @@
         "left": "8.4%"
       },
       "18": {
-        "top": "64.9271%",
-        "left": "74.2%"
+        "top": "42.743%",
+        "left": "25.5%"
       },
       "19": {
         "top": "64.7727%",
         "left": "5.7%"
+      },
+      "20": {
+        "top": "65.2364%",
+        "left": "74%"
       }
     },
     "fund-transfer": {
@@ -303,8 +321,8 @@
         "left": "19.2%"
       },
       "3": {
-        "top": "25.4856%",
-        "left": "21.6%"
+        "top": "25.0612%",
+        "left": "21.5%"
       },
       "4": {
         "top": "52.2543%",
@@ -323,12 +341,16 @@
         "left": "10.2%"
       },
       "8": {
-        "top": "81.627%",
-        "left": "60.5%"
+        "top": "61.7491%",
+        "left": "35.3%"
       },
       "9": {
-        "top": "81.4856%",
-        "left": "10.8%"
+        "top": "81.91%",
+        "left": "65.1%"
+      },
+      "10": {
+        "top": "81.7685%",
+        "left": "13%"
       }
     },
     "egp-form": {
@@ -487,6 +509,18 @@
       "38": {
         "top": "23.9406%",
         "left": "59.6%"
+      },
+      "39": {
+        "top": "25.7487%",
+        "left": "21.6%"
+      },
+      "40": {
+        "top": "60.4783%",
+        "left": "21.2%"
+      },
+      "41": {
+        "top": "92.9664%",
+        "left": "21.2%"
       }
     },
     "account-statement": {
@@ -551,12 +585,16 @@
         "left": "22.9%"
       },
       "15": {
-        "top": "90.5123%",
-        "left": "67.3%"
+        "top": "56.7337%",
+        "left": "31.7%"
       },
       "16": {
-        "top": "90.1258%",
-        "left": "11.8%"
+        "top": "91.5172%",
+        "left": "68.5%"
+      },
+      "17": {
+        "top": "91.5172%",
+        "left": "12.2%"
       }
     },
     "letter-of-authorization": {
@@ -597,12 +635,20 @@
         "left": "36.7%"
       },
       "9": {
-        "top": "89.1983%",
-        "left": "64%"
+        "top": "74.4347%",
+        "left": "27.9%"
       },
       "10": {
-        "top": "89.2756%",
-        "left": "8.4%"
+        "top": "61.4488%",
+        "left": "21%"
+      },
+      "11": {
+        "top": "89.9712%",
+        "left": "68.3%"
+      },
+      "12": {
+        "top": "89.7394%",
+        "left": "12.7%"
       }
     },
     "td-rd-encashment": {
@@ -655,12 +701,16 @@
         "left": "5.5%"
       },
       "12": {
-        "top": "69.565%",
-        "left": "65.3%"
+        "top": "50.8592%",
+        "left": "24.6%"
       },
       "13": {
-        "top": "69.4876%",
-        "left": "7.3%"
+        "top": "69.4103%",
+        "left": "66.9%"
+      },
+      "14": {
+        "top": "69.3331%",
+        "left": "9.4%"
       }
     },
     "dormant-activation": {
@@ -777,16 +827,20 @@
         "left": "37.6%"
       },
       "28": {
-        "top": "85.0109%",
-        "left": "5.25633%"
+        "top": "45.7443%",
+        "left": "22.7563%"
       },
       "29": {
-        "top": "85.1546%",
-        "left": "41%"
+        "top": "85.6957%",
+        "left": "4.6%"
       },
       "30": {
-        "top": "85.1545%",
-        "left": "72.7%"
+        "top": "85.3863%",
+        "left": "41.6%"
+      },
+      "31": {
+        "top": "85.5411%",
+        "left": "73.8%"
       }
     },
     "new-change-request": {
@@ -997,16 +1051,16 @@
         "left": "8.9%"
       },
       "6": {
-        "top": "40.3051%",
-        "left": "79.9%"
+        "top": "40.7689%",
+        "left": "72.7%"
       },
       "7": {
         "top": "39.4829%",
         "left": "56.2%"
       },
       "8": {
-        "top": "40.9364%",
-        "left": "31.4%"
+        "top": "41.0137%",
+        "left": "21.1%"
       },
       "9": {
         "top": "39.6565%",
@@ -1021,20 +1075,92 @@
         "left": "2.3%"
       },
       "12": {
-        "top": "75.826%",
-        "left": "15.1%"
+        "top": "53.1008%",
+        "left": "17.6%"
       },
       "13": {
-        "top": "75.3622%",
-        "left": "2%"
+        "top": "53.2554%",
+        "left": "63.9%"
       },
       "14": {
-        "top": "94.3772%",
-        "left": "68.4%"
+        "top": "57.043%",
+        "left": "17.8%"
       },
       "15": {
-        "top": "94.2225%",
-        "left": "6.5%"
+        "top": "56.8109%",
+        "left": "63.9%"
+      },
+      "16": {
+        "top": "49.7483%",
+        "left": "43.9%"
+      },
+      "17": {
+        "top": "48.8648%",
+        "left": "2.1%"
+      },
+      "18": {
+        "top": "60.7685%",
+        "left": "17.9%"
+      },
+      "19": {
+        "top": "60.3047%",
+        "left": "1.8%"
+      },
+      "20": {
+        "top": "27.6083%",
+        "left": "29.4%"
+      },
+      "21": {
+        "top": "30.0526%",
+        "left": "29.5%"
+      },
+      "22": {
+        "top": "32.5742%",
+        "left": "29.3%"
+      },
+      "23": {
+        "top": "26.6035%",
+        "left": "2.4%"
+      },
+      "24": {
+        "top": "68.3435%",
+        "left": "18.5%"
+      },
+      "25": {
+        "top": "68.3917%",
+        "left": "60.8%"
+      },
+      "26": {
+        "top": "71.3772%",
+        "left": "18.9%"
+      },
+      "27": {
+        "top": "71.1934%",
+        "left": "60.8%"
+      },
+      "28": {
+        "top": "63.6285%",
+        "left": "2.1%"
+      },
+      "29": {
+        "top": "75.5654%",
+        "left": "44%"
+      },
+      "30": {
+        "top": "75.2562%",
+        "left": "2%"
+      },
+      "31": {
+        "top": "76.4541%",
+        "left": "29.8%"
+      },
+      "32": {
+        "top": "93.836%",
+        "left": "69.9%"
+      },
+      "33": {
+        "top": "93.6042%",
+        "left": "9.6%"
       }
     },
     "nominee-information-update": {
@@ -1103,12 +1229,16 @@
         "left": "32.6%"
       },
       "16": {
-        "top": "77.9485%",
-        "left": "64.2%"
+        "top": "68.9645%",
+        "left": "43.1%"
       },
       "17": {
-        "top": "79.0804%",
-        "left": "8.1%"
+        "top": "82.2637%",
+        "left": "66.9%"
+      },
+      "18": {
+        "top": "80.8489%",
+        "left": "18.2%"
       }
     },
     "nominee-information-update-page2": {
@@ -1147,6 +1277,10 @@
       "8": {
         "top": "93.6042%",
         "left": "7.7%"
+      },
+      "9": {
+        "top": "75.8503%",
+        "left": "28.3%"
       }
     },
     "nominee-information-update-page3": {
@@ -1234,6 +1368,12 @@
         "top": "75.7532%",
         "left": "3.5%"
       }
+    },
+    "solvency-certificate": {
+      "1": {
+        "top": "6.05609%",
+        "left": "17.1%"
+      }
     }
   }
-}
+};

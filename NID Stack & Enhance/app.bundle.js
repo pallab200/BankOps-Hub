@@ -2276,7 +2276,7 @@
     }
     function readBasePixels() {
       const state = appState.getState();
-      const base = state ? state.adjustedBase : null;
+      const base = state ? state.adjustedBase || state.combinedImage : null;
       if (!base) return null;
       if (base.data && Number.isFinite(base.width) && Number.isFinite(base.height) && base.width > 0 && base.height > 0) {
         return { data: base.data, width: base.width, height: base.height };

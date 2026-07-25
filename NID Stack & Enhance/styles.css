@@ -169,9 +169,12 @@ a {
 
 .app-header {
   margin-bottom: var(--space-6);
-  padding-bottom: var(--space-5);
-  border-bottom: 2px solid var(--color-border);
+  padding: var(--space-6) var(--space-7);
+  border-bottom: none;
   text-align: center;
+  border-radius: var(--radius-xl);
+  position: relative;
+  z-index: 1;
 }
 
 .app-header__row {
@@ -180,26 +183,30 @@ a {
   justify-content: center;
   gap: var(--space-3);
   margin-bottom: var(--space-2);
+  position: relative;
+  z-index: 2;
 }
 
 .app-header i {
   font-size: var(--font-size-2xl);
-  color: var(--color-primary);
+  color: #ffffff;
   font-style: normal;
 }
 
 .app-header h1 {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-black);
-  color: var(--color-primary);
+  color: #ffffff;
 }
 
 .app-header .lead {
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.9);
   font-weight: var(--font-weight-normal);
   font-size: var(--font-size-sm);
   max-width: 500px;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
 /* ============================================================================

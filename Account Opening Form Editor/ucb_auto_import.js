@@ -106,7 +106,7 @@ window.UCB_AUTO_IMPORT_DATA = {
     "credibleSourceOfFunds": "",
     "sourceOfFundsVerify": "FACE TO FACE CONVERSATION",
     "beneficialOwners": "no",
-    "todayDate": "2026-05-29",
+    "todayDate": "",
     "todayDateAuto": "true",
     "boNameEn": "",
     "boNameBn": "",

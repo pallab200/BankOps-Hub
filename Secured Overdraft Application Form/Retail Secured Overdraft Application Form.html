@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Retail Secured Overdraft Application Form Editor</title>
-  <link href="assets/poppins.css" rel="stylesheet">
-  <link rel="stylesheet" href="assets/font-awesome.min.css">
+  <link href="Assets/poppins.css" rel="stylesheet">
+  <link rel="stylesheet" href="Assets/font-awesome.min.css">
   <script src="ucb_auto_import.js"></script>
   <style>
 :root {
@@ -1707,8 +1707,9 @@ body::after {
           <div class="form-group">
             <label>Type</label>
             <select name="loanType" id="loanTypeSelect">
-              <option value="sanction">Sanction</option>
-              <option value="renewal">Renewal</option>
+              <option value="sanction">Sanction (SOD)</option>
+              <option value="sanction-rcsl">Sanction (RCSL)</option>
+              <option value="renewal">Renewal (SOD)</option>
             </select>
           </div>
           <div class="form-group" id="renewalSubTypeGroup" style="display: none;">
@@ -1751,6 +1752,14 @@ body::after {
           <div class="form-group" style="display: none;">
             <label>SOD Limit Inward</label>
             <input type="text" name="sodLimitInward" placeholder="SOD Limit Inward" readonly>
+          </div>
+          <div class="form-group" id="tenorGroup" style="display: none;">
+            <label>Tenor (Months)</label>
+            <input type="text" name="tenorMonths" placeholder="e.g. 36">
+          </div>
+          <div class="form-group" id="emiDateGroup" style="display: none;">
+            <label>EMI Date</label>
+            <input type="text" name="emiDate" placeholder="e.g. 15">
           </div>
           <div class="form-group">
             <label>Account Ownership</label>
@@ -1990,153 +1999,78 @@ body::after {
         </div>
       </div>
 
-      <!-- Address Sections Side by Side -->
-      <div class="address-sections-container">
-        <!-- Present Address Section -->
-        <div class="form-section" id="present-address">
-          <div class="section-header">
-            <i class="fas fa-map-marker-alt"></i>
-            <h2 id="presentAddressTitle">Present Address</h2>
-            <i class="fas fa-chevron-down section-toggle"></i>
-          </div>
-          <div class="form-fields two-col">
-            <div class="form-group">
-              <label>Street No/Village</label>
-              <input type="text" name="presentStreetVillage" placeholder="Street No/Village">
-            </div>
-            <div class="form-group">
-              <label>Post Office</label>
-              <input type="text" name="presentPostOffice" placeholder="Post Office">
-            </div>
-            <div class="form-group">
-              <label>PS/Upazila</label>
-              <input type="text" name="presentPsUpazila" placeholder="PS/Upazila">
-            </div>
-            <div class="form-group">
-              <label>District</label>
-              <input type="text" name="presentDistrict" placeholder="District">
-            </div>
-            <div class="form-group">
-              <label>Postal Code</label>
-              <input type="text" name="presentPostalCode" placeholder="Postal Code">
-            </div>
-          </div>
+      <!-- Address Section - First Applicant -->
+      <div class="form-section" id="address-first-applicant">
+        <div class="section-header">
+          <i class="fas fa-map-marker-alt"></i>
+          <h2 id="addressFirstTitle">Address</h2>
+          <i class="fas fa-chevron-down section-toggle"></i>
         </div>
-
-        <!-- Permanent Address Section -->
-        <div class="form-section" id="permanent-address">
-          <div class="section-header">
-            <i class="fas fa-home"></i>
-            <h2 id="permanentAddressTitle">Permanent Address</h2>
-            <i class="fas fa-chevron-down section-toggle"></i>
+        <div class="form-fields" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <!-- Present Address (Left) -->
+          <div>
+            <h3 style="font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--primary); padding-bottom: 6px;">Present Address</h3>
+            <div class="form-group"><label>Street No/Village</label><input type="text" name="presentStreetVillage" placeholder="Street No/Village"></div>
+            <div class="form-group"><label>Post Office</label><input type="text" name="presentPostOffice" placeholder="Post Office"></div>
+            <div class="form-group"><label>PS/Upazila</label><input type="text" name="presentPsUpazila" placeholder="PS/Upazila"></div>
+            <div class="form-group"><label>District</label><input type="text" name="presentDistrict" placeholder="District"></div>
+            <div class="form-group"><label>Postal Code</label><input type="text" name="presentPostalCode" placeholder="Postal Code"></div>
           </div>
-          <div class="form-fields two-col">
-            <div class="form-group">
-              <label>Street No/Village</label>
-              <input type="text" name="permanentStreetVillage" placeholder="Street No/Village">
+          <!-- Permanent Address (Right) -->
+          <div>
+            <h3 style="font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--primary); padding-bottom: 6px;">Permanent Address</h3>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="sameAddressCheckbox" name="sameAddressCheckbox" style="width: 16px; height: 16px; cursor: pointer;">
+                <span style="font-size: 0.82rem;">Same as Present Address</span>
+              </label>
             </div>
-            <div class="form-group">
-              <label>Post Office</label>
-              <input type="text" name="permanentPostOffice" placeholder="Post Office">
-            </div>
-            <div class="form-group">
-              <label>PS/Upazila</label>
-              <input type="text" name="permanentPsUpazila" placeholder="PS/Upazila">
-            </div>
-            <div class="form-group">
-              <label>District</label>
-              <input type="text" name="permanentDistrict" placeholder="District">
-            </div>
-            <div class="form-group">
-              <label>Postal Code</label>
-              <input type="text" name="permanentPostalCode" placeholder="Postal Code">
-            </div>
-          </div>
-          <!-- Same Address Checkbox -->
-          <div class="form-group" style="margin-top: 12px;">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-              <input type="checkbox" id="sameAddressCheckbox" name="sameAddressCheckbox" style="width: 18px; height: 18px; cursor: pointer;">
-              <span>Permanent Address same as Present Address</span>
-            </label>
+            <div class="form-group"><label>Street No/Village</label><input type="text" name="permanentStreetVillage" placeholder="Street No/Village"></div>
+            <div class="form-group"><label>Post Office</label><input type="text" name="permanentPostOffice" placeholder="Post Office"></div>
+            <div class="form-group"><label>PS/Upazila</label><input type="text" name="permanentPsUpazila" placeholder="PS/Upazila"></div>
+            <div class="form-group"><label>District</label><input type="text" name="permanentDistrict" placeholder="District"></div>
+            <div class="form-group"><label>Postal Code</label><input type="text" name="permanentPostalCode" placeholder="Postal Code"></div>
           </div>
         </div>
       </div>
 
-      <!-- Joint Applicant Address Sections (Hidden by default) -->
-      <div class="address-sections-container" id="joint-address-sections" style="display: none;">
-        <!-- Present Address - Joint Applicant Section -->
-        <div class="form-section" id="present-address-joint">
-          <div class="section-header">
-            <i class="fas fa-map-marker-alt"></i>
-            <h2>Present Address - Joint Applicant</h2>
-            <i class="fas fa-chevron-down section-toggle"></i>
-          </div>
-          <div class="form-fields two-col">
-            <div class="form-group">
-              <label>Street No/Village</label>
-              <input type="text" name="jointPresentStreetVillage" placeholder="Street No/Village">
-            </div>
-            <div class="form-group">
-              <label>Post Office</label>
-              <input type="text" name="jointPresentPostOffice" placeholder="Post Office">
-            </div>
-            <div class="form-group">
-              <label>PS/Upazila</label>
-              <input type="text" name="jointPresentPsUpazila" placeholder="PS/Upazila">
-            </div>
-            <div class="form-group">
-              <label>District</label>
-              <input type="text" name="jointPresentDistrict" placeholder="District">
-            </div>
-            <div class="form-group">
-              <label>Postal Code</label>
-              <input type="text" name="jointPresentPostalCode" placeholder="Postal Code">
-            </div>
-          </div>
-          <!-- Same as First Applicant Present Address Checkbox -->
-          <div class="form-group" style="margin-top: 12px;">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-              <input type="checkbox" id="sameAsFirstApplicantPresentCheckbox" name="sameAsFirstApplicantPresentCheckbox" style="width: 18px; height: 18px; cursor: pointer;">
-              <span>Same as First Applicant Present Address</span>
-            </label>
-          </div>
+      <!-- Address Section - Joint Applicant -->
+      <div class="form-section" id="joint-address-sections" style="display: none;">
+        <div class="section-header">
+          <i class="fas fa-map-marker-alt"></i>
+          <h2>Address - Joint Applicant</h2>
+          <i class="fas fa-chevron-down section-toggle"></i>
         </div>
-
-        <!-- Permanent Address - Joint Applicant Section -->
-        <div class="form-section" id="permanent-address-joint">
-          <div class="section-header">
-            <i class="fas fa-home"></i>
-            <h2>Permanent Address - Joint Applicant</h2>
-            <i class="fas fa-chevron-down section-toggle"></i>
+        <div class="form-fields" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <!-- Present Address Joint (Left) -->
+          <div>
+            <h3 style="font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--primary); padding-bottom: 6px;">Present Address</h3>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="sameAsFirstApplicantPresentCheckbox" name="sameAsFirstApplicantPresentCheckbox" style="width: 16px; height: 16px; cursor: pointer;">
+                <span style="font-size: 0.82rem;">Same as First Applicant</span>
+              </label>
+            </div>
+            <div class="form-group"><label>Street No/Village</label><input type="text" name="jointPresentStreetVillage" placeholder="Street No/Village"></div>
+            <div class="form-group"><label>Post Office</label><input type="text" name="jointPresentPostOffice" placeholder="Post Office"></div>
+            <div class="form-group"><label>PS/Upazila</label><input type="text" name="jointPresentPsUpazila" placeholder="PS/Upazila"></div>
+            <div class="form-group"><label>District</label><input type="text" name="jointPresentDistrict" placeholder="District"></div>
+            <div class="form-group"><label>Postal Code</label><input type="text" name="jointPresentPostalCode" placeholder="Postal Code"></div>
           </div>
-          <div class="form-fields two-col">
-            <div class="form-group">
-              <label>Street No/Village</label>
-              <input type="text" name="jointPermanentStreetVillage" placeholder="Street No/Village">
+          <!-- Permanent Address Joint (Right) -->
+          <div>
+            <h3 style="font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--primary); padding-bottom: 6px;">Permanent Address</h3>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="sameAsJointApplicantPresentCheckbox" name="sameAsJointApplicantPresentCheckbox" style="width: 16px; height: 16px; cursor: pointer;">
+                <span style="font-size: 0.82rem;">Same as Present Address</span>
+              </label>
             </div>
-            <div class="form-group">
-              <label>Post Office</label>
-              <input type="text" name="jointPermanentPostOffice" placeholder="Post Office">
-            </div>
-            <div class="form-group">
-              <label>PS/Upazila</label>
-              <input type="text" name="jointPermanentPsUpazila" placeholder="PS/Upazila">
-            </div>
-            <div class="form-group">
-              <label>District</label>
-              <input type="text" name="jointPermanentDistrict" placeholder="District">
-            </div>
-            <div class="form-group">
-              <label>Postal Code</label>
-              <input type="text" name="jointPermanentPostalCode" placeholder="Postal Code">
-            </div>
-          </div>
-          <!-- Same as Joint Applicant Present Address Checkbox -->
-          <div class="form-group" style="margin-top: 12px;">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-              <input type="checkbox" id="sameAsJointApplicantPresentCheckbox" name="sameAsJointApplicantPresentCheckbox" style="width: 18px; height: 18px; cursor: pointer;">
-              <span>Same as Joint Applicant Present Address</span>
-            </label>
+            <div class="form-group"><label>Street No/Village</label><input type="text" name="jointPermanentStreetVillage" placeholder="Street No/Village"></div>
+            <div class="form-group"><label>Post Office</label><input type="text" name="jointPermanentPostOffice" placeholder="Post Office"></div>
+            <div class="form-group"><label>PS/Upazila</label><input type="text" name="jointPermanentPsUpazila" placeholder="PS/Upazila"></div>
+            <div class="form-group"><label>District</label><input type="text" name="jointPermanentDistrict" placeholder="District"></div>
+            <div class="form-group"><label>Postal Code</label><input type="text" name="jointPermanentPostalCode" placeholder="Postal Code"></div>
           </div>
         </div>
       </div>
@@ -2293,7 +2227,6 @@ body::after {
           <option value="retail-overdraft">Retail Secured Overdraft Form</option>
           <option value="noc-form">NOC Form</option>
           <option value="application-form">Application</option>
-          <option value="branch-sanction-form">Branch Sanction</option>
           <option value="cib-inquiry-form">CIB Inquiry</option>
           <option value="charge-document">Charge Document</option>
           <option value="fund-transfer-request">Fund Transfer Request</option>
@@ -3603,6 +3536,9 @@ body::after {
   <div id="cashSecuredLoanContainer" style="display: none; max-width: 1000px; margin: 0 auto; text-transform: uppercase;">
     <div class="form-page" style="padding: 0; overflow: visible; position: relative; margin-bottom: 0; border-radius: 0; box-shadow: none;">
       <img src="Assets/Images/Cash  Secured Loan Application Form/RCSL Application Form Final_page-0001.jpg" style="width: 100%; height: auto; display: block;" alt="Cash Secured Loan Page 1">
+      <!-- Tenor and EMI Date overlays -->
+      <div class="overlay" data-field="cslTenor" style="position: absolute; top: 15%; left: 60%; font-size: 12px; font-weight: bold;"><span class="overlay-value" id="cslTenor"></span></div>
+      <div class="overlay" data-field="cslEmiDate" style="position: absolute; top: 18%; left: 60%; font-size: 12px; font-weight: bold;"><span class="overlay-value" id="cslEmiDate"></span></div>
     </div>
     <div class="form-page" style="padding: 0; overflow: visible; position: relative; margin-bottom: 0; border-radius: 0; box-shadow: none;">
       <img src="Assets/Images/Cash  Secured Loan Application Form/RCSL Application Form Final_page-0002.jpg" style="width: 100%; height: auto; display: block;" alt="Cash Secured Loan Page 2">
@@ -3755,7 +3691,6 @@ body::after {
       <option value="retail-overdraft">Retail Secured Overdraft Form</option>
       <option value="noc-form">NOC Form</option>
       <option value="application-form">Application</option>
-      <option value="branch-sanction-form">Branch Sanction</option>
       <option value="cib-inquiry-form">CIB Inquiry</option>
       <option value="charge-document">Charge Document</option>
       <option value="fund-transfer-request">Fund Transfer Request</option>
@@ -3808,8 +3743,7 @@ body::after {
     const personalInfoSection = document.getElementById('personal-info');
     const personalInfoJointSection = document.getElementById('personal-info-joint');
     const personalInfoTitle = document.getElementById('personalInfoTitle');
-    const presentAddressTitle = document.getElementById('presentAddressTitle');
-    const permanentAddressTitle = document.getElementById('permanentAddressTitle');
+    const addressFirstTitle = document.getElementById('addressFirstTitle');
     const jointAddressSections = document.getElementById('joint-address-sections');
     const FORM_STORAGE_KEY = 'retailSecuredOverdraftForm';
     const POSITIONS_STORAGE_KEY = 'overlayPositions';
@@ -3818,16 +3752,14 @@ body::after {
       if (value === 'joint') {
         personalInfoTitle.textContent = 'Personal Information - First Applicant';
         personalInfoJointSection.style.display = 'block';
-        presentAddressTitle.textContent = 'Present Address - First Applicant';
-        permanentAddressTitle.textContent = 'Permanent Address - First Applicant';
-        jointAddressSections.style.display = 'grid';
+        addressFirstTitle.textContent = 'Address - First Applicant';
+        jointAddressSections.style.display = 'block';
         // Update Form Type dropdowns for joint
         updateCibDropdownOptions(true);
       } else {
         personalInfoTitle.textContent = 'Personal Information';
         personalInfoJointSection.style.display = 'none';
-        presentAddressTitle.textContent = 'Present Address';
-        permanentAddressTitle.textContent = 'Permanent Address';
+        addressFirstTitle.textContent = 'Address';
         jointAddressSections.style.display = 'none';
         // Revert Form Type dropdowns
         updateCibDropdownOptions(false);
@@ -6238,6 +6170,12 @@ body::after {
       // Remove previous CSL seals
       cslPage1.querySelectorAll('.csl-verified-seal').forEach(el => el.remove());
 
+      // Tenor and EMI Date
+      const cslTenorEl = document.getElementById('cslTenor');
+      const cslEmiEl = document.getElementById('cslEmiDate');
+      if (cslTenorEl) cslTenorEl.textContent = document.querySelector('input[name="tenorMonths"]')?.value || '';
+      if (cslEmiEl) cslEmiEl.textContent = document.querySelector('input[name="emiDate"]')?.value || '';
+
       // Add 2nd applicant seal if joint
       if (ownership === 'joint' && jointFullName) {
         const seal2 = document.createElement('div');
@@ -6716,6 +6654,29 @@ body::after {
           if (professionGroup) professionGroup.style.display = '';
           if (designationGroup) designationGroup.style.display = '';
           if (monthlyIncomeGroup) monthlyIncomeGroup.style.display = '';
+          // Show passport expiry, hide tenor/emi
+          document.querySelectorAll('input[name="passportExpiryDate"]').forEach(el => { if (el.closest('.form-group')) el.closest('.form-group').style.display = ''; });
+          document.querySelectorAll('input[name="jointPassportExpiryDate"]').forEach(el => { if (el.closest('.form-group')) el.closest('.form-group').style.display = ''; });
+          document.getElementById('tenorGroup').style.display = 'none';
+          document.getElementById('emiDateGroup').style.display = 'none';
+        } else if (value === 'sanction-rcsl') {
+          // Same as sanction but hide passport expiry, show tenor/emi
+          if (sodAccountNoGroup) sodAccountNoGroup.style.display = 'none';
+          if (renewalTableGroup) renewalTableGroup.style.display = 'none';
+          if (customerNumberGroup) customerNumberGroup.style.display = '';
+          if (casaAccountGroup) casaAccountGroup.style.display = '';
+          if (chequeBookGroup) chequeBookGroup.style.display = '';
+          if (sourceRmGroup) sourceRmGroup.style.display = '';
+          if (rmMobileGroup) rmMobileGroup.style.display = '';
+          if (orgNameGroup) orgNameGroup.style.display = '';
+          if (professionGroup) professionGroup.style.display = '';
+          if (designationGroup) designationGroup.style.display = '';
+          if (monthlyIncomeGroup) monthlyIncomeGroup.style.display = '';
+          // Hide passport expiry, show tenor/emi
+          document.querySelectorAll('input[name="passportExpiryDate"]').forEach(el => { if (el.closest('.form-group')) el.closest('.form-group').style.display = 'none'; });
+          document.querySelectorAll('input[name="jointPassportExpiryDate"]').forEach(el => { if (el.closest('.form-group')) el.closest('.form-group').style.display = 'none'; });
+          document.getElementById('tenorGroup').style.display = '';
+          document.getElementById('emiDateGroup').style.display = '';
         } else if (value === 'renewal') {
           // Show SOD A/C No and Limit Details table
           if (sodAccountNoGroup) sodAccountNoGroup.style.display = '';
@@ -6730,6 +6691,11 @@ body::after {
           if (professionGroup) professionGroup.style.display = 'none';
           if (designationGroup) designationGroup.style.display = 'none';
           if (monthlyIncomeGroup) monthlyIncomeGroup.style.display = 'none';
+          // Show passport expiry, hide tenor/emi
+          document.querySelectorAll('input[name="passportExpiryDate"]').forEach(el => { if (el.closest('.form-group')) el.closest('.form-group').style.display = ''; });
+          document.querySelectorAll('input[name="jointPassportExpiryDate"]').forEach(el => { if (el.closest('.form-group')) el.closest('.form-group').style.display = ''; });
+          document.getElementById('tenorGroup').style.display = 'none';
+          document.getElementById('emiDateGroup').style.display = 'none';
         }
 
         // Show/hide Form Type dropdown options based on loan type
@@ -6741,16 +6707,25 @@ body::after {
           const retailOpt = select.querySelector('option[value="retail-overdraft"]');
           const nocOpt = select.querySelector('option[value="noc-form"]');
           const ftOpt = select.querySelector('option[value="fund-transfer-request"]');
+          const cslOpt = select.querySelector('option[value="cash-secured-loan"]');
           if (value === 'sanction') {
             if (renewalOpt) renewalOpt.style.display = 'none';
             if (retailOpt) retailOpt.style.display = '';
             if (nocOpt) nocOpt.style.display = '';
             if (ftOpt) ftOpt.style.display = '';
+            if (cslOpt) cslOpt.style.display = 'none';
+          } else if (value === 'sanction-rcsl') {
+            if (renewalOpt) renewalOpt.style.display = 'none';
+            if (retailOpt) retailOpt.style.display = 'none';
+            if (nocOpt) nocOpt.style.display = '';
+            if (ftOpt) ftOpt.style.display = '';
+            if (cslOpt) cslOpt.style.display = '';
           } else if (value === 'renewal') {
             if (renewalOpt) renewalOpt.style.display = '';
             if (retailOpt) retailOpt.style.display = 'none';
             if (nocOpt) nocOpt.style.display = 'none';
             if (ftOpt) ftOpt.style.display = 'none';
+            if (cslOpt) cslOpt.style.display = 'none';
           }
         });
       }

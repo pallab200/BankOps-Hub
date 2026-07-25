@@ -1022,7 +1022,7 @@
             background: rgba(255, 255, 255, 0.08);
             border-radius: 20px;
             overflow: hidden;
-            margin-top: 30px;
+            margin: 30px auto 0;
             animation: textFadeIn 0.6s ease-out 0.65s both;
             position: relative;
         }
@@ -1378,54 +1378,47 @@
                 try {
                     const os = require('os');
                     const userInfo = os.userInfo().username || '';
-                    // os.userInfo().username typically returns "domain\username" or just "username"
                     if (userInfo) {
                         username = userInfo;
+                        localStorage.setItem('pcUsername', username);
                     }
                 } catch (e) {
                     // Not available, continue to next method
                 }
             }
             
-            // Method 2: Try to fetch from a backend endpoint (if available)
+            // Method 2: Check localStorage for previously saved name
             if (username === 'User') {
-                fetch('/api/username')
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.username) {
-                            document.getElementById('welcomeUsername').textContent = data.username;
-                        }
-                    })
-                    .catch(() => {
-                        // No backend available, use extracted username
-                    });
-            }
-            
-            // Method 3: Extract from file path - get domain\username format
-            if (username === 'User') {
-                // Try to get from localStorage if previously stored
                 const storedUsername = localStorage.getItem('pcUsername');
                 if (storedUsername) {
-                    username = storedUsername;
-                } else {
-                    // Try to extract from window location or file path
-                    try {
-                        const path = window.location.pathname;
-                        // Look for pattern like Users\username or Users/username
-                        const match = path.match(/Users[\\\/]([^\\\/]+)/i);
-                        if (match && match[1]) {
-                            // Extract username and capitalize it
-                            let extractedUser = match[1];
-                            // If it looks like a domain\username format, keep it as is, otherwise capitalize
-                            if (!extractedUser.includes('\\') && !extractedUser.includes('@')) {
-                                extractedUser = extractedUser.charAt(0).toUpperCase() + extractedUser.slice(1);
-                            }
-                            username = extractedUser;
-                            localStorage.setItem('pcUsername', username);
+                    try { username = decodeURIComponent(storedUsername); } catch(e) { username = storedUsername; }
+                }
+            }
+
+            // Method 3: Extract from file path (works when opened locally)
+            if (username === 'User') {
+                try {
+                    const path = decodeURIComponent(window.location.pathname);
+                    const match = path.match(/Users[\\\/]([^\\\/]+)/i);
+                    if (match && match[1]) {
+                        let extractedUser = match[1];
+                        if (!extractedUser.includes('\\') && !extractedUser.includes('@')) {
+                            extractedUser = extractedUser.charAt(0).toUpperCase() + extractedUser.slice(1);
                         }
-                    } catch (e) {
-                        // Fallback to default
+                        username = extractedUser;
+                        localStorage.setItem('pcUsername', username);
                     }
+                } catch (e) {
+                    // Fallback
+                }
+            }
+
+            // Method 4: If still no name, prompt user (first visit on hosted site)
+            if (username === 'User') {
+                const promptedName = prompt('Welcome to BankOps Hub! Please enter your name:');
+                if (promptedName && promptedName.trim()) {
+                    username = promptedName.trim();
+                    localStorage.setItem('pcUsername', username);
                 }
             }
             

@@ -2302,13 +2302,11 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   z-index: 1002;
   opacity: 0;
   visibility: hidden;
-  pointer-events: none;
   transition: var(--transition-normal);
 }
 .slide-menu-backdrop.show {
   opacity: 1;
   visibility: visible;
-  pointer-events: auto;
 }
 
 .slide-menu {
@@ -3779,6 +3777,13 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
             <div class="section-header">
               <i class="fas fa-user-friends"></i>
               <h2>Beneficial Owner</h2>
+              <div style="display:flex; align-items:center; gap:8px; margin-left:auto; margin-right:12px;">
+                <label style="font-size:0.82rem; font-weight:600; color:var(--text-secondary); white-space:nowrap; margin:0;">Same as Nominee</label>
+                <select id="boSameAsNominee" style="padding:6px 10px; border:2px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.82rem; font-family:inherit; cursor:pointer;">
+                  <option value="no">No</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </div>
               <i class="fas fa-chevron-down section-toggle"></i>
             </div>
             <div class="form-fields" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
@@ -6579,15 +6584,9 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         displayValue = acctType.includes('current') ? 'Business' : 'Savings';
       }
 
-      // Special: nidOrBirth - prefer NID if present, otherwise use Birth Certificate Number
+      // Special: nidOrBirth - always show "Through Letter of Thanks"
       else if (field === 'nidOrBirth') {
-        const nidVal = data.nid && String(data.nid).trim();
-        const passportVal = data.passportNo && String(data.passportNo).trim();
-        const birthVal = data.birthCertNo && String(data.birthCertNo).trim();
-        if (nidVal) displayValue = 'Through National ID';
-        else if (passportVal) displayValue = 'Through Passport';
-        else if (birthVal) displayValue = 'Through Birth Certificate';
-        else displayValue = '';
+        displayValue = 'Through Letter of Thanks';
       }
 
       // If this overlay represents a checkbox bound to the form, render a tick when checked
@@ -7216,17 +7215,42 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   }
 
   // Auto-import JSON data from ucb_auto_import.js (loaded via <script> tag, works with file://)
+  // Falls back to sessionStorage/localStorage backup for Edge on file:// protocol
   function autoImportJSON() {
-    if (typeof window.UCB_AUTO_IMPORT_DATA === 'undefined') {
-      console.log('No ucb_auto_import.js found — skipping auto-import.');
-      return;
+    // 1. Try window global (set by <script src="ucb_auto_import.js">)
+    if (typeof window.UCB_AUTO_IMPORT_DATA !== 'undefined') {
+      try {
+        applyImportedJSON(window.UCB_AUTO_IMPORT_DATA);
+        console.log('Auto-imported data from ucb_auto_import.js (script tag)');
+        return;
+      } catch (err) {
+        console.error('Auto-import error (script tag)', err);
+      }
     }
+
+    // 2. Fallback: try sessionStorage backup (written by the new export format)
     try {
-      applyImportedJSON(window.UCB_AUTO_IMPORT_DATA);
-      console.log('Auto-imported data from ucb_auto_import.js');
-    } catch (err) {
-      console.error('Auto-import error', err);
-    }
+      const ssBackup = sessionStorage.getItem('UCB_AUTO_IMPORT_BACKUP');
+      if (ssBackup) {
+        const obj = JSON.parse(ssBackup);
+        applyImportedJSON(obj);
+        console.log('Auto-imported data from sessionStorage backup (Edge fallback)');
+        return;
+      }
+    } catch (e) {}
+
+    // 3. Fallback: try localStorage backup
+    try {
+      const lsBackup = localStorage.getItem('UCB_AUTO_IMPORT_BACKUP');
+      if (lsBackup) {
+        const obj = JSON.parse(lsBackup);
+        applyImportedJSON(obj);
+        console.log('Auto-imported data from localStorage backup (Edge fallback)');
+        return;
+      }
+    } catch (e) {}
+
+    console.log('No ucb_auto_import.js data found — skipping auto-import.');
   }
 
   function applyImportedJSON(obj) {
@@ -7823,6 +7847,32 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     setTimeout(() => { if (typeof computeOverallTotals === 'function') computeOverallTotals(); }, 50);
   }
 
+  // Beneficial Owner: copy nominee info (except address) when "Same as Nominee" = Yes
+  function handleBoSameAsNominee() {
+    if (!form) return;
+    const boSameAsNomineeSelect = document.getElementById('boSameAsNominee');
+    if (!boSameAsNomineeSelect) return;
+    const val = boSameAsNomineeSelect.value;
+    if (val === 'yes') {
+      // Copy nominee fields to beneficial owner fields (except address)
+      const nomineeName = form.elements['nomineeName'] ? form.elements['nomineeName'].value : '';
+      const nomineeDob = form.elements['nomineeDob'] ? form.elements['nomineeDob'].value : '';
+      const nomineeNid = form.elements['nomineeNid'] ? form.elements['nomineeNid'].value : '';
+      const nomineeMobile = form.elements['nomineeMobile'] ? form.elements['nomineeMobile'].value : '';
+      const nomineeRelation = form.elements['nomineeRelation'] ? form.elements['nomineeRelation'].value : '';
+
+      // Set Beneficial Owner fields from nominee data
+      if (form.elements['boNameEn']) form.elements['boNameEn'].value = nomineeName;
+      if (form.elements['boDob']) form.elements['boDob'].value = nomineeDob;
+      if (form.elements['boNid']) form.elements['boNid'].value = nomineeNid;
+      if (form.elements['boPhone']) form.elements['boPhone'].value = nomineeMobile;
+      // Relationship is not a direct BO field but we can note it if needed
+    }
+
+    updateOverlays();
+    setTimeout(() => { if (typeof computeOverallTotals === 'function') computeOverallTotals(); }, 50);
+  }
+
   // Show/hide joint applicant fields based on ownership
   function handleOwnershipChange() {
     const ownership = form.elements['accountOwnership'] ? form.elements['accountOwnership'].value : '';
@@ -7851,9 +7901,10 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   // Developer mode toggle — show/hide Import, Export, Information Input, Form Preview
   const devModeToggle = document.getElementById('devModeToggle');
   if (devModeToggle) {
-    // Always start with developer mode OFF on app open
+    // Always start with developer mode OFF
     devModeToggle.checked = false;
     document.body.classList.remove('developer-mode');
+    try { localStorage.setItem('UCB_DEV_MODE', 'false'); } catch (e) {}
     
     // Listen for toggle changes on the checkbox itself
     devModeToggle.addEventListener('change', function(e) {
@@ -7865,6 +7916,10 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         document.body.classList.remove('developer-mode');
         console.log('[DEV MODE] Developer mode OFF');
       }
+      try { 
+        localStorage.setItem('UCB_DEV_MODE', this.checked ? 'true' : 'false'); 
+        console.log('[DEV MODE] Saved state:', this.checked ? 'true' : 'false');
+      } catch (e) {}
     });
     
     // Make the slider clickable - clicking slider toggles the checkbox
@@ -7913,6 +7968,12 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   if (beneficialOwnersSelect) {
     beneficialOwnersSelect.addEventListener('change', handleBeneficialOwnerToggle);
     handleBeneficialOwnerToggle();
+  }
+
+  // Beneficial Owner "Same as Nominee" dropdown
+  const boSameAsNomineeSelect = document.getElementById('boSameAsNominee');
+  if (boSameAsNomineeSelect) {
+    boSameAsNomineeSelect.addEventListener('change', handleBoSameAsNominee);
   }
 
   // Form type (Conventional / Others) change
@@ -8232,7 +8293,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     transectionProfileField.addEventListener('input', syncTransectionProfile);
     transectionProfileField.addEventListener('change', syncTransectionProfile);
     // propagate on load
-    try { syncTransectionProfile(); } catch (e) { console.error('[INIT] syncTransectionProfile error:', e); }
+    syncTransectionProfile();
   }
 
   // Compute and populate the Total Probable Deposit/Withdrawal summary fields
@@ -8404,7 +8465,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   });
 
   // Initialize
-  try { initializeOverlays(); } catch (e) { console.error('[INIT] initializeOverlays error:', e); }
+  initializeOverlays();
   loadFormData();
   // If loading from storage changed the main branch field, keep slide input in sync
   try {
@@ -8424,7 +8485,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   try { handleOwnershipChange(); } catch (e) {}
   try { handleNomineeSameAddress(); } catch (e) {}
   try { handleGuardianSameAddress(); } catch (e) {}
-  try { updateOverlays(); } catch (e) { console.error('[INIT] updateOverlays error:', e); }
+  updateOverlays();
 
   // Set initial nav visibility: show the button to switch to the other page
   try { switchPage('info'); } catch (e) { /* ignore if switchPage not ready */ }
@@ -8945,31 +9006,6 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   }
 
 })();
-  </script>
-  <script>
-  // Fallback: ensure slide menu toggle works even if main script encounters errors
-  (function() {
-    try {
-      var toggle = document.getElementById('slideMenuToggle');
-      var menu = document.getElementById('slideMenu');
-      var backdrop = document.getElementById('slideMenuBackdrop');
-      var closeBtn = document.getElementById('slideMenuClose');
-      if (toggle && menu && backdrop) {
-        toggle.addEventListener('click', function() {
-          menu.classList.add('open');
-          backdrop.classList.add('show');
-        });
-        if (closeBtn) closeBtn.addEventListener('click', function() {
-          menu.classList.remove('open');
-          backdrop.classList.remove('show');
-        });
-        backdrop.addEventListener('click', function() {
-          menu.classList.remove('open');
-          backdrop.classList.remove('show');
-        });
-      }
-    } catch(e) { console.error('Slide menu fallback error:', e); }
-  })();
   </script>
   <script>
     (function() {

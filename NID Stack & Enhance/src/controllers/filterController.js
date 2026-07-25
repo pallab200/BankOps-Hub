@@ -88,11 +88,12 @@ export function createFilterController(options = {}) {
    * Read the UNFILTERED adjusted base as {data, width, height}, or null when no
    * Adjusted_Image exists. Accepts either an ImageData-like object or a
    * canvas-like element as the base buffer.
+   * Falls back to combinedImage if adjustedBase is not available.
    * @returns {{data: ArrayLike<number>, width: number, height: number}|null}
    */
   function readBasePixels() {
     const state = appState.getState();
-    const base = state ? state.adjustedBase : null;
+    const base = state ? (state.adjustedBase || state.combinedImage) : null;
     if (!base) return null;
 
     // ImageData-like: { data, width, height }.

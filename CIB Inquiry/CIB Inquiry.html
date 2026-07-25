@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../css/unified-theme.css">
   <title>CIB Inquiry</title>
-  <link rel="stylesheet" href="assets/font-awesome.min.css">
+  <link rel="stylesheet" href="Assets/font-awesome.min.css">
   <style>
     :root {
       --primary: #6366f1;
@@ -76,6 +77,7 @@
       right: -100px;
       left: auto;
       background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+      animation: floatBg 20s ease-in-out infinite;
     }
 
     body::after {
@@ -85,6 +87,14 @@
       right: auto;
       bottom: -150px;
       background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(168, 85, 247, 0.08));
+      animation: floatBg 25s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatBg {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(30px, -30px) scale(1.05); }
+      50% { transform: translate(-20px, 20px) scale(0.95); }
+      75% { transform: translate(20px, 30px) scale(1.02); }
     }
 
     @keyframes sectionShimmer {
@@ -130,7 +140,38 @@
       background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(79, 70, 229, 0.98) 50%, rgba(139, 92, 246, 0.95) 100%);
       color: #fff;
       backdrop-filter: blur(18px);
-      box-shadow: 0 4px 30px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 4px 30px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      animation: fadeInDown 0.5s ease-out;
+      overflow: hidden;
+    }
+
+    .topbar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      background-size: 200% 100%;
+      animation: sectionShimmer 3s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
     }
 
     .brand {
@@ -151,6 +192,7 @@
       font-weight: 800;
       letter-spacing: 0.08em;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      animation: float 3s ease-in-out infinite;
     }
 
     .brand-copy {
