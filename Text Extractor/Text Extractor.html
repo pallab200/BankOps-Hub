@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="../css/fontawesome.min.css">
     <link rel="stylesheet" href="../css/fontawesome-fix.css">
     <link rel="stylesheet" href="../css/poppins.css">
+    <!-- Shared config: auto-seeds OpenRouter API key into localStorage -->
+    <script src="../config.js"></script>
     <!-- Tesseract.js for Image OCR - Local source -->
     <script src="../lib/tesseract/tesseract.min.js"></script>
     <!-- PDF.js for PDF text extraction - Local source -->
@@ -600,6 +602,46 @@
     </header>
 
     <div class="container">
+        <!-- Settings Card -->
+        <div class="card" id="settingsCard" style="border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleSettings()">
+                <h3 class="section-title" style="margin-bottom: 0;">
+                    <i class="fas fa-cog"></i> AI Configuration Settings
+                    <span id="apiKeyBadge" style="display:none; margin-left:10px; font-size:0.72rem; font-weight:600; background:#d1fae5; color:#065f46; padding:2px 10px; border-radius:99px; vertical-align:middle;">✓ API Key Set</span>
+                </h3>
+                <i id="settingsToggleIcon" class="fas fa-chevron-down" style="color: var(--text-secondary); transition: transform 0.3s;"></i>
+            </div>
+            <div id="settingsContent" style="display: none; margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                <div class="row">
+                    <div style="flex: 1; min-width: 250px; display: flex; flex-direction: column;">
+                        <label for="apiKeyInput">OpenRouter API Key</label>
+                        <div style="display: flex; width: 100%;">
+                            <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..." style="margin-bottom: 0; width: 100%;">
+                        </div>
+                        <small style="margin-top: 6px; display: block; color: var(--text-secondary);">Enter your OpenRouter API Key. This will be stored locally in your browser.</small>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 16px;">
+                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column;">
+                        <label for="primaryModelInput">Primary AI Model</label>
+                        <input type="text" id="primaryModelInput" placeholder="google/gemini-2.5-flash" value="google/gemini-2.5-flash" style="margin-bottom: 0;">
+                    </div>
+                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column;">
+                        <label for="fallbackModelInput">Fallback AI Model</label>
+                        <input type="text" id="fallbackModelInput" placeholder="openrouter/free" value="openrouter/free" style="margin-bottom: 0;">
+                    </div>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button class="secondary-btn" onclick="resetSettingsDefaults()" style="background: white; color: var(--text-secondary); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 10px; font-weight: 600;">
+                        <i class="fas fa-undo"></i> Reset to Defaults
+                    </button>
+                    <button class="secondary-btn" id="saveSettingsBtn" onclick="saveSettings()" style="background: var(--primary); color: white; border: none; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); transition: all 0.3s ease; padding: 10px 20px; border-radius: 10px; font-weight: 600;">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Upload Section -->
         <div class="card">
             <h3 class="section-title"><i class="fas fa-upload"></i> Upload File</h3>
@@ -635,10 +677,16 @@
                 <span id="modeInfoText">Extract text from images or PDFs and display it below.</span>
             </div>
 
-            <button class="primary-btn" id="ocrBtn" onclick="runOCR()">
-                <i class="fas fa-search"></i>
-                <span id="btnText">Extract Text</span>
-            </button>
+            <div class="action-row" style="margin-top: 20px;">
+                <button class="primary-btn" id="ocrBtn" onclick="runOCR()">
+                    <i class="fas fa-search"></i>
+                    <span id="btnText">Extract Text</span>
+                </button>
+                <button class="primary-btn" id="aiOcrBtn" onclick="runAIOCR()" style="background: linear-gradient(135deg, var(--accent) 0%, #be185d 100%); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);">
+                    <i class="fas fa-robot"></i>
+                    <span id="aiBtnText">AI Extract</span>
+                </button>
+            </div>
         </div>
 
         <!-- Status Section -->
@@ -703,6 +751,8 @@
         const output = document.getElementById('output');
         const ocrBtn = document.getElementById('ocrBtn');
         const btnText = document.getElementById('btnText');
+        const aiOcrBtn = document.getElementById('aiOcrBtn');
+        const aiBtnText = document.getElementById('aiBtnText');
 
         let currentFileType = null; // 'image' or 'pdf'
         let currentMode = 'text'; // 'text' or 'word'
@@ -1170,6 +1220,7 @@ ${paragraphs}
             resultsCard.style.display = 'block';
             output.value = '';
             ocrBtn.disabled = true;
+            if (aiOcrBtn) aiOcrBtn.disabled = true;
             btnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
             try {
@@ -1231,6 +1282,7 @@ ${paragraphs}
                 console.error(err);
             } finally {
                 ocrBtn.disabled = false;
+                if (aiOcrBtn) aiOcrBtn.disabled = false;
                 if (currentMode === 'word') {
                     btnText.innerHTML = 'Convert to Word';
                     document.querySelector('#ocrBtn i').className = 'fas fa-file-word';
@@ -1270,6 +1322,382 @@ ${paragraphs}
             currentFileType = null;
             lastExtractedText = '';
             document.getElementById('downloadWordBtn').style.display = 'none';
+        }
+
+        // --- AI OCR Functions ---
+
+        // Load settings on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('OPENROUTER_API_KEY');
+            let savedPrimary = localStorage.getItem('OPENROUTER_PRIMARY_MODEL');
+            const savedFallback = localStorage.getItem('OPENROUTER_FALLBACK_MODEL');
+            
+            // Migrate from old nemotron-nano free model to gemini-2.5-flash
+            if (savedPrimary === 'nvidia/nemotron-nano-12b-v2-vl:free') {
+                savedPrimary = 'google/gemini-2.5-flash';
+                localStorage.setItem('OPENROUTER_PRIMARY_MODEL', savedPrimary);
+            }
+            
+            if (savedKey) {
+                document.getElementById('apiKeyInput').value = savedKey;
+                // Show the "API Key Set" badge on the collapsed header
+                const badge = document.getElementById('apiKeyBadge');
+                if (badge) badge.style.display = 'inline-block';
+            }
+            document.getElementById('primaryModelInput').value = savedPrimary || 'google/gemini-2.5-flash';
+            if (savedFallback) {
+                document.getElementById('fallbackModelInput').value = savedFallback;
+            }
+        });
+
+        function toggleSettings() {
+            const content = document.getElementById('settingsContent');
+            const icon = document.getElementById('settingsToggleIcon');
+            const card = document.getElementById('settingsCard');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(180deg)';
+                card.style.borderColor = 'var(--primary)';
+            } else {
+                content.style.display = 'none';
+                icon.style.transform = 'rotate(0deg)';
+                card.style.borderColor = 'rgba(255, 255, 255, 0.6)';
+            }
+        }
+        
+        function openSettings() {
+            const content = document.getElementById('settingsContent');
+            const icon = document.getElementById('settingsToggleIcon');
+            const card = document.getElementById('settingsCard');
+            
+            content.style.display = 'block';
+            icon.style.transform = 'rotate(180deg)';
+            card.style.borderColor = 'var(--primary)';
+        }
+
+
+
+        function saveSettings() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            const primaryModel = document.getElementById('primaryModelInput').value.trim() || 'google/gemini-2.5-flash';
+            const fallbackModel = document.getElementById('fallbackModelInput').value.trim() || 'openrouter/free';
+            
+            localStorage.setItem('OPENROUTER_API_KEY', apiKey);
+            localStorage.setItem('OPENROUTER_PRIMARY_MODEL', primaryModel);
+            localStorage.setItem('OPENROUTER_FALLBACK_MODEL', fallbackModel);
+
+            // Update the badge
+            const badge = document.getElementById('apiKeyBadge');
+            if (badge) badge.style.display = apiKey ? 'inline-block' : 'none';
+            
+            const saveBtn = document.getElementById('saveSettingsBtn');
+            const originalHTML = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+            saveBtn.style.background = 'var(--success)';
+            
+            setTimeout(() => {
+                saveBtn.innerHTML = originalHTML;
+                saveBtn.style.background = '';
+            }, 2000);
+        }
+
+        function resetSettingsDefaults() {
+            document.getElementById('primaryModelInput').value = 'google/gemini-2.5-flash';
+            document.getElementById('fallbackModelInput').value = 'openrouter/free';
+            saveSettings();
+        }
+
+        function fileToDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (err) => reject(new Error('Failed to read image file'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function resizeImage(base64Str, maxWidth = 1200, maxHeight = 1200) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth || height > maxHeight) {
+                        if (width > height) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        } else {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    resolve(canvas.toDataURL('image/jpeg', 0.8));
+                };
+                img.onerror = () => {
+                    resolve(base64Str);
+                };
+                img.src = base64Str;
+            });
+        }
+
+        async function callOpenRouterAPI(apiKey, modelId, base64Image, timeoutMs = 35000) {
+            const prompt = `You are a high-accuracy OCR engine.
+
+Extract all visible text from the supplied document.
+
+Rules:
+* Preserve the original text.
+* Support Bangla and English.
+* Preserve mixed Bangla-English text.
+* Do not translate.
+* Do not summarize.
+* Do not rewrite.
+* Do not correct spelling.
+* Preserve numbers exactly.
+* Preserve names exactly.
+* Preserve dates and amounts exactly.
+* Preserve line breaks where possible.
+* Preserve tables where possible.
+* Never invent missing text.
+* Never guess unreadable characters.
+
+If something cannot be read confidently, write [unclear].
+
+Return only the extracted text.`;
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs); // Custom timeout
+
+            try {
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: modelId,
+                        messages: [
+                            {
+                                role: "user",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: prompt
+                                    },
+                                    {
+                                        type: "image_url",
+                                        image_url: {
+                                            url: base64Image
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        temperature: 0,
+                        max_tokens: 8192 // Expanded output tokens limit, falls back to free model if credits are insufficient
+                    }),
+                    signal: controller.signal
+                });
+
+                if (!response.ok) {
+                    let errorData;
+                    try {
+                        errorData = await response.json();
+                    } catch (e) {}
+                    const status = response.status;
+                    const message = errorData?.error?.message || response.statusText || 'API error';
+                    throw { status, message };
+                }
+
+                const data = await response.json();
+                if (data.error) {
+                    throw { status: data.error.code || 500, message: data.error.message };
+                }
+
+                const content = data.choices?.[0]?.message?.content;
+                if (!content) {
+                    throw new Error("No text returned from the AI model.");
+                }
+
+                return content;
+            } finally {
+                clearTimeout(timeoutId);
+            }
+        }
+
+        async function runAIOtherModel(apiKey, primaryModel, fallbackModel, base64Image) {
+            try {
+                updateStatus(`AI is extracting text (using ${primaryModel})...`, 'processing');
+                // 60 seconds timeout for primary model to allow for slow queues
+                const text = await callOpenRouterAPI(apiKey, primaryModel, base64Image, 60000);
+                return { text, modelUsed: primaryModel };
+            } catch (primaryErr) {
+                console.warn("Primary model failed, attempting fallback:", primaryErr);
+                
+                // If it is a clear authentication/authorization error, do not retry.
+                // If it is a timeout (AbortError) or network failure, we DO retry with the fallback model.
+                if (primaryErr.status === 401 || primaryErr.status === 403) {
+                    throw primaryErr;
+                }
+
+                try {
+                    updateStatus(`Primary model failed. Retrying with fallback model (${fallbackModel})...`, 'processing');
+                    // 60 seconds timeout for fallback model
+                    const text = await callOpenRouterAPI(apiKey, fallbackModel, base64Image, 60000);
+                    return { text, modelUsed: fallbackModel };
+                } catch (fallbackErr) {
+                    console.error("Fallback model also failed:", fallbackErr);
+                    throw fallbackErr;
+                }
+            }
+        }
+
+        async function runAIOCR() {
+            const fileInput = document.getElementById('imageInput');
+
+            if (!fileInput.files.length) {
+                alert("Please select a file first.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const apiKey = (localStorage.getItem('OPENROUTER_API_KEY') || '').trim();
+            const primaryModel = (localStorage.getItem('OPENROUTER_PRIMARY_MODEL') || 'google/gemini-2.5-flash').trim();
+            const fallbackModel = (localStorage.getItem('OPENROUTER_FALLBACK_MODEL') || 'openrouter/free').trim();
+
+            if (!apiKey) {
+                updateStatus('OpenRouter API key is not configured.', 'error');
+                openSettings();
+                return;
+            }
+
+            // Show status and disable buttons
+            updateStatus('AI is extracting text...', 'processing');
+            progressWrapper.classList.add('active');
+            progressFill.style.width = '0%';
+            resultsCard.style.display = 'block';
+            output.value = '';
+            ocrBtn.disabled = true;
+            if (aiOcrBtn) {
+                aiOcrBtn.disabled = true;
+                const icon = aiOcrBtn.querySelector('i');
+                if (icon) icon.className = 'fas fa-spinner fa-spin';
+            }
+            if (aiBtnText) aiBtnText.textContent = 'Processing...';
+
+            try {
+                let extractedText = '';
+                let lastModelUsed = primaryModel;
+
+                if (currentFileType === 'pdf') {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    const totalPages = pdf.numPages;
+
+                    for (let i = 1; i <= totalPages; i++) {
+                        updateStatus(`Rendering page ${i}/${totalPages} for AI Extract...`, 'processing');
+                        const progress = Math.round(((i - 1) / totalPages) * 100);
+                        progressFill.style.width = progress + '%';
+
+                        const page = await pdf.getPage(i);
+                        const viewport = page.getViewport({ scale: 3.0 });
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        await page.render({ canvasContext: context, viewport: viewport }).promise;
+                        
+                        const base64Image = canvas.toDataURL('image/jpeg', 0.85);
+
+                        updateStatus(`Compressing page ${i}/${totalPages}...`, 'processing');
+                        const compressedImage = await resizeImage(base64Image);
+
+                        updateStatus(`AI is extracting page ${i}/${totalPages}...`, 'processing');
+                        const result = await runAIOtherModel(apiKey, primaryModel, fallbackModel, compressedImage);
+                        extractedText += result.text + '\n\n';
+                        lastModelUsed = result.modelUsed;
+                    }
+                    extractedText = extractedText.trim();
+                } else {
+                    // Image files
+                    updateStatus('Reading image file...', 'processing');
+                    progressFill.style.width = '20%';
+                    const base64Image = await fileToDataURL(file);
+                    
+                    updateStatus('Compressing image for AI...', 'processing');
+                    progressFill.style.width = '40%';
+                    const compressedImage = await resizeImage(base64Image);
+                    
+                    progressFill.style.width = '60%';
+                    const result = await runAIOtherModel(apiKey, primaryModel, fallbackModel, compressedImage);
+                    extractedText = result.text;
+                    lastModelUsed = result.modelUsed;
+                }
+
+                output.value = extractedText;
+                lastExtractedText = extractedText;
+                progressFill.style.width = '100%';
+
+                if (currentMode === 'word') {
+                    updateStatus('AI Extraction Complete! Generating Word document...', 'processing');
+                    const baseName = file.name.replace(/\.[^/.]+$/, '');
+                    const blob = generateWordBlob(extractedText, baseName);
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = baseName + '.doc';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    updateStatus(`Word document downloaded successfully! (AI Model: ${lastModelUsed})`, 'success');
+                    document.getElementById('downloadWordBtn').style.display = 'inline-flex';
+                } else {
+                    updateStatus(`AI extraction completed. (Model: ${lastModelUsed})`, 'success');
+                    document.getElementById('downloadWordBtn').style.display = 'none';
+                }
+                progressWrapper.classList.remove('active');
+            } catch (err) {
+                console.error("AI Extraction Error:", err);
+                
+                let errorMsg = 'AI extraction failed. You can continue using the standard Text Extractor.';
+                if (err) {
+                    if (err.name === 'AbortError') {
+                        errorMsg = 'AI extraction timed out. Please try again or check your internet connection.';
+                    } else if (err.status === 401 || err.status === 403) {
+                        errorMsg = 'Invalid API key. Please check your OpenRouter API key settings.';
+                    } else if (err.status === 429) {
+                        errorMsg = 'Free AI model is currently rate-limited. Please try again later.';
+                    } else if (err.name === 'TypeError' || (err.message && (err.message.includes('Failed to fetch') || err.message.includes('network')))) {
+                        errorMsg = 'Unable to connect to AI service. You can still use the standard Text Extractor.';
+                    } else if (err.message) {
+                        errorMsg = `AI extraction failed: ${err.message}. You can continue using the standard Text Extractor.`;
+                    }
+                }
+                
+                updateStatus(errorMsg, 'error');
+                progressWrapper.classList.remove('active');
+            } finally {
+                ocrBtn.disabled = false;
+                if (aiOcrBtn) {
+                    aiOcrBtn.disabled = false;
+                    const icon = aiOcrBtn.querySelector('i');
+                    if (icon) icon.className = 'fas fa-robot';
+                }
+                if (aiBtnText) aiBtnText.textContent = 'AI Extract';
+            }
         }
     </script>
 </body>
