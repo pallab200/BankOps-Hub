@@ -5031,33 +5031,71 @@
             return null;
         }
 
-        function chatExtractPrincipalAmount(text) {
-            const explicitAmount = chatExtractNumberByPatterns(text, [
-                /(?:principal|deposit(?:\s+amount)?|investment|মূলধন|আসল|জমা(?:র)?\s+পরিমাণ)\s*(?:=|:)?\s*(?:tk|bdt|taka|টাকা)?\s*([0-9][0-9,]*(?:\.\d+)?)/i,
-                /\bp\s*=\s*([0-9][0-9,]*(?:\.\d+)?)/i,
+        function chatExpandNumberWords(text) {
+            if (!text) return '';
+            let result = text;
+            result = result.replace(/([0-9]+(?:\.[0-9]+)?)\s*(?:crores?|কোটি)\b/gi, (match, val) => String(Number(val) * 10000000));
+            result = result.replace(/([0-9]+(?:\.[0-9]+)?)\s*(?:lakhs?|lacs?|লক্ষ|লাখ)\b/gi, (match, val) => String(Number(val) * 100000));
+            result = result.replace(/([0-9]+(?:\.[0-9]+)?)\s*(?:thousands?|হাজার)\b/gi, (match, val) => String(Number(val) * 1000));
+            result = result.replace(/\b([0-9]+(?:\.[0-9]+)?)\s*[kK]\b/g, (match, val) => String(Number(val) * 1000));
+            result = result.replace(/\b([0-9]+(?:\.[0-9]+)?)\s*[mM]\b/g, (match, val) => String(Number(val) * 1000000));
+            return result;
+        }
+
+        function chatExtractPrincipalAmount(text, isQuery = false) {
+            const expanded = chatExpandNumberWords(text);
+            const patterns = [
+                /(?:principal|deposit(?:\s+amount)?|investment|মূলধন|আসল|জমা(?:র)?\s+পরিমাণ)\s*(?:=|:)?\s*(?:tk|bdt|taka|টাকা)?\s*([0-9][0-9,]*(?:\.\d+)?)(?!\s*(?:days?|day|months?|month|years?|year|দিন|মাস|বছর|%|percent|p\.a\.|per\s+annum))\b/i,
+                /\bp\s*=\s*([0-9][0-9,]*(?:\.\d+)?)(?!\s*(?:days?|day|months?|month|years?|year|দিন|মাস|বছর|%|percent|p\.a\.|per\s+annum))\b/i,
                 /(?:i\s*=\s*p\s*[×x*]\s*r\s*[×x*]\s*t\s*=\s*)([0-9][0-9,]*(?:\.\d+)?)(?=\s*[×x*])/i,
                 /(?:p\s*[×x*]\s*r\s*[×x*]\s*t\s*=\s*)([0-9][0-9,]*(?:\.\d+)?)(?=\s*[×x*])/i,
                 /(?:a\s*=\s*p\s*\+\s*i\s*=\s*)([0-9][0-9,]*(?:\.\d+)?)(?=\s*\+)/i,
-                /(?:tk|bdt|taka|টাকা)\s*([0-9][0-9,]*(?:\.\d+)?)/i,
+                /(?:tk|bdt|taka|টাকা)\s*([0-9][0-9,]*(?:\.\d+)?)(?!\s*(?:days?|day|months?|month|years?|year|দিন|মাস|বছর|%|percent|p\.a\.|per\s+annum))\b/i,
                 /([0-9][0-9,]*(?:\.\d+)?)\s*(?:tk|bdt|taka|টাকা)\b/i
-            ]);
+            ];
 
-            if (explicitAmount !== null) {
-                return explicitAmount;
+            for (const pattern of patterns) {
+                const regexWithGroup = new RegExp(pattern.source, pattern.flags + 'g');
+                let match;
+                while ((match = regexWithGroup.exec(expanded)) !== null) {
+                    if (match[1] == null) continue;
+                    
+                    const parsed = chatParseLooseNumber(match[1]);
+                    if (parsed === null) continue;
+                    
+                    const startIdx = match.index;
+                    const before = expanded.slice(Math.max(0, startIdx - 30), startIdx).toLowerCase();
+                    const after = expanded.slice(regexWithGroup.lastIndex, regexWithGroup.lastIndex + 30).toLowerCase();
+                    
+                    if (/(?:below|above|limit|minimum|maximum|up\s*to|upto|over|under|less\s+than|more\s+than|greater\s+than|at\s+least|কম|বেশি|কমপক্ষে|ঊর্ধ্ব|নিম্ন|সীমা)/i.test(before)) {
+                        continue;
+                    }
+                    
+                    if (/(?:but\s+below|but\s+less\s+than|to\b|(?:and|&)\s+above|(?:and|&)\s+below)/i.test(after)) {
+                        continue;
+                    }
+                    
+                    return parsed;
+                }
+            }
+
+            if (!isQuery) {
+                return null;
             }
 
             const numberRegex = /[0-9][0-9,]*(?:\.\d+)?/g;
             let match;
-            while ((match = numberRegex.exec(text))) {
+            while ((match = numberRegex.exec(expanded))) {
                 const parsed = chatParseLooseNumber(match[0]);
                 if (parsed === null || parsed < 1000) continue;
 
-                const before = text.slice(Math.max(0, match.index - 24), match.index).toLowerCase();
-                const after = text.slice(numberRegex.lastIndex, numberRegex.lastIndex + 24).toLowerCase();
+                const before = expanded.slice(Math.max(0, match.index - 24), match.index).toLowerCase();
+                const after = expanded.slice(numberRegex.lastIndex, numberRegex.lastIndex + 24).toLowerCase();
 
                 if (after.trim().startsWith('%')) continue;
                 if (/^\s*(?:days?|day|months?|month|years?|year|দিন|মাস|বছর)\b/.test(after)) continue;
                 if (/(?:interest|rate|maturity|tax|profit|net|emi|loan|installment)/.test(before)) continue;
+                if (/(?:below|above|limit|minimum|maximum|up\s*to|upto|over|under|less\s+than|more\s+than|greater\s+than|at\s+least|কম|বেশি|কমপক্ষে|ঊর্ধ্ব|নিম্ন|সীমা)/i.test(before)) continue;
 
                 return parsed;
             }
@@ -5066,11 +5104,20 @@
         }
 
         function chatExtractRatePercent(text) {
-            return chatExtractNumberByPatterns(text, [
+            const percentMatch = text.match(/([0-9][0-9,]*(?:\.\d+)?)\s*%/i);
+            if (percentMatch) {
+                const parsed = chatParseLooseNumber(percentMatch[1]);
+                if (parsed !== null) return { rate: parsed, isPercent: true };
+            }
+            
+            const rateMatch = chatExtractNumberByPatterns(text, [
                 /(?:interest\s*rate|annual\s*rate|profit\s*rate|rate|সুদের হার|মুনাফার হার|হার)\s*(?:=|:)?\s*([0-9][0-9,]*(?:\.\d+)?)/i,
-                /\br\s*=\s*([0-9][0-9,]*(?:\.\d+)?)/i,
-                /([0-9][0-9,]*(?:\.\d+)?)\s*%/i
+                /\br\s*=\s*([0-9][0-9,]*(?:\.\d+)?)/i
             ]);
+            if (rateMatch !== null) {
+                return { rate: rateMatch, isPercent: false };
+            }
+            return null;
         }
 
         function chatExtractTenorDays(text) {
@@ -5182,13 +5229,15 @@
                 return null;
             }
 
-            const principal = chatExtractPrincipalAmount(normalizedQuestion) ?? chatExtractPrincipalAmount(normalizedContext);
-            let ratePercent = chatExtractRatePercent(normalizedQuestion);
-            if (ratePercent === null) {
-                ratePercent = chatExtractRatePercent(normalizedContext);
-            }
-            if (ratePercent !== null && ratePercent > 0 && ratePercent <= 1 && !/%/.test(normalizedQuestion)) {
-                ratePercent *= 100;
+            const principal = chatExtractPrincipalAmount(normalizedQuestion, true) ?? chatExtractPrincipalAmount(normalizedContext, false);
+            
+            const rateInfo = chatExtractRatePercent(normalizedQuestion) ?? chatExtractRatePercent(normalizedContext);
+            let ratePercent = null;
+            if (rateInfo) {
+                ratePercent = rateInfo.rate;
+                if (!rateInfo.isPercent && ratePercent > 0 && ratePercent <= 0.2) {
+                    ratePercent *= 100;
+                }
             }
 
             const tenor = chatExtractTenorDays(normalizedQuestion) ?? chatExtractTenorDays(normalizedContext);
