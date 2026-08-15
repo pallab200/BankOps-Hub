@@ -1939,8 +1939,39 @@
             }
             
             /* Hide non-essential elements in print */
-            #cash-calculator-page, #cash-receive-page, #vault-page, .sidebar, #cash-flow-page, #atm-input-page {
+            #cash-calculator-page, #cash-receive-page, #vault-page, .sidebar, #cash-flow-page, #atm-input-page, #electricity-bill-page {
                 display: none !important;
+            }
+            
+            /* Remove all spacing from ATM wrapper so atm-output-page starts at the top */
+            #atm-replenishment-page {
+                padding: 0 !important;
+                margin: 0 !important;
+                display: block !important;
+                flex: none !important;
+            }
+            #atm-output-page {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+                padding-left: 0.4in !important;
+                padding-right: 0.4in !important;
+            }
+            
+            /* Remove layout spacing from parent wrappers in print */
+            #main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+                gap: 0 !important;
+                overflow: visible !important;
+                display: block !important;
+            }
+            #content-area {
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                overflow: visible !important;
+                display: block !important;
             }
             
             /* Header print styles */
@@ -1967,11 +1998,18 @@
             }
             
             /* Show only the specific output container being printed */
-            #atm-output-page, #cash-calculator-print-output {
+            #atm-output-page.printing-active, #cash-calculator-print-output.printing-active {
                 display: block !important;
                 visibility: visible;
                 position: static; /* Ensure it stays in the normal flow for printing */
                 padding: 0;
+            }
+            /* Hide containers that are NOT actively printing */
+            #atm-output-page:not(.printing-active) {
+                display: none !important;
+            }
+            #cash-calculator-print-output:not(.printing-active) {
+                display: none !important;
             }
 
             /* ATM specific print styles for size and layout */
@@ -3291,9 +3329,8 @@
                 display: none !important;
             }
             
-            /* Show the report view */
+            /* Show the report view only when body has preview-active or it is explicitly being printed */
             #pagedReportView {
-                display: block !important;
                 width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
@@ -3380,7 +3417,15 @@
                     position: static !important;
                     box-shadow: none !important;
                     margin: 0 !important;
+                }
+                #cash-calculator-print-output {
                     padding: 0 !important;
+                }
+                #atm-output-page {
+                    padding-left: 0.4in !important;
+                    padding-right: 0.4in !important;
+                    padding-top: 0 !important;
+                    padding-bottom: 0 !important;
                 }
             }
         </style>
@@ -3534,9 +3579,9 @@
                     .amount-glow { animation: amountGlow 620ms ease forwards; }
                     /* Popup drag & resize styles */
                     /* overlay scrolls, popup sits near top and is narrow/tall like mobile card */
-                    .calc-popup-overlay { display: none; position: fixed; inset: 0; background: rgba(11,14,20,0.18); align-items: flex-start; justify-content: center; padding-top: 36px; overflow: auto; z-index: 1200; }
+                    .calc-popup-overlay { display: none; position: fixed; inset: 0; background: transparent; align-items: flex-start; justify-content: center; padding-top: 36px; overflow: auto; z-index: 1200; pointer-events: none; }
                     .calc-popup-overlay.active { display: flex; }
-                    .calc-popup { background: #fff; border-radius: 10px; box-shadow: 0 18px 40px -18px rgba(2,6,23,0.6); width: 320px; height: calc(100vh - 96px); max-width: calc(100% - 40px); max-height: calc(100vh - 56px); position: relative; overflow: visible; z-index: 1300; margin: 0 auto; }
+                    .calc-popup { background: rgba(255,255,255,0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 10px; box-shadow: 0 18px 40px -18px rgba(2,6,23,0.3); width: 320px; height: calc(100vh - 96px); max-width: calc(100% - 40px); max-height: calc(100vh - 56px); position: relative; overflow: visible; z-index: 1300; margin: 0 auto; pointer-events: auto; }
                     .calc-popup .popup-header { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid rgba(0,0,0,0.06); cursor: move; }
                     .calc-popup .calc-popup-close { background:transparent; border:none; font-size:16px; padding:6px 8px; cursor:pointer; }
                     .calc-resize-handle { width:14px; height:14px; position:absolute; right:6px; bottom:6px; background:linear-gradient(135deg,#e2e8f0,#cbd5e1); border-radius:4px; box-shadow:0 4px 10px rgba(2,6,23,0.08); cursor:nwse-resize; z-index:1400; }
@@ -3652,16 +3697,17 @@
                     .calc-popup-overlay {
                         position: fixed;
                         inset: 0;
-                        background: rgba(0,0,0,0.18);
+                        background: transparent;
                         display: none;
                         align-items: flex-start;
                         justify-content: center;
                         padding-top: 36px;
                         overflow: auto;
                         z-index: 1200;
+                        pointer-events: none;
                     }
                     .calc-popup-overlay.active { display: flex; }
-                    .calc-popup { background: #fff; border-radius: 10px; max-width: 720px; width: 320px; height: calc(100vh - 96px); max-height: 90vh; overflow: visible; box-shadow: 0 20px 50px rgba(2,6,23,0.4); padding: 12px; position: relative; margin:0 auto; }
+                    .calc-popup { background: rgba(255,255,255,0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 10px; max-width: 720px; width: 320px; height: calc(100vh - 96px); max-height: 90vh; overflow: visible; box-shadow: 0 20px 50px rgba(2,6,23,0.2); padding: 12px; position: relative; margin:0 auto; pointer-events: auto; }
                     .calc-popup .popup-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
                     .calc-popup .popup-header h3 { margin:0; font-size:1.05rem; }
                     .calc-popup-close { background: transparent; border: none; font-size: 1.05rem; cursor: pointer; padding:4px; border-radius:6px; }
@@ -5409,6 +5455,10 @@
                 const page = document.getElementById(id);
                 if (page) {
                     page.classList.toggle('hidden', id !== pageId);
+                    // Clean up printing-active class when navigating away
+                    if (id !== pageId) {
+                        page.classList.remove('printing-active');
+                    }
                 }
             });
             // Trigger Cash Flow initialization/render if navigating to it
@@ -5910,16 +5960,21 @@
                             if (el) {
                                 prevStates.push({ el, display: el.style.display });
                                 el.style.display = 'none';
+                                el.classList.remove('printing-active');
                             }
                         });
-                        // Ensure atm output is visible
-                        if (atmOutputPage) atmOutputPage.style.display = 'block';
+                        // Ensure atm output is visible and marked as the active print target
+                        if (atmOutputPage) {
+                            atmOutputPage.style.display = 'block';
+                            atmOutputPage.classList.add('printing-active');
+                        }
 
                         // Give the browser a moment to repaint before opening print dialog
                         setTimeout(() => {
                             window.print();
                             // restore previous display states after print dialog closes
                             prevStates.forEach(s => { s.el.style.display = s.display; });
+                            if (atmOutputPage) atmOutputPage.classList.remove('printing-active');
                         }, 60);
                     } catch (err) {
                         console.error('ATM print failed to prepare:', err);
@@ -6952,17 +7007,20 @@
                     const pageWidthPx = Math.round(pageWidthMm * mmToIn * dpi);
                     const pageHeightPx = Math.round(pageHeightMm * mmToIn * dpi);
 
-                    // Create a jsPDF instance with pixel units and A4 size in px
-                    const pdf = new jsPDF({ unit: 'px', format: [pageWidthPx + 0, pageHeightPx + 0], orientation: 'portrait' });
+                    // Create a full A4 PDF page and place image with margins
+                    const fullPageWidthPx = Math.round(210 * mmToIn * dpi);
+                    const fullPageHeightPx = Math.round(297 * mmToIn * dpi);
+                    const marginPx = Math.round(marginMm * mmToIn * dpi);
+                    const pdf = new jsPDF({ unit: 'px', format: [fullPageWidthPx, fullPageHeightPx], orientation: 'portrait' });
 
-                    // Compute shrink-only scale to ensure the entire canvas fits into a single A4 printable area
+                    // Compute shrink-only scale to ensure the entire canvas fits into the printable area
                     // (do not upscale beyond 1)
                     const computedScale = Math.min(pageWidthPx / canvas.width, pageHeightPx / canvas.height);
                     const scale = Math.min(1, computedScale);
                     const imgW = Math.round(canvas.width * scale);
                     const imgH = Math.round(canvas.height * scale);
-                    const x = Math.round((pageWidthPx - imgW) / 2);
-                    const y = Math.round((pageHeightPx - imgH) / 2);
+                    const x = marginPx + Math.round((pageWidthPx - imgW) / 2);
+                    const y = marginPx;
 
                     pdf.addImage(imgData, 'JPEG', x, y, imgW, imgH, undefined, 'FAST');
                     pdf.save(filename);
@@ -7184,9 +7242,15 @@
             // 3. Switch view and trigger print
             if (directPrint) {
                 // If directPrint requested, don't switch to the preview page — just trigger printing.
+                // Mark this container as the active print target and hide ATM output
+                outputContainer.classList.add('printing-active');
+                const atmOut = document.getElementById('atm-output-page');
+                if (atmOut) { atmOut.classList.remove('printing-active'); atmOut.style.display = 'none'; }
                 // Ensure DOM updates are painted before invoking print.
                 await new Promise(resolve => setTimeout(resolve, 80));
                 window.print();
+                outputContainer.classList.remove('printing-active');
+                if (atmOut) atmOut.style.display = '';
                 // After printing, ensure the app returns to calculator page
                 showPage('cash-calculator-page');
                 return;
@@ -7194,6 +7258,10 @@
 
             // Default behavior: show preview so user can manually print or export PDF
             showPage('cash-calculator-print-output'); // Temporarily show print view
+            outputContainer.classList.add('printing-active');
+            // Hide ATM output page when Teller Report is being shown
+            const atmOutForPreview = document.getElementById('atm-output-page');
+            if (atmOutForPreview) { atmOutForPreview.classList.remove('printing-active'); atmOutForPreview.style.display = 'none'; }
             
             // Show print button for user to manually trigger printing or close
             const printManualControls = document.createElement('div');
@@ -9015,6 +9083,10 @@
                             clone.innerHTML = printEl.innerHTML;
                             const toRemove = clone.querySelectorAll('.no-print, .print-only, #previewControls');
                             toRemove.forEach(n => n.remove());
+                            // Add left/right padding (0.4in) to prevent content clipping
+                            clone.style.paddingLeft = '0.4in';
+                            clone.style.paddingRight = '0.4in';
+                            clone.style.boxSizing = 'border-box';
                             // If clone is empty after stripping, warn and abort
                             if (!clone.innerHTML.trim()) {
                                 alert('No printable content found to export.');
@@ -10814,9 +10886,9 @@
                                 --card: #ffffff;
                                 --muted: #6b7280;
                                 --accent: #2563EB;
-                                --popup-pad: clamp(6px, 1.8vh, 16px);
-                                --popup-gap: clamp(6px, 1.6vh, 10px);
-                                --popup-radius: clamp(8px, 2.2vh, 14px);
+                                --popup-pad: 2px;
+                                --popup-gap: 2px;
+                                --popup-radius: 6px;
                             }
                             html,
                             body {
@@ -10829,7 +10901,7 @@
                             .backdrop {
                                 position: fixed;
                                 inset: 0;
-                                background: rgba(11, 14, 20, 0.12);
+                                background: transparent;
                                 display: flex;
                                 align-items: stretch;
                                 justify-content: center;
@@ -10837,72 +10909,59 @@
                                 box-sizing: border-box;
                             }
                             .card {
-                                width: min(100%, 380px);
-                                height: calc(100vh - (var(--popup-pad) * 2));
-                                height: calc(100dvh - (var(--popup-pad) * 2));
+                                width: 100%;
+                                height: 100%;
                                 background: var(--card);
                                 border-radius: var(--popup-radius);
-                                box-shadow: 0 18px 50px rgba(2, 6, 23, 0.35);
                                 overflow: hidden;
                                 display: flex;
                                 flex-direction: column;
                                 min-height: 0;
-                                transform: translateY(8px);
-                                opacity: 0;
-                                animation: cardIn 420ms cubic-bezier(.2, .9, .2, 1) forwards;
+                                animation: cardIn 320ms cubic-bezier(.2, .9, .2, 1) forwards;
                             }
                             .card-body {
                                 flex: 1 1 auto;
                                 min-height: 0;
                                 display: flex;
                                 flex-direction: column;
-                                gap: var(--popup-gap);
-                                padding: clamp(8px, 2vh, 12px);
+                                padding: 3px 5px;
                                 box-sizing: border-box;
+                                gap: 2px;
                             }
                             .card-topbar {
                                 flex: 0 0 auto;
                                 display: flex;
                                 align-items: center;
                                 justify-content: space-between;
-                                gap: clamp(6px, 1.5vw, 10px);
+                                gap: 4px;
                             }
                             .total {
-                                flex: 0 0 auto;
-                                font-size: clamp(16px, 3vh, 20px);
+                                font-size: 15px;
                                 font-weight: 800;
                                 color: var(--accent);
                                 margin: 0;
                                 transition: transform 280ms ease;
-                                display: inline-block;
                             }
                             .total.total-pulse {
                                 animation: totalPulse 0.42s cubic-bezier(.2, .9, .2, 1);
                             }
-                            .total .count {
-                                display: inline-block;
-                                min-width: 72px;
-                                text-align: right;
-                            }
                             .denom-list {
                                 flex: 1 1 auto;
                                 min-height: 0;
-                                overflow: auto;
-                                padding-right: 4px;
-                                display: flex;
-                                flex-direction: column;
-                                gap: clamp(4px, 1vh, 8px);
-                                scrollbar-width: thin;
-                                scrollbar-color: rgba(148, 163, 184, 0.9) transparent;
+                                display: grid;
+                                grid-template-columns: repeat(5, 1fr);
+                                grid-template-rows: repeat(2, auto);
+                                gap: 1px 4px;
+                                overflow: hidden;
                             }
                             .denom-row {
-                                display: grid;
-                                grid-template-columns: minmax(46px, 0.9fr) minmax(64px, 1fr) minmax(54px, 1fr);
+                                display: flex;
+                                flex-direction: column;
                                 align-items: center;
-                                gap: clamp(6px, 1.4vw, 10px);
-                                transition: background 320ms ease, transform 360ms cubic-bezier(.2, .9, .2, 1), opacity 320ms ease;
-                                transform: translateY(8px);
+                                gap: 0px;
+                                transition: background 320ms ease;
                                 opacity: 0;
+                                transform: translateY(4px);
                             }
                             .denom-row.row-visible {
                                 transform: translateY(0);
@@ -10910,11 +10969,12 @@
                             }
                             .denom-row.row-flash {
                                 animation: rowFlash 0.44s cubic-bezier(.2, .9, .2, 1);
-                                background: linear-gradient(90deg, rgba(99, 102, 241, 0.10), rgba(99, 102, 241, 0.02));
+                                background: linear-gradient(180deg, rgba(99, 102, 241, 0.10), rgba(99, 102, 241, 0.02));
+                                border-radius: 4px;
                             }
                             @keyframes totalPulse {
                                 0% { transform: scale(1); }
-                                40% { transform: scale(1.09); }
+                                40% { transform: scale(1.08); }
                                 100% { transform: scale(1); }
                             }
                             @keyframes rowFlash {
@@ -10923,7 +10983,7 @@
                                 100% { background: transparent; }
                             }
                             @keyframes cardIn {
-                                from { transform: translateY(8px); opacity: 0; }
+                                from { transform: translateY(4px); opacity: 0; }
                                 to { transform: translateY(0); opacity: 1; }
                             }
                             @keyframes pulseFlash {
@@ -10933,9 +10993,8 @@
                             }
                             .denom-label {
                                 width: auto;
-                                min-width: 0;
-                                text-align: right;
-                                font-size: clamp(12px, 1.8vh, 14px);
+                                text-align: center;
+                                font-size: 13px;
                                 font-weight: 700;
                                 color: var(--muted);
                                 white-space: nowrap;
@@ -10943,11 +11002,11 @@
                             .denom-input {
                                 width: 100%;
                                 min-width: 0;
-                                padding: clamp(6px, 1.5vh, 8px) clamp(8px, 1.8vw, 10px);
-                                border-radius: clamp(8px, 1.8vh, 10px);
+                                padding: 2px 3px;
+                                border-radius: 4px;
                                 border: 1px solid #e6e9ef;
-                                text-align: right;
-                                font-size: clamp(13px, 1.9vh, 15px);
+                                text-align: center;
+                                font-size: 14px;
                                 font-weight: 600;
                                 background: #fafafa;
                                 box-sizing: border-box;
@@ -10962,45 +11021,40 @@
                                 -moz-appearance: textfield;
                             }
                             .denom-input:focus {
-                                box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
-                                transform: translateY(-2px);
+                                box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+                                border-color: #6366f1;
+                                outline: none;
                             }
                             .denom-sub {
-                                width: 100%;
-                                min-width: 0;
-                                text-align: right;
-                                font-size: clamp(12px, 1.8vh, 14px);
+                                text-align: center;
+                                font-size: 12px;
                                 font-weight: 700;
                                 color: #111827;
                                 white-space: nowrap;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
+                                min-height: 10px;
                             }
                             .card-footer {
                                 flex: 0 0 auto;
                                 display: grid;
-                                grid-template-columns: repeat(2, minmax(0, 1fr));
-                                gap: clamp(6px, 1.5vh, 10px);
-                                padding-top: clamp(6px, 1.2vh, 8px);
+                                grid-template-columns: repeat(2, 1fr);
+                                gap: 4px;
+                                padding-top: 2px;
                                 border-top: 1px solid rgba(226, 232, 240, 0.9);
-                                background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.96) 28%);
                             }
                             .btn {
                                 position: relative;
                                 overflow: hidden;
                                 width: 100%;
-                                padding: clamp(8px, 1.8vh, 10px) clamp(10px, 2vw, 12px);
-                                border-radius: clamp(8px, 1.8vh, 10px);
+                                padding: 4px 6px;
+                                border-radius: 5px;
                                 border: none;
                                 cursor: pointer;
-                                font-size: clamp(13px, 1.9vh, 15px);
+                                font-size: 13px;
                                 font-weight: 700;
-                                will-change: transform;
-                                transition: transform 180ms cubic-bezier(.2, .9, .2, 1), box-shadow 180ms ease;
-                                box-sizing: border-box;
+                                transition: transform 180ms cubic-bezier(.2, .9, .2, 1);
                             }
                             .btn:hover {
-                                transform: translateY(-3px) scale(1.02);
+                                transform: translateY(-1px) scale(1.02);
                             }
                             .btn:active {
                                 transform: translateY(0) scale(0.98);
@@ -11024,86 +11078,37 @@
                             .btn-pulse {
                                 animation: pulseFlash 520ms cubic-bezier(.2, .9, .2, 1) forwards;
                             }
+                            @keyframes pulseFlash {
+                                0% { transform: scale(1); }
+                                50% { transform: scale(1.06); }
+                                100% { transform: scale(1); }
+                            }
                             .btn-recv {
                                 background: linear-gradient(180deg, #10B981, #059669);
                                 color: #fff;
-                                box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
                             }
                             .btn-pay {
                                 background: linear-gradient(180deg, #ef4444, #dc2626);
                                 color: #fff;
-                                box-shadow: 0 8px 24px rgba(239, 68, 68, 0.12);
                             }
                             .btn-clear {
                                 width: auto;
                                 min-width: fit-content;
-                                padding-inline: clamp(10px, 2.2vw, 14px);
+                                padding: 2px 8px;
                                 background: linear-gradient(180deg, #f8fafc, #e2e8f0);
                                 color: #334155;
-                                box-shadow: 0 8px 20px rgba(148, 163, 184, 0.18);
                                 border: 1px solid rgba(148, 163, 184, 0.35);
-                                font-size: clamp(12px, 1.7vh, 13px);
+                                font-size: 12px;
                             }
                             .close-btn {
                                 background: transparent;
                                 border: none;
-                                font-size: 16px;
+                                font-size: 12px;
                                 cursor: pointer;
                                 color: var(--muted);
                             }
-                            @media (max-width: 420px) {
-                                .denom-row {
-                                    grid-template-columns: minmax(42px, 0.85fr) minmax(58px, 1fr) minmax(48px, 0.95fr);
-                                }
-                            }
-                            @media (max-height: 560px) {
-                                :root {
-                                    --popup-pad: 6px;
-                                    --popup-gap: 5px;
-                                }
-                                .card-body {
-                                    padding: 8px;
-                                }
-                                .total {
-                                    font-size: 15px;
-                                }
-                                .denom-row {
-                                    gap: 6px;
-                                }
-                                .denom-label,
-                                .denom-sub,
-                                .denom-input,
-                                .btn {
-                                    font-size: 12px;
-                                }
-                                .btn {
-                                    padding-top: 7px;
-                                    padding-bottom: 7px;
-                                }
-                            }
-                            @media (max-height: 430px) {
-                                .card-body {
-                                    padding: 6px;
-                                }
-                                .denom-list {
-                                    gap: 4px;
-                                }
-                                .denom-row {
-                                    grid-template-columns: minmax(40px, 0.8fr) minmax(54px, 1fr) minmax(46px, 0.9fr);
-                                }
-                                .denom-label,
-                                .denom-sub,
-                                .denom-input,
-                                .btn {
-                                    font-size: 11px;
-                                }
-                            }
                             @media (prefers-reduced-motion: reduce) {
-                                .denom-row,
-                                .card {
-                                    transition: none !important;
-                                    animation: none !important;
-                                }
+                                .denom-row, .card { transition: none !important; animation: none !important; }
                             }
                         </style>
                     </head>
@@ -11293,7 +11298,8 @@
                             });
 
                             // Enter key: move to next denom input and select value
-                            // Arrow Up/Down: navigate between fields without changing count
+                            // Arrow Up/Down: navigate vertically in the 5-column grid
+                            // Arrow Left/Right: navigate horizontally
                             document.addEventListener('keydown', (ev) => {
                                 const target = ev.target;
                                 if (!target || !target.classList) return;
@@ -11301,9 +11307,32 @@
                                 
                                 const inputs = Array.from(document.querySelectorAll('.denom-input'));
                                 const idx = inputs.indexOf(target);
+                                const cols = 5; // grid columns
                                 
-                                // Arrow Up: move to previous field
+                                // Arrow Up: move up one row (jump by cols)
                                 if (ev.key === 'ArrowUp') {
+                                    ev.preventDefault();
+                                    const prev = inputs[idx - cols];
+                                    if (prev) {
+                                        prev.focus();
+                                        try { prev.select(); } catch (e) {}
+                                    }
+                                    return;
+                                }
+                                
+                                // Arrow Down: move down one row (jump by cols)
+                                if (ev.key === 'ArrowDown') {
+                                    ev.preventDefault();
+                                    const next = inputs[idx + cols];
+                                    if (next) {
+                                        next.focus();
+                                        try { next.select(); } catch (e) {}
+                                    }
+                                    return;
+                                }
+
+                                // Arrow Left: move to previous field
+                                if (ev.key === 'ArrowLeft') {
                                     ev.preventDefault();
                                     const prev = inputs[idx - 1];
                                     if (prev) {
@@ -11312,9 +11341,9 @@
                                     }
                                     return;
                                 }
-                                
-                                // Arrow Down: move to next field
-                                if (ev.key === 'ArrowDown') {
+
+                                // Arrow Right: move to next field
+                                if (ev.key === 'ArrowRight') {
                                     ev.preventDefault();
                                     const next = inputs[idx + 1];
                                     if (next) {
@@ -11531,24 +11560,26 @@
                 }
 
                 async function openPinnedCalcWindow() {
+                    // Remove in-page popup if open
+                    const existingInPage = document.getElementById('pinnedCalcPopup');
+                    if (existingInPage) existingInPage.remove();
+
                     if (!supportsPinnedCalcWindow) {
-                        alert('Always-on-top pin mode is only available in supported Chrome or Microsoft Edge browsers. Regular HTML pages cannot force always-on-top everywhere.');
+                        alert('Always-on-top pin mode is only available in supported Chrome or Microsoft Edge browsers.');
                         return;
                     }
 
                     if (pinnedCalcWindow && !pinnedCalcWindow.closed) {
                         try {
                             pinnedCalcWindow.focus();
-                        } catch (e) {
-                            // Ignore focus failures.
-                        }
+                        } catch (e) {}
                         syncCalcPopupTotal(pinnedCalcWindow);
                         setPinButtonState(true);
                         return;
                     }
 
                     try {
-                        pinnedCalcWindow = await window.documentPictureInPicture.requestWindow({ width: 340, height: 700 });
+                        pinnedCalcWindow = await window.documentPictureInPicture.requestWindow({ width: 580, height: 230 });
                         writeCalcPopupWindow(pinnedCalcWindow);
                         setPinButtonState(true);
 
@@ -11560,7 +11591,7 @@
                         pinnedCalcWindow = null;
                         setPinButtonState(false);
                         console.warn('Pinned calculator is unavailable', e);
-                        alert('Pinned always-on-top mode was blocked or is not available here. Use a supported Chrome or Microsoft Edge window if you want the calculator above other pages.');
+                        alert('Pinned always-on-top mode was blocked or is not available here.');
                     }
                 }
 

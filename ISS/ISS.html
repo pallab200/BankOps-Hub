@@ -180,43 +180,37 @@
   .num-updated{ animation: numWipe .45s cubic-bezier(.2,.9,.2,1); }
   @keyframes numWipe{ 0%{ transform:translateY(8px); opacity:0 } 60%{ transform:translateY(-6px); opacity:1 } 100%{ transform:translateY(0); opacity:1 } }
 
-  /* Portfolio Dashboard - Clean Row Layout - 5 Columns */
+  /* Portfolio Dashboard - Modern Card Grid */
   .results-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 0;
+    gap: 16px;
     margin-top: 24px;
     padding: 0;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
     width: 100%;
   }
 
   .result-card {
     background: #ffffff;
-    border: none;
-    border-right: 1px solid #e5e7eb;
-    padding: 24px 20px;
-    border-radius: 0;
-    box-shadow: none;
+    border: 1px solid #e5e7eb;
+    padding: 22px 20px;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15,23,42,0.04);
     display: flex;
     flex-direction: column;
     gap: 8px;
-    transform: none;
-    opacity: 1;
-    animation: none;
-    transition: all 0.2s ease;
+    transform: translateY(12px);
+    opacity: 0;
+    animation: cardSlideIn 0.5s cubic-bezier(.2,.9,.2,1) forwards;
+    transition: all 0.25s ease;
     position: relative;
     overflow: visible;
     min-width: 0;
-    flex: 1 1 auto;
-  }
-
-  .result-card:last-child {
-    border-right: none;
   }
 
   .result-card::before {
@@ -225,34 +219,43 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 0;
-    background: transparent;
+    height: 3px;
+    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   .result-card:hover {
-    transform: none;
-    box-shadow: none;
-    background: #f9fafb;
-    border-color: #e5e7eb;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(99,102,241,0.12);
+    border-color: rgba(99,102,241,0.2);
+  }
+
+  .result-card:hover::before {
+    opacity: 1;
   }
 
   .result-card h5 {
     margin: 0;
-    font-size: 0.8rem;
-    color: #374151;
-    text-transform: none;
-    letter-spacing: 0.01em;
+    font-size: 0.78rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     font-weight: 700;
     line-height: 1.3;
   }
 
   .result-card .num {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: 900;
-    color: #2563eb;
-    margin: 4px 0;
+    color: #1f2937;
+    margin: 6px 0 0 0;
     line-height: 1.1;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #2563eb 0%, #6366f1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .result-card p {
@@ -261,20 +264,109 @@
     color: #9ca3af;
   }
 
-  @keyframes cardIn {
+  /* Card stagger entrance animation */
+  @keyframes cardSlideIn {
     0% {
-      transform: none;
-      opacity: 1;
+      transform: translateY(12px);
+      opacity: 0;
     }
     100% {
-      transform: none;
+      transform: translateY(0);
       opacity: 1;
     }
   }
 
+  .result-card:nth-child(1) { animation-delay: 0.03s; }
+  .result-card:nth-child(2) { animation-delay: 0.06s; }
+  .result-card:nth-child(3) { animation-delay: 0.09s; }
+  .result-card:nth-child(4) { animation-delay: 0.12s; }
+  .result-card:nth-child(5) { animation-delay: 0.15s; }
+  .result-card:nth-child(6) { animation-delay: 0.18s; }
+  .result-card:nth-child(7) { animation-delay: 0.21s; }
+  .result-card:nth-child(8) { animation-delay: 0.24s; }
+  .result-card:nth-child(9) { animation-delay: 0.27s; }
+  .result-card:nth-child(10) { animation-delay: 0.30s; }
+  .result-card:nth-child(11) { animation-delay: 0.33s; }
+  .result-card:nth-child(12) { animation-delay: 0.36s; }
+  .result-card:nth-child(13) { animation-delay: 0.39s; }
+  .result-card:nth-child(14) { animation-delay: 0.42s; }
+  .result-card:nth-child(15) { animation-delay: 0.45s; }
+  .result-card:nth-child(16) { animation-delay: 0.48s; }
+  .result-card:nth-child(17) { animation-delay: 0.51s; }
+  .result-card:nth-child(18) { animation-delay: 0.54s; }
+
+  /* Number count-up animation */
   @keyframes numPulse {
-    0% { transform: translateY(8px) scale(0.98); opacity: 0.4; }
-    60% { transform: translateY(-6px) scale(1.04); opacity: 1; }
+    0% { transform: translateY(10px) scale(0.95); opacity: 0; }
+    50% { transform: translateY(-3px) scale(1.02); opacity: 1; }
+    100% { transform: none; opacity: 1; }
+  }
+
+  .num.pulse {
+    animation: numPulse 0.7s cubic-bezier(.2, .9, .2, 1);
+  }
+
+  /* Number pop animation when value updates */
+  @keyframes numPopIn {
+    0% { transform: translateY(12px) scale(0.9); opacity: 0; filter: blur(2px); }
+    60% { transform: translateY(-4px) scale(1.04); opacity: 1; filter: blur(0); }
+    100% { transform: none; opacity: 1; filter: blur(0); }
+  }
+
+  .num-pop {
+    animation: numPopIn 0.6s cubic-bezier(.2,.9,.2,1);
+  }
+
+  /* numeric update wipe animation */
+  .num-updated{ animation: numWipe .5s cubic-bezier(.2,.9,.2,1); }
+  @keyframes numWipe{ 0%{ transform:translateY(10px) scale(0.95); opacity:0 } 50%{ transform:translateY(-3px) scale(1.02); opacity:1 } 100%{ transform:translateY(0) scale(1); opacity:1 } }
+
+  /* Results header */
+  .results-header {
+    margin-bottom: 8px;
+  }
+
+  .results-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #1f2937;
+    letter-spacing: -0.01em;
+  }
+
+  /* Card tooltip on hover */
+  #pageResults.box { overflow: visible; }
+
+  .result-card[data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: #1f2937;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    max-width: 260px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .result-card[data-tip]:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @keyframes cardIn {
+    0% { transform: translateY(12px); opacity: 0; }
     100% { transform: none; opacity: 1; }
   }
 
@@ -317,10 +409,6 @@
       opacity: 1;
       transform: none;
     }
-  }
-
-  .num.pulse {
-    animation: numPulse 0.9s cubic-bezier(.2, .9, .2, 1);
   }
 
   /* No stagger for row layout */
@@ -370,12 +458,18 @@
     transition: all 0.2s ease;
     font-weight: 600;
     font-size: 0.9rem;
+    cursor: pointer;
   }
 
   .chip:hover {
     box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
     transform: translateY(-3px);
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(236, 72, 153, 0.12));
+  }
+
+  .chip span:first-child {
+    border-bottom: 1px dashed rgba(99, 102, 241, 0.3);
+    padding-bottom: 1px;
   }
 
   /* Tables - Modern Portfolio Style */
@@ -448,40 +542,40 @@
   }
 
   @media (max-width: 1600px) {
-    .results-grid { grid-template-columns: repeat(5, 1fr); gap: 0; }
+    .results-grid { grid-template-columns: repeat(5, 1fr); gap: 14px; }
   }
 
   @media (max-width: 1400px) {
-    .results-grid { grid-template-columns: repeat(5, 1fr); gap: 0; }
+    .results-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
   }
 
   @media (max-width: 1200px) {
-    .results-grid { grid-template-columns: repeat(5, 1fr); gap: 0; }
+    .results-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
   }
 
   @media (max-width: 1024px) {
-    .results-grid { grid-template-columns: repeat(5, 1fr); gap: 0; }
-    .result-card { padding: 20px 16px; }
-    .result-card .num { font-size: 1.5rem; }
+    .results-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .result-card { padding: 18px 16px; }
+    .result-card .num { font-size: 1.4rem; }
   }
 
   @media (max-width: 768px) {
-    .results-grid { grid-template-columns: repeat(3, 1fr); gap: 0; }
-    .result-card { padding: 18px 14px; }
-    .result-card h5 { font-size: 0.75rem; }
-    .result-card .num { font-size: 1.3rem; }
+    .results-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .result-card { padding: 16px 14px; }
+    .result-card h5 { font-size: 0.72rem; }
+    .result-card .num { font-size: 1.2rem; }
   }
 
   @media (max-width: 640px) {
-    .results-grid { grid-template-columns: repeat(2, 1fr); gap: 0; }
-    .result-card { padding: 16px 12px; }
+    .results-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .result-card { padding: 14px 12px; }
     .result-card h5 { font-size: 0.7rem; }
     .result-card .num { font-size: 1.1rem; }
   }
 
   @media (max-width: 480px) {
-    .results-grid { grid-template-columns: 1fr; gap: 0; }
-    .result-card { padding: 14px 10px; }
+    .results-grid { grid-template-columns: 1fr; gap: 10px; }
+    .result-card { padding: 14px 12px; }
   }
   /* Initial panel enhanced styles with unified design system */
   #initialPanel {
@@ -873,44 +967,96 @@ body.no-bgclip .footer-rgb .rgb-text{
     <div class="grid">
     <div class="box" id="pageSelections" style="display:none">
   <style>
-  /* local helper styles for selection grouping (light-mode) */
-  .selector-section{ border:1px solid rgba(11,17,32,0.04); padding:12px; margin-bottom:12px; background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,251,0.98)); border-radius:8px }
-  .selector-section h4{ margin:0 0 8px 0; color:var(--accent-blue); font-size:0.98em; letter-spacing:0.02em; font-weight:700 }
-  .selector-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:start }
+  /* local helper styles for selection grouping - Modern Design */
+  .selector-section{ background: #ffffff; border: 1px solid #e5e7eb; padding: 20px 24px; margin-bottom: 16px; border-radius: 14px; box-shadow: 0 2px 8px rgba(15,23,42,0.04); transition: all 0.25s ease; }
+  .selector-section:hover { box-shadow: 0 4px 16px rgba(99,102,241,0.08); border-color: rgba(99,102,241,0.15); }
+  .selector-section h4{ margin:0 0 14px 0; font-size: 1rem; font-weight: 800; color: #1f2937; letter-spacing: 0.01em; display: flex; align-items: center; gap: 10px; }
+  .selector-section h4::before { content: ''; display: inline-block; width: 4px; height: 18px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 3px; flex-shrink: 0; }
+  .selector-section h4 .filter-total { margin-left: auto; font-size: 0.82rem; font-weight: 700; color: #6366f1; background: rgba(99,102,241,0.08); padding: 5px 14px; border-radius: 8px; border: 1px solid rgba(99,102,241,0.12); letter-spacing: 0; text-transform: none; }
+  .selector-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items:start }
   .selector-grid .col{ display:flex; flex-direction:column; gap:8px }
-  .selector-grid .col .label-small{ font-size:0.88em; color:var(--muted); margin-bottom:4px }
+  .selector-grid .col .label-small{ font-size: 0.78rem; color: #6b7280; margin-bottom: 4px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
   /* make selects fluid inside columns */
-  .selector-grid .col select{ width:100%; min-width:0; box-sizing:border-box }
+  .selector-grid .col select{ width:100%; min-width:0; box-sizing:border-box; border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 10px 12px; font-size: 0.9rem; background: #fafbfc; color: #1f2937; transition: all 0.2s ease; font-family: inherit; }
+  .selector-grid .col select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); background: #fff; outline: none; }
+  .selector-grid .col select[multiple] { border-radius: 10px; padding: 6px; }
+  .selector-grid .col select[multiple] option { padding: 8px 12px; border-radius: 6px; margin: 2px 0; }
+  .selector-grid .col select[multiple] option:checked { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; }
   /* chip row styling */
-  .chip-row{ margin-top:8px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; min-height:34px }
-  .chip-row .chip{ background:linear-gradient(180deg, rgba(0,120,255,0.02), rgba(255,255,255,0.95)); border:1px solid rgba(0,120,255,0.08); color:#0b1220 }
-  /* entrance animation for selector sections */
-  .selector-section{ transform: translateY(8px); opacity:0; transition: transform .36s ease, opacity .36s ease }
-  #pageSelections.visible .selector-section{ transform:none; opacity:1 }
-  /* stagger children when page becomes visible */
-  #pageSelections.visible .selector-section:nth-child(1){ transition-delay: 40ms }
-  #pageSelections.visible .selector-section:nth-child(2){ transition-delay: 80ms }
-  #pageSelections.visible .selector-section:nth-child(3){ transition-delay: 120ms }
-  #pageSelections.visible .selector-section:nth-child(4){ transition-delay: 160ms }
-  #pageSelections.visible .selector-section:nth-child(5){ transition-delay: 200ms }
-  #pageSelections.visible .selector-section:nth-child(6){ transition-delay: 240ms }
-  #pageSelections.visible .selector-section:nth-child(7){ transition-delay: 280ms }
+  .chip-row{ margin-top: 8px; display:flex; flex-wrap:wrap; gap: 8px; align-items:center; min-height: 36px; padding: 8px; background: #f8fafc; border-radius: 10px; border: 1px dashed #e5e7eb; }
+  .chip-row .chip{ background: #ffffff; border: 1px solid rgba(99,102,241,0.15); color: #1f2937; padding: 6px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; box-shadow: 0 1px 4px rgba(99,102,241,0.06); }
+  /* entrance animation for selector sections - triggered when page becomes visible */
+  .selector-section{ transform: translateY(14px); opacity:0; transition: transform 0.5s cubic-bezier(.2,.9,.2,1), opacity 0.5s cubic-bezier(.2,.9,.2,1); }
+  #pageSelections.visible .selector-section{ transform:none; opacity:1; }
+  #pageSelections.visible .selector-section:nth-child(1){ transition-delay: 0.05s; }
+  #pageSelections.visible .selector-section:nth-child(2){ transition-delay: 0.12s; }
+  #pageSelections.visible .selector-section:nth-child(3){ transition-delay: 0.19s; }
+  #pageSelections.visible .selector-section:nth-child(4){ transition-delay: 0.26s; }
+  #pageSelections.visible .selector-section:nth-child(5){ transition-delay: 0.33s; }
+  #pageSelections.visible .selector-section:nth-child(6){ transition-delay: 0.40s; }
+  #pageSelections.visible .selector-section:nth-child(7){ transition-delay: 0.47s; }
+  #pageSelections.visible .selector-section:nth-child(8){ transition-delay: 0.54s; }
+  #pageSelections.visible .selector-section:nth-child(9){ transition-delay: 0.61s; }
+
+  /* Select options slide in from left */
+  #pageSelections.visible .selector-grid .col select[multiple] option {
+    animation: filterOptionIn 0.35s cubic-bezier(.2,.9,.2,1) forwards;
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  @keyframes filterOptionIn {
+    0% { opacity: 0; transform: translateX(-8px); }
+    100% { opacity: 1; transform: none; }
+  }
+  #pageSelections.visible .selector-grid .col select[multiple] option:nth-child(1) { animation-delay: 0.02s; }
+  #pageSelections.visible .selector-grid .col select[multiple] option:nth-child(2) { animation-delay: 0.04s; }
+  #pageSelections.visible .selector-grid .col select[multiple] option:nth-child(3) { animation-delay: 0.06s; }
+  #pageSelections.visible .selector-grid .col select[multiple] option:nth-child(4) { animation-delay: 0.08s; }
+  #pageSelections.visible .selector-grid .col select[multiple] option:nth-child(5) { animation-delay: 0.10s; }
+  #pageSelections.visible .selector-grid .col select[multiple] option:nth-child(6) { animation-delay: 0.12s; }
+  #pageSelections.visible .selector-grid .col select[multiple] option:nth-child(7) { animation-delay: 0.14s; }
+  #pageSelections.visible .selector-grid .col select[multiple] option:nth-child(8) { animation-delay: 0.16s; }
+  #pageSelections.visible .selector-grid .col select[multiple] option:nth-child(9) { animation-delay: 0.18s; }
+  #pageSelections.visible .selector-grid .col select[multiple] option:nth-child(10) { animation-delay: 0.20s; }
+  #pageSelections.visible .selector-grid .col select[multiple] option:nth-child(n+11) { animation-delay: 0.22s; }
+
+  #pageSelections.visible .selector-section{ }
+  /* stagger handled by transition-delay above */
   /* chip pop animation */
-  .chip{ transform: scale(.96); opacity:0.92; transition: transform .18s ease, opacity .18s ease }
-  .chip.pop{ transform: scale(1); opacity:1; box-shadow:0 8px 30px rgba(0,120,255,0.06) }
+  .chip{ transform: scale(.92); opacity:0; transition: transform .25s cubic-bezier(.2,.9,.2,1), opacity .25s ease, box-shadow .25s ease }
+  .chip.pop{ transform: scale(1); opacity:1; box-shadow: 0 4px 12px rgba(99,102,241,0.1) }
+  /* select option highlight animation */
+  .selector-grid .col select[multiple] option:checked { transition: background 0.2s ease; }
+  /* filter total badge pulse when value changes */
+  @keyframes filterBadgePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+  .filter-total.updated { animation: filterBadgePulse 0.4s cubic-bezier(.2,.9,.2,1); }
+  /* mode-select dropdown animation */
+  .mode-select { transition: all 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
+  .mode-select:hover { border-color: rgba(99,102,241,0.3) !important; }
+  /* chip row container subtle entrance */
+  .chip-row { transition: background 0.3s ease, border-color 0.3s ease; }
+  .chip-row:hover { border-color: rgba(99,102,241,0.2); background: rgba(99,102,241,0.02); }
   /* select focus glow */
-  select:focus{ box-shadow: 0 6px 30px rgba(0,120,255,0.08); border-color:var(--accent-blue) }
+  select:focus{ box-shadow: 0 0 0 3px rgba(99,102,241,0.1); border-color: #6366f1 }
+  /* mode-select dropdown styling */
+  .mode-select { padding: 8px 14px !important; border: 1.5px solid #e5e7eb !important; border-radius: 8px !important; font-size: 0.85rem !important; font-weight: 600 !important; background: #fff !important; color: #374151 !important; min-width: 180px !important; }
+  .mode-select:focus { border-color: #6366f1 !important; box-shadow: 0 0 0 3px rgba(99,102,241,0.1) !important; }
   /* small helper for two-column single-col layouts on narrow screens */
   @media (max-width:920px){ .selector-grid{ grid-template-columns: 1fr } }
   </style>
   <style>
-    /* make all visible text in selection page uppercase (visual only) */
-    #pageSelections { text-transform: none; }
-    #pageSelections h4, #pageSelections .label-small, #pageSelections label, #pageSelections .chip, #pageSelections .chip-row, #pageSelections .chip-row span { text-transform: uppercase; }
+    /* Filters page text styling */
+    #pageSelections { text-transform: none; padding: 28px; }
+    #pageSelections h4, #pageSelections .label-small, #pageSelections label { text-transform: uppercase; }
+    #pageSelections .chip, #pageSelections .chip-row span { text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.03em; }
     /* uppercase option text display in selects (visual) */
     #pageSelections select { text-transform: uppercase; }
     /* keep placeholder/disabled small note normal-case where present */
-    #pageSelections .label-small { font-variant: small-caps; }
+    #pageSelections .label-small { font-variant: normal; }
   </style>
         
         <div style="display:none">
@@ -929,71 +1075,34 @@ body.no-bgclip .footer-rgb .rgb-text{
   <div style="display:none"><label style="display:inline-block;margin-top:6px"><input id="includeProduct" type="checkbox" checked /> Include Product Description in display/export</label></div>
   <div id="serviceInline" style="display:none;margin-top:6px;font-size:0.95em;color:#222">Total Service Loan Outstanding: <b id="serviceTotalInline">—</b></div>
     <div class="selector-section">
-      <h4>SERVICE LOAN OUTSTANDING</h4>
+      <h4>SERVICE LOAN OUTSTANDING <span class="filter-total" id="filterTotalService">Total: —</span></h4>
       <div class="selector-grid">
         <div class="col">
           <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
             <div class="label-small">Filter by</div>
             <select id="serviceMode" class="mode-select">
               <option value="product">Product Description</option>
-              <option value="customer">Customer Name</option>
+              <option value="customer">Customer Name with A/C No</option>
             </select>
           </div>
           <select id="serviceProducts" multiple size="6"></select>
+          <select id="serviceCustomers" multiple size="6" style="display:none"></select>
         </div>
         <div class="col">
           <div class="chip-row" id="serviceSelected">(No products selected)</div>
         </div>
       </div>
     </div>
-    <div id="smeEarnestLimit" style="margin-top:6px; font-size:0.95em; color:#222">SME - Earnest Money Account Limit: <b id="smeEarnestLimitVal">—</b>
-      &nbsp; &nbsp;Pct: <input id="smeEarnestPct" type="number" step="0.01" min="0" max="100" style="width:80px;" /> %
-      &nbsp; Security Value: <b id="smeEarnestImpactVal">—</b>
-    </div>
     <div style="height:8px"></div>
     <div class="selector-section">
-      <h4>Security</h4>
-      <div class="selector-grid">
-        <div class="col">
-          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
-            <div class="label-small">Filter by</div>
-            <select id="securityMode" class="mode-select">
-              <option value="product">Product Description</option>
-              <option value="customer">Customer Name</option>
-            </select>
-          </div>
-          <select id="securityProducts" multiple size="6"></select>
-        </div>
-        <div class="col"><div class="chip-row" id="securitySelected">(No products selected)</div></div>
-      </div>
-    </div>
-    <div style="height:8px"></div>
-    <div class="selector-section">
-      <h4>Unused Part of Commitment</h4>
-      <div class="selector-grid">
-        <div class="col">
-          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
-            <div class="label-small">Filter by</div>
-            <select id="unusedMode" class="mode-select">
-              <option value="product">Product Description</option>
-              <option value="customer">Customer Name</option>
-            </select>
-          </div>
-          <select id="unusedProducts" multiple size="6"></select>
-        </div>
-        <div class="col"><div class="chip-row" id="unusedSelected">(No products selected)</div></div>
-      </div>
-    </div>
-    <div style="height:8px"></div>
-    <div class="selector-section">
-      <h4>Manufacturing &amp; Industrial</h4>
+      <h4>Manufacturing &amp; Industrial LOAN OUTSTANDING <span class="filter-total" id="filterTotalMi">Total: —</span></h4>
       <div class="selector-grid">
         <div class="col">
           <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
             <div class="label-small">Filter by</div>
             <select id="miMode" class="mode-select">
               <option value="product">Product Description</option>
-              <option value="customer">Customer Name</option>
+              <option value="customer">Customer Name with A/C No</option>
             </select>
           </div>
           <select id="miProducts" multiple size="6"></select>
@@ -1004,17 +1113,66 @@ body.no-bgclip .footer-rgb .rgb-text{
         </div>
       </div>
     </div>
+    <div style="height:8px"></div>
+    <div class="selector-section">
+      <h4>Security Value Against Loan <span class="filter-total" id="filterTotalSecurity">Total: —</span></h4>
+      <div id="securityBreakdown" style="margin-bottom:14px; padding: 12px 18px; background: linear-gradient(135deg, rgba(99,102,241,0.04), rgba(16,185,129,0.04)); border: 1px solid rgba(99,102,241,0.12); border-radius: 10px; font-size:0.85em; color:#374151; line-height:1.8;">
+        <div style="font-weight:700; color:#1f2937; margin-bottom:6px; font-size:0.9rem;">Total = Customer Asset Value + SME EMF Security Value + Loan Selection (×115%)</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px 24px; align-items:center;">
+          <span>Customer Asset Value: <b id="secBreakCustAsset" style="color:#6366f1;">—</b></span>
+          <span>+ SME EMF Security Value: <b id="secBreakSme" style="color:#6366f1;">—</b></span>
+          <span>+ Loan Selection (×115%): <b id="secBreakSelection" style="color:#6366f1;">—</b></span>
+          <span>= <b id="secBreakTotal" style="color:#059669; font-size:1rem;">—</b></span>
+        </div>
+      </div>
+      <div id="smeEarnestLimit" style="margin-bottom:16px; padding: 14px 20px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 10px; font-size:0.9em; color:#374151; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">SME - Earnest Money Account Limit: <b id="smeEarnestLimitVal" style="color:#6366f1; font-weight:800">—</b>
+      &nbsp; &nbsp;Pct: <input id="smeEarnestPct" type="number" step="0.01" min="0" max="100" style="width:80px; padding:8px 10px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:0.9rem; font-family:inherit;" /> %
+      &nbsp; Security Value: <b id="smeEarnestImpactVal" style="color:#6366f1; font-weight:800">—</b>
+    </div>
+      <div class="selector-grid">
+        <div class="col">
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+            <div class="label-small">Filter by</div>
+            <select id="securityMode" class="mode-select">
+              <option value="product">Product Description</option>
+              <option value="customer">Customer Name with A/C No</option>
+            </select>
+          </div>
+          <select id="securityProducts" multiple size="6"></select>
+          <select id="securityCustomers" multiple size="6" style="display:none"></select>
+        </div>
+        <div class="col"><div class="chip-row" id="securitySelected">(No products selected)</div></div>
+      </div>
+    </div>
+    <div style="height:8px"></div>
+    <div class="selector-section">
+      <h4>Unused Part of Commitment <span class="filter-total" id="filterTotalUnused">Total: —</span></h4>
+      <div class="selector-grid">
+        <div class="col">
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+            <div class="label-small">Filter by</div>
+            <select id="unusedMode" class="mode-select">
+              <option value="product">Product Description</option>
+              <option value="customer">Customer Name with A/C No</option>
+            </select>
+          </div>
+          <select id="unusedProducts" multiple size="6"></select>
+          <select id="unusedCustomers" multiple size="6" style="display:none"></select>
+        </div>
+        <div class="col"><div class="chip-row" id="unusedSelected">(No products selected)</div></div>
+      </div>
+    </div>
     
     <div style="height:8px"></div>
     <div class="selector-section">
-      <h4>Asset-backed</h4>
+      <h4>Asset-backed LOAN OUTSTANDING <span class="filter-total" id="filterTotalAb">Total: —</span></h4>
       <div class="selector-grid">
         <div class="col">
           <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
             <div class="label-small">Filter by</div>
             <select id="abMode" class="mode-select">
               <option value="product">Product Description</option>
-              <option value="customer">Customer Name</option>
+              <option value="customer">Customer Name with A/C No</option>
             </select>
           </div>
           <select id="abProducts" multiple size="6"></select>
@@ -1027,17 +1185,20 @@ body.no-bgclip .footer-rgb .rgb-text{
     </div>
     <div style="height:8px"></div>
     <div class="selector-section">
-      <h4>Women Entrepreneur</h4>
+      <h4>Women Entrepreneur LOAN OUTSTANDING <span class="filter-total" id="filterTotalWe">Total: —</span></h4>
       <div class="selector-grid">
         <div class="col">
           <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
             <div class="label-small">Filter by</div>
             <select id="weMode" class="mode-select">
-              <option value="customer">Customer Name</option>
+              <option value="customer">Customer Name with A/C No</option>
               <option value="product">Product Description</option>
             </select>
           </div>
-          <select id="weCustomers" multiple size="4"></select>
+          <select id="weCustomers" multiple size="6"></select>
+          <select id="weProducts" multiple size="6" style="display:none"></select>
+        </div>
+        <div class="col">
           <div class="chip-row" id="weSelected">(No customers selected)</div>
         </div>
       </div>
@@ -1045,14 +1206,14 @@ body.no-bgclip .footer-rgb .rgb-text{
 
     <div style="height:8px"></div>
     <div class="selector-section">
-      <h4>AGRI (CROP)</h4>
+      <h4>AGRI (CROP) LOAN OUTSTANDING <span class="filter-total" id="filterTotalAgriCrop">Total: —</span></h4>
       <div class="selector-grid">
         <div class="col">
           <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
             <div class="label-small">Filter by</div>
             <select id="agriCropMode" class="mode-select">
               <option value="product">Product Description</option>
-              <option value="customer">Customer Name</option>
+              <option value="customer">Customer Name with A/C No</option>
             </select>
           </div>
           <select id="agriCropProducts" multiple size="6"></select>
@@ -1061,16 +1222,19 @@ body.no-bgclip .footer-rgb .rgb-text{
         <div class="col">
           <div class="chip-row" id="agriCropCombinedSelected">(No items selected)</div>
         </div>
+      </div>
+    </div>
 
+    <div style="height:8px"></div>
+    <div class="selector-section">
+      <h4>AGRI (INDUSTRIAL) LOAN OUTSTANDING <span class="filter-total" id="filterTotalAgriInd">Total: —</span></h4>
+      <div class="selector-grid">
         <div class="col">
-          <div style="font-size:0.95em; font-weight:700; color:var(--accent-blue); margin-bottom:6px">AGRI (INDUSTRIAL)
-
-</div>
           <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
             <div class="label-small">Filter by</div>
             <select id="agriIndMode" class="mode-select">
               <option value="product">Product Description</option>
-              <option value="customer">Customer Name</option>
+              <option value="customer">Customer Name with A/C No</option>
             </select>
           </div>
           <select id="agriIndProducts" multiple size="6"></select>
@@ -1099,63 +1263,190 @@ body.no-bgclip .footer-rgb .rgb-text{
         <div class="results-title">Portfolio Dashboard</div>
       </div>
       <div id="results" class="results-grid">
-        <div class="result-card"><h5>Total Loan Accounts</h5><div class="num" id="totalAccounts">—</div></div>
-        <div class="result-card"><h5>Total Loan Amount</h5><div class="num" id="bucketTotal">—</div></div>
-        <div class="result-card"><h5>Short (≤1y)</h5><div class="num" id="short">—</div></div>
-        <div class="result-card"><h5>Medium (&gt;1y - &lt;3y)</h5><div class="num" id="med">—</div></div>
-        <div class="result-card"><h5>Long (≥3y)</h5><div class="num" id="long">—</div></div>
+        <div class="result-card" data-tip="Total number of loan accounts in the portfolio"><h5>Total Loan Accounts</h5><div class="num" id="totalAccounts">—</div></div>
+        <div class="result-card" data-tip="Sum of all loan amounts across the portfolio"><h5>Total Loan Amount</h5><div class="num" id="bucketTotal">—</div></div>
+        <div class="result-card" data-tip="Loans with tenure up to 1 year"><h5>Short (≤1y)</h5><div class="num" id="short">—</div></div>
+        <div class="result-card" data-tip="Loans with tenure between 1 and 3 years"><h5>Medium (&gt;1y - &lt;3y)</h5><div class="num" id="med">—</div></div>
+        <div class="result-card" data-tip="Loans with tenure 3 years or more"><h5>Long (≥3y)</h5><div class="num" id="long">—</div></div>
 
-        <div class="result-card"><h5>Top-50 total Loan Outstanding</h5><div class="num" id="top50">—</div></div>
-        <div class="result-card"><h5>Total Service Loan Outstanding</h5><div class="num" id="serviceTotal">—</div></div>
-        <div class="result-card"><h5>Total Manufacturing &amp; Industrial</h5><div class="num" id="miTotal">—</div></div>
-        <div class="result-card"><h5>Total Non-Manufacturing &amp; Trade</h5><div class="num" id="nonMiTotal">—</div></div>
-        <div class="result-card"><h5>Total EOL</h5><div class="num" id="totalEOL">—</div></div>
+        <div class="result-card" data-tip="Sum of the top 50 largest loan amounts"><h5>Top-50 total Loan Outstanding</h5><div class="num" id="top50">—</div></div>
+        <div class="result-card" data-tip="Total outstanding from selected service loan products"><h5>Total Service Loan Outstanding</h5><div class="num" id="serviceTotal">—</div></div>
+        <div class="result-card" data-tip="Total outstanding from manufacturing & industrial sector"><h5>Total Manufacturing &amp; Industrial</h5><div class="num" id="miTotal">—</div></div>
+        <div class="result-card" data-tip="Total outstanding excluding manufacturing & service loans"><h5>Total Non-Manufacturing &amp; Trade</h5><div class="num" id="nonMiTotal">—</div></div>
+        <div class="result-card" data-tip="Total Excess Over Limit across all accounts"><h5>Total EOL</h5><div class="num" id="totalEOL">—</div></div>
 
-        <div class="result-card"><h5>Total Asset-backed Loan</h5><div class="num" id="abTotal">—</div></div>
-        <div class="result-card"><h5>Total Guarantee-backed Loan</h5><div class="num" id="gbTotal">—</div></div>
-        <div class="result-card"><h5>Total Security Value</h5><div class="num" id="securityAdjusted">—</div></div>
-        <div class="result-card"><h5>Total Unused Part of Commitment</h5><div class="num" id="unusedTotal">—</div></div>
-        <div class="result-card"><h5>New Loan Disbursed</h5><div class="num" id="newDisbLastMonth">—</div></div>
+        <div class="result-card" data-tip="Total loans backed by physical or financial assets"><h5>Total Asset-backed Loan</h5><div class="num" id="abTotal">—</div></div>
+        <div class="result-card" data-tip="Total loans backed by guarantees (unsecured)"><h5>Total Guarantee-backed Loan</h5><div class="num" id="gbTotal">—</div></div>
+        <div class="result-card" data-tip="Combined security value: Asset + SME EMF + Loan Selection (×115%)"><h5>Total Security Value</h5><div class="num" id="securityAdjusted">—</div></div>
+        <div class="result-card" data-tip="Unused portion of approved commitment limits"><h5>Total Unused Part of Commitment</h5><div class="num" id="unusedTotal">—</div></div>
+        <div class="result-card" data-tip="New loans disbursed in the previous calendar month"><h5>New Loan Disbursed</h5><div class="num" id="newDisbLastMonth">—</div></div>
 
-        <div class="result-card"><h5>Total Agri Industrial Loan</h5><div class="num" id="agriIndTotal">—</div></div>
-        <div class="result-card"><h5>Total Agri (crop) loan</h5><div class="num" id="agriCropTotal">—</div></div>
-        <div class="result-card"><h5>Total Women Entrepreneur Loan</h5><div class="num" id="weTotal">—</div></div>
+        <div class="result-card" data-tip="Total outstanding from agri industrial sector"><h5>Total Agri Industrial Loan</h5><div class="num" id="agriIndTotal">—</div></div>
+        <div class="result-card" data-tip="Total outstanding from agri crop sector"><h5>Total Agri (crop) loan</h5><div class="num" id="agriCropTotal">—</div></div>
+        <div class="result-card" data-tip="Total outstanding from women entrepreneur loans"><h5>Total Women Entrepreneur Loan</h5><div class="num" id="weTotal">—</div></div>
         <!-- duplicates removed -->
       </div>
     </div>
   <div class="box" id="pageAll" style="display:none">
-      <h4 style="margin-top:12px">Customer Name &amp; Asset Value</h4>
-      <div id="custAssetSection" style="max-height:360px; overflow:auto; border-top:1px dashed #ccc; padding-top:8px">
-  <div style="margin-bottom:8px"><button id="addCustAsset" type="button">Add Customer Asset</button> <span id="custAssetTotal" style="margin-left:16px; font-weight:700">Total: —</span></div>
-  <table id="custAssetTable"><thead><tr><th>#</th><th>Customer Name</th><th>Asset Value</th><th>%</th><th>Impact</th><th>Actions</th></tr></thead><tbody></tbody></table>
-      </div>
+    <style>
+    /* Raw Data Page - Modern Styles */
+    #pageAll { padding: 28px; }
+    #pageAll .raw-section { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(15,23,42,0.04); transition: all 0.2s ease; }
+    #pageAll .raw-section:hover { box-shadow: 0 4px 16px rgba(99,102,241,0.08); border-color: rgba(99,102,241,0.15); }
+    #pageAll .raw-section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    #pageAll .raw-section-header i { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #fff; border-radius: 10px; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(99,102,241,0.2); }
+    #pageAll .raw-section-header h4 { margin: 0; font-size: 1.1rem; font-weight: 800; color: #1f2937; letter-spacing: -0.01em; }
+    #pageAll .raw-section-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+    #pageAll .raw-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #fff; border: none; border-radius: 10px; font-size: 0.88rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(99,102,241,0.25); transition: all 0.2s ease; font-family: inherit; }
+    #pageAll .raw-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.35); }
+    #pageAll .raw-btn i { font-size: 0.85rem; }
+    #pageAll .raw-total-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(16,185,129,0.04)); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; font-size: 0.9rem; font-weight: 700; color: #065f46; }
+    #pageAll .raw-table-wrap { max-height: 360px; overflow: auto; border-radius: 10px; border: 1px solid #e5e7eb; }
+    #pageAll .raw-table-wrap table { border-radius: 0; box-shadow: none; margin: 0; table-layout: fixed; width: 100%; }
+    #pageAll .raw-table-wrap thead th { position: sticky; top: 0; z-index: 2; background: #f8fafc; border-bottom: 2px solid #e5e7eb; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: #6b7280; padding: 12px 14px; text-align: center; }
+    #pageAll .raw-table-wrap thead th:first-child { text-align: center; width: 40px; }
+    #pageAll .raw-table-wrap tbody td { padding: 11px 14px; font-size: 0.9rem; color: #374151; text-align: center; }
+    #pageAll .raw-table-wrap tbody tr:hover { background: rgba(99,102,241,0.04); }
+    #pageAll .raw-table-wrap tbody tr:nth-child(even) { background: #fafbfc; }
+    #pageAll .raw-table-wrap tbody tr:nth-child(even):hover { background: rgba(99,102,241,0.04); }
 
-      <h3>EOL</h3>
-      <div id="eolSection" style="margin-top:10px; border-top:1px dashed #ccc; padding-top:8px">
-        <div id="eolTableWrap" style="display:block; max-height:220px; overflow:auto; margin-top:8px">
+    /* Raw Data page section animations - triggered when page shown */
+    #pageAll .raw-section {
+      transform: translateY(14px);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(.2,.9,.2,1), opacity 0.5s cubic-bezier(.2,.9,.2,1);
+    }
+    #pageAll.visible .raw-section {
+      transform: none;
+      opacity: 1;
+    }
+    #pageAll.visible .raw-section:nth-child(1) { transition-delay: 0.05s; }
+    #pageAll.visible .raw-section:nth-child(2) { transition-delay: 0.12s; }
+    #pageAll.visible .raw-section:nth-child(3) { transition-delay: 0.19s; }
+    #pageAll.visible .raw-section:nth-child(4) { transition-delay: 0.26s; }
+
+    /* Table row entrance animation */
+    #pageAll .raw-table-wrap tbody tr {
+      animation: rawRowIn 0.35s cubic-bezier(.2,.9,.2,1) forwards;
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+
+    @keyframes rawRowIn {
+      0% { opacity: 0; transform: translateX(-8px); }
+      100% { opacity: 1; transform: none; }
+    }
+
+    /* Stagger first 20 rows */
+    #pageAll .raw-table-wrap tbody tr:nth-child(1) { animation-delay: 0.02s; }
+    #pageAll .raw-table-wrap tbody tr:nth-child(2) { animation-delay: 0.04s; }
+    #pageAll .raw-table-wrap tbody tr:nth-child(3) { animation-delay: 0.06s; }
+    #pageAll .raw-table-wrap tbody tr:nth-child(4) { animation-delay: 0.08s; }
+    #pageAll .raw-table-wrap tbody tr:nth-child(5) { animation-delay: 0.10s; }
+    #pageAll .raw-table-wrap tbody tr:nth-child(6) { animation-delay: 0.12s; }
+    #pageAll .raw-table-wrap tbody tr:nth-child(7) { animation-delay: 0.14s; }
+    #pageAll .raw-table-wrap tbody tr:nth-child(8) { animation-delay: 0.16s; }
+    #pageAll .raw-table-wrap tbody tr:nth-child(9) { animation-delay: 0.18s; }
+    #pageAll .raw-table-wrap tbody tr:nth-child(10) { animation-delay: 0.20s; }
+    #pageAll .raw-table-wrap tbody tr:nth-child(n+11) { animation-delay: 0.22s; }
+
+    /* Button hover pulse */
+    #pageAll .raw-btn:active {
+      transform: scale(0.96);
+    }
+    /* Bucket select styling */
+    #pageAll .bucket-bar { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 10px; margin-top: 16px; }
+    #pageAll .bucket-bar label { margin: 0; font-size: 0.88rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.03em; }
+    #pageAll .bucket-bar select { padding: 8px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.9rem; font-family: inherit; background: #fff; color: #1f2937; transition: all 0.2s ease; }
+    #pageAll .bucket-bar select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); outline: none; }
+    /* Edit & Delete buttons in tables */
+    #pageAll .raw-table-wrap tbody .cust-edit,
+    #pageAll .raw-table-wrap tbody .cust-delete {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    #pageAll .raw-table-wrap tbody .cust-edit {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.2);
+    }
+    #pageAll .raw-table-wrap tbody .cust-edit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(99,102,241,0.35);
+    }
+    #pageAll .raw-table-wrap tbody .cust-delete {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(239,68,68,0.2);
+    }
+    #pageAll .raw-table-wrap tbody .cust-delete:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239,68,68,0.35);
+    }
+    </style>
+
+    <!-- Customer Name & Asset Value Section -->
+    <div class="raw-section">
+      <div class="raw-section-header"><i class="fas fa-users"></i><h4>Customer Name &amp; Asset Value</h4></div>
+      <div id="custAssetSection">
+        <div class="raw-section-toolbar">
+          <button id="addCustAsset" type="button" class="raw-btn"><i class="fas fa-plus"></i> Add Customer Asset</button>
+          <span id="custAssetTotal" class="raw-total-badge">Total: —</span>
+        </div>
+        <div class="raw-table-wrap">
+          <table id="custAssetTable"><thead><tr><th>#</th><th>Customer Name</th><th>Account No</th><th>Asset Value</th><th>%</th><th>Impact</th><th>Actions</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- EOL Section -->
+    <div class="raw-section">
+      <div class="raw-section-header"><i class="fas fa-exclamation-triangle"></i><h4>EOL</h4></div>
+      <div id="eolSection">
+        <div id="eolTableWrap" class="raw-table-wrap">
           <table id="eolTable"><thead><tr><th>#</th><th>Customer</th><th>Product</th><th>Remarks</th><th>Account Limit</th><th>Total Due</th><th>Excess</th></tr></thead><tbody></tbody></table>
         </div>
       </div>
+    </div>
 
-      
-
-      <h3 style="margin-top:12px">Unused Part of Commitment (Selected rows)</h3>
-      <div id="unusedTableWrap" style="margin-top:8px; border-top:1px dashed #ccc; padding-top:8px; display:block; max-height:220px; overflow:auto">
+    <!-- Unused Part of Commitment Section -->
+    <div class="raw-section">
+      <div class="raw-section-header"><i class="fas fa-file-invoice-dollar"></i><h4>Unused Part of Commitment (Selected rows)</h4></div>
+      <div id="unusedTableWrap" class="raw-table-wrap">
         <table id="unusedTableAll"><thead><tr><th>#</th><th>Customer</th><th>Product</th><th>Limit Amount</th><th>Total Due</th><th>Unused</th></tr></thead><tbody></tbody></table>
       </div>
+    </div>
 
-      <h4>All sample</h4>
-      <div style="max-height:520px; overflow:auto"><table id="topTable"><thead><tr><th>#</th><th>Customer Name</th><th>Amount</th><th>Expiry</th><th>Disbursement</th></tr></thead><tbody></tbody></table></div>
-
-      <div style="margin-top:8px; margin-bottom:8px">
-        <label style="margin-right:8px">Bucket selection:</label>
+    <!-- All Sample Section -->
+    <div class="raw-section">
+      <div class="raw-section-header"><i class="fas fa-database"></i><h4>All Sample</h4></div>
+      <div class="raw-table-wrap" style="max-height:520px">
+        <table id="topTable"><thead><tr><th>#</th><th>Customer Name</th><th>Product Description</th><th>Account No</th><th>Amount</th><th>Int. Rate</th><th>Expiry</th><th>Disbursement</th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="bucket-bar">
+        <label>Bucket selection:</label>
         <select id="bucketSelect">
           <option value="all">All (no filter)</option>
-          <option value="short">Short (<=1y)</option>
+          <option value="short">Short (≤1y)</option>
           <option value="medium">Medium (>1y - <3y)</option>
-          <option value="long">Long (>=3y)</option>
+          <option value="long">Long (≥3y)</option>
+        </select>
+        <label style="margin:0">Product:</label>
+        <select id="bucketProductFilter" style="min-width:180px;">
+          <option value="">All Products</option>
+        </select>
+        <label style="margin:0">Customer:</label>
+        <select id="bucketCustomerFilter" style="min-width:180px;">
+          <option value="">All Customers</option>
         </select>
       </div>
+    </div>
     </div>
     
     
@@ -1208,6 +1499,86 @@ body.no-bgclip .footer-rgb .rgb-text{
     function normalize(s){ if(s==null) return ''; return String(s).trim(); }
     function normalizeKey(s){ return normalize(s).toLowerCase().replace(/\s+/g,' ').replace(/[^a-z0-9 ]/g,''); }
 
+    // Helper: get the account number column name from data headers (find actual "Account No" column, not idCol which may be Contract Ref)
+    function getAcctCol(){
+      // First try to find a column specifically named "Account No" or "Account Number" from headers
+      if(typeof lastCols !== 'undefined' && lastCols.length > 0){
+        const found = lastCols.find(c=> {
+          const k = normalizeKey(c);
+          return k.includes('account') && (k.includes('no') || k.includes('number'));
+        });
+        if(found) return found;
+      }
+      // fallback to idCol
+      return document.getElementById('idCol').value || '';
+    }
+
+    // Helper: build "CustomerName - AccountNo" entries from records for customer filter dropdowns
+    function buildCustWithAcctEntries(records){
+      const custCol = document.getElementById('customerCol').value;
+      const acctCol = getAcctCol();
+      const entries = new Map(); // key: lowercase display string, value: display string (original case)
+      if(custCol && records){
+        for(const r of records){
+          const cust = normalize(r[custCol]||'');
+          const acct = acctCol ? normalize(r[acctCol]||'') : '';
+          if(!cust) continue;
+          const display = acct ? (cust + ' - ' + acct) : cust;
+          const key = display.toLowerCase();
+          if(!entries.has(key)) entries.set(key, display);
+        }
+      }
+      return Array.from(entries.entries()).sort((a,b)=>a[0].localeCompare(b[0]));
+    }
+
+    // Helper: check if a record matches a customer-with-account token
+    // Token format: "customername - accountno" (lowercase)
+    // If token contains " - " AND matches a known customer+account pattern, match both fields
+    // Otherwise fall back to includes() matching on product/customer columns
+    function tokenMatchesRecord(token, r, prodColName, custColName){
+      const acctCol = getAcctCol();
+      if(token.includes(' - ') && acctCol){
+        // Check if this token is actually a "customer - account" entry by verifying
+        // the part after the last " - " matches an account number in the record
+        const av = String(r[acctCol]||'').toLowerCase().trim();
+        if(av){
+          // Try to see if the token ends with the account value
+          const suffix = ' - ' + av;
+          if(token.endsWith(suffix)){
+            const custPart = token.slice(0, token.length - suffix.length).trim();
+            const cv = String(r[custColName]||'').toLowerCase().trim();
+            return cv === custPart;
+          }
+        }
+        // Also try: token might be "custname - acctno" where acctno doesn't match this record
+        // In that case check if ANY split produces a valid account match pattern
+        // If none of the record's account matches, fall through to includes logic
+      }
+      // fallback: original includes logic for product-based tokens
+      const pv = String(r[prodColName]||'').toLowerCase();
+      const cv = String(r[custColName]||'').toLowerCase();
+      return pv.includes(token) || cv.includes(token);
+    }
+
+    // Helper: attach a scroll-preserving toggle handler to a multi-select element
+    function attachToggleHandler(sel, renderFn){
+      if(sel._toggleHandlerAdded) return;
+      sel.addEventListener('mousedown', function(e){
+        const t = e.target;
+        if(t && t.tagName && t.tagName.toLowerCase() === 'option'){
+          e.preventDefault();
+          const scrollPos = sel.scrollTop;
+          const val = t.value;
+          for(const o of sel.options){ if(o.value===val){ o.selected = !o.selected; break; } }
+          if(typeof renderFn === 'function') renderFn();
+          try{ analyzeNow(); }catch(err){}
+          // Restore scroll position after toggle
+          requestAnimationFrame(()=>{ sel.scrollTop = scrollPos; });
+        }
+      });
+      sel._toggleHandlerAdded = true;
+    }
+
   // Helper to read saved selection arrays/values from the persisted selections blob
   function getSavedSelection(id){ try{ const raw = localStorage.getItem(PERSIST_KEY); if(!raw) return null; const obj = JSON.parse(raw); if(!obj) return null; const val = obj[id]; if(val===undefined||val===null) return null; if(Array.isArray(val)) return val.map(v=>String(v).toLowerCase()); return String(val).toLowerCase(); }catch(e){ return null; } }
 
@@ -1217,10 +1588,12 @@ body.no-bgclip .footer-rgb .rgb-text{
       // DOM selected options (if present)
       const el = document.getElementById(baseId);
       if(el){ try{ const dom = Array.from(el.selectedOptions).map(o=>String(o.value).toLowerCase()); for(const d of dom) if(d) tokens.add(d); }catch(_){} }
-      // If there's a paired Customers select (e.g. agriCropProducts -> agriCropCustomers), include its DOM-selected options too
+      // If there's a paired select (Products<->Customers), include its DOM-selected options too
       try{
-        const partnerId = baseId.replace(/Products$/,'Customers');
-        const partnerEl = document.getElementById(partnerId);
+        let partnerId = null;
+        if(baseId.match(/Products$/)) partnerId = baseId.replace(/Products$/,'Customers');
+        else if(baseId.match(/Customers$/)) partnerId = baseId.replace(/Customers$/,'Products');
+        const partnerEl = partnerId ? document.getElementById(partnerId) : null;
         if(partnerEl){ const dom2 = Array.from(partnerEl.selectedOptions).map(o=>String(o.value).toLowerCase()); for(const d of dom2) if(d) tokens.add(d); }
       }catch(_){}
       // generic saved
@@ -1247,6 +1620,18 @@ body.no-bgclip .footer-rgb .rgb-text{
 
   // Toggle visibility of product/customer selects for MI and AB based on their mode selectors
   function setModeVisibilityAll(){ try{
+      // Service
+      const serviceModeEl = document.getElementById('serviceMode');
+      if(serviceModeEl){ const ms = serviceModeEl.value || 'product'; const sProd = document.getElementById('serviceProducts'); const sCust = document.getElementById('serviceCustomers'); if(sProd) sProd.style.display = (ms==='product' ? '' : 'none'); if(sCust) sCust.style.display = (ms==='customer' ? '' : 'none'); }
+      // Security
+      const secModeEl = document.getElementById('securityMode');
+      if(secModeEl){ const msc = secModeEl.value || 'product'; const secProd = document.getElementById('securityProducts'); const secCust = document.getElementById('securityCustomers'); if(secProd) secProd.style.display = (msc==='product' ? '' : 'none'); if(secCust) secCust.style.display = (msc==='customer' ? '' : 'none'); }
+      // Unused
+      const unusedModeEl = document.getElementById('unusedMode');
+      if(unusedModeEl){ const mu = unusedModeEl.value || 'product'; const uProd = document.getElementById('unusedProducts'); const uCust = document.getElementById('unusedCustomers'); if(uProd) uProd.style.display = (mu==='product' ? '' : 'none'); if(uCust) uCust.style.display = (mu==='customer' ? '' : 'none'); }
+      // Women Entrepreneur
+      const weModeEl = document.getElementById('weMode');
+      if(weModeEl){ const mw = weModeEl.value || 'customer'; const weCust = document.getElementById('weCustomers'); const weProd = document.getElementById('weProducts'); if(weCust) weCust.style.display = (mw==='customer' ? '' : 'none'); if(weProd) weProd.style.display = (mw==='product' ? '' : 'none'); }
       // MI
       const miModeEl = document.getElementById('miMode');
       if(miModeEl){ const m = miModeEl.value || 'product'; const miProd = document.getElementById('miProducts'); const miCust = document.getElementById('miCustomers'); const miProdRow = document.getElementById('miProductSelected'); const miCustRow = document.getElementById('miSelected'); if(miProd) miProd.style.display = (m==='product' ? '' : 'none'); if(miProdRow) miProdRow.style.display = (m==='product' ? '' : 'none'); if(miCust) miCust.style.display = (m==='customer' ? '' : 'none'); if(miCustRow) miCustRow.style.display = (m==='customer' ? '' : 'none'); }
@@ -1264,43 +1649,58 @@ body.no-bgclip .footer-rgb .rgb-text{
 
     function populateServiceProducts(records){
       const prodSel = document.getElementById('serviceProducts'); if(!prodSel) return;
-      // preserve previous selections (prefer current DOM selection, then per-mode saved snapshot, then generic saved snapshot)
-  let prevSelected = Array.from(prodSel.selectedOptions).map(o=>String(o.value).toLowerCase());
-      const mode = (document.getElementById('serviceMode') && document.getElementById('serviceMode').value) ? document.getElementById('serviceMode').value : 'product';
-      if(prevSelected.length===0){ const savedMode = getSavedSelection('serviceProducts__'+mode); if(savedMode){ prevSelected = Array.isArray(savedMode)? savedMode : [savedMode]; } }
+      let prevSelected = Array.from(prodSel.selectedOptions).map(o=>String(o.value).toLowerCase());
+      if(prevSelected.length===0){ const savedMode = getSavedSelection('serviceProducts__product'); if(savedMode){ prevSelected = Array.isArray(savedMode)? savedMode : [savedMode]; } }
       if(prevSelected.length===0){ const saved = getSavedSelection('serviceProducts'); if(saved){ prevSelected = Array.isArray(saved)? saved : [saved]; } }
       prodSel.innerHTML='';
-  // decide whether to populate from product description or customer name based on mode
-  const colName = (mode==='customer') ? document.getElementById('customerCol').value : document.getElementById('productCol').value;
-  const productValues = new Set();
-  if(colName && records){ for(const r of records){ const p = normalize(r[colName]||''); if(p) productValues.add(p.toLowerCase()); } }
+      const colName = document.getElementById('productCol').value;
+      const productValues = new Set();
+      if(colName && records){ for(const r of records){ const p = normalize(r[colName]||''); if(p) productValues.add(p.toLowerCase()); } }
       const prodArr = Array.from(productValues).sort();
       if(prodArr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no product values found)'; prodSel.appendChild(o); return; }
-      for(const v of prodArr){ const o = document.createElement('option'); o.value = v; o.textContent = v; // restore previous selection if present
+      for(const v of prodArr){ const o = document.createElement('option'); o.value = v; o.textContent = v;
         if(prevSelected.includes(v)) o.selected = true;
         prodSel.appendChild(o); }
-      const defaults = ['sme - earnest money finance','retail - doctors loan','earnest money finance','doctors loan'];
-      let anySel=false;
-      for(const opt of prodSel.options){ if(opt.selected) { anySel = true; break; } }
-      // Do not auto-select any options on initial load — leave selections to the user
-
-      // clicking an option should toggle it (single click), not clear others — implement via mousedown
       if(!prodSel._toggleHandlerAdded){
         prodSel.addEventListener('mousedown', function(e){
-          // ignore clicks on the scrollbar area etc.
           const target = e.target;
           if(!target) return;
           if(target.tagName && target.tagName.toLowerCase() === 'option'){
-            e.preventDefault(); // stop default single-select behaviour
+            e.preventDefault();
             const val = target.value;
-            // toggle selection
             for(const o of prodSel.options){ if(o.value===val){ o.selected = !o.selected; break; } }
             renderSelectedServiceChips(); try{ analyzeNow(); }catch(err){}
           }
         });
         prodSel._toggleHandlerAdded = true;
       }
-      // update chips after repopulate
+      try{ renderSelectedServiceChips(); }catch(e){}
+    }
+
+    function populateServiceCustomers(records){
+      const sel = document.getElementById('serviceCustomers'); if(!sel) return;
+      let prev = Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase());
+      if(prev.length===0){ const savedMode = getSavedSelection('serviceCustomers__customer'); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } }
+      if(prev.length===0){ const saved = getSavedSelection('serviceCustomers'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } }
+      sel.innerHTML='';
+      const entries = buildCustWithAcctEntries(records);
+      if(entries.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; sel.appendChild(o); return; }
+      for(const [key, display] of entries){ const o = document.createElement('option'); o.value = key; o.textContent = display;
+        if(prev.includes(key)) o.selected = true;
+        sel.appendChild(o); }
+      if(!sel._toggleHandlerAdded){
+        sel.addEventListener('mousedown', function(e){
+          const target = e.target;
+          if(!target) return;
+          if(target.tagName && target.tagName.toLowerCase() === 'option'){
+            e.preventDefault();
+            const val = target.value;
+            for(const o of sel.options){ if(o.value===val){ o.selected = !o.selected; break; } }
+            renderSelectedServiceChips(); try{ analyzeNow(); }catch(err){}
+          }
+        });
+        sel._toggleHandlerAdded = true;
+      }
       try{ renderSelectedServiceChips(); }catch(e){}
     }
 
@@ -1308,11 +1708,10 @@ body.no-bgclip .footer-rgb .rgb-text{
     function populateUnusedProducts(records){
       const sel = document.getElementById('unusedProducts'); if(!sel) return;
   let prev = Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase());
-      const mode = (document.getElementById('unusedMode') && document.getElementById('unusedMode').value) ? document.getElementById('unusedMode').value : 'product';
-      if(prev.length===0){ const savedMode = getSavedSelection('unusedProducts__'+mode); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } }
+      if(prev.length===0){ const savedMode = getSavedSelection('unusedProducts__product'); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } }
       if(prev.length===0){ const saved = getSavedSelection('unusedProducts'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } }
       sel.innerHTML = '';
-  const col = (mode==='customer') ? document.getElementById('customerCol').value : document.getElementById('productCol').value;
+  const col = document.getElementById('productCol').value;
   const values = new Set();
   if(col && records){ for(const r of records){ const v = normalize(r[col]||''); if(v) values.add(v.toLowerCase()); } }
       const arr = Array.from(values).sort();
@@ -1322,15 +1721,27 @@ body.no-bgclip .footer-rgb .rgb-text{
       try{ renderSelectedUnusedChips(); }catch(e){}
     }
 
+    function populateUnusedCustomers(records){
+      const sel = document.getElementById('unusedCustomers'); if(!sel) return;
+      let prev = Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase());
+      if(prev.length===0){ const savedMode = getSavedSelection('unusedCustomers__customer'); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } }
+      if(prev.length===0){ const saved = getSavedSelection('unusedCustomers'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } }
+      sel.innerHTML='';
+      const entries = buildCustWithAcctEntries(records);
+      if(entries.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; sel.appendChild(o); return; }
+      for(const [key, display] of entries){ const o=document.createElement('option'); o.value=key; o.textContent=display; if(prev.includes(key)) o.selected=true; sel.appendChild(o); }
+      if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedUnusedChips(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; }
+      try{ renderSelectedUnusedChips(); }catch(e){}
+    }
+
     // Security selectors (products)
     function populateSecurityProducts(records){
       const sel = document.getElementById('securityProducts'); if(!sel) return;
   let prev = Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase());
-      const mode = (document.getElementById('securityMode') && document.getElementById('securityMode').value) ? document.getElementById('securityMode').value : 'product';
-      if(prev.length===0){ const savedMode = getSavedSelection('securityProducts__'+mode); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } }
+      if(prev.length===0){ const savedMode = getSavedSelection('securityProducts__product'); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } }
       if(prev.length===0){ const saved = getSavedSelection('securityProducts'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } }
       sel.innerHTML = '';
-  const col = (mode==='customer') ? document.getElementById('customerCol').value : document.getElementById('productCol').value;
+  const col = document.getElementById('productCol').value;
   const values = new Set();
   if(col && records){ for(const r of records){ const v = normalize(r[col]||''); if(v) values.add(v.toLowerCase()); } }
       const arr = Array.from(values).sort();
@@ -1340,23 +1751,36 @@ body.no-bgclip .footer-rgb .rgb-text{
       try{ renderSelectedSecurityChips(); }catch(e){}
     }
 
+    function populateSecurityCustomers(records){
+      const sel = document.getElementById('securityCustomers'); if(!sel) return;
+      let prev = Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase());
+      if(prev.length===0){ const savedMode = getSavedSelection('securityCustomers__customer'); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } }
+      if(prev.length===0){ const saved = getSavedSelection('securityCustomers'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } }
+      sel.innerHTML='';
+      const entries = buildCustWithAcctEntries(records);
+      if(entries.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; sel.appendChild(o); return; }
+      for(const [key, display] of entries){ const o=document.createElement('option'); o.value=key; o.textContent=display; if(prev.includes(key)) o.selected=true; sel.appendChild(o); }
+      if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedSecurityChips(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; }
+      try{ renderSelectedSecurityChips(); }catch(e){}
+    }
+
     function renderSelectedSecurityChips(){
       const container=document.getElementById('securitySelected');
-      const sel=document.getElementById('securityProducts');
-      if(!container||!sel) return;
+      const prodSel=document.getElementById('securityProducts');
+      const custSel=document.getElementById('securityCustomers');
+      if(!container) return;
       container.innerHTML='';
-      const mode = (document.getElementById('securityMode') && document.getElementById('securityMode').value) ? document.getElementById('securityMode').value : 'product';
-      const otherMode = (mode==='product') ? 'customer' : 'product';
-      const selected = Array.from(sel.selectedOptions).map(o=>o.value);
-      // render current-mode selected
-      if(selected.length===0){ /* no current selections - but still show other-mode saved below if present */ }
-      for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of sel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedSecurityChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-      // render saved selections for the other mode (label them)
-      try{
-        const otherSaved = getSavedSelection('securityProducts__'+otherMode) || [];
-        const otherArr = Array.isArray(otherSaved) ? otherSaved : (otherSaved ? [otherSaved] : []);
-        for(const ov of otherArr){ if(!ov) continue; if(selected.includes(ov)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = ov + ' ('+otherMode+')'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('securityProducts', otherMode, ov); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedSecurityChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-      }catch(e){}
+      // product selections
+      if(prodSel){
+        const selected = Array.from(prodSel.selectedOptions).map(o=>o.value);
+        for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; chip.style.cursor='pointer'; const text=document.createElement('span'); text.textContent=val; text.addEventListener('click', ()=>{ try{ showProductCustomerPopup(val); }catch(e){} }); const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', (e)=>{ e.stopPropagation(); for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedSecurityChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+      }
+      // customer selections
+      if(custSel){
+        const selected = Array.from(custSel.selectedOptions).map(o=>o.value);
+        for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedSecurityChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+      }
+      if(container.children.length===0) container.textContent='(No items selected)';
       addPopEffect(container);
     }
     // helper to apply .pop animation to chips after they're inserted
@@ -1366,54 +1790,168 @@ body.no-bgclip .footer-rgb .rgb-text{
         setTimeout(()=>{ chips.forEach(c=> c.classList.add('pop')); }, 20);
       }catch(e){}
     }
-  // Render service selected chips showing both current-mode selections and saved selections from the other mode
+
+    // === Product Chip Popup: Show all customers with account numbers for a selected product ===
+    (function(){
+      // Create popup overlay once
+      const popupHTML = `
+      <style>
+      .prod-popup-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);z-index:10001;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s ease;pointer-events:none}
+      .prod-popup-overlay.active{opacity:1;pointer-events:all}
+      .prod-popup{background:#fff;border-radius:18px;padding:0;width:92%;max-width:600px;max-height:80vh;box-shadow:0 25px 60px rgba(15,23,42,0.25);transform:translateY(24px) scale(0.95);transition:transform .35s cubic-bezier(.2,.9,.2,1),opacity .3s ease;opacity:0;position:relative;overflow:hidden;display:flex;flex-direction:column}
+      .prod-popup-overlay.active .prod-popup{transform:none;opacity:1}
+      .prod-popup-header{padding:24px 28px 16px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(99,102,241,0.04),rgba(236,72,153,0.02))}
+      .prod-popup-header i{color:#6366f1;font-size:1.2rem}
+      .prod-popup-header h3{margin:0;font-size:1.15rem;font-weight:800;color:#1f2937;flex:1}
+      .prod-popup-header .prod-popup-close{width:32px;height:32px;border-radius:8px;border:none;background:#f3f4f6;color:#6b7280;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s ease}
+      .prod-popup-header .prod-popup-close:hover{background:#e5e7eb;color:#1f2937;transform:scale(1.1)}
+      .prod-popup-body{padding:16px 28px 24px;overflow-y:auto;flex:1}
+      .prod-popup-count{font-size:0.82rem;color:#6b7280;margin-bottom:12px;font-weight:600}
+      .prod-popup-table{width:100%;border-collapse:collapse;font-size:0.88rem}
+      .prod-popup-table thead th{background:#f8fafc;padding:10px 12px;text-align:left;font-weight:700;color:#374151;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid #e5e7eb;position:sticky;top:0}
+      .prod-popup-table tbody td{padding:10px 12px;border-bottom:1px solid #f3f4f6;color:#1f2937}
+      .prod-popup-table tbody tr{opacity:0;transform:translateY(8px);animation:popupRowIn .35s cubic-bezier(.2,.9,.2,1) forwards}
+      .prod-popup-table tbody tr:nth-child(1){animation-delay:.03s}
+      .prod-popup-table tbody tr:nth-child(2){animation-delay:.06s}
+      .prod-popup-table tbody tr:nth-child(3){animation-delay:.09s}
+      .prod-popup-table tbody tr:nth-child(4){animation-delay:.12s}
+      .prod-popup-table tbody tr:nth-child(5){animation-delay:.15s}
+      .prod-popup-table tbody tr:nth-child(6){animation-delay:.18s}
+      .prod-popup-table tbody tr:nth-child(7){animation-delay:.21s}
+      .prod-popup-table tbody tr:nth-child(8){animation-delay:.24s}
+      .prod-popup-table tbody tr:nth-child(9){animation-delay:.27s}
+      .prod-popup-table tbody tr:nth-child(10){animation-delay:.30s}
+      .prod-popup-table tbody tr:nth-child(n+11){animation-delay:.33s}
+      .prod-popup-table tbody tr:hover{background:#f8fafc}
+      .prod-popup-table .amt-col{text-align:right;font-weight:600;color:#6366f1}
+      @keyframes popupRowIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
+      </style>
+      <div class="prod-popup-overlay" id="prodPopupOverlay">
+        <div class="prod-popup">
+          <div class="prod-popup-header">
+            <i class="fas fa-users"></i>
+            <h3 id="prodPopupTitle">Customers</h3>
+            <button type="button" class="prod-popup-close" id="prodPopupClose">&times;</button>
+          </div>
+          <div class="prod-popup-body" id="prodPopupBody"></div>
+        </div>
+      </div>`;
+      document.addEventListener('DOMContentLoaded', function(){
+        document.body.insertAdjacentHTML('beforeend', popupHTML);
+        const overlay = document.getElementById('prodPopupOverlay');
+        const closeBtn = document.getElementById('prodPopupClose');
+        function closePopup(){ overlay.classList.remove('active'); }
+        closeBtn.addEventListener('click', closePopup);
+        overlay.addEventListener('click', function(e){ if(e.target===overlay) closePopup(); });
+        document.addEventListener('keydown', function(e){ if(e.key==='Escape' && overlay.classList.contains('active')) closePopup(); });
+      });
+
+      // Global function to show product popup
+      window.showProductCustomerPopup = function(productValue){
+        if(!lastData) return;
+        const records = (typeof dropSummary==='function') ? dropSummary(lastData) : lastData;
+        const prodCol = document.getElementById('productCol').value;
+        const custCol = document.getElementById('customerCol').value;
+        const acctCol = getAcctCol();
+        const amtKey = document.getElementById('amountCol') ? document.getElementById('amountCol').value : '';
+        if(!prodCol) return;
+
+        // Find all records matching this product
+        const matching = [];
+        for(const r of records){
+          const pv = normalize(r[prodCol]||'').toLowerCase();
+          if(pv === productValue.toLowerCase()){
+            const cust = normalize(r[custCol]||'') || '—';
+            const acct = acctCol ? (normalize(r[acctCol]||'') || '—') : '—';
+            const amt = amtKey ? parseAmount(r[amtKey]) : NaN;
+            matching.push({cust, acct, amt});
+          }
+        }
+
+        // Sort by customer name
+        matching.sort((a,b)=> a.cust.localeCompare(b.cust));
+
+        const overlay = document.getElementById('prodPopupOverlay');
+        const title = document.getElementById('prodPopupTitle');
+        const body = document.getElementById('prodPopupBody');
+        title.textContent = productValue;
+        
+        let html = '<div class="prod-popup-count">' + matching.length + ' account(s) found</div>';
+        html += '<table class="prod-popup-table"><thead><tr><th>#</th><th>Customer Name</th><th>Account No</th><th style="text-align:right">Amount</th></tr></thead><tbody>';
+        let popupTotal = 0;
+        matching.forEach((m, i) => {
+          const amt = isNaN(m.amt) ? 0 : m.amt;
+          popupTotal += amt;
+          html += '<tr><td>'+(i+1)+'</td><td>'+m.cust+'</td><td>'+m.acct+'</td><td class="amt-col">'+(isNaN(m.amt)?'—':m.amt.toLocaleString('en-US',{maximumFractionDigits:2}))+'</td></tr>';
+        });
+        html += '</tbody><tfoot><tr style="font-weight:800;border-top:2px solid #e5e7eb;background:#f8fafc;"><td colspan="3" style="text-align:right;padding:12px 14px;color:#1f2937;">Total</td><td class="amt-col" style="color:#6366f1;font-size:1.05em;">'+popupTotal.toLocaleString('en-US',{maximumFractionDigits:2})+'</td></tr></tfoot></table>';
+        if(matching.length===0) html = '<div style="text-align:center;padding:40px 20px;color:#9ca3af;font-size:0.95rem;"><i class="fas fa-search" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.4"></i>No customers found for this product</div>';
+        body.innerHTML = html;
+        overlay.classList.add('active');
+      };
+    })();
+  // Render service selected chips showing selections from both product and customer selects
   function renderSelectedServiceChips(){
     const container = document.getElementById('serviceSelected');
     const prodSel = document.getElementById('serviceProducts');
-    if(!container || !prodSel) return;
+    const custSel = document.getElementById('serviceCustomers');
+    if(!container) return;
     container.innerHTML = '';
-    const mode = (document.getElementById('serviceMode') && document.getElementById('serviceMode').value) ? document.getElementById('serviceMode').value : 'product';
-    const otherMode = (mode === 'product') ? 'customer' : 'product';
-    const selected = Array.from(prodSel.selectedOptions).map(o=>o.value);
-    // current-mode selected chips
-    for(const val of selected){
-      const chip = document.createElement('span'); chip.className='chip';
-      const text = document.createElement('span'); text.textContent = val;
-      const btn = document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×';
-      btn.addEventListener('click', ()=>{
-        for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } }
-        try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){}
-        renderSelectedServiceChips(); try{ analyzeNow(); }catch(e){}
-      });
-      chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip);
+    // product selections
+    if(prodSel){
+      const selected = Array.from(prodSel.selectedOptions).map(o=>o.value);
+      for(const val of selected){
+        const chip = document.createElement('span'); chip.className='chip'; chip.style.cursor='pointer';
+        const text = document.createElement('span'); text.textContent = val;
+        text.addEventListener('click', ()=>{ try{ showProductCustomerPopup(val); }catch(e){} });
+        const btn = document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×';
+        btn.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } }
+          try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){}
+          renderSelectedServiceChips(); try{ analyzeNow(); }catch(e){}
+        });
+        chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip);
+      }
     }
-    // saved selections for the other mode
-    try{
-      const otherSaved = getSavedSelection('serviceProducts__'+otherMode) || [];
-      const otherArr = Array.isArray(otherSaved) ? otherSaved : (otherSaved ? [otherSaved] : []);
-      for(const ov of otherArr){ if(!ov) continue; if(selected.includes(ov)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = ov + ' ('+otherMode+')'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('serviceProducts', otherMode, ov); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedServiceChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-    }catch(e){}
+    // customer selections
+    if(custSel){
+      const selected = Array.from(custSel.selectedOptions).map(o=>o.value);
+      for(const val of selected){
+        const chip = document.createElement('span'); chip.className='chip';
+        const text = document.createElement('span'); text.textContent = val;
+        const btn = document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×';
+        btn.addEventListener('click', ()=>{
+          for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } }
+          try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){}
+          renderSelectedServiceChips(); try{ analyzeNow(); }catch(e){}
+        });
+        chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip);
+      }
+    }
+    if(container.children.length===0) container.textContent='(No items selected)';
     try{ addPopEffect(container); }catch(e){}
   }
     function renderSelectedUnusedChips(){
       const container=document.getElementById('unusedSelected');
-      const sel=document.getElementById('unusedProducts');
-      if(!container||!sel) return;
+      const prodSel=document.getElementById('unusedProducts');
+      const custSel=document.getElementById('unusedCustomers');
+      if(!container) return;
       container.innerHTML='';
-      const mode = (document.getElementById('unusedMode') && document.getElementById('unusedMode').value) ? document.getElementById('unusedMode').value : 'product';
-      const otherMode = (mode==='product') ? 'customer' : 'product';
-      const selected = Array.from(sel.selectedOptions).map(o=>o.value);
-      for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of sel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedUnusedChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-      try{
-        const otherSaved = getSavedSelection('unusedProducts__'+otherMode) || [];
-        const otherArr = Array.isArray(otherSaved) ? otherSaved : (otherSaved ? [otherSaved] : []);
-        for(const ov of otherArr){ if(!ov) continue; if(selected.includes(ov)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = ov + ' ('+otherMode+')'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('unusedProducts', otherMode, ov); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedUnusedChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-      }catch(e){}
+      if(prodSel){
+        const selected = Array.from(prodSel.selectedOptions).map(o=>o.value);
+        for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; chip.style.cursor='pointer'; const text=document.createElement('span'); text.textContent=val; text.addEventListener('click', ()=>{ try{ showProductCustomerPopup(val); }catch(e){} }); const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', (e)=>{ e.stopPropagation(); for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedUnusedChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+      }
+      if(custSel){
+        const selected = Array.from(custSel.selectedOptions).map(o=>o.value);
+        for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedUnusedChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+      }
+      if(container.children.length===0) container.textContent='(No items selected)';
       addPopEffect(container);
     }
   // Simple page switcher
   function showPageResults(){
-    try{ pageSelections.classList.remove('visible'); pageSelections.classList.add('slide-out-right'); pageAll.classList.add('slide-out-right'); }catch(e){}
+    try{ pageSelections.classList.remove('visible'); pageAll.classList.remove('visible'); pageSelections.classList.add('slide-out-right'); pageAll.classList.add('slide-out-right'); }catch(e){}
     setTimeout(()=>{
       try{ pageResults.style.display=''; pageResults.classList.add('visible'); pageResults.classList.add('page-anim'); }catch(e){}
       try{ pageSelections.style.display='none'; pageAll.style.display='none'; }catch(e){}
@@ -1422,7 +1960,7 @@ body.no-bgclip .footer-rgb .rgb-text{
     navResults.disabled=true; navSelections.disabled=false; navAll.disabled=false;
   }
   function showPageSelections(){
-    try{ pageResults.classList.add('slide-out-right'); pageAll.classList.add('slide-out-right'); }catch(e){}
+    try{ pageAll.classList.remove('visible'); pageResults.classList.add('slide-out-right'); pageAll.classList.add('slide-out-right'); }catch(e){}
     setTimeout(()=>{
       try{ pageResults.style.display='none'; pageSelections.style.display=''; pageSelections.classList.add('visible'); pageSelections.classList.add('page-anim'); pageAll.style.display='none'; }catch(e){}
       try{ pageResults.classList.remove('slide-out-right'); pageAll.classList.remove('slide-out-right'); }catch(e){}
@@ -1445,7 +1983,7 @@ body.no-bgclip .footer-rgb .rgb-text{
     // Persisted page handling
   const PERSIST_KEY = 'iss_local_selections_v1';
     function saveSelections(){ try{
-  const keys = ['amountCol','idCol','productCol','customerCol','termCol','includeProduct','serviceMode','securityMode','unusedMode','weMode','miMode','abMode','agriCropMode','agriIndMode','serviceProducts','miProducts','miCustomers','abProducts','abCustomers','weCustomers','agriCropProducts','agriCropCustomers','agriIndProducts','agriIndCustomers','unusedProducts','securityProducts','bucketSelect'];
+  const keys = ['amountCol','idCol','productCol','customerCol','termCol','includeProduct','serviceMode','securityMode','unusedMode','weMode','miMode','abMode','agriCropMode','agriIndMode','serviceProducts','serviceCustomers','miProducts','miCustomers','abProducts','abCustomers','weCustomers','weProducts','agriCropProducts','agriCropCustomers','agriIndProducts','agriIndCustomers','unusedProducts','unusedCustomers','securityProducts','securityCustomers','bucketSelect'];
         const out = {};
         for(const k of keys){ const el = document.getElementById(k); if(!el) continue; if(el.multiple){ out[k] = Array.from(el.selectedOptions).map(o=>o.value); } else if(el.type==='checkbox'){ out[k] = el.checked; } else { out[k] = el.value; } }
         // persist mode-specific selections so switching modes doesn't lose prior selections
@@ -1533,14 +2071,18 @@ body.no-bgclip .footer-rgb .rgb-text{
       try{
         if(lastData){
           populateServiceProducts(lastData);
+          populateServiceCustomers(lastData);
           populateMiProducts(lastData);
           populateMiCustomers(lastData);
           populateAbProducts(lastData);
           populateAbCustomers(lastData);
           populateWeCustomers(lastData);
+          populateWeProducts(lastData);
           populateAgriProducts(lastData);
           populateUnusedProducts(lastData);
+          populateUnusedCustomers(lastData);
           populateSecurityProducts(lastData);
+          populateSecurityCustomers(lastData);
         }
       }catch(e){}
       // re-run analysis to refresh UI (if we have data to analyze)
@@ -1702,12 +2244,9 @@ body.no-bgclip .footer-rgb .rgb-text{
       // also restore any per-mode saved values (if present)
       if(prev.length===0){ const sp = getSavedSelection('miCustomers__product') || []; const sc = getSavedSelection('miCustomers__customer') || []; const both = [].concat(Array.isArray(sp)?sp:[sp]).concat(Array.isArray(sc)?sc:[sc]).filter(Boolean); if(both.length>0) prev = both; }
       sel.innerHTML = '';
-      const custCol = document.getElementById('customerCol').value;
-      const values = new Set();
-      if(custCol && records){ for(const r of records){ const v = normalize(r[custCol]||''); if(v) values.add(v.toLowerCase()); } }
-      const arr = Array.from(values).sort();
-      if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; sel.appendChild(o); return; }
-      for(const v of arr){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(prev.includes(v)) o.selected = true; sel.appendChild(o); }
+      const entries = buildCustWithAcctEntries(records);
+      if(entries.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; sel.appendChild(o); return; }
+      for(const [key, display] of entries){ const o=document.createElement('option'); o.value=key; o.textContent=display; if(prev.includes(key)) o.selected = true; sel.appendChild(o); }
       // defaults: none — prefer preserving previous selection
   // Do not auto-select any options on initial load — leave selections to the user
       if(!sel._toggleHandlerAdded){
@@ -1744,29 +2283,15 @@ function renderSelectedMiProductChips(){
 function renderSelectedMiCombined(){
   const container = document.getElementById('miCombinedSelected'); if(!container) return; container.innerHTML='';
   const prodSel = document.getElementById('miProducts'); const custSel = document.getElementById('miCustomers');
-  const prodSelected = prodSel ? Array.from(prodSel.selectedOptions).map(o=>o.value) : [];
-  const custSelected = custSel ? Array.from(custSel.selectedOptions).map(o=>o.value) : [];
-
-  // render product-selected chips
-  for(const val of prodSelected){
-    const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×';
-    btn.addEventListener('click', ()=>{ try{ if(prodSel){ for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedMiCombined(); try{ analyzeNow(); }catch(e){} });
-    chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip);
+  if(prodSel){
+    const selected = Array.from(prodSel.selectedOptions).map(o=>o.value);
+    for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; chip.style.cursor='pointer'; const text=document.createElement('span'); text.textContent=val; text.addEventListener('click', ()=>{ try{ showProductCustomerPopup(val); }catch(e){} }); const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', (e)=>{ e.stopPropagation(); for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedMiCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
   }
-
-  // render customer-selected chips (labelled)
-  for(const val of custSelected){ if(!val) continue; if(prodSelected.includes(val)) continue; const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(custSel){ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedMiCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-
-  // include any per-mode saved tokens from the other-mode keys (preserve removals)
-  try{
-    const otherProdSaved = getSavedSelection('miProducts__product') || [];
-    const otherCustSaved = getSavedSelection('miProducts__customer') || [];
-    const savedProdArr = Array.isArray(otherProdSaved)? otherProdSaved : (otherProdSaved? [otherProdSaved] : []);
-    const savedCustArr = Array.isArray(otherCustSaved)? otherCustSaved : (otherCustSaved? [otherCustSaved] : []);
-    for(const sv of savedCustArr){ if(!sv) continue; if(custSelected.includes(sv) || prodSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('miProducts','customer', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedMiCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-    for(const sv of savedProdArr){ if(!sv) continue; if(prodSelected.includes(sv) || custSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (product)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('miProducts','product', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedMiCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-  }catch(e){}
-
+  if(custSel){
+    const selected = Array.from(custSel.selectedOptions).map(o=>o.value);
+    for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedMiCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+  }
+  if(container.children.length===0) container.textContent='(No items selected)';
   addPopEffect(container);
 }
 
@@ -1794,29 +2319,19 @@ function renderSelectedMiCombined(){
 function renderSelectedAbCombined(){
   const container = document.getElementById('abCombinedSelected'); if(!container) return; container.innerHTML='';
   const prodSel = document.getElementById('abProducts'); const custSel = document.getElementById('abCustomers');
-  const prodSelected = prodSel ? Array.from(prodSel.selectedOptions).map(o=>o.value) : [];
-  const custSelected = custSel ? Array.from(custSel.selectedOptions).map(o=>o.value) : [];
-
-  // render product-selected chips
-  for(const val of prodSelected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(prodSel){ for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAbCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-
-  // render customer-selected chips (labelled)
-  for(const val of custSelected){ if(!val) continue; if(prodSelected.includes(val)) continue; const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(custSel){ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAbCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-
-  // include saved per-mode tokens not currently selected
-  try{
-    const savedProd = getSavedSelection('abProducts__product') || [];
-    const savedCust = getSavedSelection('abProducts__customer') || [];
-    const savedProdArr = Array.isArray(savedProd)? savedProd : (savedProd? [savedProd] : []);
-    const savedCustArr = Array.isArray(savedCust)? savedCust : (savedCust? [savedCust] : []);
-    for(const sv of savedCustArr){ if(!sv) continue; if(custSelected.includes(sv) || prodSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('abProducts','customer', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAbCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-    for(const sv of savedProdArr){ if(!sv) continue; if(prodSelected.includes(sv) || custSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (product)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('abProducts','product', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAbCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-  }catch(e){}
-
+  if(prodSel){
+    const selected = Array.from(prodSel.selectedOptions).map(o=>o.value);
+    for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; chip.style.cursor='pointer'; const text=document.createElement('span'); text.textContent=val; text.addEventListener('click', ()=>{ try{ showProductCustomerPopup(val); }catch(e){} }); const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', (e)=>{ e.stopPropagation(); for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAbCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+  }
+  if(custSel){
+    const selected = Array.from(custSel.selectedOptions).map(o=>o.value);
+    for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAbCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+  }
+  if(container.children.length===0) container.textContent='(No items selected)';
   addPopEffect(container);
 }
 
-  function populateAbCustomers(records){ const sel=document.getElementById('abCustomers'); if(!sel) return; let prev=Array.from(sel.selectedOptions).map(o=>o.value); if(prev.length===0){ const saved = getSavedSelection('abCustomers'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } } if(prev.length===0){ const sp = getSavedSelection('abCustomers__product')|| []; const sc = getSavedSelection('abCustomers__customer')|| []; const both = [].concat(Array.isArray(sp)?sp:[sp]).concat(Array.isArray(sc)?sc:[sc]).filter(Boolean); if(both.length>0) prev = both; } sel.innerHTML=''; const custCol=document.getElementById('customerCol').value; const values=new Set(); if(custCol && records){ for(const r of records){ const v=normalize(r[custCol]||''); if(v) values.add(v.toLowerCase()); } } const arr=Array.from(values).sort(); if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; sel.appendChild(o); return; } for(const v of arr){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(prev.includes(v)) o.selected=true; sel.appendChild(o); } if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedAbChips(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; } try{ renderSelectedAbChips(); }catch(e){}
+  function populateAbCustomers(records){ const sel=document.getElementById('abCustomers'); if(!sel) return; let prev=Array.from(sel.selectedOptions).map(o=>o.value); if(prev.length===0){ const saved = getSavedSelection('abCustomers'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } } if(prev.length===0){ const sp = getSavedSelection('abCustomers__product')|| []; const sc = getSavedSelection('abCustomers__customer')|| []; const both = [].concat(Array.isArray(sp)?sp:[sp]).concat(Array.isArray(sc)?sc:[sc]).filter(Boolean); if(both.length>0) prev = both; } sel.innerHTML=''; const entries=buildCustWithAcctEntries(records); if(entries.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; sel.appendChild(o); return; } for(const [key, display] of entries){ const o=document.createElement('option'); o.value=key; o.textContent=display; if(prev.includes(key)) o.selected=true; sel.appendChild(o); } if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedAbChips(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; } try{ renderSelectedAbChips(); }catch(e){}
     }
 
 function renderSelectedAbProductChips(){
@@ -1832,22 +2347,25 @@ function renderSelectedAbChips(){
     
 
     // Women Entrepreneur (customer selection)
-  function populateWeCustomers(records){ const sel=document.getElementById('weCustomers'); if(!sel) return; let prev=Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase()); sel.innerHTML=''; const mode = (document.getElementById('weMode') && document.getElementById('weMode').value) ? document.getElementById('weMode').value : 'customer'; if(prev.length===0){ const savedMode = getSavedSelection('weCustomers__'+mode); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } } if(prev.length===0){ const saved = getSavedSelection('weCustomers'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } } const col = (mode==='product') ? document.getElementById('productCol').value : document.getElementById('customerCol').value; const values=new Set(); if(col && records){ for(const r of records){ const v=normalize(r[col]||''); if(v) values.add(v.toLowerCase()); } } const arr=Array.from(values).sort(); if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no values found)'; sel.appendChild(o); return; } for(const v of arr){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(prev.includes(v)) o.selected=true; sel.appendChild(o); } if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedWeChips(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; } try{ renderSelectedWeChips(); }catch(e){} }
-  function renderSelectedWeChips(){ const container=document.getElementById('weSelected'); const sel=document.getElementById('weCustomers'); const selected=Array.from(sel.selectedOptions).map(o=>o.value); container.innerHTML=''; if(selected.length===0){ container.textContent='(No customers selected)'; return; } for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of sel.options){ if(o.value===val){ o.selected=false; break; } } renderSelectedWeChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); } addPopEffect(container); }
+  function populateWeCustomers(records){ const sel=document.getElementById('weCustomers'); if(!sel) return; let prev=Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase()); sel.innerHTML=''; if(prev.length===0){ const savedMode = getSavedSelection('weCustomers__customer'); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } } if(prev.length===0){ const saved = getSavedSelection('weCustomers'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } } const entries=buildCustWithAcctEntries(records); if(entries.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no values found)'; sel.appendChild(o); return; } for(const [key, display] of entries){ const o=document.createElement('option'); o.value=key; o.textContent=display; if(prev.includes(key)) o.selected=true; sel.appendChild(o); } if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedWeChips(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; } try{ renderSelectedWeChips(); }catch(e){} }
+
+  function populateWeProducts(records){ const sel=document.getElementById('weProducts'); if(!sel) return; let prev=Array.from(sel.selectedOptions).map(o=>String(o.value).toLowerCase()); sel.innerHTML=''; if(prev.length===0){ const savedMode = getSavedSelection('weProducts__product'); if(savedMode){ prev = Array.isArray(savedMode)? savedMode : [savedMode]; } } if(prev.length===0){ const saved = getSavedSelection('weProducts'); if(saved){ prev = Array.isArray(saved)? saved : [saved]; } } const col = document.getElementById('productCol').value; const values=new Set(); if(col && records){ for(const r of records){ const v=normalize(r[col]||''); if(v) values.add(v.toLowerCase()); } } const arr=Array.from(values).sort(); if(arr.length===0){ const o=document.createElement('option'); o.value=''; o.textContent='(no values found)'; sel.appendChild(o); return; } for(const v of arr){ const o=document.createElement('option'); o.value=v; o.textContent=v; if(prev.includes(v)) o.selected=true; sel.appendChild(o); } if(!sel._toggleHandlerAdded){ sel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of sel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedWeChips(); try{ analyzeNow(); }catch(err){} } }); sel._toggleHandlerAdded=true; } try{ renderSelectedWeChips(); }catch(e){} }
+
   function renderSelectedWeChips(){
     const container=document.getElementById('weSelected');
-    const sel=document.getElementById('weCustomers');
-    if(!container||!sel) return;
+    const custSel=document.getElementById('weCustomers');
+    const prodSel=document.getElementById('weProducts');
+    if(!container) return;
     container.innerHTML='';
-    const mode = (document.getElementById('weMode') && document.getElementById('weMode').value) ? document.getElementById('weMode').value : 'customer';
-    const otherMode = (mode==='product') ? 'customer' : 'product';
-    const selected = Array.from(sel.selectedOptions).map(o=>o.value);
-    for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of sel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedWeChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-    try{
-      const otherSaved = getSavedSelection('weCustomers__'+otherMode) || [];
-      const otherArr = Array.isArray(otherSaved) ? otherSaved : (otherSaved ? [otherSaved] : []);
-      for(const ov of otherArr){ if(!ov) continue; if(selected.includes(ov)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = ov + ' ('+otherMode+')'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('weCustomers', otherMode, ov); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedWeChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-    }catch(e){}
+    if(custSel){
+      const selected = Array.from(custSel.selectedOptions).map(o=>o.value);
+      for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedWeChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    }
+    if(prodSel){
+      const selected = Array.from(prodSel.selectedOptions).map(o=>o.value);
+      for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; chip.style.cursor='pointer'; const text=document.createElement('span'); text.textContent=val; text.addEventListener('click', ()=>{ try{ showProductCustomerPopup(val); }catch(e){} }); const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', (e)=>{ e.stopPropagation(); for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedWeChips(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    }
+    if(container.children.length===0) container.textContent='(No items selected)';
     addPopEffect(container);
   }
     
@@ -1868,15 +2386,12 @@ function renderSelectedAbChips(){
   if(!cropSel._toggleHandlerAdded){ cropSel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of cropSel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(err){} } }); cropSel._toggleHandlerAdded=true; }
   if(!indSel._toggleHandlerAdded){ indSel.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of indSel.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(err){} } }); indSel._toggleHandlerAdded=true; }
 
-  // populate customer selects (use customerCol)
+  // populate customer selects (use customerCol + account number)
   if(cropCust){ cropCust.innerHTML=''; }
   if(indCust){ indCust.innerHTML=''; }
-  const custCol = document.getElementById('customerCol').value;
-  const custValues = new Set();
-  if(custCol && records){ for(const r of records){ const v=normalize(r[custCol]||''); if(v) custValues.add(v.toLowerCase()); } }
-  const custArr = Array.from(custValues).sort();
-  if(custArr.length===0){ if(cropCust){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; cropCust.appendChild(o); } if(indCust){ const o2=document.createElement('option'); o2.value=''; o2.textContent='(no customer values found)'; indCust.appendChild(o2); } }
-  else { for(const v of custArr){ if(cropCust){ const oc=document.createElement('option'); oc.value=v; oc.textContent=v; if(prevCropCust.includes(v)) oc.selected=true; cropCust.appendChild(oc); } if(indCust){ const oi=document.createElement('option'); oi.value=v; oi.textContent=v; if(prevIndCust.includes(v)) oi.selected=true; indCust.appendChild(oi); } } }
+  const entries = buildCustWithAcctEntries(records);
+  if(entries.length===0){ if(cropCust){ const o=document.createElement('option'); o.value=''; o.textContent='(no customer values found)'; cropCust.appendChild(o); } if(indCust){ const o2=document.createElement('option'); o2.value=''; o2.textContent='(no customer values found)'; indCust.appendChild(o2); } }
+  else { for(const [key, display] of entries){ if(cropCust){ const oc=document.createElement('option'); oc.value=key; oc.textContent=display; if(prevCropCust.includes(key)) oc.selected=true; cropCust.appendChild(oc); } if(indCust){ const oi=document.createElement('option'); oi.value=key; oi.textContent=display; if(prevIndCust.includes(key)) oi.selected=true; indCust.appendChild(oi); } } }
 
   // customer toggle handlers
   if(cropCust && !cropCust._toggleHandlerAdded){ cropCust.addEventListener('mousedown', function(e){ const t=e.target; if(t && t.tagName && t.tagName.toLowerCase()==='option'){ e.preventDefault(); const val=t.value; for(const o of cropCust.options){ if(o.value===val){ o.selected=!o.selected; break; } } renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(err){} } }); cropCust._toggleHandlerAdded=true; }
@@ -1892,50 +2407,34 @@ function renderSelectedAbChips(){
   function renderSelectedAgriCropCombined(){
     const container = document.getElementById('agriCropCombinedSelected'); if(!container) return; container.innerHTML='';
     const prodSel = document.getElementById('agriCropProducts'); const custSel = document.getElementById('agriCropCustomers');
-    const prodSelected = prodSel ? Array.from(prodSel.selectedOptions).map(o=>o.value) : [];
-    const custSelected = custSel ? Array.from(custSel.selectedOptions).map(o=>o.value) : [];
-
-    // render product-selected chips
-    for(const val of prodSelected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(prodSel){ for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-
-    // render customer-selected chips (labelled)
-    for(const val of custSelected){ if(!val) continue; if(prodSelected.includes(val)) continue; const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(custSel){ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-
-    // include any per-mode saved tokens
-    try{
-      const savedProd = getSavedSelection('agriCropProducts__product') || [];
-      const savedCust = getSavedSelection('agriCropProducts__customer') || [];
-      const savedProdArr = Array.isArray(savedProd)? savedProd : (savedProd? [savedProd] : []);
-      const savedCustArr = Array.isArray(savedCust)? savedCust : (savedCust? [savedCust] : []);
-      for(const sv of savedCustArr){ if(!sv) continue; if(custSelected.includes(sv) || prodSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('agriCropProducts','customer', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-      for(const sv of savedProdArr){ if(!sv) continue; if(prodSelected.includes(sv) || custSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (product)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('agriCropProducts','product', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-    }catch(e){}
+    if(prodSel){
+      const selected = Array.from(prodSel.selectedOptions).map(o=>o.value);
+      for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; chip.style.cursor='pointer'; const text=document.createElement('span'); text.textContent=val; text.addEventListener('click', ()=>{ try{ showProductCustomerPopup(val); }catch(e){} }); const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', (e)=>{ e.stopPropagation(); for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    }
+    if(custSel){
+      const selected = Array.from(custSel.selectedOptions).map(o=>o.value);
+      for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriCropCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    }
+    if(container.children.length===0) container.textContent='(No items selected)';
     addPopEffect(container);
   }
 
   function renderSelectedAgriIndChips(){
-    // Backwards-compatible wrapper: route to combined renderer
     try{ if(typeof renderSelectedAgriIndCombined === 'function'){ renderSelectedAgriIndCombined(); return; } }catch(e){}
   }
 
   function renderSelectedAgriIndCombined(){
     const container = document.getElementById('agriIndCombinedSelected'); if(!container) return; container.innerHTML='';
     const prodSel = document.getElementById('agriIndProducts'); const custSel = document.getElementById('agriIndCustomers');
-    const prodSelected = prodSel ? Array.from(prodSel.selectedOptions).map(o=>o.value) : [];
-    const custSelected = custSel ? Array.from(custSel.selectedOptions).map(o=>o.value) : [];
-
-    for(const val of prodSelected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(prodSel){ for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-
-    for(const val of custSelected){ if(!val) continue; if(prodSelected.includes(val)) continue; const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent = val + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ if(custSel){ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } } if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-
-    try{
-      const savedProd = getSavedSelection('agriIndProducts__product') || [];
-      const savedCust = getSavedSelection('agriIndProducts__customer') || [];
-      const savedProdArr = Array.isArray(savedProd)? savedProd : (savedProd? [savedProd] : []);
-      const savedCustArr = Array.isArray(savedCust)? savedCust : (savedCust? [savedCust] : []);
-      for(const sv of savedCustArr){ if(!sv) continue; if(custSelected.includes(sv) || prodSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (customer)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('agriIndProducts','customer', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-      for(const sv of savedProdArr){ if(!sv) continue; if(prodSelected.includes(sv) || custSelected.includes(sv)) continue; const chip=document.createElement('span'); chip.className='chip other-mode'; const text=document.createElement('span'); text.textContent = sv + ' (product)'; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove saved'; btn.textContent='×'; btn.addEventListener('click', ()=>{ try{ removeSavedSelectionFor('agriIndProducts','product', sv); if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
-    }catch(e){}
+    if(prodSel){
+      const selected = Array.from(prodSel.selectedOptions).map(o=>o.value);
+      for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; chip.style.cursor='pointer'; const text=document.createElement('span'); text.textContent=val; text.addEventListener('click', ()=>{ try{ showProductCustomerPopup(val); }catch(e){} }); const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', (e)=>{ e.stopPropagation(); for(const o of prodSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    }
+    if(custSel){
+      const selected = Array.from(custSel.selectedOptions).map(o=>o.value);
+      for(const val of selected){ const chip=document.createElement('span'); chip.className='chip'; const text=document.createElement('span'); text.textContent=val; const btn=document.createElement('button'); btn.type='button'; btn.title='Remove'; btn.textContent='×'; btn.addEventListener('click', ()=>{ for(const o of custSel.options){ if(o.value===val){ o.selected=false; break; } } try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} renderSelectedAgriIndCombined(); try{ analyzeNow(); }catch(e){} }); chip.appendChild(text); chip.appendChild(btn); container.appendChild(chip); }
+    }
+    if(container.children.length===0) container.textContent='(No items selected)';
     addPopEffect(container);
   }
     
@@ -2023,7 +2522,7 @@ function renderSelectedMiChips(){
   // Clear previous persisted selections when a new file is loaded so selectors reflect the new dataset
     try{ localStorage.removeItem(PERSIST_KEY); notes.textContent = 'Loaded file — previous selections cleared to match this file.'; }catch(e){}
     // auto-run analysis and switch to results after file load
-  try{ populateServiceProducts(records); populateMiProducts(records); populateMiCustomers(records); populateAbProducts(records); populateAbCustomers(records); populateWeCustomers(records); populateAgriProducts(records); populateUnusedProducts(records); populateSecurityProducts(records); renderSelectedUnusedChips(); renderSelectedSecurityChips(); analyzeNow(); showPageResults(); if(typeof saveSelections==='function') saveSelections(); }catch(e){ console.warn('post-load init failed', e); }
+  try{ populateServiceProducts(records); populateServiceCustomers(records); populateMiProducts(records); populateMiCustomers(records); populateAbProducts(records); populateAbCustomers(records); populateWeCustomers(records); populateWeProducts(records); populateAgriProducts(records); populateUnusedProducts(records); populateUnusedCustomers(records); populateSecurityProducts(records); populateSecurityCustomers(records); setModeVisibilityAll(); renderSelectedUnusedChips(); renderSelectedSecurityChips(); renderSelectedServiceChips(); renderSelectedWeChips(); analyzeNow(); showPageResults(); if(typeof saveSelections==='function') saveSelections(); }catch(e){ console.warn('post-load init failed', e); }
     try{ showMainUI(); }catch(e){}
       // populate service product and MI selectors after selectors are set (already done above)
     });
@@ -2052,13 +2551,36 @@ function renderSelectedMiChips(){
         const custImpact = Number(window._custAssetImpactNumeric || 0);
         const adjusted = upliftSec + smeImpact + custImpact;
         const el = document.getElementById('securityAdjusted');
-        if(el) el.textContent = (isNaN(adjusted) || adjusted===0 ? '—' : adjusted.toLocaleString('en-US',{maximumFractionDigits:2}));
+        if(el) { el.textContent = (isNaN(adjusted) ? '0' : adjusted.toLocaleString('en-US',{maximumFractionDigits:2})); el.classList.remove('num-pop'); void el.offsetWidth; el.classList.add('num-pop'); }
         window._securityAdjustedNumeric = (isNaN(adjusted)? 0 : adjusted);
-  // debug UI removed: no per-field debug updates
+        // update filter header badge for Security Value Against Loan
+        const badge = document.getElementById('filterTotalSecurity');
+        if(badge) badge.textContent = 'Total: ' + (isNaN(adjusted) ? '0' : adjusted.toLocaleString('en-US',{maximumFractionDigits:2}));
+        // update breakdown display
+        try{
+          const fmt = (v)=> (isNaN(v)) ? '0' : v.toLocaleString('en-US',{maximumFractionDigits:2});
+          const bCust = document.getElementById('secBreakCustAsset'); if(bCust) bCust.textContent = fmt(custImpact);
+          const bSme = document.getElementById('secBreakSme'); if(bSme) bSme.textContent = fmt(smeImpact);
+          const bSel = document.getElementById('secBreakSelection'); if(bSel) bSel.textContent = fmt(upliftSec);
+          const bTotal = document.getElementById('secBreakTotal'); if(bTotal) bTotal.textContent = fmt(adjusted);
+        }catch(e){}
       }catch(e){ console.warn('computeSecurityAdjusted failed', e); }
     }
 
     function dropSummary(records){ const tokens = ['total','subtotal','grand total','grandtotal']; return records.filter(r=>{ for(const k in r){ const v = r[k]; if(v===null) continue; const s = String(v).toLowerCase().replace(/\s+/g,''); for(const t of tokens) if(s.includes(t.replace(/\s+/g,''))) return false; } return true; }); }
+
+    // Helper: set a dashboard num element's text with animation
+    function setNumAnimated(id, value){
+      const el = document.getElementById(id); if(!el) return;
+      const text = (value===undefined || value===null || value==='' || value==='—') ? '—' : value;
+      const oldText = el.textContent;
+      el.textContent = text;
+      if(text !== oldText && text !== '—'){
+        el.classList.remove('num-pop');
+        void el.offsetWidth; // force reflow
+        el.classList.add('num-pop');
+      }
+    }
 
     function analyzeNow(){ if(!lastData) { notes.textContent='No data loaded'; return; }
       const records = dropSummary(lastData);
@@ -2084,12 +2606,12 @@ function renderSelectedMiChips(){
       const top50sum = top50.reduce((s,t)=>s + (isNaN(t.val)?0:t.val), 0);
 
       // fill results
-      document.getElementById('top50').textContent = top50sum.toLocaleString('en-US',{maximumFractionDigits:2});
+      setNumAnimated('top50', top50sum.toLocaleString('en-US',{maximumFractionDigits:2}));
 
       // term buckets across all rows
       // Total number of loan accounts (after dropping summary rows)
       const totalAccounts = records.length;
-      document.getElementById('totalAccounts').textContent = totalAccounts;
+      setNumAnimated('totalAccounts', totalAccounts);
 
       // Compute Total EOL (Excess Over Limit)
       // Priority: (A) If Remarks column contains tokens 'EOL' or 'EXPIRED' (e.g. 'EOL N EXPIRED'),
@@ -2170,14 +2692,14 @@ function renderSelectedMiChips(){
           const prodColName = document.getElementById('productCol').value;
           const custColLocal = document.getElementById('customerCol').value;
           const combinedService = gatherSelectionTokens('serviceProducts');
-          const serviceTotal = records.reduce((s,r)=>{ if(!prodColName && !custColLocal) return s; const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColLocal]||'').toLowerCase(); if(combinedService.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); } return s; }, 0);
+          const serviceTotal = records.reduce((s,r)=>{ if(!prodColName && !custColLocal) return s; if(combinedService.some(t=> t && tokenMatchesRecord(t, r, prodColName, custColLocal))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); } return s; }, 0);
           document.getElementById('serviceTotal').textContent = serviceTotal.toLocaleString('en-US',{maximumFractionDigits:2});
           // update inline under product selector too
           document.getElementById('serviceTotalInline').textContent = serviceTotal.toLocaleString('en-US',{maximumFractionDigits:2});
           // Compute Manufacturing & Industrial total based on selected customer tokens
           const miSelected = Array.from(document.getElementById('miCustomers').selectedOptions).map(o=>o.value.toLowerCase());
           const custColName = document.getElementById('customerCol').value;
-          const miTotal = records.reduce((s,r)=>{ if(!custColName) return s; const v = String(r[custColName]||'').toLowerCase(); if(miSelected.some(t=> t && v.includes(t) )){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); } return s; }, 0);
+          const miTotal = records.reduce((s,r)=>{ if(!custColName) return s; if(miSelected.some(t=> t && tokenMatchesRecord(t, r, prodColName, custColName))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); } return s; }, 0);
           document.getElementById('miTotal').textContent = miTotal.toLocaleString('en-US',{maximumFractionDigits:2});
         }
       }
@@ -2207,7 +2729,7 @@ function renderSelectedMiChips(){
         }
       }
       totalEOL = computed;
-      document.getElementById('totalEOL').textContent = totalEOL.toLocaleString('en-US',{maximumFractionDigits:2});
+      setNumAnimated('totalEOL', totalEOL.toLocaleString('en-US',{maximumFractionDigits:2}));
 
       // Compute Unused Part of Commitment and render per-row table
       try {
@@ -2229,7 +2751,11 @@ function renderSelectedMiChips(){
         const limCandidatesForFind = limitAmountHeaders.concat(limitCandidates.slice());
 
         // Build window._unusedFiltered
-        if (unusedCandidates.length > 0) {
+        // If no selections in Unused filter, show nothing in Raw Data table
+        if (selectedUnused.length === 0) {
+          window._unusedFiltered = [];
+          unusedTotal = 0;
+        } else if (unusedCandidates.length > 0) {
           const col = unusedCandidates[0];
           const vals = records.map(r => parse(r[col]));
           if (vals.some(v => !isNaN(v))) {
@@ -2241,9 +2767,7 @@ function renderSelectedMiChips(){
             const custColKey = document.getElementById('customerCol').value || '';
             const prodColKey = prodColName || '';
             recordsForUnused = records.filter(r => {
-              const prodTxt = prodColKey ? String(r[prodColKey] || '').toLowerCase() : '';
-              const custTxt = custColKey ? String(r[custColKey] || '').toLowerCase() : '';
-              return selectedUnused.some(t => t && (prodTxt.includes(t) || custTxt.includes(t)));
+              return selectedUnused.some(t => t && tokenMatchesRecord(t, r, prodColKey, custColKey));
             });
           }
           window._unusedFiltered = recordsForUnused.map((r) => {
@@ -2279,9 +2803,9 @@ function renderSelectedMiChips(){
           const rows = [];
           for (const r of records) {
             if (selectedUnused.length > 0) {
-              const prodTxt = prodColName ? String(r[prodColName] || '').toLowerCase() : '';
-              const custTxt = document.getElementById('customerCol').value ? String(r[document.getElementById('customerCol').value] || '').toLowerCase() : '';
-              if (!selectedUnused.some(t => t && (prodTxt.includes(t) || custTxt.includes(t)))) continue;
+              const _prodCol = prodColName || '';
+              const _custCol = document.getElementById('customerCol').value || '';
+              if (!selectedUnused.some(t => t && tokenMatchesRecord(t, r, _prodCol, _custCol))) continue;
             }
             const lim = findNumeric(r, limCandidatesForFind);
             const td = findNumeric(r, tdCandidatesForFind);
@@ -2314,7 +2838,7 @@ function renderSelectedMiChips(){
           }
         }
 
-        document.getElementById('unusedTotal').textContent = unusedTotal.toLocaleString('en-US', { maximumFractionDigits: 2 });
+        setNumAnimated('unusedTotal', unusedTotal.toLocaleString('en-US', { maximumFractionDigits: 2 }));
 
         // render the unused table (respect unusedBucketSelect)
         function renderUnusedTable() {
@@ -2390,8 +2914,8 @@ function renderSelectedMiChips(){
         const custColName = document.getElementById('customerCol').value;
   // Include both DOM and saved selections (any mode) when computing service totals
   const combinedService = gatherSelectionTokens('serviceProducts');
-  const serviceTotalAlways = records.reduce((s,r)=>{ if(!prodColName && !custColName) return s; const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColName]||'').toLowerCase(); if(combinedService.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); } return s; }, 0);
-  document.getElementById('serviceTotal').textContent = serviceTotalAlways.toLocaleString('en-US',{maximumFractionDigits:2});
+  const serviceTotalAlways = records.reduce((s,r)=>{ if(!prodColName && !custColName) return s; if(combinedService.some(t=> t && tokenMatchesRecord(t, r, prodColName, custColName))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); } return s; }, 0);
+  setNumAnimated('serviceTotal', serviceTotalAlways.toLocaleString('en-US',{maximumFractionDigits:2}));
   document.getElementById('serviceTotalInline').textContent = serviceTotalAlways.toLocaleString('en-US',{maximumFractionDigits:2});
 
         // Include DOM + saved selections for MI (products and customers)
@@ -2399,22 +2923,20 @@ function renderSelectedMiChips(){
         const uniqMi = Array.from(new Set(combinedMi));
         const miTotalAlways = records.reduce((s,r)=>{
           if(!prodColName && !custColName) return s;
-          const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColName]||'').toLowerCase();
-          if(uniqMi.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); }
+          if(uniqMi.some(t=> t && tokenMatchesRecord(t, r, prodColName, custColName))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); }
           return s;
         }, 0);
-        document.getElementById('miTotal').textContent = miTotalAlways.toLocaleString('en-US',{maximumFractionDigits:2});
+        setNumAnimated('miTotal', miTotalAlways.toLocaleString('en-US',{maximumFractionDigits:2}));
         // Compute Asset-backed total similar to MI (product OR customer)
         // Include DOM + saved selections for Asset-backed
         const combinedAb = [].concat(gatherSelectionTokens('abProducts') || []).concat(gatherSelectionTokens('abCustomers') || []);
         const uniqAb = Array.from(new Set(combinedAb));
         const abTotalAlways = records.reduce((s,r)=>{
           if(!prodColName && !custColName) return s;
-          const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColName]||'').toLowerCase();
-          if(uniqAb.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); }
+          if(uniqAb.some(t=> t && tokenMatchesRecord(t, r, prodColName, custColName))){ const a = parseAmount(r[amtKey]); return s + (isNaN(a)?0:a); }
           return s;
         }, 0);
-        document.getElementById('abTotal').textContent = abTotalAlways.toLocaleString('en-US',{maximumFractionDigits:2});
+        setNumAnimated('abTotal', abTotalAlways.toLocaleString('en-US',{maximumFractionDigits:2}));
         // Compute Security total (Account Limit) for selected security products
         try{
           const prodColName = document.getElementById('productCol').value;
@@ -2428,7 +2950,7 @@ function renderSelectedMiChips(){
           if(limitCandidates.length>0){
             for(const r of records){ const pvProd = String(r[prodColName]||'').toLowerCase(); const pvCust = String(r[custColName]||'').toLowerCase();
               let matched = false;
-              if(useSelected){ if(combinedSecurity.some(t=> t && (pvProd.includes(t) || pvCust.includes(t)))) matched = true; }
+              if(useSelected){ if(combinedSecurity.some(t=> t && tokenMatchesRecord(t, r, prodColName, custColName))) matched = true; }
               else { if(securityTokens.some(tok=> pvProd.includes(tok) || pvCust.includes(tok))) matched = true; }
               if(matched){ const lim = findNumeric(r, limitCandidates); if(!isNaN(lim)) securityTotal += lim; }
             }
@@ -2438,12 +2960,12 @@ function renderSelectedMiChips(){
             const uplift = 1.15;
             const displaySecurity = (isNaN(securityTotal) ? NaN : (securityTotal * uplift));
             const secEl = document.getElementById('securityTotal');
-            if(secEl) secEl.textContent = (isNaN(displaySecurity) || displaySecurity===0 ? '—' : displaySecurity.toLocaleString('en-US',{maximumFractionDigits:2}));
+            if(secEl) secEl.textContent = (isNaN(displaySecurity) ? '0' : displaySecurity.toLocaleString('en-US',{maximumFractionDigits:2}));
             // expose numeric (raw and uplifted) for adjusted calculation and debug
             try{ window._securityRawNumeric = (isNaN(securityTotal) ? 0 : securityTotal); window._securityUpliftNumeric = (isNaN(displaySecurity) ? 0 : displaySecurity); window._securityTotalNumeric = (isNaN(displaySecurity) ? 0 : displaySecurity); }catch(e){}
-          }catch(e){ const secEl = document.getElementById('securityTotal'); if(secEl) secEl.textContent='—'; }
+          }catch(e){ const secEl = document.getElementById('securityTotal'); if(secEl) secEl.textContent='0'; }
           try{ computeSecurityAdjusted(); }catch(e){}
-        }catch(e){ try{ const secEl=document.getElementById('securityTotal'); if(secEl) secEl.textContent='—'; }catch(_){ } }
+        }catch(e){ try{ const secEl=document.getElementById('securityTotal'); if(secEl) secEl.textContent='0'; }catch(_){ } }
         // SME - Earnest Money Finance Account Limit total (independent of selections)
         try{
           const prodColNameLocal = prodColName;
@@ -2471,29 +2993,52 @@ function renderSelectedMiChips(){
   const weMode = (document.getElementById('weMode') && document.getElementById('weMode').value) ? document.getElementById('weMode').value : 'customer';
   // include DOM + saved (product/customer) selections for WE
   const weSelected = gatherSelectionTokens('weCustomers');
-  const weTotal = records.reduce((s,r)=>{ const pv = String(r[document.getElementById('productCol').value]||'').toLowerCase(); const cv = String(r[document.getElementById('customerCol').value]||'').toLowerCase(); if(weSelected.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a=parseAmount(r[amtKey]); return s + (isNaN(a)?0:a);} return s; }, 0);
-    const weEl = document.getElementById('weTotal'); if(weEl) weEl.textContent = weTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+  const weTotal = records.reduce((s,r)=>{ const prodCol_=document.getElementById('productCol').value; const custCol_=document.getElementById('customerCol').value; if(weSelected.some(t=> t && tokenMatchesRecord(t, r, prodCol_, custCol_))){ const a=parseAmount(r[amtKey]); return s + (isNaN(a)?0:a);} return s; }, 0);
+    const weEl = document.getElementById('weTotal'); if(weEl) setNumAnimated('weTotal', weTotal.toLocaleString('en-US',{maximumFractionDigits:2}));
   }catch(e){ try{ const weEl = document.getElementById('weTotal'); if(weEl) weEl.textContent='—'; }catch(_){ } }
   // Agri crop and agri industrial totals (product-based)
   // include DOM + saved selections for Agri crop and industrial
   const agriCropSelected = gatherSelectionTokens('agriCropProducts');
   const agriIndSelected = gatherSelectionTokens('agriIndProducts');
   // Match agri selections against BOTH product and customer columns (same behavior as Service/MI/AB/WE)
-  const agriCropTotal = records.reduce((s,r)=>{ const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColName]||'').toLowerCase(); if(agriCropSelected.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a=parseAmount(r[amtKey]); return s + (isNaN(a)?0:a);} return s; }, 0);
-  const agriIndTotal = records.reduce((s,r)=>{ const pv = String(r[prodColName]||'').toLowerCase(); const cv = String(r[custColName]||'').toLowerCase(); if(agriIndSelected.some(t=> t && (pv.includes(t) || cv.includes(t)))){ const a=parseAmount(r[amtKey]); return s + (isNaN(a)?0:a);} return s; }, 0);
-  document.getElementById('agriCropTotal').textContent = agriCropTotal.toLocaleString('en-US',{maximumFractionDigits:2});
-  document.getElementById('agriIndTotal').textContent = agriIndTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+  const agriCropTotal = records.reduce((s,r)=>{ if(agriCropSelected.some(t=> t && tokenMatchesRecord(t, r, prodColName, custColName))){ const a=parseAmount(r[amtKey]); return s + (isNaN(a)?0:a);} return s; }, 0);
+  const agriIndTotal = records.reduce((s,r)=>{ if(agriIndSelected.some(t=> t && tokenMatchesRecord(t, r, prodColName, custColName))){ const a=parseAmount(r[amtKey]); return s + (isNaN(a)?0:a);} return s; }, 0);
+  setNumAnimated('agriCropTotal', agriCropTotal.toLocaleString('en-US',{maximumFractionDigits:2}));
+  setNumAnimated('agriIndTotal', agriIndTotal.toLocaleString('en-US',{maximumFractionDigits:2}));
         // Compute Non-Manufacturing & Trade total = sum(TotalDue) - MI - Service
         // Determine a reasonable TotalDue column
         const tdCol = totalDueCandidates[0] || amtKey;
         let sumTotalDueAll = 0;
         if(tdCol){ sumTotalDueAll = records.reduce((s,r)=>{ const v = parseAmount(r[tdCol]); return s + (isNaN(v)?0:v); }, 0); }
         const nonMi = sumTotalDueAll - miTotalAlways - serviceTotalAlways;
-        document.getElementById('nonMiTotal').textContent = (isNaN(nonMi)? '': nonMi.toLocaleString('en-US',{maximumFractionDigits:2}));
+        setNumAnimated('nonMiTotal', (isNaN(nonMi)? '': nonMi.toLocaleString('en-US',{maximumFractionDigits:2})));
         // Guarantee-backed (and unsecured) = TotalDueAll - Asset-backed
         const gbTotal = sumTotalDueAll - abTotalAlways;
-        document.getElementById('gbTotal').textContent = (isNaN(gbTotal)? '': gbTotal.toLocaleString('en-US',{maximumFractionDigits:2}));
+        setNumAnimated('gbTotal', (isNaN(gbTotal)? '': gbTotal.toLocaleString('en-US',{maximumFractionDigits:2})));
       }catch(e){ console.warn('Failed to compute service/mi totals', e); }
+
+      // Update filter section header totals
+      try{
+        function setFilterTotal(id, el){ const badge = document.getElementById(id); if(badge && el){ const v = el.textContent; const newText = (v && v!=='—') ? 'Total: '+v : 'Total: —'; if(badge.textContent !== newText){ badge.textContent = newText; badge.classList.remove('updated'); void badge.offsetWidth; badge.classList.add('updated'); } } }
+        setFilterTotal('filterTotalService', document.getElementById('serviceTotal'));
+        // Security Value Against Loan = Customer Asset Impact + SME Security Value + Security selection total
+        (function(){
+          const badge = document.getElementById('filterTotalSecurity');
+          if(badge){
+            const custImpact = Number(window._custAssetImpactNumeric || 0);
+            const smeImpact = Number(window._smeEarnestImpactNumeric || 0);
+            const secSelection = Number(window._securityUpliftNumeric || 0);
+            const combined = custImpact + smeImpact + secSelection;
+            badge.textContent = (isNaN(combined) || combined===0) ? 'Total: —' : 'Total: ' + combined.toLocaleString('en-US',{maximumFractionDigits:2});
+          }
+        })();
+        setFilterTotal('filterTotalUnused', document.getElementById('unusedTotal'));
+        setFilterTotal('filterTotalMi', document.getElementById('miTotal'));
+        setFilterTotal('filterTotalAb', document.getElementById('abTotal'));
+        setFilterTotal('filterTotalWe', document.getElementById('weTotal'));
+        setFilterTotal('filterTotalAgriCrop', document.getElementById('agriCropTotal'));
+        setFilterTotal('filterTotalAgriInd', document.getElementById('agriIndTotal'));
+      }catch(e){ console.warn('Failed to update filter header totals', e); }
 
       // no separate Total Due (EOL rows) display; totalDue is available on window._eol_totalDue if needed for debugging
 
@@ -2520,9 +3065,9 @@ function renderSelectedMiChips(){
   const medTotal = records.reduce((s,r,i)=>{ const m=monthsArr[i]; const a=parseAmount(r[amtKey]); return (m>12 && m<36 && !isNaN(a))? s+a: s; }, 0);
   const shortTotal = records.reduce((s,r,i)=>{ const m=monthsArr[i]; const a=parseAmount(r[amtKey]); return ((m<=12 && m!==null) && !isNaN(a))? s+a: s; }, 0);
 
-      document.getElementById('long').textContent = longTotal.toLocaleString('en-US',{maximumFractionDigits:2});
-      document.getElementById('med').textContent = medTotal.toLocaleString('en-US',{maximumFractionDigits:2});
-      document.getElementById('short').textContent = shortTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+      setNumAnimated('long', longTotal.toLocaleString('en-US',{maximumFractionDigits:2}));
+      setNumAnimated('med', medTotal.toLocaleString('en-US',{maximumFractionDigits:2}));
+      setNumAnimated('short', shortTotal.toLocaleString('en-US',{maximumFractionDigits:2}));
 
           // Compute Total New Loan Disbursed in the previous calendar month
           try{
@@ -2536,8 +3081,8 @@ function renderSelectedMiChips(){
             const lastMonthStart = new Date(lastMonthEnd.getFullYear(), lastMonthEnd.getMonth(), 1);
             let newDisbTotal = 0;
             if(disbCol){ for(const r of records){ const d = parseDateGuess(r[disbCol]); if(d && d >= lastMonthStart && d <= lastMonthEnd){ const a = parseAmount(r[amtKey]); if(!isNaN(a)) newDisbTotal += a; } } }
-            document.getElementById('newDisbLastMonth').textContent = newDisbTotal.toLocaleString('en-US',{maximumFractionDigits:2});
-          }catch(e){ console.warn('Failed to compute newDisbLastMonth', e); document.getElementById('newDisbLastMonth').textContent = '—'; }
+            setNumAnimated('newDisbLastMonth', newDisbTotal.toLocaleString('en-US',{maximumFractionDigits:2}));
+          }catch(e){ console.warn('Failed to compute newDisbLastMonth', e); setNumAnimated('newDisbLastMonth', '—'); }
 
       // populate bucket select labels with totals
       const bucketSelect = document.getElementById('bucketSelect');
@@ -2552,18 +3097,60 @@ function renderSelectedMiChips(){
   // Total Loan should always show grand total across all records (not affected by bucket selection)
   const grandTotal = records.reduce((s,r)=>{ const v = parseAmount(r[amtKey]); return s + (isNaN(v)?0:v); }, 0);
   bucketTotalDisplay.textContent = grandTotal.toLocaleString('en-US',{maximumFractionDigits:2});
+  setNumAnimated('bucketTotal', grandTotal.toLocaleString('en-US',{maximumFractionDigits:2}));
 
-      // show ALL sample rows (respect bucket selection)
+  // Populate Raw Data bucket Product and Customer filter dropdowns
+  (function(){
+    const prodFilter = document.getElementById('bucketProductFilter');
+    const custFilter = document.getElementById('bucketCustomerFilter');
+    if(prodFilter){
+      const prevProd = prodFilter.value || '';
+      prodFilter.innerHTML = '<option value="">All Products</option>';
+      const prodCol = document.getElementById('productCol').value;
+      if(prodCol){
+        const prods = new Set();
+        for(const r of records){ const v = normalize(r[prodCol]||''); if(v) prods.add(v); }
+        Array.from(prods).sort().forEach(p=>{
+          const o = document.createElement('option'); o.value = p; o.textContent = p;
+          if(p === prevProd) o.selected = true;
+          prodFilter.appendChild(o);
+        });
+      }
+    }
+    if(custFilter){
+      const prevCust = custFilter.value || '';
+      custFilter.innerHTML = '<option value="">All Customers</option>';
+      const custCol = document.getElementById('customerCol').value;
+      if(custCol){
+        const custs = new Set();
+        for(const r of records){ const v = normalize(r[custCol]||''); if(v) custs.add(v); }
+        Array.from(custs).sort().forEach(c=>{
+          const o = document.createElement('option'); o.value = c; o.textContent = c;
+          if(c === prevCust) o.selected = true;
+          custFilter.appendChild(o);
+        });
+      }
+    }
+  })();
+
+      // show ALL sample rows (respect bucket selection + product/customer filters)
       function renderTopTableForBucket(){
         const sel = document.getElementById('bucketSelect').value;
+        const prodFilterVal = (document.getElementById('bucketProductFilter').value || '').trim();
+        const custFilterVal = (document.getElementById('bucketCustomerFilter').value || '').trim();
+        const prodCol = document.getElementById('productCol').value;
+        const custCol = document.getElementById('customerCol').value;
         const tbody = document.querySelector('#topTable tbody'); tbody.innerHTML='';
-        // filter all records by bucket
+        // filter all records by bucket + product + customer
         const allIdx = records.map((rec,i)=>({idx:i, val: parseAmount(rec[amtKey])})).filter(x=>!isNaN(x.val));
         const filtered = allIdx.filter(item=>{
           const m = monthsArr[item.idx];
-          if(sel==='short') return (m!==null && m<=12);
-          if(sel==='medium') return (m!==null && m>12 && m<36);
-          if(sel==='long') return (m!==null && m>=36);
+          if(sel==='short' && !(m!==null && m<=12)) return false;
+          if(sel==='medium' && !(m!==null && m>12 && m<36)) return false;
+          if(sel==='long' && !(m!==null && m>=36)) return false;
+          const rec = records[item.idx];
+          if(prodFilterVal && prodCol){ const rv = normalize(rec[prodCol]||''); if(rv !== prodFilterVal) return false; }
+          if(custFilterVal && custCol){ const rv = normalize(rec[custCol]||''); if(rv !== custFilterVal) return false; }
           return true;
         });
         // render all filtered rows (limit to a reasonable display cap to avoid huge DOM)
@@ -2575,7 +3162,13 @@ function renderSelectedMiChips(){
           const disb = (rec[lastCols.find(c=>normalizeKey(c).includes('disbursement')||normalizeKey(c).includes('sanction'))]|| '');
           const custCol = document.getElementById('customerCol').value;
           const custName = custCol ? (rec[custCol]||'') : '';
-          tr.innerHTML = `<td>${i+1}</td><td>${custName}</td><td class="right">${(t.val||0).toLocaleString('en-US',{maximumFractionDigits:2})}</td><td>${expiry}</td><td>${disb}</td>`;
+          const prodCol = document.getElementById('productCol').value;
+          const prodName = prodCol ? (rec[prodCol]||'') : '';
+          const acctCol = lastCols.find(c=>normalizeKey(c).includes('account') && (normalizeKey(c).includes('no') || normalizeKey(c).includes('number')));
+          const acctNo = acctCol ? (rec[acctCol]||'') : '';
+          const rateCol = lastCols.find(c=>normalizeKey(c).includes('rate') || normalizeKey(c).includes('int.') || normalizeKey(c).includes('interest'));
+          const intRate = rateCol ? (rec[rateCol]||'') : '';
+          tr.innerHTML = `<td>${i+1}</td><td>${custName}</td><td>${prodName}</td><td>${acctNo}</td><td class="right">${(t.val||0).toLocaleString('en-US',{maximumFractionDigits:2})}</td><td>${intRate}</td><td>${expiry}</td><td>${disb}</td>`;
           tbody.appendChild(tr);
         });
   // compute selected bucket total (used for display/debug only, but do NOT overwrite the global Total Loan)
@@ -2585,6 +3178,8 @@ function renderSelectedMiChips(){
       }
         renderTopTableForBucket();
       document.getElementById('bucketSelect').addEventListener('change', renderTopTableForBucket);
+      document.getElementById('bucketProductFilter').addEventListener('change', renderTopTableForBucket);
+      document.getElementById('bucketCustomerFilter').addEventListener('change', renderTopTableForBucket);
   // ensure EOL wrap is visible
   const wrap = document.getElementById('eolTableWrap'); if(wrap) wrap.style.display='block';
   // refresh customer asset table if available
@@ -2595,6 +3190,85 @@ function renderSelectedMiChips(){
   function saveCustAssets(list){ try{ localStorage.setItem(CUST_ASSET_KEY, JSON.stringify(list)); try{ if(typeof saveFullState==='function') saveFullState(); }catch(e){} }catch(e){} }
         // initialize in-memory list
         window._custAssets = loadCustAssets();
+
+        // --- Modern Modal for Customer Asset Add/Edit ---
+        (function(){
+          // inject modal HTML + CSS once
+          const modalHTML = `
+          <style>
+          .ca-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);z-index:10000;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .25s ease;pointer-events:none}
+          .ca-modal-overlay.active{opacity:1;pointer-events:all}
+          .ca-modal{background:#fff;border-radius:16px;padding:32px;width:90%;max-width:440px;box-shadow:0 25px 60px rgba(15,23,42,0.2);transform:translateY(20px) scale(0.97);transition:transform .3s cubic-bezier(.2,.9,.2,1),opacity .3s ease;opacity:0;position:relative}
+          .ca-modal-overlay.active .ca-modal{transform:none;opacity:1}
+          .ca-modal h3{margin:0 0 24px 0;font-size:1.3rem;font-weight:800;color:#1f2937;display:flex;align-items:center;gap:10px}
+          .ca-modal h3 i{color:#6366f1;font-size:1.1rem}
+          .ca-modal .ca-field{margin-bottom:16px}
+          .ca-modal .ca-field label{display:block;font-size:0.85rem;font-weight:600;color:#374151;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.03em}
+          .ca-modal .ca-field label .optional{font-weight:400;color:#9ca3af;text-transform:none;font-size:0.8rem;margin-left:6px}
+          .ca-modal .ca-field input{width:100%;padding:12px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.95rem;font-family:inherit;transition:all .2s ease;box-sizing:border-box;background:#fafbfc}
+          .ca-modal .ca-field input:focus{outline:none;border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.1);background:#fff}
+          .ca-modal .ca-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid #f3f4f6}
+          .ca-modal .ca-btn{padding:10px 22px;border-radius:10px;font-size:0.9rem;font-weight:700;cursor:pointer;border:none;transition:all .2s ease;font-family:inherit}
+          .ca-modal .ca-btn-cancel{background:#f3f4f6;color:#374151}
+          .ca-modal .ca-btn-cancel:hover{background:#e5e7eb}
+          .ca-modal .ca-btn-save{background:linear-gradient(135deg,#6366f1 0%,#4f46e5 100%);color:#fff;box-shadow:0 4px 12px rgba(99,102,241,0.3)}
+          .ca-modal .ca-btn-save:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(99,102,241,0.4)}
+          </style>
+          <div class="ca-modal-overlay" id="caModalOverlay">
+            <div class="ca-modal">
+              <h3><i class="fas fa-user-plus"></i> <span id="caModalTitle">Add Customer Asset</span></h3>
+              <div class="ca-field"><label>Customer Name</label><input type="text" id="caInputCust" placeholder="Enter customer name"></div>
+              <div class="ca-field"><label>Account No <span class="optional">(optional)</span></label><input type="text" id="caInputAcct" placeholder="Enter account number"></div>
+              <div class="ca-field"><label>Asset Value</label><input type="text" id="caInputAsset" placeholder="e.g. 1,500,000"></div>
+              <div class="ca-field"><label>Percentage <span class="optional">(% of total)</span></label><input type="text" id="caInputPct" placeholder="e.g. 12.5"></div>
+              <div class="ca-actions">
+                <button type="button" class="ca-btn ca-btn-cancel" id="caModalCancel">Cancel</button>
+                <button type="button" class="ca-btn ca-btn-save" id="caModalSave">Save</button>
+              </div>
+            </div>
+          </div>`;
+          document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+          const overlay = document.getElementById('caModalOverlay');
+          const titleEl = document.getElementById('caModalTitle');
+          const inputCust = document.getElementById('caInputCust');
+          const inputAcct = document.getElementById('caInputAcct');
+          const inputAsset = document.getElementById('caInputAsset');
+          const inputPct = document.getElementById('caInputPct');
+          const btnCancel = document.getElementById('caModalCancel');
+          const btnSave = document.getElementById('caModalSave');
+          let _onSave = null;
+
+          function closeModal(){
+            overlay.classList.remove('active');
+            _onSave = null;
+          }
+
+          btnCancel.addEventListener('click', closeModal);
+          overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeModal(); });
+
+          btnSave.addEventListener('click', ()=>{
+            const cust = inputCust.value.trim();
+            const acct = inputAcct.value.trim();
+            const asset = inputAsset.value.trim();
+            const pctRaw = inputPct.value.replace('%','').trim();
+            const parsedPct = pctRaw==='' ? null : Number(pctRaw);
+            if(_onSave) _onSave({customer:cust, accountNo:acct, asset:asset, pct:(parsedPct===null||isNaN(parsedPct))?null:parsedPct});
+            closeModal();
+          });
+
+          // global function to open the modal
+          window.openCustAssetModal = function(title, existing, onSave){
+            titleEl.textContent = title || 'Add Customer Asset';
+            inputCust.value = existing ? (existing.customer||'') : '';
+            inputAcct.value = existing ? (existing.accountNo||'') : '';
+            inputAsset.value = existing ? (existing.asset||'') : '';
+            inputPct.value = existing ? ((existing.pct!==null && existing.pct!==undefined) ? String(existing.pct) : '') : '';
+            _onSave = onSave;
+            overlay.classList.add('active');
+            setTimeout(()=>inputCust.focus(), 100);
+          };
+        })();
 
         function renderCustomerAssetTable(){
           const tbody = document.querySelector('#custAssetTable tbody'); if(!tbody) return; tbody.innerHTML='';
@@ -2627,7 +3301,8 @@ function renderSelectedMiChips(){
             const pctNum = (item && item.hasOwnProperty('pct') && item.pct!==null && item.pct!==undefined && item.pct!=='') ? Number(item.pct) : (isNaN(parsed) || total===0 ? 0 : (parsed/total*100));
             const impactValNum = (isNaN(parsed) || isNaN(pctNum)) ? 0 : (parsed * (pctNum/100));
             const impactVal = isNaN(impactValNum)? '' : impactValNum.toLocaleString('en-US',{maximumFractionDigits:2});
-            tr.innerHTML = `<td>${i+1}</td><td>${custText}</td><td class="right">${assetVal}</td><td class="right">${pctDisplay}</td><td class="right">${impactVal}</td><td><button type="button" data-i="${i}" class="cust-edit">Edit</button> <button type="button" data-i="${i}" class="cust-delete">Delete</button></td>`;
+            const acctText = item.accountNo || '';
+            tr.innerHTML = `<td>${i+1}</td><td>${custText}</td><td>${acctText}</td><td>${assetVal}</td><td>${pctDisplay}</td><td>${impactVal}</td><td><button type="button" data-i="${i}" class="cust-edit">Edit</button> <button type="button" data-i="${i}" class="cust-delete">Delete</button></td>`;
             tbody.appendChild(tr);
           });
           // handlers
@@ -2637,17 +3312,11 @@ function renderSelectedMiChips(){
               const list = window._custAssets || [];
               if(i<0 || i>=list.length) return;
               const item = list[i];
-              const newCust = prompt('Customer Name', item.customer||''); if(newCust===null) return;
-              const newAsset = prompt('Asset Value', item.asset||''); if(newAsset===null) return;
-              // prompt for percentage (allow blank to clear stored pct)
-              const curPct = (item.hasOwnProperty('pct') && item.pct!==null && item.pct!==undefined) ? String(item.pct) : '';
-              const newPctRaw = prompt('Percentage (percent of total) — enter number only, e.g. 12.5', curPct);
-              if(newPctRaw===null) return;
-              const cleaned = String(newPctRaw).replace('%','').trim();
-              const parsedPct = cleaned===''? null : Number(cleaned);
-              item.customer = newCust; item.asset = newAsset; item.pct = (parsedPct===null || isNaN(parsedPct))? null: parsedPct;
-              saveCustAssets(list);
-              try{ renderCustomerAssetTable(); }catch(e){ console.warn('Failed to re-render cust assets', e); }
+              openCustAssetModal('Edit Customer Asset', item, (data)=>{
+                item.accountNo = data.accountNo; item.customer = data.customer; item.asset = data.asset; item.pct = data.pct;
+                saveCustAssets(list);
+                try{ renderCustomerAssetTable(); }catch(e){ console.warn('Failed to re-render cust assets', e); }
+              });
             });
           });
           tbody.querySelectorAll('button.cust-delete').forEach(btn=>{
@@ -2666,14 +3335,12 @@ function renderSelectedMiChips(){
         // wire Add button
         try{
           const addBtn = document.getElementById('addCustAsset'); if(addBtn){ addBtn.addEventListener('click', ()=>{
-            const cust = prompt('Customer Name',''); if(cust===null) return;
-            const asset = prompt('Asset Value',''); if(asset===null) return;
-            const pctRaw = prompt('Percentage (percent of total) — enter number only, e.g. 12.5',''); if(pctRaw===null) return;
-            const cleaned = String(pctRaw).replace('%','').trim(); const parsedPct = cleaned===''? null : Number(cleaned);
-            window._custAssets = window._custAssets || [];
-            window._custAssets.push({customer:cust, asset: asset, pct: (parsedPct===null || isNaN(parsedPct))? null: parsedPct});
-            saveCustAssets(window._custAssets);
-            try{ renderCustomerAssetTable(); }catch(e){ console.warn('Failed to render after add', e); }
+            openCustAssetModal('Add Customer Asset', null, (data)=>{
+              window._custAssets = window._custAssets || [];
+              window._custAssets.push({accountNo: data.accountNo, customer: data.customer, asset: data.asset, pct: data.pct});
+              saveCustAssets(window._custAssets);
+              try{ renderCustomerAssetTable(); }catch(e){ console.warn('Failed to render after add', e); }
+            });
           }); }
         }catch(e){ console.warn('Failed to wire add cust asset', e); }
 
@@ -2723,12 +3390,12 @@ function renderSelectedMiChips(){
     // update service inline when product selection changes
     document.getElementById('productCol').addEventListener('change', ()=>{
       if(!lastData) return; // no data to compute
-  try{ populateServiceProducts(lastData); populateMiProducts(lastData); populateAbProducts(lastData); populateAgriProducts(lastData); populateUnusedProducts(lastData); populateSecurityProducts(lastData); renderSelectedServiceChips(); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); renderSelectedUnusedChips(); renderSelectedSecurityChips(); analyzeNow(); if(typeof saveSelections==='function') saveSelections(); }catch(e){ console.warn('analyzeNow failed on product change', e); }
+  try{ populateServiceProducts(lastData); populateServiceCustomers(lastData); populateMiProducts(lastData); populateAbProducts(lastData); populateAgriProducts(lastData); populateUnusedProducts(lastData); populateUnusedCustomers(lastData); populateSecurityProducts(lastData); populateSecurityCustomers(lastData); populateWeProducts(lastData); populateWeCustomers(lastData); renderSelectedServiceChips(); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); renderSelectedUnusedChips(); renderSelectedSecurityChips(); renderSelectedWeChips(); analyzeNow(); if(typeof saveSelections==='function') saveSelections(); }catch(e){ console.warn('analyzeNow failed on product change', e); }
     });
     // when mode selectors change, persist the selections for the previous mode first
     // so changing modes does NOT lose the selections made in the mode being left.
     (function(){
-  const mapping = { serviceMode: 'serviceProducts', securityMode: 'securityProducts', unusedMode: 'unusedProducts', weMode: 'weCustomers', miMode: null, abMode: null, agriCropMode: null, agriIndMode: null };
+  const mapping = { serviceMode: null, securityMode: null, unusedMode: null, weMode: null, miMode: null, abMode: null, agriCropMode: null, agriIndMode: null };
       function saveSelectionUnderMode(baseId, mode){ try{
           const el = document.getElementById(baseId); if(!el) return;
           const vals = Array.from(el.selectedOptions).map(o=>o.value);
@@ -2748,7 +3415,15 @@ function renderSelectedMiChips(){
             const prev = el.dataset.prevMode || 'product';
             let baseId = mapping[modeId];
             // some modes control different base selectors depending on product/customer
-            if(modeId === 'miMode'){
+            if(modeId === 'serviceMode'){
+              baseId = (prev === 'product') ? 'serviceProducts' : 'serviceCustomers';
+            } else if(modeId === 'securityMode'){
+              baseId = (prev === 'product') ? 'securityProducts' : 'securityCustomers';
+            } else if(modeId === 'unusedMode'){
+              baseId = (prev === 'product') ? 'unusedProducts' : 'unusedCustomers';
+            } else if(modeId === 'weMode'){
+              baseId = (prev === 'customer') ? 'weCustomers' : 'weProducts';
+            } else if(modeId === 'miMode'){
               baseId = (prev === 'product') ? 'miProducts' : 'miCustomers';
             } else if(modeId === 'abMode'){
               baseId = (prev === 'product') ? 'abProducts' : 'abCustomers';
@@ -2764,7 +3439,7 @@ function renderSelectedMiChips(){
             // apply visibility for MI/AB selects immediately
             try{ setModeVisibilityAll(); }catch(e){}
             // now repopulate lists for new modes
-            populateServiceProducts(lastData); populateUnusedProducts(lastData); populateSecurityProducts(lastData); populateWeCustomers(lastData);
+            populateServiceProducts(lastData); populateServiceCustomers(lastData); populateUnusedProducts(lastData); populateUnusedCustomers(lastData); populateSecurityProducts(lastData); populateSecurityCustomers(lastData); populateWeCustomers(lastData); populateWeProducts(lastData);
             try{ populateMiProducts(lastData); populateMiCustomers(lastData); populateAbProducts(lastData); populateAbCustomers(lastData); populateAgriProducts(lastData); }catch(e){}
             if(typeof saveSelections==='function') saveSelections();
             try{ renderSelectedServiceChips(); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedWeChips(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); renderSelectedUnusedChips(); renderSelectedSecurityChips(); analyzeNow(); }catch(e){}
@@ -2776,7 +3451,12 @@ function renderSelectedMiChips(){
   document.getElementById('miProducts').addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedMiCombined(); analyzeNow(); }catch(e){} });
     document.getElementById('customerCol').addEventListener('change', ()=>{
         if(!lastData) return;
-    try{ populateMiCustomers(lastData); populateAbCustomers(lastData); populateWeCustomers(lastData); populateAgriProducts(lastData); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedWeChips(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); analyzeNow(); }catch(e){ console.warn('analyzeNow failed on customer change', e); }
+    try{ populateMiCustomers(lastData); populateAbCustomers(lastData); populateWeCustomers(lastData); populateServiceCustomers(lastData); populateSecurityCustomers(lastData); populateUnusedCustomers(lastData); populateAgriProducts(lastData); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedWeChips(); renderSelectedServiceChips(); renderSelectedSecurityChips(); renderSelectedUnusedChips(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); analyzeNow(); }catch(e){ console.warn('analyzeNow failed on customer change', e); }
+      });
+    // When account number column changes, repopulate customer filters since they show "Name - Account"
+    document.getElementById('idCol').addEventListener('change', ()=>{
+        if(!lastData) return;
+    try{ populateMiCustomers(lastData); populateAbCustomers(lastData); populateWeCustomers(lastData); populateServiceCustomers(lastData); populateSecurityCustomers(lastData); populateUnusedCustomers(lastData); populateAgriProducts(lastData); renderSelectedMiCombined(); renderSelectedAbCombined(); renderSelectedWeChips(); renderSelectedServiceChips(); renderSelectedSecurityChips(); renderSelectedUnusedChips(); renderSelectedAgriCropCombined(); renderSelectedAgriIndCombined(); analyzeNow(); }catch(e){ console.warn('analyzeNow failed on idCol change', e); }
       });
     document.getElementById('weCustomers').addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedWeChips(); analyzeNow(); }catch(e){} });
   document.getElementById('agriCropProducts').addEventListener('change', ()=>{ if(!lastData) return; try{ renderSelectedAgriCropCombined(); analyzeNow(); }catch(e){} });
@@ -2794,6 +3474,29 @@ function renderSelectedMiChips(){
   ['serviceProducts','miProducts','miCustomers','abProducts','abCustomers','weCustomers','agriCropProducts','agriCropCustomers','agriIndProducts','agriIndCustomers','unusedProducts','securityProducts','serviceMode','securityMode','unusedMode','weMode','miMode','abMode','agriCropMode','agriIndMode','customerCol','productCol','amountCol','idCol','termCol','bucketSelect'].forEach(id=>{
       const el=document.getElementById(id); if(!el) return; el.addEventListener('change', ()=>{ try{ if(typeof saveSelections==='function') saveSelections(); }catch(e){} });
     });
+
+    // Global scroll position preservation for multi-select dropdowns
+    // When user clicks an option, the select scrolls back to top after re-render; this prevents that.
+    (function(){
+      let _scrollTarget = null;
+      let _scrollPos = 0;
+      document.addEventListener('mousedown', function(e){
+        const t = e.target;
+        if(t && t.tagName && t.tagName.toLowerCase() === 'option'){
+          const sel = t.closest('select[multiple]');
+          if(sel){
+            _scrollTarget = sel;
+            _scrollPos = sel.scrollTop;
+            // Restore scroll after all handlers and re-renders complete
+            requestAnimationFrame(()=>{
+              setTimeout(()=>{
+                if(_scrollTarget){ _scrollTarget.scrollTop = _scrollPos; _scrollTarget = null; }
+              }, 0);
+            });
+          }
+        }
+      }, true); // capturing phase — runs before other handlers
+    })();
 
     // export functionality removed
 

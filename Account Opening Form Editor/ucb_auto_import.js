@@ -1,7 +1,29 @@
 window.UCB_AUTO_IMPORT_DATA = {
-  "exportedAt": "2026-05-29T09:36:38.300Z",
+  "exportedAt": "2026-08-15T09:11:48.005Z",
   "form": {
     "branchName": "",
+    "combinedApplicantsOverride": "",
+    "accountNumber": "",
+    "accountNumberNoSpace": "",
+    "cif": "",
+    "accountOwnership": "single",
+    "secondApplicantName": "",
+    "thirdApplicantName": "",
+    "ownershipOthersText": "",
+    "combinedApplicantsBn": "",
+    "initialDeposit": "",
+    "amlTrackingNumber": "",
+    "rmCode": "",
+    "chequeBook": "",
+    "debitCard": "",
+    "typeOfAccount": "savings",
+    "currency": "taka",
+    "acctTypeOthersText": "",
+    "currencyOthersText": "",
+    "isrBank": "",
+    "isrCustomer": "",
+    "introducerRequired": "no",
+    "fatca": "no",
     "fullNameEn": "",
     "fullNameBn": "",
     "dob": "",
@@ -18,6 +40,98 @@ window.UCB_AUTO_IMPORT_DATA = {
     "occupation": "",
     "monthlyIncome": "",
     "sourceOfFund": "",
+    "nationality": "Bangladeshi",
+    "residentStatus": "yes",
+    "presentHouse": "",
+    "presentRoad": "",
+    "presentPO": "",
+    "presentPostCode": "",
+    "presentThana": "",
+    "presentDistrict": "",
+    "presentCountry": "Bangladesh",
+    "permanentHouse": "",
+    "permanentRoad": "",
+    "permanentPO": "",
+    "permanentPostCode": "",
+    "permanentThana": "",
+    "permanentDistrict": "",
+    "permanentCountry": "Bangladesh",
+    "fatca_accountHolder": "1st",
+    "fatca_countryResidence": "",
+    "fatca_countryBirth": "",
+    "fatca_q1": "",
+    "fatca_q2": "",
+    "fatca_q3": "",
+    "fatca_q4": "",
+    "app2_cif": "",
+    "app2_fullNameEn": "",
+    "app2_fullNameBn": "",
+    "app2_amlTrackingNumber": "",
+    "app2_dob": "",
+    "app2_gender": "",
+    "app2_fatherName": "",
+    "app2_motherName": "",
+    "app2_spouseName": "",
+    "app2_nid": "",
+    "app2_passportNo": "",
+    "app2_birthCertNo": "",
+    "app2_etin": "",
+    "app2_mobile": "",
+    "app2_email": "",
+    "app2_occupation": "",
+    "app2_monthlyIncome": "",
+    "app2_sourceOfFund": "",
+    "app2_nationality": "Bangladeshi",
+    "app2_residentStatus": "yes",
+    "app2_presentHouse": "",
+    "app2_presentRoad": "",
+    "app2_presentPO": "",
+    "app2_presentPostCode": "",
+    "app2_presentThana": "",
+    "app2_presentDistrict": "",
+    "app2_presentCountry": "Bangladesh",
+    "app2_permanentHouse": "",
+    "app2_permanentRoad": "",
+    "app2_permanentPO": "",
+    "app2_permanentPostCode": "",
+    "app2_permanentThana": "",
+    "app2_permanentDistrict": "",
+    "app2_permanentCountry": "Bangladesh",
+    "app3_cif": "",
+    "app3_fullNameEn": "",
+    "app3_fullNameBn": "",
+    "app3_amlTrackingNumber": "",
+    "app3_dob": "",
+    "app3_gender": "",
+    "app3_fatherName": "",
+    "app3_motherName": "",
+    "app3_spouseName": "",
+    "app3_nid": "",
+    "app3_passportNo": "",
+    "app3_birthCertNo": "",
+    "app3_etin": "",
+    "app3_mobile": "",
+    "app3_email": "",
+    "app3_occupation": "",
+    "app3_monthlyIncome": "",
+    "app3_sourceOfFund": "",
+    "app3_nationality": "Bangladeshi",
+    "app3_residentStatus": "yes",
+    "app3_presentHouse": "",
+    "app3_presentRoad": "",
+    "app3_presentPO": "",
+    "app3_presentPostCode": "",
+    "app3_presentThana": "",
+    "app3_presentDistrict": "",
+    "app3_presentCountry": "Bangladesh",
+    "app3_permanentHouse": "",
+    "app3_permanentRoad": "",
+    "app3_permanentPO": "",
+    "app3_permanentPostCode": "",
+    "app3_permanentThana": "",
+    "app3_permanentDistrict": "",
+    "app3_permanentCountry": "Bangladesh",
+    "gCif": "",
     "gNameEn": "",
     "gNameBn": "",
     "gAmlTrackingNumber": "",
@@ -36,6 +150,7 @@ window.UCB_AUTO_IMPORT_DATA = {
     "gSourceOfFund": "",
     "gTin": "",
     "gNationality": "Bangladeshi",
+    "gResidentStatus": "yes",
     "gPresentHouse": "",
     "gPresentArea": "",
     "gPresentPO": "",
@@ -53,34 +168,6 @@ window.UCB_AUTO_IMPORT_DATA = {
     "introducerName": "",
     "introducerDob": "",
     "introducerAccount": "",
-    "accountNumber": "",
-    "accountNumberNoSpace": "",
-    "cif": "",
-    "accountOwnership": "single",
-    "secondApplicantName": "",
-    "thirdApplicantName": "",
-    "combinedApplicantsBn": "",
-    "initialDeposit": "",
-    "amlTrackingNumber": "",
-    "rmCode": "",
-    "chequeBook": "",
-    "debitCard": "",
-    "isrBank": "",
-    "isrCustomer": "",
-    "presentHouse": "",
-    "presentRoad": "",
-    "presentPO": "",
-    "presentPostCode": "",
-    "presentThana": "",
-    "presentDistrict": "",
-    "presentCountry": "Bangladesh",
-    "permanentHouse": "",
-    "permanentRoad": "",
-    "permanentPO": "",
-    "permanentPostCode": "",
-    "permanentThana": "",
-    "permanentDistrict": "",
-    "permanentCountry": "Bangladesh",
     "nomineeName": "",
     "nomineeDob": "",
     "nomineeRelation": "",
@@ -151,8 +238,8 @@ window.UCB_AUTO_IMPORT_DATA = {
     "depositRemittanceCount": "",
     "depositRemittanceAmount": "",
     "depositRemittanceTotal": "",
-    "depositMaxSingleCombined": "0",
-    "depositTotalProbable": "0",
+    "depositMaxSingleCombined": "",
+    "depositTotalProbable": "",
     "withdrawalCashCount": "5",
     "withdrawalCashAmount": "",
     "withdrawalCashTotal": "",
@@ -162,8 +249,8 @@ window.UCB_AUTO_IMPORT_DATA = {
     "withdrawalRemittanceCount": "",
     "withdrawalRemittanceAmount": "",
     "withdrawalRemittanceTotal": "",
-    "withdrawalMaxSingleCombined": "0",
-    "withdrawalTotalProbable": "0",
+    "withdrawalMaxSingleCombined": "",
+    "withdrawalTotalProbable": "",
     "nomineeSameAddress": false,
     "guardianSameAddress": false
   },
@@ -257,8 +344,8 @@ window.UCB_AUTO_IMPORT_DATA = {
       "left": "11.9%"
     },
     "1_presentThana_22": {
-      "top": "73.9549%",
-      "left": "39.2%"
+      "top": "73.8109%",
+      "left": "38.9%"
     },
     "1_presentDistrict_23": {
       "top": "73.8108%",
@@ -344,49 +431,133 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "31.8378%",
       "left": "32%"
     },
-    "1_tick1_44": {
-      "top": "27.6627%",
-      "left": "32.1%"
+    "1_ownership_anyone_44": {
+      "top": "31.9707%",
+      "left": "40.6%"
     },
-    "1_tick2_45": {
-      "top": "27.7347%",
-      "left": "24%"
+    "1_ownership_either_45": {
+      "top": "31.9706%",
+      "left": "48.6%"
     },
-    "1_tick3_46": {
-      "top": "59.6232%",
-      "left": "22.6%"
+    "1_ownership_others_46": {
+      "top": "31.8267%",
+      "left": "65.2%"
     },
-    "1_male_47": {
-      "top": "56.7439%",
-      "left": "62.8%"
+    "1_ownershipOthersText_47": {
+      "top": "32.0427%",
+      "left": "71.9%"
     },
-    "1_female_48": {
-      "top": "56.8159%",
-      "left": "70.5%"
+    "1_tick1_48": {
+      "top": "90%",
+      "left": "20%"
     },
-    "1_initialDeposit_49": {
-      "top": "33.7969%",
-      "left": "24.5%"
+    "1_tick2_49": {
+      "top": "97.0557%",
+      "left": "52.3%"
     },
-    "1_birthCertNo_50": {
-      "top": "86.0565%",
-      "left": "38.8%"
+    "1_tick3_50": {
+      "top": "97.3437%",
+      "left": "2.9%"
     },
-    "1_chequeBook_51": {
-      "top": "35.6839%",
-      "left": "26.4%"
+    "1_male_51": {
+      "top": "56.8815%",
+      "left": "63.6%"
     },
-    "1_debitCard_52": {
-      "top": "35.6119%",
-      "left": "37%"
+    "1_female_52": {
+      "top": "56.9535%",
+      "left": "70.9%"
     },
-    "1_tick3_53": {
-      "top": "29.8222%",
-      "left": "24%"
+    "1_thirdGender_53": {
+      "top": "56.9535%",
+      "left": "77.7%"
     },
-    "1_officer1Seal_54": {
-      "top": "90.6147%",
-      "left": "73.2%"
+    "1_resident_yes_54": {
+      "top": "59.6174%",
+      "left": "22.8%"
+    },
+    "1_resident_no_55": {
+      "top": "59.8334%",
+      "left": "29.9%"
+    },
+    "1_acctType_savings_56": {
+      "top": "27.7228%",
+      "left": "23.8%"
+    },
+    "1_acctType_current_57": {
+      "top": "27.7228%",
+      "left": "32.5%"
+    },
+    "1_acctType_snd_58": {
+      "top": "27.6508%",
+      "left": "40.8%"
+    },
+    "1_acctType_fc_59": {
+      "top": "27.6509%",
+      "left": "48.9%"
+    },
+    "1_acctType_rfcd_60": {
+      "top": "27.8669%",
+      "left": "56.9%"
+    },
+    "1_acctType_nfcd_61": {
+      "top": "27.8668%",
+      "left": "65.5%"
+    },
+    "1_acctType_others_62": {
+      "top": "27.6509%",
+      "left": "73.6%"
+    },
+    "1_currency_taka_63": {
+      "top": "29.9389%",
+      "left": "23.9%"
+    },
+    "1_currency_usd_64": {
+      "top": "29.7229%",
+      "left": "32.5%"
+    },
+    "1_currency_euro_65": {
+      "top": "29.9388%",
+      "left": "40.7%"
+    },
+    "1_currency_gbp_66": {
+      "top": "29.8668%",
+      "left": "49.1%"
+    },
+    "1_currency_others_67": {
+      "top": "29.5789%",
+      "left": "57.2%"
+    },
+    "1_acctTypeOthersText_68": {
+      "top": "27.8669%",
+      "left": "79.7%"
+    },
+    "1_currencyOthersText_69": {
+      "top": "29.7229%",
+      "left": "64.2%"
+    },
+    "1_initialDeposit_70": {
+      "top": "33.5705%",
+      "left": "24.4%"
+    },
+    "1_birthCertNo_71": {
+      "top": "88%",
+      "left": "35%"
+    },
+    "1_chequeBook_72": {
+      "top": "35.6023%",
+      "left": "25.9%"
+    },
+    "1_debitCard_73": {
+      "top": "35.6024%",
+      "left": "36.7%"
+    },
+    "1_tick3_74": {
+      "top": "96.6957%",
+      "left": "31.7%"
+    },
+    "1_officer1Seal_75": {
+      "top": "91.2638%",
+      "left": "72.9%"
     },
     "2_accountNumber_0": {
       "top": "44.1644%",
@@ -468,49 +639,73 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "34.8025%",
       "left": "67.3%"
     },
-    "2_tick3_20": {
-      "top": "88.1285%",
-      "left": "40.8%"
+    "2_fatca_no_20": {
+      "top": "88.2001%",
+      "left": "41.2%"
     },
-    "2_ownership_single_21": {
-      "top": "46.8984%",
+    "2_fatca_yes_21": {
+      "top": "88.1281%",
+      "left": "35.1%"
+    },
+    "2_ownership_single_22": {
+      "top": "46.946%",
       "left": "24%"
     },
-    "2_ownership_joint_22": {
-      "top": "46.9704%",
+    "2_ownership_joint_23": {
+      "top": "47.018%",
       "left": "32.4%"
     },
-    "2_digit2_23": {
-      "top": "93.8137%",
-      "left": "11.2%"
+    "2_ownership_anyone_24": {
+      "top": "46.946%",
+      "left": "40.5%"
     },
-    "2_digit6_24": {
-      "top": "93.8856%",
-      "left": "17.9%"
+    "2_ownership_either_25": {
+      "top": "46.946%",
+      "left": "48.6%"
     },
-    "2_secondApplicantName_25": {
-      "top": "70.4926%",
-      "left": "39.9%"
+    "2_ownership_others_26": {
+      "top": "46.946%",
+      "left": "65.1%"
     },
-    "2_thirdApplicantName_26": {
-      "top": "70.6144%",
-      "left": "71.1%"
+    "2_ownershipOthersText_27": {
+      "top": "46.946%",
+      "left": "71.6%"
     },
-    "2_officer1Seal_27": {
-      "top": "80.7923%",
-      "left": "9.4%"
+    "2_digit2_28": {
+      "top": "93.6718%",
+      "left": "11%"
     },
-    "2_officer2Seal_28": {
-      "top": "80.9363%",
-      "left": "38.8%"
+    "2_digit6_29": {
+      "top": "93.8158%",
+      "left": "18.1%"
     },
-    "2_officer3Seal_29": {
-      "top": "81.1522%",
-      "left": "70.2%"
+    "2_secondApplicantName_30": {
+      "top": "70.4311%",
+      "left": "39.8%"
     },
-    "2_attestedSeal_30": {
-      "top": "59.9245%",
-      "left": "24.9%"
+    "2_thirdApplicantName_31": {
+      "top": "70.4793%",
+      "left": "71.3%"
+    },
+    "2_officer1Seal_32": {
+      "top": "81.0799%",
+      "left": "38.4%"
+    },
+    "2_officer2Seal_33": {
+      "top": "81.3679%",
+      "left": "8.1%"
+    },
+    "2_officer3Seal_34": {
+      "top": "81.2239%",
+      "left": "69.2%"
+    },
+    "2_attestedSeal_35": {
+      "top": "55.8891%",
+      "left": "27.6%"
+    },
+    "2_attestedSeal2_36": {
+      "top": "56.321%",
+      "left": "58.1%"
     },
     "3_accountNumber_0": {
       "top": "4.22873%",
@@ -580,6 +775,10 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "42.1448%",
       "left": "23.6%"
     },
+    "6_verifiedSeal2_10": {
+      "top": "42.2097%",
+      "left": "59.1%"
+    },
     "18_fullNameEn_0": {
       "top": "46.0695%",
       "left": "23.5%"
@@ -601,8 +800,8 @@ window.UCB_AUTO_IMPORT_DATA = {
       "left": "37.9%"
     },
     "18_todayDate_5": {
-      "top": "14.278%",
-      "left": "12%"
+      "top": "14.206%",
+      "left": "11.4%"
     },
     "18_accountNumber_6": {
       "top": "41.657%",
@@ -642,7 +841,7 @@ window.UCB_AUTO_IMPORT_DATA = {
     },
     "18_dob_15": {
       "top": "49.4897%",
-      "left": "15.7%"
+      "left": "16.2%"
     },
     "18_nationality_16": {
       "top": "58.0324%",
@@ -756,45 +955,129 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "33.2776%",
       "left": "32.5%"
     },
-    "18_tick1_44": {
-      "top": "60.487%",
-      "left": "22.6%"
+    "18_ownership_anyone_44": {
+      "top": "33.4106%",
+      "left": "40.8%"
     },
-    "18_tick2_45": {
-      "top": "29.1745%",
-      "left": "24.1%"
+    "18_ownership_either_45": {
+      "top": "33.4826%",
+      "left": "49%"
     },
-    "18_tick3_46": {
-      "top": "31.334%",
-      "left": "24%"
+    "18_ownership_others_46": {
+      "top": "33.2666%",
+      "left": "65.5%"
     },
-    "18_male_47": {
-      "top": "57.7517%",
-      "left": "62.8%"
+    "18_ownershipOthersText_47": {
+      "top": "33.4106%",
+      "left": "71.4%"
     },
-    "18_female_48": {
-      "top": "57.9677%",
-      "left": "70.4%"
+    "18_tick1_48": {
+      "top": "90%",
+      "left": "20%"
     },
-    "18_initialDeposit_49": {
-      "top": "35.2366%",
-      "left": "27.2%"
+    "18_tick2_49": {
+      "top": "96.9117%",
+      "left": "1%"
     },
-    "18_birthCertNo_50": {
-      "top": "86.1284%",
-      "left": "36.5%"
+    "18_tick3_50": {
+      "top": "96.8397%",
+      "left": "12%"
     },
-    "18_chequeBook_51": {
-      "top": "37.1236%",
-      "left": "26%"
+    "18_male_51": {
+      "top": "57.6735%",
+      "left": "63%"
     },
-    "18_debitCard_52": {
-      "top": "37.2675%",
-      "left": "36.5%"
+    "18_female_52": {
+      "top": "57.6735%",
+      "left": "70.7%"
     },
-    "18_officer1Seal_53": {
-      "top": "90.6535%",
-      "left": "74.2%"
+    "18_thirdGender_53": {
+      "top": "58.0335%",
+      "left": "77.5%"
+    },
+    "18_resident_yes_54": {
+      "top": "60.9133%",
+      "left": "22.7%"
+    },
+    "18_resident_no_55": {
+      "top": "60.6254%",
+      "left": "29.9%"
+    },
+    "18_acctType_savings_56": {
+      "top": "29.2348%",
+      "left": "23.9%"
+    },
+    "18_acctType_current_57": {
+      "top": "29.3068%",
+      "left": "32.4%"
+    },
+    "18_acctType_snd_58": {
+      "top": "29.3788%",
+      "left": "40.3%"
+    },
+    "18_acctType_fc_59": {
+      "top": "29.3787%",
+      "left": "48.8%"
+    },
+    "18_acctType_rfcd_60": {
+      "top": "29.3068%",
+      "left": "57.1%"
+    },
+    "18_acctType_nfcd_61": {
+      "top": "29.3788%",
+      "left": "65.4%"
+    },
+    "18_acctType_others_62": {
+      "top": "29.2348%",
+      "left": "73.7%"
+    },
+    "18_currency_taka_63": {
+      "top": "31.3068%",
+      "left": "23.9%"
+    },
+    "18_currency_usd_64": {
+      "top": "31.2348%",
+      "left": "32.5%"
+    },
+    "18_currency_euro_65": {
+      "top": "31.3067%",
+      "left": "40.9%"
+    },
+    "18_currency_gbp_66": {
+      "top": "31.1628%",
+      "left": "48.9%"
+    },
+    "18_currency_others_67": {
+      "top": "31.2348%",
+      "left": "57.2%"
+    },
+    "18_acctTypeOthersText_68": {
+      "top": "29.3068%",
+      "left": "79.9%"
+    },
+    "18_currencyOthersText_69": {
+      "top": "31.3068%",
+      "left": "63.9%"
+    },
+    "18_initialDeposit_70": {
+      "top": "35.1544%",
+      "left": "24.5%"
+    },
+    "18_birthCertNo_71": {
+      "top": "88%",
+      "left": "35%"
+    },
+    "18_chequeBook_72": {
+      "top": "37.1143%",
+      "left": "26.1%"
+    },
+    "18_debitCard_73": {
+      "top": "37.0423%",
+      "left": "36.6%"
+    },
+    "18_officer1Seal_74": {
+      "top": "91.2315%",
+      "left": "73%"
     },
     "19_accountNumber_0": {
       "top": "44.3203%",
@@ -876,49 +1159,73 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "34.6521%",
       "left": "67.5%"
     },
-    "19_tick3_20": {
-      "top": "88.2005%",
-      "left": "41.2%"
+    "19_fatca_no_20": {
+      "top": "88.1281%",
+      "left": "41.3%"
     },
-    "19_ownership_single_21": {
-      "top": "46.9542%",
-      "left": "23.7%"
+    "19_fatca_yes_21": {
+      "top": "88.2001%",
+      "left": "34.8%"
     },
-    "19_ownership_joint_22": {
-      "top": "46.8823%",
-      "left": "32.4%"
+    "19_ownership_single_22": {
+      "top": "46.802%",
+      "left": "24%"
     },
-    "19_digit2_23": {
-      "top": "93.8871%",
-      "left": "11.2%"
+    "19_ownership_joint_23": {
+      "top": "46.874%",
+      "left": "32.2%"
     },
-    "19_digit6_24": {
-      "top": "94.031%",
-      "left": "18%"
+    "19_ownership_anyone_24": {
+      "top": "46.658%",
+      "left": "40.7%"
     },
-    "19_secondApplicantName_25": {
-      "top": "70.4996%",
-      "left": "40%"
+    "19_ownership_either_25": {
+      "top": "46.946%",
+      "left": "48.8%"
     },
-    "19_thirdApplicantName_26": {
-      "top": "70.4763%",
-      "left": "71.2%"
+    "19_ownership_others_26": {
+      "top": "46.946%",
+      "left": "64.9%"
     },
-    "19_officer1Seal_27": {
-      "top": "80.2879%",
-      "left": "9.6%"
+    "19_ownershipOthersText_27": {
+      "top": "46.946%",
+      "left": "71.3%"
     },
-    "19_officer2Seal_28": {
-      "top": "80.6478%",
-      "left": "39.1%"
+    "19_digit2_28": {
+      "top": "93.7438%",
+      "left": "11.1%"
     },
-    "19_officer3Seal_29": {
-      "top": "80.6478%",
-      "left": "69.8%"
+    "19_digit6_29": {
+      "top": "93.7438%",
+      "left": "18.2%"
     },
-    "19_attestedSeal_30": {
-      "top": "59.8526%",
-      "left": "24.3%"
+    "19_secondApplicantName_30": {
+      "top": "70.3592%",
+      "left": "39.9%"
+    },
+    "19_thirdApplicantName_31": {
+      "top": "70.4073%",
+      "left": "71.3%"
+    },
+    "19_officer1Seal_32": {
+      "top": "80.936%",
+      "left": "8.3%"
+    },
+    "19_officer2Seal_33": {
+      "top": "80.9359%",
+      "left": "38.4%"
+    },
+    "19_officer3Seal_34": {
+      "top": "81.1519%",
+      "left": "69.6%"
+    },
+    "19_attestedSeal_35": {
+      "top": "56.393%",
+      "left": "27.4%"
+    },
+    "19_attestedSeal2_36": {
+      "top": "56.465%",
+      "left": "58.3%"
     },
     "20_accountNumber_0": {
       "top": "4.29783%",
@@ -987,6 +1294,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "23_verifiedSeal_9": {
       "top": "43.8723%",
       "left": "22.1%"
+    },
+    "23_verifiedSeal2_10": {
+      "top": "43.2897%",
+      "left": "60%"
     },
     "24_fullNameEn_0": {
       "top": "48.085%",
@@ -1172,49 +1483,133 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "34.7892%",
       "left": "32.5%"
     },
-    "24_tick1_46": {
-      "top": "62.0706%",
-      "left": "21.1%"
+    "24_ownership_anyone_46": {
+      "top": "34.9946%",
+      "left": "41.4%"
     },
-    "24_tick2_47": {
-      "top": "62.1427%",
-      "left": "21.2%"
+    "24_ownership_either_47": {
+      "top": "34.9225%",
+      "left": "51%"
     },
-    "24_tick3_48": {
-      "top": "32.9895%",
-      "left": "22.7%"
+    "24_ownership_others_48": {
+      "top": "34.9225%",
+      "left": "62.9%"
     },
-    "24_male_49": {
-      "top": "59.6952%",
-      "left": "61.3%"
+    "24_ownershipOthersText_49": {
+      "top": "35.1385%",
+      "left": "69.5%"
     },
-    "24_female_50": {
-      "top": "59.6952%",
-      "left": "68.3%"
+    "24_tick1_50": {
+      "top": "90%",
+      "left": "20%"
     },
-    "24_initialDeposit_51": {
-      "top": "36.8922%",
-      "left": "26.2%"
+    "24_tick2_51": {
+      "top": "97.4156%",
+      "left": "61.1%"
     },
-    "24_birthCertNo_52": {
-      "top": "87.4961%",
-      "left": "36.7%"
+    "24_tick3_52": {
+      "top": "97.0557%",
+      "left": "44.6%"
     },
-    "24_chequeBook_53": {
-      "top": "38.5633%",
+    "24_male_53": {
+      "top": "59.8334%",
+      "left": "61.4%"
+    },
+    "24_female_54": {
+      "top": "59.9054%",
+      "left": "68.5%"
+    },
+    "24_thirdGender_55": {
+      "top": "59.8334%",
+      "left": "75.4%"
+    },
+    "24_resident_yes_56": {
+      "top": "62.1373%",
+      "left": "21.8%"
+    },
+    "24_resident_no_57": {
+      "top": "62.4253%",
+      "left": "31.5%"
+    },
+    "24_acctType_savings_58": {
+      "top": "27.7229%",
+      "left": "22.6%"
+    },
+    "24_acctType_current_59": {
+      "top": "27.7228%",
+      "left": "32.8%"
+    },
+    "24_acctType_snd_60": {
+      "top": "27.7229%",
+      "left": "41.3%"
+    },
+    "24_acctType_fc_61": {
+      "top": "27.8669%",
+      "left": "51%"
+    },
+    "24_acctType_rfcd_62": {
+      "top": "30.3148%",
+      "left": "32.7%"
+    },
+    "24_acctType_nfcd_63": {
+      "top": "30.2427%",
+      "left": "22.9%"
+    },
+    "24_acctType_others_64": {
+      "top": "30.1708%",
+      "left": "41.4%"
+    },
+    "24_currency_taka_65": {
+      "top": "33.1787%",
+      "left": "22.6%"
+    },
+    "24_currency_usd_66": {
+      "top": "32.8188%",
+      "left": "32.6%"
+    },
+    "24_currency_euro_67": {
+      "top": "33.1068%",
+      "left": "50.7%"
+    },
+    "24_currency_gbp_68": {
+      "top": "33.1787%",
+      "left": "41.1%"
+    },
+    "24_currency_others_69": {
+      "top": "33.1067%",
+      "left": "62.9%"
+    },
+    "24_acctTypeOthersText_70": {
+      "top": "30.1707%",
+      "left": "48.5%"
+    },
+    "24_currencyOthersText_71": {
+      "top": "33.6107%",
+      "left": "69.4%"
+    },
+    "24_initialDeposit_72": {
+      "top": "36.6664%",
+      "left": "24.6%"
+    },
+    "24_birthCertNo_73": {
+      "top": "88%",
+      "left": "35%"
+    },
+    "24_chequeBook_74": {
+      "top": "38.6981%",
       "left": "26.4%"
     },
-    "24_debitCard_54": {
-      "top": "38.5633%",
-      "left": "36.6%"
+    "24_debitCard_75": {
+      "top": "38.6262%",
+      "left": "36.5%"
     },
-    "24_tick3_55": {
-      "top": "27.7348%",
-      "left": "23.1%"
+    "24_tick3_76": {
+      "top": "97.9196%",
+      "left": "4.6%"
     },
-    "24_officer1Seal_56": {
-      "top": "91.0134%",
-      "left": "73.3%"
+    "24_officer1Seal_77": {
+      "top": "91.8075%",
+      "left": "72.5%"
     },
     "25_accountNumber_0": {
       "top": "45.2561%",
@@ -1296,49 +1691,73 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "35.4439%",
       "left": "67.4%"
     },
-    "25_tick3_20": {
-      "top": "87.6246%",
-      "left": "41.4%"
+    "25_fatca_no_20": {
+      "top": "87.912%",
+      "left": "40.9%"
     },
-    "25_ownership_single_21": {
-      "top": "47.0982%",
-      "left": "22.7%"
+    "25_fatca_yes_21": {
+      "top": "87.6961%",
+      "left": "35.1%"
     },
-    "25_ownership_joint_22": {
-      "top": "46.9542%",
-      "left": "32.9%"
+    "25_ownership_single_22": {
+      "top": "47.2341%",
+      "left": "23.2%"
     },
-    "25_digit2_23": {
-      "top": "93.8871%",
-      "left": "11.4%"
+    "25_ownership_joint_23": {
+      "top": "47.018%",
+      "left": "32.7%"
     },
-    "25_digit6_24": {
-      "top": "93.8871%",
-      "left": "18.2%"
+    "25_ownership_anyone_24": {
+      "top": "47.09%",
+      "left": "41.5%"
     },
-    "25_secondApplicantName_25": {
-      "top": "72.2991%",
-      "left": "40.1%"
+    "25_ownership_either_25": {
+      "top": "47.09%",
+      "left": "51.2%"
     },
-    "25_thirdApplicantName_26": {
-      "top": "72.2759%",
-      "left": "71.4%"
+    "25_ownership_others_26": {
+      "top": "47.018%",
+      "left": "63.2%"
     },
-    "25_officer1Seal_27": {
-      "top": "81.2957%",
-      "left": "8.3%"
+    "25_ownershipOthersText_27": {
+      "top": "47.234%",
+      "left": "69.8%"
     },
-    "25_officer2Seal_28": {
-      "top": "81.2237%",
-      "left": "39.1%"
+    "25_digit2_28": {
+      "top": "93.7438%",
+      "left": "11.1%"
     },
-    "25_officer3Seal_29": {
-      "top": "81.3677%",
-      "left": "70.1%"
+    "25_digit6_29": {
+      "top": "93.7438%",
+      "left": "18.1%"
     },
-    "25_attestedSeal_30": {
-      "top": "61.7961%",
-      "left": "24.4%"
+    "25_secondApplicantName_30": {
+      "top": "72.2311%",
+      "left": "39.9%"
+    },
+    "25_thirdApplicantName_31": {
+      "top": "72.3512%",
+      "left": "71.3%"
+    },
+    "25_officer1Seal_32": {
+      "top": "81.7999%",
+      "left": "7.8%"
+    },
+    "25_officer2Seal_33": {
+      "top": "81.8719%",
+      "left": "38.4%"
+    },
+    "25_officer3Seal_34": {
+      "top": "81.8719%",
+      "left": "69.5%"
+    },
+    "25_attestedSeal_35": {
+      "top": "56.1771%",
+      "left": "27%"
+    },
+    "25_attestedSeal2_36": {
+      "top": "56.0331%",
+      "left": "58.2%"
     },
     "26_accountNumber_0": {
       "top": "4.15386%",
@@ -1416,6 +1835,10 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "59.6366%",
       "left": "21.5%"
     },
+    "29_verifiedSeal2_10": {
+      "top": "59.4889%",
+      "left": "59.6%"
+    },
     "30_fullNameEn_0": {
       "top": "48.085%",
       "left": "23.5%"
@@ -1486,7 +1909,7 @@ window.UCB_AUTO_IMPORT_DATA = {
     },
     "30_dob_17": {
       "top": "51.4332%",
-      "left": "15.8%"
+      "left": "15.9%"
     },
     "30_nationality_18": {
       "top": "60.0479%",
@@ -1600,49 +2023,133 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "34.7892%",
       "left": "32.8%"
     },
-    "30_tick1_46": {
+    "30_ownership_anyone_46": {
+      "top": "34.9945%",
+      "left": "41.6%"
+    },
+    "30_ownership_either_47": {
+      "top": "34.9946%",
+      "left": "51.2%"
+    },
+    "30_ownership_others_48": {
+      "top": "34.9225%",
+      "left": "63.3%"
+    },
+    "30_ownershipOthersText_49": {
+      "top": "34.9946%",
+      "left": "69.6%"
+    },
+    "30_tick1_50": {
       "top": "90%",
       "left": "20%"
     },
-    "30_tick2_47": {
-      "top": "62.0706%",
-      "left": "21.6%"
+    "30_tick2_51": {
+      "top": "96.1918%",
+      "left": "5.4%"
     },
-    "30_tick3_48": {
-      "top": "32.9895%",
+    "30_tick3_52": {
+      "top": "96.4797%",
+      "left": "59%"
+    },
+    "30_male_53": {
+      "top": "59.9054%",
+      "left": "61.7%"
+    },
+    "30_female_54": {
+      "top": "59.7614%",
+      "left": "68.4%"
+    },
+    "30_thirdGender_55": {
+      "top": "59.7614%",
+      "left": "76%"
+    },
+    "30_resident_yes_56": {
+      "top": "62.2813%",
+      "left": "21.7%"
+    },
+    "30_resident_no_57": {
+      "top": "62.2813%",
+      "left": "31.7%"
+    },
+    "30_acctType_savings_58": {
+      "top": "27.6509%",
+      "left": "22.6%"
+    },
+    "30_acctType_current_59": {
+      "top": "27.7228%",
+      "left": "32.7%"
+    },
+    "30_acctType_snd_60": {
+      "top": "27.7229%",
+      "left": "41.2%"
+    },
+    "30_acctType_fc_61": {
+      "top": "27.7948%",
+      "left": "51.2%"
+    },
+    "30_acctType_rfcd_62": {
+      "top": "30.3148%",
+      "left": "32.6%"
+    },
+    "30_acctType_nfcd_63": {
+      "top": "30.4587%",
       "left": "23%"
     },
-    "30_male_49": {
-      "top": "59.5513%",
-      "left": "61.3%"
+    "30_acctType_others_64": {
+      "top": "30.1708%",
+      "left": "41.3%"
     },
-    "30_female_50": {
-      "top": "59.5512%",
-      "left": "68.3%"
+    "30_currency_taka_65": {
+      "top": "33.1787%",
+      "left": "22.8%"
     },
-    "30_initialDeposit_51": {
-      "top": "36.8201%",
-      "left": "29.5%"
+    "30_currency_usd_66": {
+      "top": "32.9627%",
+      "left": "32.8%"
     },
-    "30_birthCertNo_52": {
-      "top": "87.3522%",
-      "left": "35.6%"
+    "30_currency_euro_67": {
+      "top": "33.3227%",
+      "left": "50.9%"
     },
-    "30_chequeBook_53": {
-      "top": "38.5633%",
-      "left": "26.1%"
+    "30_currency_gbp_68": {
+      "top": "33.2508%",
+      "left": "41.2%"
     },
-    "30_debitCard_54": {
-      "top": "38.6353%",
+    "30_currency_others_69": {
+      "top": "33.0347%",
+      "left": "63%"
+    },
+    "30_acctTypeOthersText_70": {
+      "top": "30.3147%",
+      "left": "48.3%"
+    },
+    "30_currencyOthersText_71": {
+      "top": "33.5387%",
+      "left": "69.6%"
+    },
+    "30_initialDeposit_72": {
+      "top": "36.7384%",
+      "left": "24.5%"
+    },
+    "30_birthCertNo_73": {
+      "top": "88%",
+      "left": "35%"
+    },
+    "30_chequeBook_74": {
+      "top": "38.6261%",
+      "left": "25.9%"
+    },
+    "30_debitCard_75": {
+      "top": "38.5542%",
       "left": "36.5%"
     },
-    "30_tick3_55": {
-      "top": "27.6628%",
-      "left": "22.7%"
+    "30_tick3_76": {
+      "top": "96.3357%",
+      "left": "36.7%"
     },
-    "30_officer1Seal_56": {
-      "top": "91.1574%",
-      "left": "73.8%"
+    "30_officer1Seal_77": {
+      "top": "91.7355%",
+      "left": "72.5%"
     },
     "31_accountNumber_0": {
       "top": "45.2561%",
@@ -1724,49 +2231,73 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "35.4438%",
       "left": "67.3%"
     },
-    "31_tick3_20": {
-      "top": "87.6965%",
-      "left": "41.4%"
+    "31_fatca_no_20": {
+      "top": "87.6961%",
+      "left": "41.1%"
     },
-    "31_ownership_single_21": {
-      "top": "47.0262%",
-      "left": "23%"
+    "31_fatca_yes_21": {
+      "top": "87.9121%",
+      "left": "35.1%"
     },
-    "31_ownership_joint_22": {
-      "top": "46.9543%",
-      "left": "32.3%"
+    "31_ownership_single_22": {
+      "top": "46.73%",
+      "left": "22.9%"
     },
-    "31_digit2_23": {
-      "top": "93.8151%",
-      "left": "11.4%"
+    "31_ownership_joint_23": {
+      "top": "47.018%",
+      "left": "32.9%"
     },
-    "31_digit6_24": {
-      "top": "93.8151%",
-      "left": "18.1%"
+    "31_ownership_anyone_24": {
+      "top": "47.09%",
+      "left": "41.3%"
     },
-    "31_secondApplicantName_25": {
-      "top": "72.5871%",
-      "left": "40%"
+    "31_ownership_either_25": {
+      "top": "47.09%",
+      "left": "50.7%"
     },
-    "31_thirdApplicantName_26": {
-      "top": "72.4919%",
+    "31_ownership_others_26": {
+      "top": "47.162%",
+      "left": "63.2%"
+    },
+    "31_ownershipOthersText_27": {
+      "top": "47.162%",
+      "left": "69.4%"
+    },
+    "31_digit2_28": {
+      "top": "93.6718%",
+      "left": "11.2%"
+    },
+    "31_digit6_29": {
+      "top": "93.7438%",
+      "left": "18%"
+    },
+    "31_secondApplicantName_30": {
+      "top": "72.4471%",
+      "left": "39.9%"
+    },
+    "31_thirdApplicantName_31": {
+      "top": "72.4232%",
       "left": "71.3%"
     },
-    "31_officer1Seal_27": {
-      "top": "81.5836%",
-      "left": "8.7%"
+    "31_officer1Seal_32": {
+      "top": "82.2319%",
+      "left": "7.6%"
     },
-    "31_officer2Seal_28": {
-      "top": "81.6556%",
-      "left": "38.1%"
+    "31_officer2Seal_33": {
+      "top": "82.0159%",
+      "left": "69.3%"
     },
-    "31_officer3Seal_29": {
-      "top": "81.5117%",
-      "left": "69.8%"
+    "31_officer3Seal_34": {
+      "top": "82.2319%",
+      "left": "38%"
     },
-    "31_attestedSeal_30": {
-      "top": "61.4362%",
-      "left": "24.3%"
+    "31_attestedSeal_35": {
+      "top": "56.969%",
+      "left": "27.5%"
+    },
+    "31_attestedSeal2_36": {
+      "top": "56.609%",
+      "left": "58.4%"
     },
     "32_accountNumber_0": {
       "top": "4.15386%",
@@ -1843,6 +2374,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "35_verifiedSeal_9": {
       "top": "59.5646%",
       "left": "21.8%"
+    },
+    "35_verifiedSeal2_10": {
+      "top": "59.4889%",
+      "left": "59.1%"
     },
     "40_cif_0": {
       "top": "14.3704%",
@@ -2007,6 +2542,718 @@ window.UCB_AUTO_IMPORT_DATA = {
     "40_officer3Seal_40": {
       "top": "87.7258%",
       "left": "72.9%"
+    },
+    "50_branchName_0": {
+      "top": "20.0763%",
+      "left": "8.5%"
+    },
+    "50_fatca_cif_1": {
+      "top": "28.257%",
+      "left": "31.1%"
+    },
+    "50_fatca_accountNumber_2": {
+      "top": "30.5612%",
+      "left": "31.4%"
+    },
+    "50_combinedApplicants_3": {
+      "top": "32.3243%",
+      "left": "30.2%"
+    },
+    "50_fatca_accountHolder_4": {
+      "top": "38.7058%",
+      "left": "29.9%"
+    },
+    "50_fatca_countryResidence_5": {
+      "top": "40.7781%",
+      "left": "30.2%"
+    },
+    "50_fatca_countryBirth_6": {
+      "top": "43.005%",
+      "left": "29.9%"
+    },
+    "50_fatca_q1_yes_7": {
+      "top": "47.6908%",
+      "left": "44.4%"
+    },
+    "50_fatca_q1_no_8": {
+      "top": "47.6907%",
+      "left": "48.9%"
+    },
+    "50_fatca_q2_yes_9": {
+      "top": "49.2631%",
+      "left": "44.4%"
+    },
+    "50_fatca_q2_no_10": {
+      "top": "49.495%",
+      "left": "48.9%"
+    },
+    "50_fatca_q3_yes_11": {
+      "top": "50.99%",
+      "left": "44.4%"
+    },
+    "50_fatca_q3_no_12": {
+      "top": "51.2219%",
+      "left": "48.8%"
+    },
+    "50_fatca_q4_yes_13": {
+      "top": "52.6757%",
+      "left": "44.4%"
+    },
+    "50_fatca_q4_no_14": {
+      "top": "52.9076%",
+      "left": "48.8%"
+    },
+    "50_fatca_accountHolder_15": {
+      "top": "79.6457%",
+      "left": "14.2%"
+    },
+    "50_fatca_date_16": {
+      "top": "81.4499%",
+      "left": "14.2%"
+    },
+    "50_officer1Seal_17": {
+      "top": "78.7381%",
+      "left": "46.9%"
+    },
+    "55_applicantStaticLabel_0": {
+      "top": "2.84805%",
+      "left": "40.1%"
+    },
+    "55_amlTrackingNumber_1": {
+      "top": "5.42403%",
+      "left": "30.1%"
+    },
+    "55_cif_2": {
+      "top": "7.98409%",
+      "left": "40.3%"
+    },
+    "55_fullNameEn_3": {
+      "top": "26.1316%",
+      "left": "23.4%"
+    },
+    "55_fullNameBn_4": {
+      "top": "23.5274%",
+      "left": "13.2%"
+    },
+    "55_accountNumber_5": {
+      "top": "21.7915%",
+      "left": "52.9%"
+    },
+    "55_nid_6": {
+      "top": "65.6459%",
+      "left": "27.9%"
+    },
+    "55_passportNo_7": {
+      "top": "67.4458%",
+      "left": "29.7%"
+    },
+    "55_fatherName_8": {
+      "top": "31.4952%",
+      "left": "22.8%"
+    },
+    "55_motherName_9": {
+      "top": "33.7032%",
+      "left": "23.2%"
+    },
+    "55_spouseName_10": {
+      "top": "35.9113%",
+      "left": "23.4%"
+    },
+    "55_dob_11": {
+      "top": "29.6957%",
+      "left": "16.2%"
+    },
+    "55_nationality_12": {
+      "top": "38.3114%",
+      "left": "12.3%"
+    },
+    "55_presentHouse_13": {
+      "top": "52.8237%",
+      "left": "19%"
+    },
+    "55_presentRoad_14": {
+      "top": "52.792%",
+      "left": "71.7%"
+    },
+    "55_presentPostCode_15": {
+      "top": "54.8079%",
+      "left": "85.4%"
+    },
+    "55_presentPO_16": {
+      "top": "55.0239%",
+      "left": "11.9%"
+    },
+    "55_presentThana_17": {
+      "top": "55.1679%",
+      "left": "39%"
+    },
+    "55_presentDistrict_18": {
+      "top": "55.1679%",
+      "left": "60.7%"
+    },
+    "55_presentCountry_19": {
+      "top": "57.1118%",
+      "left": "10.1%"
+    },
+    "55_permanentHouse_20": {
+      "top": "60%",
+      "left": "20%"
+    },
+    "55_permanentRoad_21": {
+      "top": "59.4642%",
+      "left": "71.9%"
+    },
+    "55_permanentPostCode_22": {
+      "top": "61.5521%",
+      "left": "85.5%"
+    },
+    "55_permanentPO_23": {
+      "top": "63.928%",
+      "left": "70.2%"
+    },
+    "55_permanentThana_24": {
+      "top": "61.6961%",
+      "left": "39.1%"
+    },
+    "55_permanentDistrict_25": {
+      "top": "61.5521%",
+      "left": "60.7%"
+    },
+    "55_permanentCountry_26": {
+      "top": "63.64%",
+      "left": "10.3%"
+    },
+    "55_mobile_27": {
+      "top": "57.2407%",
+      "left": "40.4%"
+    },
+    "55_email_28": {
+      "top": "57.2168%",
+      "left": "60.5%"
+    },
+    "55_occupation_29": {
+      "top": "44.2017%",
+      "left": "18.6%"
+    },
+    "55_monthlyIncome_30": {
+      "top": "46.0979%",
+      "left": "20.8%"
+    },
+    "55_sourceOfFund_31": {
+      "top": "48.2963%",
+      "left": "20.6%"
+    },
+    "55_etin_32": {
+      "top": "50.8497%",
+      "left": "15.6%"
+    },
+    "55_birthCertNo_33": {
+      "top": "88%",
+      "left": "35%"
+    },
+    "55_male_34": {
+      "top": "38.1624%",
+      "left": "62.8%"
+    },
+    "55_female_35": {
+      "top": "37.9464%",
+      "left": "71.1%"
+    },
+    "55_thirdGender_36": {
+      "top": "38.1624%",
+      "left": "77.2%"
+    },
+    "55_resident_yes_37": {
+      "top": "40.9703%",
+      "left": "21.6%"
+    },
+    "55_resident_no_38": {
+      "top": "41.1142%",
+      "left": "29.7%"
+    },
+    "55_officer1Seal_39": {
+      "top": "72.6166%",
+      "left": "73.5%"
+    },
+    "56_applicantStaticLabel_0": {
+      "top": "3.13604%",
+      "left": "40.9%"
+    },
+    "56_amlTrackingNumber_1": {
+      "top": "5.49602%",
+      "left": "31.3%"
+    },
+    "56_cif_2": {
+      "top": "7.8401%",
+      "left": "40.6%"
+    },
+    "56_fullNameEn_3": {
+      "top": "26.1316%",
+      "left": "23.3%"
+    },
+    "56_fullNameBn_4": {
+      "top": "23.7434%",
+      "left": "13.3%"
+    },
+    "56_accountNumber_5": {
+      "top": "21.8635%",
+      "left": "53.3%"
+    },
+    "56_nid_6": {
+      "top": "65.7179%",
+      "left": "27.6%"
+    },
+    "56_passportNo_7": {
+      "top": "67.5178%",
+      "left": "29.6%"
+    },
+    "56_fatherName_8": {
+      "top": "31.6392%",
+      "left": "23%"
+    },
+    "56_motherName_9": {
+      "top": "33.7752%",
+      "left": "22.6%"
+    },
+    "56_spouseName_10": {
+      "top": "36.0553%",
+      "left": "23.4%"
+    },
+    "56_dob_11": {
+      "top": "29.6237%",
+      "left": "16.4%"
+    },
+    "56_nationality_12": {
+      "top": "38.2394%",
+      "left": "12.4%"
+    },
+    "56_presentHouse_13": {
+      "top": "52.6078%",
+      "left": "19%"
+    },
+    "56_presentRoad_14": {
+      "top": "52.72%",
+      "left": "72.2%"
+    },
+    "56_presentPostCode_15": {
+      "top": "54.9519%",
+      "left": "85.7%"
+    },
+    "56_presentPO_16": {
+      "top": "55.0239%",
+      "left": "11.9%"
+    },
+    "56_presentThana_17": {
+      "top": "54.9519%",
+      "left": "38.4%"
+    },
+    "56_presentDistrict_18": {
+      "top": "55.0239%",
+      "left": "60.7%"
+    },
+    "56_presentCountry_19": {
+      "top": "57.1118%",
+      "left": "10%"
+    },
+    "56_permanentHouse_20": {
+      "top": "59.496%",
+      "left": "18.8%"
+    },
+    "56_permanentRoad_21": {
+      "top": "59.5362%",
+      "left": "72.1%"
+    },
+    "56_permanentPostCode_22": {
+      "top": "61.4801%",
+      "left": "85.4%"
+    },
+    "56_permanentPO_23": {
+      "top": "61.6961%",
+      "left": "11.9%"
+    },
+    "56_permanentThana_24": {
+      "top": "61.6241%",
+      "left": "38.9%"
+    },
+    "56_permanentDistrict_25": {
+      "top": "61.6241%",
+      "left": "60.8%"
+    },
+    "56_permanentCountry_26": {
+      "top": "63.856%",
+      "left": "10.2%"
+    },
+    "56_mobile_27": {
+      "top": "57.0247%",
+      "left": "40.3%"
+    },
+    "56_email_28": {
+      "top": "57.2168%",
+      "left": "60.9%"
+    },
+    "56_occupation_29": {
+      "top": "44.1298%",
+      "left": "18.6%"
+    },
+    "56_monthlyIncome_30": {
+      "top": "46.1699%",
+      "left": "20.8%"
+    },
+    "56_sourceOfFund_31": {
+      "top": "48.0804%",
+      "left": "20.8%"
+    },
+    "56_etin_32": {
+      "top": "50.7777%",
+      "left": "15.5%"
+    },
+    "56_birthCertNo_33": {
+      "top": "88%",
+      "left": "35%"
+    },
+    "56_male_34": {
+      "top": "38.0904%",
+      "left": "62.5%"
+    },
+    "56_female_35": {
+      "top": "37.8744%",
+      "left": "70.3%"
+    },
+    "56_thirdGender_36": {
+      "top": "38.2344%",
+      "left": "77.7%"
+    },
+    "56_resident_yes_37": {
+      "top": "40.8982%",
+      "left": "22.7%"
+    },
+    "56_resident_no_38": {
+      "top": "40.9703%",
+      "left": "29.7%"
+    },
+    "56_officer1Seal_39": {
+      "top": "72.2566%",
+      "left": "73.1%"
+    },
+    "57_applicantStaticLabel_0": {
+      "top": "3.20804%",
+      "left": "42.2%"
+    },
+    "57_amlTrackingNumber_1": {
+      "top": "5.49602%",
+      "left": "32.6%"
+    },
+    "57_cif_2": {
+      "top": "7.7681%",
+      "left": "42.4%"
+    },
+    "57_fullNameEn_3": {
+      "top": "26.2036%",
+      "left": "23.3%"
+    },
+    "57_fullNameBn_4": {
+      "top": "23.8154%",
+      "left": "13.2%"
+    },
+    "57_accountNumber_5": {
+      "top": "21.7915%",
+      "left": "52.8%"
+    },
+    "57_nid_6": {
+      "top": "65.5739%",
+      "left": "27.7%"
+    },
+    "57_passportNo_7": {
+      "top": "67.5178%",
+      "left": "29.8%"
+    },
+    "57_fatherName_8": {
+      "top": "31.4952%",
+      "left": "22.7%"
+    },
+    "57_motherName_9": {
+      "top": "33.7752%",
+      "left": "23.2%"
+    },
+    "57_spouseName_10": {
+      "top": "35.9833%",
+      "left": "23.5%"
+    },
+    "57_dob_11": {
+      "top": "29.6237%",
+      "left": "16.3%"
+    },
+    "57_nationality_12": {
+      "top": "38.3834%",
+      "left": "12.2%"
+    },
+    "57_presentHouse_13": {
+      "top": "52.7518%",
+      "left": "18.9%"
+    },
+    "57_presentRoad_14": {
+      "top": "52.792%",
+      "left": "72.1%"
+    },
+    "57_presentPostCode_15": {
+      "top": "55.0239%",
+      "left": "85.4%"
+    },
+    "57_presentPO_16": {
+      "top": "54.9519%",
+      "left": "11.9%"
+    },
+    "57_presentThana_17": {
+      "top": "55.1679%",
+      "left": "39.2%"
+    },
+    "57_presentDistrict_18": {
+      "top": "55.0959%",
+      "left": "60.5%"
+    },
+    "57_presentCountry_19": {
+      "top": "57.0398%",
+      "left": "10.3%"
+    },
+    "57_permanentHouse_20": {
+      "top": "60%",
+      "left": "20%"
+    },
+    "57_permanentRoad_21": {
+      "top": "59.5362%",
+      "left": "72%"
+    },
+    "57_permanentPostCode_22": {
+      "top": "61.4801%",
+      "left": "85.6%"
+    },
+    "57_permanentPO_23": {
+      "top": "61.6961%",
+      "left": "11.8%"
+    },
+    "57_permanentThana_24": {
+      "top": "61.7681%",
+      "left": "38.9%"
+    },
+    "57_permanentDistrict_25": {
+      "top": "61.8401%",
+      "left": "60.4%"
+    },
+    "57_permanentCountry_26": {
+      "top": "63.64%",
+      "left": "10%"
+    },
+    "57_mobile_27": {
+      "top": "57.0967%",
+      "left": "39.9%"
+    },
+    "57_email_28": {
+      "top": "57.0728%",
+      "left": "60.9%"
+    },
+    "57_occupation_29": {
+      "top": "44.2737%",
+      "left": "18.5%"
+    },
+    "57_monthlyIncome_30": {
+      "top": "46.2419%",
+      "left": "21.2%"
+    },
+    "57_sourceOfFund_31": {
+      "top": "48.2244%",
+      "left": "20.4%"
+    },
+    "57_etin_32": {
+      "top": "50.8497%",
+      "left": "15.6%"
+    },
+    "57_birthCertNo_33": {
+      "top": "88%",
+      "left": "35%"
+    },
+    "57_male_34": {
+      "top": "38.1624%",
+      "left": "63.1%"
+    },
+    "57_female_35": {
+      "top": "38.0904%",
+      "left": "70.5%"
+    },
+    "57_thirdGender_36": {
+      "top": "38.1624%",
+      "left": "78.1%"
+    },
+    "57_resident_yes_37": {
+      "top": "41.0423%",
+      "left": "22.8%"
+    },
+    "57_resident_no_38": {
+      "top": "40.8982%",
+      "left": "30%"
+    },
+    "57_officer1Seal_39": {
+      "top": "72.4726%",
+      "left": "72.6%"
+    },
+    "58_applicantStaticLabel_0": {
+      "top": "3.13604%",
+      "left": "41.4%"
+    },
+    "58_amlTrackingNumber_1": {
+      "top": "5.35203%",
+      "left": "31.1%"
+    },
+    "58_cif_2": {
+      "top": "7.55211%",
+      "left": "41.7%"
+    },
+    "58_fullNameEn_3": {
+      "top": "26.1316%",
+      "left": "23.1%"
+    },
+    "58_fullNameBn_4": {
+      "top": "23.6714%",
+      "left": "13.2%"
+    },
+    "58_accountNumber_5": {
+      "top": "21.7916%",
+      "left": "52.9%"
+    },
+    "58_nid_6": {
+      "top": "65.7179%",
+      "left": "27.6%"
+    },
+    "58_passportNo_7": {
+      "top": "67.4458%",
+      "left": "29.9%"
+    },
+    "58_fatherName_8": {
+      "top": "31.6392%",
+      "left": "23%"
+    },
+    "58_motherName_9": {
+      "top": "33.7752%",
+      "left": "23.2%"
+    },
+    "58_spouseName_10": {
+      "top": "35.9113%",
+      "left": "23.6%"
+    },
+    "58_dob_11": {
+      "top": "29.5517%",
+      "left": "16.1%"
+    },
+    "58_nationality_12": {
+      "top": "38.3834%",
+      "left": "12.2%"
+    },
+    "58_presentHouse_13": {
+      "top": "52.6798%",
+      "left": "19%"
+    },
+    "58_presentRoad_14": {
+      "top": "52.72%",
+      "left": "71.7%"
+    },
+    "58_presentPostCode_15": {
+      "top": "54.8799%",
+      "left": "85.3%"
+    },
+    "58_presentPO_16": {
+      "top": "54.9519%",
+      "left": "11.8%"
+    },
+    "58_presentThana_17": {
+      "top": "55.0959%",
+      "left": "38.9%"
+    },
+    "58_presentDistrict_18": {
+      "top": "54.9519%",
+      "left": "60.7%"
+    },
+    "58_presentCountry_19": {
+      "top": "57.3278%",
+      "left": "9.9%"
+    },
+    "58_permanentHouse_20": {
+      "top": "59.424%",
+      "left": "19.1%"
+    },
+    "58_permanentRoad_21": {
+      "top": "59.5362%",
+      "left": "72.1%"
+    },
+    "58_permanentPostCode_22": {
+      "top": "61.6961%",
+      "left": "85.4%"
+    },
+    "58_permanentPO_23": {
+      "top": "61.7681%",
+      "left": "12%"
+    },
+    "58_permanentThana_24": {
+      "top": "61.6961%",
+      "left": "38.7%"
+    },
+    "58_permanentDistrict_25": {
+      "top": "61.7681%",
+      "left": "60.7%"
+    },
+    "58_permanentCountry_26": {
+      "top": "63.856%",
+      "left": "10.1%"
+    },
+    "58_mobile_27": {
+      "top": "57.2407%",
+      "left": "40.3%"
+    },
+    "58_email_28": {
+      "top": "57.0728%",
+      "left": "60.7%"
+    },
+    "58_occupation_29": {
+      "top": "44.2737%",
+      "left": "18.3%"
+    },
+    "58_monthlyIncome_30": {
+      "top": "46.2419%",
+      "left": "20.9%"
+    },
+    "58_sourceOfFund_31": {
+      "top": "48.1524%",
+      "left": "20.8%"
+    },
+    "58_etin_32": {
+      "top": "50.7777%",
+      "left": "15.7%"
+    },
+    "58_birthCertNo_33": {
+      "top": "88%",
+      "left": "35%"
+    },
+    "58_male_34": {
+      "top": "38.0184%",
+      "left": "63.2%"
+    },
+    "58_female_35": {
+      "top": "38.0904%",
+      "left": "70.6%"
+    },
+    "58_thirdGender_36": {
+      "top": "38.0904%",
+      "left": "77.9%"
+    },
+    "58_resident_yes_37": {
+      "top": "40.8263%",
+      "left": "22.3%"
+    },
+    "58_resident_no_38": {
+      "top": "40.9703%",
+      "left": "29.9%"
+    },
+    "58_officer1Seal_39": {
+      "top": "72.4006%",
+      "left": "72.3%"
     },
     "48_gNameBn_0": {
       "top": "42.5695%",
@@ -2220,8 +3467,8 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "22.2333%",
       "left": "36.4%"
     },
-    "7_fullNameEn_4": {
-      "top": "26.9855%",
+    "7_combinedApplicants_4": {
+      "top": "26.7782%",
       "left": "36.3%"
     },
     "7_accountTypeName_5": {
@@ -2724,9 +3971,9 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "17.0225%",
       "left": "22.7%"
     },
-    "13_fullNameEn_3": {
-      "top": "21.6833%",
-      "left": "22.3%"
+    "13_combinedApplicants_3": {
+      "top": "21.684%",
+      "left": "22.1%"
     },
     "13_accountTypeName_4": {
       "top": "19.3151%",
@@ -2885,12 +4132,12 @@ window.UCB_AUTO_IMPORT_DATA = {
       "left": "68.3%"
     },
     "17_accountNumberNoSpace_0": {
-      "top": "12%",
-      "left": "28%"
+      "top": "11.3634%",
+      "left": "23.1%"
     },
-    "17_fullNameEn_1": {
-      "top": "13.3372%",
-      "left": "23.5%"
+    "17_combinedApplicants_1": {
+      "top": "13.1239%",
+      "left": "23.1%"
     },
     "17_tick3_2": {
       "top": "29.3193%",

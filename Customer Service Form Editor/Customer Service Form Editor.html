@@ -3055,12 +3055,12 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
               </div>
               <div class="form-fields-wrapper">
                 <!-- Date Information -->
-                <div style="display: none; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+                <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
                   <h3 style="margin: 0 0 12px 0; font-size: 0.85rem; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.5px;">Date</h3>
                   <div class="form-fields">
                     <div class="form-group span-2">
                       <label>Today</label>
-                      <input type="text" name="tdRdTodayDate" placeholder="dd/mm/yy" maxlength="8" pattern="\d{2}/\d{2}/\d{2}">
+                      <input type="date" name="tdRdTodayDate" id="tdRdTodayDateInput">
                     </div>
                   </div>
                 </div>
@@ -3094,11 +3094,24 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                         <option value="">-- Select Type --</option>
                         <option value="Premature Encashment">Premature Encashment</option>
                         <option value="Interest Payment">Interest Payment</option>
+                        <option value="Fixed Deposit Matured">Fixed Deposit Matured</option>
                       </select>
                     </div>
                     <div class="form-group span-2" id="tdRdMaturityDateField" style="display: none;">
-                      <label>Maturity Date</label>
+                      <label>Maturity Date (Interest Payment)</label>
                       <input type="date" name="tdRdMaturityDate" placeholder="Select maturity date">
+                    </div>
+                    <div class="form-group span-2" id="tdRdFixedMaturityDateField" style="display: none;">
+                      <label>Maturity Date (Fixed Deposit Matured)</label>
+                      <input type="date" name="tdRdFixedMaturityDate" placeholder="Select maturity date">
+                    </div>
+                    <div class="form-group span-2" id="tdRdPrematureMaturityDateField" style="display: none;">
+                      <label>Maturity Date (Premature Encashment)</label>
+                      <input type="date" name="tdRdPrematureMaturityDate" id="tdRdPrematureMaturityDateInput">
+                    </div>
+                    <div class="form-group span-2" id="tdRdDaysRemainingField" style="display: none;">
+                      <label>Days Remaining to Mature</label>
+                      <input type="text" name="tdRdDaysRemaining" id="tdRdDaysRemainingInput" readonly style="background: #fff5f5; font-weight: 700; color: #ef4444;">
                     </div>
                   </div>
                 </div>
@@ -3118,6 +3131,25 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                     <div class="form-group span-2" id="tdRdPaymentACField" style="display: none;">
                       <label>Account Number</label>
                       <input type="text" name="tdRdPaymentAccountNumber" placeholder="Enter account number">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Customer Verification -->
+                <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+                  <h3 style="margin: 0 0 12px 0; font-size: 0.85rem; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.5px;">Customer Verification</h3>
+                  <div class="form-fields">
+                    <div class="form-group span-2">
+                      <label>Verification Type</label>
+                      <select name="tdRdVerificationType" id="tdRdVerificationType">
+                        <option value="">-- Select --</option>
+                        <option value="Customer Physically Present">Customer Physically Present</option>
+                        <option value="Others">Others</option>
+                      </select>
+                    </div>
+                    <div class="form-group span-2" id="tdRdOthersTextField" style="display: none;">
+                      <label>Others (Specify)</label>
+                      <input type="text" name="tdRdOthersText" id="tdRdOthersTextInput" placeholder="Enter details">
                     </div>
                   </div>
                 </div>
@@ -3656,9 +3688,13 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         { field: 'tdRdPaymentPayOrderTick',  top: '33%', left: '50%' },
         { field: 'tdRdPaymentAccountNumber', top: '36%', left: '30%' },
         { field: 'tick1',          top: '80%', left: '20%' },
+        { field: 'tdRdOthersTick', top: '80%', left: '55%' },
+        { field: 'tdRdOthersText', top: '82%', left: '60%' },
         { field: 'verifiedSeal',   top: '59%', left: '10%' },
         { field: 'tdRdOfficerSeal', top: '80%', left: '80%', label: 'Officer Seal', sealType: 'tdRdOfficerSeal' },
-        { field: 'officer1Seal', top: '80%', left: '80%', label: 'Officer 1 Seal', sealType: 'officer1Seal' }
+        { field: 'officer1Seal', top: '80%', left: '80%', label: 'Officer 1 Seal', sealType: 'officer1Seal' },
+        { field: 'tdRdFixedDepositMaturedTick',  top: '26%', left: '75%' },
+        { field: 'tdRdFixedMaturityDate', top: '28%',  left: '65%' }
       ];
     } else if (f.id === 'account-info-update') {
       // Account Information Update: customer number, account number, account name
@@ -4253,7 +4289,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       config.forEach((cfg, idx) => {
         const val = getFieldValue(cfg.field);
         const displayVal = formatDisplayValue(cfg.field, val);
-        const isTick = ['tick1', 'tick2', 'closureDebitCardSurrenderedTick', 'closureDebitCardDestructedTick', 'closureChequeBookSurrenderedTick', 'closureChequeBookDestructedTick', 'closurePayOrderTick', 'closureTransferACTick', 'closureCancellationStandingInstructionTick', 'closureCancellationLockerTick', 'closureDebitCardDestroyedTick', 'closureChequeBookDestroyedTick', 'closureFixedTick', 'egpPaymentCashTick', 'egpPaymentDebitTick', 'egpPurposeRegistrationTick', 'egpPurposeRenewalTick', 'egpPurposePurchaseTick', 'statementAccountStatementTick', 'statementGeneralCertificateTick', 'statementBalanceConfirmationTick', 'statementAccountTaxCertificateTick', 'statementLoanTaxCertificateTick', 'statementOthersCertificateTick', 'letterNameTypeChequebookTick', 'letterNameTypeDebitCardTick', 'letterNameTypeOtherTick', 'tdRdPrematureEncashmentTick', 'tdRdInterestPaymentTick', 'tdRdPaymentMyAccountTick', 'tdRdPaymentPayOrderTick', 'dormantInformationTypeTick', 'dormantChangeInformationTypeTick', 'dormantCustomerPhysicallyPresentTick', 'dormantNIDPhotoIDObtainedTick', 'dormantNoChangeInformationTick', 'dormantCustomerInformationNeedsUpdateTick', 'dormantRecentPhotographYesTick', 'dormantRecentPhotographNoTick', 'dormantFreshIntroductionYesTick', 'dormantFreshIntroductionNoTick', 'dormantAllInfoAOFYesTick', 'dormantAllInfoAOFNoTick', 'dormantValidPhotoIDYesTick', 'dormantValidPhotoIDNoTick', 'dormantNIDCardVerifiedYesTick', 'dormantNIDCardVerifiedNoTick', 'dormantContactPointVerifiedYesTick', 'dormantContactPointVerifiedNoTick', 'dormantRiskAssessmentYesTick', 'dormantRiskAssessmentNoTick', 'dormantFaceToFaceInterviewYesTick', 'dormantFaceToFaceInterviewNoTick', 'newChangeRequestStaticTick1', 'newChangeRequestStaticTick2', 'accountUpdateOldMobileNumberTick', 'accountUpdateNewMobileNumberTick', 'accountUpdateNewEmailAddressTick', 'accountUpdateRemarksTick', 'accountUpdateServiceOptionStaticTick', 'accountUpdateNameRectificationTick', 'accountUpdateDateOfBirthTick', 'nomineeUpdateTick1', 'nomineeUpdateTick2'].includes(cfg.field);
+        const isTick = ['tick1', 'tick2', 'closureDebitCardSurrenderedTick', 'closureDebitCardDestructedTick', 'closureChequeBookSurrenderedTick', 'closureChequeBookDestructedTick', 'closurePayOrderTick', 'closureTransferACTick', 'closureCancellationStandingInstructionTick', 'closureCancellationLockerTick', 'closureDebitCardDestroyedTick', 'closureChequeBookDestroyedTick', 'closureFixedTick', 'egpPaymentCashTick', 'egpPaymentDebitTick', 'egpPurposeRegistrationTick', 'egpPurposeRenewalTick', 'egpPurposePurchaseTick', 'statementAccountStatementTick', 'statementGeneralCertificateTick', 'statementBalanceConfirmationTick', 'statementAccountTaxCertificateTick', 'statementLoanTaxCertificateTick', 'statementOthersCertificateTick', 'letterNameTypeChequebookTick', 'letterNameTypeDebitCardTick', 'letterNameTypeOtherTick', 'tdRdPrematureEncashmentTick', 'tdRdInterestPaymentTick', 'tdRdFixedDepositMaturedTick', 'tdRdOthersTick', 'tdRdPaymentMyAccountTick', 'tdRdPaymentPayOrderTick', 'dormantInformationTypeTick', 'dormantChangeInformationTypeTick', 'dormantCustomerPhysicallyPresentTick', 'dormantNIDPhotoIDObtainedTick', 'dormantNoChangeInformationTick', 'dormantCustomerInformationNeedsUpdateTick', 'dormantRecentPhotographYesTick', 'dormantRecentPhotographNoTick', 'dormantFreshIntroductionYesTick', 'dormantFreshIntroductionNoTick', 'dormantAllInfoAOFYesTick', 'dormantAllInfoAOFNoTick', 'dormantValidPhotoIDYesTick', 'dormantValidPhotoIDNoTick', 'dormantNIDCardVerifiedYesTick', 'dormantNIDCardVerifiedNoTick', 'dormantContactPointVerifiedYesTick', 'dormantContactPointVerifiedNoTick', 'dormantRiskAssessmentYesTick', 'dormantRiskAssessmentNoTick', 'dormantFaceToFaceInterviewYesTick', 'dormantFaceToFaceInterviewNoTick', 'newChangeRequestStaticTick1', 'newChangeRequestStaticTick2', 'accountUpdateOldMobileNumberTick', 'accountUpdateNewMobileNumberTick', 'accountUpdateNewEmailAddressTick', 'accountUpdateRemarksTick', 'accountUpdateServiceOptionStaticTick', 'accountUpdateNameRectificationTick', 'accountUpdateDateOfBirthTick', 'nomineeUpdateTick1', 'nomineeUpdateTick2'].includes(cfg.field);
         const div = document.createElement('div');
         div.className = 'overlay' + (val ? '' : ' overlay-empty');
         div.dataset.field = cfg.field;
@@ -4291,6 +4327,11 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
           div.classList.remove('overlay-empty');
         } else {
           div.textContent = displayVal || (isTick ? '' : (cfg.label || cfg.field));
+        }
+        
+        // Hide field name for maturity date overlays when empty (only show date)
+        if ((cfg.field === 'tdRdMaturityDate' || cfg.field === 'tdRdFixedMaturityDate') && !displayVal) {
+          div.textContent = '';
         }
         
         // Add letter-spacing for fields that need spaces between characters
@@ -4343,6 +4384,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
           div.style.letterSpacing = '0.3em';
         } else if (cfg.field === 'tdRdMaturityDate') {
           div.style.letterSpacing = '0.3em';
+        } else if (cfg.field === 'tdRdFixedMaturityDate') {
+          div.style.letterSpacing = '0.3em';
         } else if (cfg.field === 'tdRdNumber') {
           div.style.letterSpacing = '0.63em';
         } else if (cfg.field === 'dormenttodaydate') {
@@ -4372,7 +4415,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         }
         
         // Increase font size for tick symbols
-        if (['tick1', 'tick2', 'closureDebitCardSurrenderedTick', 'closureDebitCardDestructedTick', 'closureChequeBookSurrenderedTick', 'closureChequeBookDestructedTick', 'closurePayOrderTick', 'closureTransferACTick', 'closureCancellationStandingInstructionTick', 'closureCancellationLockerTick', 'closureDebitCardDestroyedTick', 'closureChequeBookDestroyedTick', 'closureFixedTick', 'egpPaymentCashTick', 'egpPaymentDebitTick', 'egpPurposeRegistrationTick', 'egpPurposeRenewalTick', 'egpPurposePurchaseTick', 'statementAccountStatementTick', 'statementGeneralCertificateTick', 'statementBalanceConfirmationTick', 'statementAccountTaxCertificateTick', 'statementLoanTaxCertificateTick', 'statementOthersCertificateTick', 'letterNameTypeChequebookTick', 'letterNameTypeDebitCardTick', 'letterNameTypeOtherTick', 'tdRdPrematureEncashmentTick', 'tdRdInterestPaymentTick', 'tdRdPaymentMyAccountTick', 'tdRdPaymentPayOrderTick', 'dormantInformationTypeTick', 'dormantChangeInformationTypeTick', 'dormantCustomerPhysicallyPresentTick', 'dormantNIDPhotoIDObtainedTick', 'dormantNoChangeInformationTick', 'dormantCustomerInformationNeedsUpdateTick', 'dormantRecentPhotographYesTick', 'dormantRecentPhotographNoTick', 'dormantFreshIntroductionYesTick', 'dormantFreshIntroductionNoTick', 'dormantAllInfoAOFYesTick', 'dormantAllInfoAOFNoTick', 'dormantValidPhotoIDYesTick', 'dormantValidPhotoIDNoTick', 'dormantNIDCardVerifiedYesTick', 'dormantNIDCardVerifiedNoTick', 'dormantContactPointVerifiedYesTick', 'dormantContactPointVerifiedNoTick', 'dormantRiskAssessmentYesTick', 'dormantRiskAssessmentNoTick', 'dormantFaceToFaceInterviewYesTick', 'dormantFaceToFaceInterviewNoTick', 'newChangeRequestStaticTick1', 'newChangeRequestStaticTick2', 'accountUpdateOldMobileNumberTick', 'accountUpdateNewMobileNumberTick', 'accountUpdateNewEmailAddressTick', 'accountUpdateRemarksTick', 'accountUpdateServiceOptionStaticTick', 'accountUpdateNameRectificationTick', 'accountUpdateDateOfBirthTick', 'accountUpdateAddressChangeTick', 'accountUpdateDocumentAttachedTick', 'nomineeUpdateTick1', 'nomineeUpdateTick2'].includes(cfg.field)) {
+        if (['tick1', 'tick2', 'closureDebitCardSurrenderedTick', 'closureDebitCardDestructedTick', 'closureChequeBookSurrenderedTick', 'closureChequeBookDestructedTick', 'closurePayOrderTick', 'closureTransferACTick', 'closureCancellationStandingInstructionTick', 'closureCancellationLockerTick', 'closureDebitCardDestroyedTick', 'closureChequeBookDestroyedTick', 'closureFixedTick', 'egpPaymentCashTick', 'egpPaymentDebitTick', 'egpPurposeRegistrationTick', 'egpPurposeRenewalTick', 'egpPurposePurchaseTick', 'statementAccountStatementTick', 'statementGeneralCertificateTick', 'statementBalanceConfirmationTick', 'statementAccountTaxCertificateTick', 'statementLoanTaxCertificateTick', 'statementOthersCertificateTick', 'letterNameTypeChequebookTick', 'letterNameTypeDebitCardTick', 'letterNameTypeOtherTick', 'tdRdPrematureEncashmentTick', 'tdRdInterestPaymentTick', 'tdRdFixedDepositMaturedTick', 'tdRdOthersTick', 'tdRdPaymentMyAccountTick', 'tdRdPaymentPayOrderTick', 'dormantInformationTypeTick', 'dormantChangeInformationTypeTick', 'dormantCustomerPhysicallyPresentTick', 'dormantNIDPhotoIDObtainedTick', 'dormantNoChangeInformationTick', 'dormantCustomerInformationNeedsUpdateTick', 'dormantRecentPhotographYesTick', 'dormantRecentPhotographNoTick', 'dormantFreshIntroductionYesTick', 'dormantFreshIntroductionNoTick', 'dormantAllInfoAOFYesTick', 'dormantAllInfoAOFNoTick', 'dormantValidPhotoIDYesTick', 'dormantValidPhotoIDNoTick', 'dormantNIDCardVerifiedYesTick', 'dormantNIDCardVerifiedNoTick', 'dormantContactPointVerifiedYesTick', 'dormantContactPointVerifiedNoTick', 'dormantRiskAssessmentYesTick', 'dormantRiskAssessmentNoTick', 'dormantFaceToFaceInterviewYesTick', 'dormantFaceToFaceInterviewNoTick', 'newChangeRequestStaticTick1', 'newChangeRequestStaticTick2', 'accountUpdateOldMobileNumberTick', 'accountUpdateNewMobileNumberTick', 'accountUpdateNewEmailAddressTick', 'accountUpdateRemarksTick', 'accountUpdateServiceOptionStaticTick', 'accountUpdateNameRectificationTick', 'accountUpdateDateOfBirthTick', 'accountUpdateAddressChangeTick', 'accountUpdateDocumentAttachedTick', 'nomineeUpdateTick1', 'nomineeUpdateTick2'].includes(cfg.field)) {
           div.style.fontWeight = 'bold';
           div.style.color = '#000';
           // Larger size for new change request static ticks
@@ -4717,7 +4760,25 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     if (fieldName === 'nomineeUpdateTitle') {
       return 'NOMINEE INFORMATION UPDATE';
     }
-    if (fieldName === 'tick1' || fieldName === 'tick2') {
+    if (fieldName === 'tick1') {
+      // For TD/RD encashment: link to Customer Physically Present
+      const verTypeEl = form && form.elements['tdRdVerificationType'];
+      if (verTypeEl && verTypeEl.value === 'Customer Physically Present') return '✓';
+      // For other forms, always show tick
+      if (!verTypeEl) return '✓';
+      return '';
+    }
+    if (fieldName === 'tdRdOthersTick') {
+      const verTypeEl = form && form.elements['tdRdVerificationType'];
+      return verTypeEl && verTypeEl.value === 'Others' ? '✓' : '';
+    }
+    if (fieldName === 'tdRdOthersText') {
+      const verTypeEl = form && form.elements['tdRdVerificationType'];
+      if (!verTypeEl || verTypeEl.value !== 'Others') return '';
+      const textEl = form && form.elements['tdRdOthersText'];
+      return textEl ? textEl.value : '';
+    }
+    if (fieldName === 'tick2') {
       return '✓';
     }
     // Conditional ticks for Account Closure debit card and cheque book
@@ -5180,6 +5241,10 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     if (fieldName === 'tdRdInterestPaymentTick') {
       const requestTypeEl = form && form.elements['tdRdRequestType'];
       return requestTypeEl && requestTypeEl.value === 'Interest Payment' ? '✓' : '';
+    }
+    if (fieldName === 'tdRdFixedDepositMaturedTick') {
+      const requestTypeEl = form && form.elements['tdRdRequestType'];
+      return requestTypeEl && requestTypeEl.value === 'Fixed Deposit Matured' ? '✓' : '';
     }
     // TD_RD Encashment payment option ticks
     if (fieldName === 'tdRdPaymentMyAccountTick') {
@@ -5775,22 +5840,66 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     if (fieldName === 'todayDate') {
       return value.split('').join(' ');
     }
-    // For TD_RD encashment today date: extract digits as d d m m y y (6 chars, 2-digit year)
+    // For TD_RD encashment today date: convert yyyy-mm-dd to d d m m y y (6 chars, 2-digit year)
     if (fieldName === 'tdRdTodayDate') {
-      const digits = value.replace(/[^0-9]/g, '');
-      const d = digits.substring(0, 6); // ddmmyy
-      return d.split('').join(' ');
+      if (!value) return '';
+      let dd, mm, yy;
+      if (value.includes('-')) {
+        const parts = value.split('-'); // yyyy-mm-dd
+        if (parts.length === 3) { yy = parts[0].slice(-2); mm = parts[1]; dd = parts[2]; }
+      } else if (value.includes('/')) {
+        const parts = value.split('/'); // dd/mm/yyyy or dd/mm/yy
+        if (parts.length === 3) { dd = parts[0]; mm = parts[1]; yy = parts[2].slice(-2); }
+      } else {
+        const digits = value.replace(/[^0-9]/g, '');
+        if (digits.length >= 8) {
+          // ddmmyyyy
+          dd = digits.substring(0, 2);
+          mm = digits.substring(2, 4);
+          yy = digits.substring(6, 8);
+        } else {
+          // ddmmyy
+          dd = digits.substring(0, 2);
+          mm = digits.substring(2, 4);
+          yy = digits.substring(4, 6);
+        }
+      }
+      if (dd && mm && yy) return (dd + mm + yy).split('').join(' ');
+      return value;
     }
     // For TD_RD maturity date: convert yyyy-mm-dd to ddmmyy with spacing (d d m m y y)
     if (fieldName === 'tdRdMaturityDate') {
+      // Only show when Interest Payment is selected
+      const requestTypeEl = form && form.elements['tdRdRequestType'];
+      if (!requestTypeEl || requestTypeEl.value !== 'Interest Payment') return '';
       if (!value) return '';
-      const parts = value.split('-'); // yyyy-mm-dd
-      if (parts.length === 3) {
-        const yy = parts[0].slice(-2);
-        const mm = parts[1];
-        const dd = parts[2];
-        return (dd + mm + yy).split('').join(' ');
+      // Handle both yyyy-mm-dd and dd/mm/yyyy formats
+      let dd, mm, yy;
+      if (value.includes('-')) {
+        const parts = value.split('-'); // yyyy-mm-dd
+        if (parts.length === 3) { yy = parts[0].slice(-2); mm = parts[1]; dd = parts[2]; }
+      } else if (value.includes('/')) {
+        const parts = value.split('/'); // dd/mm/yyyy
+        if (parts.length === 3) { dd = parts[0]; mm = parts[1]; yy = parts[2].slice(-2); }
       }
+      if (dd && mm && yy) return (dd + mm + yy).split('').join(' ');
+      return value;
+    }
+    if (fieldName === 'tdRdFixedMaturityDate') {
+      // Only show when Fixed Deposit Matured is selected
+      const requestTypeEl = form && form.elements['tdRdRequestType'];
+      if (!requestTypeEl || requestTypeEl.value !== 'Fixed Deposit Matured') return '';
+      if (!value) return '';
+      // Handle both yyyy-mm-dd and dd/mm/yyyy formats
+      let dd, mm, yy;
+      if (value.includes('-')) {
+        const parts = value.split('-'); // yyyy-mm-dd
+        if (parts.length === 3) { yy = parts[0].slice(-2); mm = parts[1]; dd = parts[2]; }
+      } else if (value.includes('/')) {
+        const parts = value.split('/'); // dd/mm/yyyy
+        if (parts.length === 3) { dd = parts[0]; mm = parts[1]; yy = parts[2].slice(-2); }
+      }
+      if (dd && mm && yy) return (dd + mm + yy).split('').join(' ');
       return value;
     }
     // For Dormant Account Activation and New Change Request today dates: format as d d m m y y y y (8 chars, full year)
@@ -6078,12 +6187,97 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   // Handle TD_RD Request Type dropdown
   const tdRdRequestTypeSelect = document.getElementById('tdRdRequestType');
   const tdRdMaturityDateField = document.getElementById('tdRdMaturityDateField');
-  if (tdRdRequestTypeSelect && tdRdMaturityDateField) {
+  const tdRdFixedMaturityDateField = document.getElementById('tdRdFixedMaturityDateField');
+  const tdRdPrematureMaturityDateField = document.getElementById('tdRdPrematureMaturityDateField');
+  const tdRdDaysRemainingField = document.getElementById('tdRdDaysRemainingField');
+  const tdRdPrematureMaturityDateInput = document.getElementById('tdRdPrematureMaturityDateInput');
+  const tdRdTodayDateInput = document.getElementById('tdRdTodayDateInput');
+  const tdRdDaysRemainingInput = document.getElementById('tdRdDaysRemainingInput');
+
+  function calculateDaysRemaining() {
+    if (!tdRdTodayDateInput || !tdRdDaysRemainingInput) return;
+    const todayVal = tdRdTodayDateInput.value;
+    // Get the active maturity date based on selected request type
+    let maturityVal = '';
+    const reqType = tdRdRequestTypeSelect ? tdRdRequestTypeSelect.value : '';
+    if (reqType === 'Premature Encashment' && tdRdPrematureMaturityDateInput) {
+      maturityVal = tdRdPrematureMaturityDateInput.value;
+    } else if (reqType === 'Interest Payment') {
+      const el = form && form.elements['tdRdMaturityDate'];
+      maturityVal = el ? el.value : '';
+    } else if (reqType === 'Fixed Deposit Matured') {
+      const el = form && form.elements['tdRdFixedMaturityDate'];
+      maturityVal = el ? el.value : '';
+    }
+    if (todayVal && maturityVal) {
+      const today = new Date(todayVal);
+      const maturity = new Date(maturityVal);
+      const diffTime = maturity - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      tdRdDaysRemainingInput.value = diffDays + ' days';
+    } else {
+      tdRdDaysRemainingInput.value = '';
+    }
+  }
+
+  if (tdRdRequestTypeSelect && tdRdMaturityDateField && tdRdFixedMaturityDateField) {
     tdRdRequestTypeSelect.addEventListener('change', function() {
       if (this.value === 'Interest Payment') {
         tdRdMaturityDateField.style.display = 'block';
+        tdRdFixedMaturityDateField.style.display = 'none';
+        tdRdPrematureMaturityDateField.style.display = 'none';
+        tdRdDaysRemainingField.style.display = 'block';
+        calculateDaysRemaining();
+      } else if (this.value === 'Fixed Deposit Matured') {
+        tdRdMaturityDateField.style.display = 'none';
+        tdRdFixedMaturityDateField.style.display = 'block';
+        tdRdPrematureMaturityDateField.style.display = 'none';
+        tdRdDaysRemainingField.style.display = 'block';
+        calculateDaysRemaining();
+      } else if (this.value === 'Premature Encashment') {
+        tdRdMaturityDateField.style.display = 'none';
+        tdRdFixedMaturityDateField.style.display = 'none';
+        tdRdPrematureMaturityDateField.style.display = 'block';
+        tdRdDaysRemainingField.style.display = 'block';
+        calculateDaysRemaining();
       } else {
         tdRdMaturityDateField.style.display = 'none';
+        tdRdFixedMaturityDateField.style.display = 'none';
+        tdRdPrematureMaturityDateField.style.display = 'none';
+        tdRdDaysRemainingField.style.display = 'none';
+      }
+      updateOverlays();
+    });
+  }
+
+  // Auto-calculate days remaining when any maturity date changes
+  if (tdRdPrematureMaturityDateInput) {
+    tdRdPrematureMaturityDateInput.addEventListener('change', calculateDaysRemaining);
+  }
+  const tdRdMaturityDateInput = form && form.elements['tdRdMaturityDate'];
+  const tdRdFixedMaturityDateInput = form && form.elements['tdRdFixedMaturityDate'];
+  if (tdRdMaturityDateInput) {
+    tdRdMaturityDateInput.addEventListener('change', calculateDaysRemaining);
+  }
+  if (tdRdFixedMaturityDateInput) {
+    tdRdFixedMaturityDateInput.addEventListener('change', calculateDaysRemaining);
+  }
+  if (tdRdTodayDateInput) {
+    tdRdTodayDateInput.addEventListener('change', function() {
+      calculateDaysRemaining();
+      updateOverlays();
+    });
+  }
+
+  // Handle TD_RD Verification Type dropdown
+  const tdRdVerificationTypeSelect = document.getElementById('tdRdVerificationType');
+  const tdRdOthersTextField = document.getElementById('tdRdOthersTextField');
+  if (tdRdVerificationTypeSelect) {
+    tdRdVerificationTypeSelect.addEventListener('change', function() {
+      if (this.value === 'Others') {
+        tdRdOthersTextField.style.display = 'block';
+      } else {
+        tdRdOthersTextField.style.display = 'none';
       }
       updateOverlays();
     });
@@ -6135,12 +6329,12 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
   function populateTodayDateField() {
     const todayDateField = form.elements['tdRdTodayDate'];
-    if (todayDateField) {
+    if (todayDateField && !todayDateField.value) {
       const today = new Date();
-      const day = String(today.getDate()).padStart(2, '0');
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const yy = String(today.getFullYear()).slice(-2);
-      todayDateField.value = `${day}/${month}/${yy}`;
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      todayDateField.value = `${yyyy}-${mm}-${dd}`;
     }
   }
 

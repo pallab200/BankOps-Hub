@@ -1,8 +1,8 @@
 window.UCB_AUTO_IMPORT_DATA = {
   "exportedAt": "2026-06-02T18:53:10.768Z",
   "form": {
-    "branchName": "serajgonj",
-    "todayDate": "2026-06-03",
+    "branchName": "",
+    "todayDate": "",
     "todayDateMode": "auto",
     "accountTitle": "",
     "accountTitleBn": "",
@@ -44,8 +44,8 @@ window.UCB_AUTO_IMPORT_DATA = {
     "monthlyIncome": "",
     "monthlyEquivalent": "",
     "sourceOfFund": "Proprietor",
-    "accountNumber": "7862112",
-    "accountNumberNoSpace": "7862112",
+    "accountNumber": "",
+    "accountNumberNoSpace": "",
     "amlTrackingNumber": "",
     "accountOwnership": "single",
     "secondApplicantName": "",

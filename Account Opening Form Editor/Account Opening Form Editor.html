@@ -417,7 +417,7 @@ body::after {
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border-color);
   transition: var(--transition-normal);
-  animation: fadeInUp 0.45s ease-out backwards;
+  animation: fadeInUp 0.3s ease-out;
   position: relative;
   overflow: hidden;
   border-left: 4px solid transparent;
@@ -450,15 +450,15 @@ body::after {
   animation: shimmer 2s infinite;
 }
 
-/* Stagger animation for form sections */
-.form-section:nth-child(1) { animation-delay: 0.1s; }
-.form-section:nth-child(2) { animation-delay: 0.2s; }
-.form-section:nth-child(3) { animation-delay: 0.3s; }
-.form-section:nth-child(4) { animation-delay: 0.4s; }
-.form-section:nth-child(5) { animation-delay: 0.5s; }
-.form-section:nth-child(6) { animation-delay: 0.6s; }
-.form-section:nth-child(7) { animation-delay: 0.7s; }
-.form-section:nth-child(8) { animation-delay: 0.8s; }
+/* Stagger animation for form sections — minimal delay */
+.form-section:nth-child(1) { animation-delay: 0s; }
+.form-section:nth-child(2) { animation-delay: 0s; }
+.form-section:nth-child(3) { animation-delay: 0s; }
+.form-section:nth-child(4) { animation-delay: 0s; }
+.form-section:nth-child(5) { animation-delay: 0s; }
+.form-section:nth-child(6) { animation-delay: 0s; }
+.form-section:nth-child(7) { animation-delay: 0s; }
+.form-section:nth-child(8) { animation-delay: 0s; }
 
 .section-header {
   display: flex;
@@ -1335,6 +1335,21 @@ body::after {
 }
 /* Hide overlays that are marked empty in the preview (don't show placeholder labels) */
 .preview-container .overlay.overlay-empty { display: none; }
+/* Hide specific tick overlays (not deleted, just hidden) */
+.overlay-check[data-field="tick2"][data-page="30"][data-index="47"],
+.overlay-check[data-field="tick2"][data-page="24"][data-index="47"],
+.overlay-check[data-field="tick3"][data-page="1"][data-index="46"],
+.overlay-check[data-field="tick3"][data-page="1"][data-index="74"],
+.overlay-check[data-field="tick2"][data-page="1"][data-index="49"],
+.overlay-check[data-field="tick3"][data-page="1"][data-index="50"],
+.overlay-check[data-field="tick3"][data-page="18"][data-index="50"],
+.overlay-check[data-field="tick2"][data-page="18"][data-index="49"],
+.overlay-check[data-field="tick2"][data-page="24"][data-index="51"],
+.overlay-check[data-field="tick3"][data-page="24"][data-index="52"],
+.overlay-check[data-field="tick3"][data-page="24"][data-index="76"],
+.overlay-check[data-field="tick3"][data-page="30"][data-index="52"],
+.overlay-check[data-field="tick3"][data-page="30"][data-index="76"],
+.overlay-check[data-field="tick2"][data-page="30"][data-index="51"] { display: none !important; }
 
 /* Form Page Cards - Enhanced */
 .form-page {
@@ -2953,9 +2968,16 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   <!-- Others Popup -->
   <div class="others-popup-backdrop" id="othersBackdrop">
     <div class="others-popup">
-        <div class="others-popup-header">
-          <h3>KYC, TP, SBS Information</h3>
-          <button class="others-popup-close" id="othersClose"><i class="fas fa-times"></i></button>
+        <div class="others-popup-header" style="display:flex; align-items:center; gap:16px; padding:16px 24px;">
+          <h3 style="margin:0; white-space:nowrap; flex-shrink:0;">KYC, TP, SBS Information</h3>
+          <select id="popupPrintTargetSelect" style="padding:6px 12px; border:none; border-radius:6px; font-size:0.8rem; font-weight:600; color:#4f46e5; background:rgba(255,255,255,0.9); cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,0.1); outline:none; position:relative; z-index:1; max-width:150px;">
+            <option value="accountHolder">Account Holder</option>
+            <option value="secondApplicant" style="display:none;">2nd Applicant</option>
+            <option value="thirdApplicant" style="display:none;">3rd Applicant</option>
+            <option value="guardian" style="display:none;">Guardian</option>
+            <option value="beneficialOwner" style="display:none;">Beneficial Owner</option>
+          </select>
+          <button class="others-popup-close" id="othersClose" style="margin-left:auto;"><i class="fas fa-times"></i></button>
         </div>
       <div class="others-popup-body">
         <div class="others-info-grid">
@@ -2996,7 +3018,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
             <div class="others-info-value" id="othersNumberOfDepositWithdrawal">—</div>
           </div>
           <div class="others-info-item">
-            <label>Transection Profile</label>
+            <label>Maximum Single Transection</label>
             <div class="others-info-value" id="kycTransection">—</div>
           </div>
           <div class="others-info-item">
@@ -3051,15 +3073,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
               <label>Beneficial Owner(s)</label>
               <div class="kyc-value" id="kycBeneficialOwners">—</div>
             </div>
-            <div class="kyc-field" style="display:flex; align-items:center; justify-content:space-between; padding:12px; gap:8px;">
-              <button type="button" id="popupPrintOthersBtn" class="btn btn-info" style="padding:10px 16px; font-size:0.9rem;"><i class="fas fa-print"></i> Print KYC, TP, SBS</button>
-              <select id="popupPrintTargetSelect" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-size:0.9rem; width:220px; text-align:left;">
-                <option value="accountHolder">Account Holder</option>
-                <option value="secondApplicant" style="display:none;">2nd Applicant</option>
-                <option value="thirdApplicant" style="display:none;">3rd Applicant</option>
-                <option value="guardian" style="display:none;">Guardian</option>
-                <option value="beneficialOwner" style="display:none;">Beneficial Owner</option>
-              </select>
+            <div class="kyc-field" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:18px 12px; gap:12px; background:linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); border:1px solid #c7d2fe; border-radius:12px; grid-column: 1 / -1;">
+              <button type="button" id="popupPrintOthersBtn" class="btn btn-info" style="padding:12px 28px; font-size:0.95rem; font-weight:700; border-radius:10px; letter-spacing:0.3px;"><i class="fas fa-print"></i> Print KYC, TP, SBS</button>
             </div>
           </div>
         </div>
@@ -3074,6 +3089,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       <button class="nav-btn active" data-page="info"><i class="fas fa-edit"></i> <span>Information Input</span></button>
       <button class="nav-btn" data-page="form"><i class="fas fa-file-image"></i> <span>Form Preview</span></button>
       <div class="header-actions">
+        <span id="applicantPrintHint" style="display:none; font-size:0.75rem; color:#fbbf24; font-weight:600; margin-right:8px; white-space:nowrap; animation: pulse 2s infinite;"><i class="fas fa-arrow-right"></i> 2nd/3rd Applicant KYC, SBS print here</span>
         <button class="btn btn-info" id="othersBtn" title="View KYC, TP, SBS Information"><i class="fas fa-info-circle"></i> <span>KYC, TP, SBS Information</span></button>
       </div>
     </div>
@@ -3085,12 +3101,141 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       <form id="account-form">
         <!-- Hidden branch field (moved to Quick Navigation) -->
         <input type="hidden" name="branchName" id="branchNameHidden">
+        <input type="hidden" name="combinedApplicantsOverride" value="">
         <div class="form-sections">
           
+          
+          <!-- Account Information -->
+          <div class="form-section" id="account-info">
+            <div class="section-header">
+              <i class="fas fa-university"></i>
+              <h2>Account Information</h2>
+              <i class="fas fa-chevron-down section-toggle"></i>
+            </div>
+            <div class="form-fields">
+              <div class="form-group">
+                <label>Account Number</label>
+                <input type="text" name="accountNumber" placeholder="Account number">
+                <input type="hidden" name="accountNumberNoSpace" />
+              </div>
+              <div class="form-group">
+                <label>CIF Number</label>
+                <input type="text" name="cif" placeholder="CIF number">
+              </div>
+              <div class="form-group">
+                <label>Account Ownership</label>
+                <select name="accountOwnership">
+                  <option value="">Select Ownership</option>
+                  <option value="single" selected>Single</option>
+                  <option value="joint">Joint</option>
+                  <option value="anyone">Any One</option>
+                  <option value="either">Either or Survivor</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
+              <div class="form-group owner-joint-only" style="display:none;">
+                <label>2nd Applicant Name</label>
+                <input type="text" name="secondApplicantName" placeholder="Second applicant full name">
+              </div>
+              <div class="form-group owner-joint-only" style="display:none;">
+                <label>3rd Applicant Name</label>
+                <input type="text" name="thirdApplicantName" placeholder="Third applicant full name">
+              </div>
+              <div class="form-group" id="ownershipOthersGroup" style="display:none;">
+                <label>Ownership (Others - Please Specify)</label>
+                <input type="text" name="ownershipOthersText" placeholder="Please Specify">
+              </div>
+              <div class="form-group" style="display:none;">
+                <label>Account Title (bangla)</label>
+                <input type="text" name="combinedApplicantsBn" placeholder="Account Title (bangla)">
+              </div>
+              <div class="form-group">
+                <label>Initial Deposit (BDT)</label>
+                <input type="text" name="initialDeposit" placeholder="Initial deposit amount">
+              </div>
+              <div class="form-group">
+                <label>AML Tracking Number</label>
+                <input type="text" name="amlTrackingNumber" placeholder="AML Tracking Number">
+              </div>
+              <div class="form-group">
+                <label>RM Code</label>
+                <input type="text" name="rmCode" placeholder="RM Code">
+              </div>
+              <div class="form-group">
+                <label>Cheque Book</label>
+                <select name="chequeBook">
+                  <option value="">Select</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Debit Card</label>
+                <select name="debitCard">
+                  <option value="">Select</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Type of Account</label>
+                <select name="typeOfAccount">
+                  <option value="savings">Savings</option>
+                  <option value="current">Current</option>
+                  <option value="snd">SND</option>
+                  <option value="fc">FC</option>
+                  <option value="rfcd">RFCD</option>
+                  <option value="nfcd">NFCD</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Currency</label>
+                <select name="currency">
+                  <option value="taka">Taka</option>
+                  <option value="usd">US Dollar</option>
+                  <option value="euro">Euro</option>
+                  <option value="gbp">GB Pound</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
+              <div class="form-group" id="acctTypeOthersGroup" style="display:none;">
+                <label>Type of Account (Others)</label>
+                <input type="text" name="acctTypeOthersText" placeholder="Please Specify">
+              </div>
+              <div class="form-group" id="currencyOthersGroup" style="display:none;">
+                <label>Currency (Others)</label>
+                <input type="text" name="currencyOthersText" placeholder="Please Specify">
+              </div>
+              <div class="form-group" id="isrBankGroup" style="display:none;">
+                <label>ISR Bank</label>
+                <input type="text" name="isrBank" placeholder="ISR Bank">
+              </div>
+              <div class="form-group" id="isrCustomerGroup" style="display:none;">
+                <label>ISR Customer</label>
+                <input type="text" name="isrCustomer" placeholder="ISR Customer">
+              </div>
+              <div class="form-group">
+                <label>Introducer Required</label>
+                <select name="introducerRequired" id="introducerRequired">
+                  <option value="no">No</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>FATCA</label>
+                <select name="fatca">
+                  <option value="no">No</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <!-- Personal Information -->
           <div class="form-section" id="personal-info">
             <div class="section-header">
-              <i class="fas fa-user"></i>
+              <i class="fas fa-user-circle"></i>
               <h2>Personal Information</h2>
               <i class="fas fa-chevron-down section-toggle"></i>
             </div>
@@ -3113,6 +3258,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                   <option value="">Select Gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
+                  <option value="third">Third Gender</option>
                 </select>
               </div>
               <div class="form-group">
@@ -3163,9 +3309,148 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                 <label>Source of Fund</label>
                 <input type="text" name="sourceOfFund" placeholder="Source of fund">
               </div>
+              <div class="form-group fatca-nationality-field" style="display:none;">
+                <label>Nationality</label>
+                <input type="text" name="nationality" value="Bangladeshi" placeholder="Nationality">
+              </div>
+              <div class="form-group">
+                <label>Resident Status</label>
+                <select name="residentStatus">
+                  <option value="yes">Yes (Resident)</option>
+                  <option value="no">No (Non-Resident)</option>
+                </select>
+              </div>
+              <div class="form-group span-4" style="display:flex; align-items:center; gap:8px; padding-top:8px;"><span style="font-weight:700;">Present Address</span></div>
+              <div class="form-group"><label>House/Holding No.</label><input type="text" name="presentHouse" placeholder="House/Holding number"></div>
+              <div class="form-group"><label>Area/Village</label><input type="text" name="presentRoad" placeholder="Area/Village"></div>
+              <div class="form-group"><label>Post Office</label><input type="text" name="presentPO" placeholder="Post Office"></div>
+              <div class="form-group"><label>Post Code</label><input type="text" name="presentPostCode" placeholder="Post Code"></div>
+              <div class="form-group"><label>Thana/Upazila</label><input type="text" name="presentThana" placeholder="Thana/Upazila"></div>
+              <div class="form-group"><label>District</label><input type="text" name="presentDistrict" placeholder="District"></div>
+              <div class="form-group"><label>Country</label><input type="text" name="presentCountry" value="Bangladesh"></div>
+              <div class="form-group span-4" style="display:flex; align-items:center; gap:8px; padding-top:8px;"><span style="font-weight:700;">Permanent Address</span><label style="margin:0; font-weight:500; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="sameAddress" style="margin:0;">Same as Present Address</label></div>
+              <div class="form-group"><label>House/Holding No.</label><input type="text" name="permanentHouse" placeholder="House/Holding number"></div>
+              <div class="form-group"><label>Area/Village</label><input type="text" name="permanentRoad" placeholder="Area/Village"></div>
+              <div class="form-group"><label>Post Office</label><input type="text" name="permanentPO" placeholder="Post Office"></div>
+              <div class="form-group"><label>Post Code</label><input type="text" name="permanentPostCode" placeholder="Post Code"></div>
+              <div class="form-group"><label>Thana/Upazila</label><input type="text" name="permanentThana" placeholder="Thana/Upazila"></div>
+              <div class="form-group"><label>District</label><input type="text" name="permanentDistrict" placeholder="District"></div>
+              <div class="form-group"><label>Country</label><input type="text" name="permanentCountry" value="Bangladesh"></div>
             </div>
           </div>
-          <!-- Guardian Information (New - similar to Beneficial Owner) -->
+
+          <!-- FATCA Declaration (shown when FATCA dropdown = Yes) -->
+          <div class="form-section" id="fatca-declaration-section" style="display:none;">
+            <div class="section-header">
+              <i class="fas fa-globe-americas"></i>
+              <h2>FATCA Declaration</h2>
+              <i class="fas fa-chevron-down section-toggle"></i>
+            </div>
+            <div class="form-fields">
+              <div class="form-group span-2"><label>Name of Account Holder</label><select name="fatca_accountHolder" id="fatcaAccountHolderSelect"><option value="1st">1st Applicant</option><option value="2nd">2nd Applicant</option><option value="3rd">3rd Applicant</option><option value="guardian">Guardian</option><option value="beneficialOwner">Beneficial Owner</option></select></div>
+              <div class="form-group"><label>Country of Residence</label><input type="text" name="fatca_countryResidence" placeholder="Country of Residence"></div>
+              <div class="form-group"><label>Country of Birth</label><input type="text" name="fatca_countryBirth" placeholder="Country of Birth"></div>
+              <div class="form-group"><label>1. Are you a U.S. Resident?</label><select name="fatca_q1"><option value="">Select</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="form-group"><label>2. Are you a U.S. Citizen?</label><select name="fatca_q2"><option value="">Select</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="form-group"><label>3. U.S. Permanent Resident Card?</label><select name="fatca_q3"><option value="">Select</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="form-group"><label>4. Substantial US ownership (10%+)?</label><select name="fatca_q4"><option value="">Select</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+            </div>
+          </div>
+
+          <!-- 2nd Applicant Information (shown when 2nd Applicant Name has value) -->
+          <div class="form-section" id="second-applicant-info" style="display:none;">
+            <div class="section-header">
+              <i class="fas fa-user-friends"></i>
+              <h2>2nd Applicant Information</h2>
+              <i class="fas fa-chevron-down section-toggle"></i>
+            </div>
+            <div class="form-fields">
+              <div class="form-group"><label>CIF Number</label><input type="text" name="app2_cif" placeholder="CIF Number"></div>
+              <div class="form-group"><label>Full Name (English)</label><input type="text" name="app2_fullNameEn" placeholder="Full name in English" readonly style="background:#f1f5f9; cursor:not-allowed;"></div>
+              <div class="form-group"><label>Full Name (Bangla)</label><input type="text" name="app2_fullNameBn" placeholder="পূর্ণ নাম বাংলায়"></div>
+              <div class="form-group"><label>AML Tracking Number</label><input type="text" name="app2_amlTrackingNumber" placeholder="AML Tracking Number"></div>
+              <div class="form-group"><label>Date of Birth</label><input type="date" name="app2_dob"></div>
+              <div class="form-group"><label>Gender</label><select name="app2_gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option><option value="third">Third Gender</option></select></div>
+              <div class="form-group"><label>Father's Name</label><input type="text" name="app2_fatherName" placeholder="Father's full name"></div>
+              <div class="form-group"><label>Mother's Name</label><input type="text" name="app2_motherName" placeholder="Mother's full name"></div>
+              <div class="form-group"><label>Spouse's Name</label><input type="text" name="app2_spouseName" placeholder="Spouse's full name"></div>
+              <div class="form-group"><label>National ID (NID)</label><input type="text" name="app2_nid" placeholder="NID number"></div>
+              <div class="form-group"><label>Passport No.</label><input type="text" name="app2_passportNo" placeholder="Passport number"></div>
+              <div class="form-group"><label>Birth Certificate No.</label><input type="text" name="app2_birthCertNo" placeholder="Birth certificate number"></div>
+              <div class="form-group"><label>E-TIN Number</label><input type="text" name="app2_etin" placeholder="E-TIN number"></div>
+              <div class="form-group"><label>Mobile Number</label><input type="tel" name="app2_mobile" placeholder="01XXXXXXXXX"></div>
+              <div class="form-group"><label>Email Address</label><input type="email" name="app2_email" placeholder="example@email.com"></div>
+              <div class="form-group"><label>Occupation/Profession</label><input type="text" name="app2_occupation" placeholder="Occupation"></div>
+              <div class="form-group"><label>Monthly Income (BDT)</label><input type="text" name="app2_monthlyIncome" placeholder="Monthly income"></div>
+              <div class="form-group"><label>Source of Fund</label><input type="text" name="app2_sourceOfFund" placeholder="Source of fund"></div>
+              <div class="form-group fatca-nationality-field" style="display:none;"><label>Nationality</label><input type="text" name="app2_nationality" value="Bangladeshi"></div>
+              <div class="form-group"><label>Resident Status</label><select name="app2_residentStatus"><option value="yes">Yes (Resident)</option><option value="no">No (Non-Resident)</option></select></div>
+              <div class="form-group span-4" style="display:flex; align-items:center; gap:8px; padding-top:8px;"><span style="font-weight:700;">Present Address</span><label style="margin:0; font-weight:500; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="app2SameAsFirstAddress" style="margin:0;">Same as 1st Applicant Address</label></div>
+              <div class="form-group"><label>House/Holding No.</label><input type="text" name="app2_presentHouse" placeholder="House/Holding"></div>
+              <div class="form-group"><label>Area/Village</label><input type="text" name="app2_presentRoad" placeholder="Area/Village"></div>
+              <div class="form-group"><label>Post Office</label><input type="text" name="app2_presentPO" placeholder="Post Office"></div>
+              <div class="form-group"><label>Post Code</label><input type="text" name="app2_presentPostCode" placeholder="Post Code"></div>
+              <div class="form-group"><label>Thana/Upazila</label><input type="text" name="app2_presentThana" placeholder="Thana/Upazila"></div>
+              <div class="form-group"><label>District</label><input type="text" name="app2_presentDistrict" placeholder="District"></div>
+              <div class="form-group"><label>Country</label><input type="text" name="app2_presentCountry" value="Bangladesh"></div>
+              <div class="form-group span-4" style="display:flex; align-items:center; gap:8px; padding-top:8px;"><span style="font-weight:700;">Permanent Address</span><label style="margin:0; font-weight:500; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="app2SameAsPresent" style="margin:0;">Same as Present Address</label></div>
+              <div class="form-group"><label>House/Holding No.</label><input type="text" name="app2_permanentHouse" placeholder="House/Holding"></div>
+              <div class="form-group"><label>Area/Village</label><input type="text" name="app2_permanentRoad" placeholder="Area/Village"></div>
+              <div class="form-group"><label>Post Office</label><input type="text" name="app2_permanentPO" placeholder="Post Office"></div>
+              <div class="form-group"><label>Post Code</label><input type="text" name="app2_permanentPostCode" placeholder="Post Code"></div>
+              <div class="form-group"><label>Thana/Upazila</label><input type="text" name="app2_permanentThana" placeholder="Thana/Upazila"></div>
+              <div class="form-group"><label>District</label><input type="text" name="app2_permanentDistrict" placeholder="District"></div>
+              <div class="form-group"><label>Country</label><input type="text" name="app2_permanentCountry" value="Bangladesh"></div>
+            </div>
+          </div>
+
+          <!-- 3rd Applicant Information (shown when 3rd Applicant Name has value) -->
+          <div class="form-section" id="third-applicant-info" style="display:none;">
+            <div class="section-header">
+              <i class="fas fa-users"></i>
+              <h2>3rd Applicant Information</h2>
+              <i class="fas fa-chevron-down section-toggle"></i>
+            </div>
+            <div class="form-fields">
+              <div class="form-group"><label>CIF Number</label><input type="text" name="app3_cif" placeholder="CIF Number"></div>
+              <div class="form-group"><label>Full Name (English)</label><input type="text" name="app3_fullNameEn" placeholder="Full name in English" readonly style="background:#f1f5f9; cursor:not-allowed;"></div>
+              <div class="form-group"><label>Full Name (Bangla)</label><input type="text" name="app3_fullNameBn" placeholder="পূর্ণ নাম বাংলায়"></div>
+              <div class="form-group"><label>AML Tracking Number</label><input type="text" name="app3_amlTrackingNumber" placeholder="AML Tracking Number"></div>
+              <div class="form-group"><label>Date of Birth</label><input type="date" name="app3_dob"></div>
+              <div class="form-group"><label>Gender</label><select name="app3_gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option><option value="third">Third Gender</option></select></div>
+              <div class="form-group"><label>Father's Name</label><input type="text" name="app3_fatherName" placeholder="Father's full name"></div>
+              <div class="form-group"><label>Mother's Name</label><input type="text" name="app3_motherName" placeholder="Mother's full name"></div>
+              <div class="form-group"><label>Spouse's Name</label><input type="text" name="app3_spouseName" placeholder="Spouse's full name"></div>
+              <div class="form-group"><label>National ID (NID)</label><input type="text" name="app3_nid" placeholder="NID number"></div>
+              <div class="form-group"><label>Passport No.</label><input type="text" name="app3_passportNo" placeholder="Passport number"></div>
+              <div class="form-group"><label>Birth Certificate No.</label><input type="text" name="app3_birthCertNo" placeholder="Birth certificate number"></div>
+              <div class="form-group"><label>E-TIN Number</label><input type="text" name="app3_etin" placeholder="E-TIN number"></div>
+              <div class="form-group"><label>Mobile Number</label><input type="tel" name="app3_mobile" placeholder="01XXXXXXXXX"></div>
+              <div class="form-group"><label>Email Address</label><input type="email" name="app3_email" placeholder="example@email.com"></div>
+              <div class="form-group"><label>Occupation/Profession</label><input type="text" name="app3_occupation" placeholder="Occupation"></div>
+              <div class="form-group"><label>Monthly Income (BDT)</label><input type="text" name="app3_monthlyIncome" placeholder="Monthly income"></div>
+              <div class="form-group"><label>Source of Fund</label><input type="text" name="app3_sourceOfFund" placeholder="Source of fund"></div>
+              <div class="form-group fatca-nationality-field" style="display:none;"><label>Nationality</label><input type="text" name="app3_nationality" value="Bangladeshi"></div>
+              <div class="form-group"><label>Resident Status</label><select name="app3_residentStatus"><option value="yes">Yes (Resident)</option><option value="no">No (Non-Resident)</option></select></div>
+              <div class="form-group span-4" style="display:flex; align-items:center; gap:8px; padding-top:8px;"><span style="font-weight:700;">Present Address</span><label style="margin:0; font-weight:500; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="app3SameAsFirstAddress" style="margin:0;">Same as 1st Applicant Address</label></div>
+              <div class="form-group"><label>House/Holding No.</label><input type="text" name="app3_presentHouse" placeholder="House/Holding"></div>
+              <div class="form-group"><label>Area/Village</label><input type="text" name="app3_presentRoad" placeholder="Area/Village"></div>
+              <div class="form-group"><label>Post Office</label><input type="text" name="app3_presentPO" placeholder="Post Office"></div>
+              <div class="form-group"><label>Post Code</label><input type="text" name="app3_presentPostCode" placeholder="Post Code"></div>
+              <div class="form-group"><label>Thana/Upazila</label><input type="text" name="app3_presentThana" placeholder="Thana/Upazila"></div>
+              <div class="form-group"><label>District</label><input type="text" name="app3_presentDistrict" placeholder="District"></div>
+              <div class="form-group"><label>Country</label><input type="text" name="app3_presentCountry" value="Bangladesh"></div>
+              <div class="form-group span-4" style="display:flex; align-items:center; gap:8px; padding-top:8px;"><span style="font-weight:700;">Permanent Address</span><label style="margin:0; font-weight:500; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="app3SameAsPresent" style="margin:0;">Same as Present Address</label></div>
+              <div class="form-group"><label>House/Holding No.</label><input type="text" name="app3_permanentHouse" placeholder="House/Holding"></div>
+              <div class="form-group"><label>Area/Village</label><input type="text" name="app3_permanentRoad" placeholder="Area/Village"></div>
+              <div class="form-group"><label>Post Office</label><input type="text" name="app3_permanentPO" placeholder="Post Office"></div>
+              <div class="form-group"><label>Post Code</label><input type="text" name="app3_permanentPostCode" placeholder="Post Code"></div>
+              <div class="form-group"><label>Thana/Upazila</label><input type="text" name="app3_permanentThana" placeholder="Thana/Upazila"></div>
+              <div class="form-group"><label>District</label><input type="text" name="app3_permanentDistrict" placeholder="District"></div>
+              <div class="form-group"><label>Country</label><input type="text" name="app3_permanentCountry" value="Bangladesh"></div>
+            </div>
+          </div>
+
           <div class="form-section" id="guardian-info-new">
             <div class="section-header">
               <i class="fas fa-user-shield"></i>
@@ -3173,6 +3458,10 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
               <i class="fas fa-chevron-down section-toggle"></i>
             </div>
             <div class="form-fields" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
+              <div class="form-group">
+                <label>CIF Number</label>
+                <input type="text" name="gCif" placeholder="CIF Number">
+              </div>
               <div class="form-group">
                 <label>Name of Guardian (In English)</label>
                 <input type="text" name="gNameEn" placeholder="Enter name in English">
@@ -3207,7 +3496,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                   <option value="">Select Gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="third">Third Gender</option>
                 </select>
               </div>
               <div class="form-group">
@@ -3246,14 +3535,22 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                 <label>TIN No. (If any)</label>
                 <input type="text" name="gTin" placeholder="TIN number (if any)">
               </div>
-              <div class="form-group">
+              <div class="form-group fatca-nationality-field" style="display:none;">
                 <label>Nationality</label>
                 <input type="text" name="gNationality" placeholder="Nationality" value="Bangladeshi">
               </div>
+              <div class="form-group">
+                <label>Resident Status</label>
+                <select name="gResidentStatus">
+                  <option value="yes">Yes (Resident)</option>
+                  <option value="no">No (Non-Resident)</option>
+                </select>
+              </div>
 
               <!-- Present Address header full width -->
-              <div class="form-group span-4">
-                <label style="font-weight:700;">Present Address</label>
+              <div class="form-group span-4" style="display:flex; align-items:center; gap:8px; padding-top:8px;">
+                <span style="font-weight:700;">Present Address</span>
+                <label style="margin:0; font-weight:500; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="gSameAsFirstAddress" style="margin:0;">Same as 1st Applicant Address</label>
               </div>
               <div class="form-group">
                 <label>House, Street, Block, Sector</label>
@@ -3286,11 +3583,9 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
               <!-- Nearest Landmark removed for guardian present address -->
 
               <!-- Permanent Address header with inline Same-as-Present checkbox -->
-              <div class="form-group span-4" style="display:flex; align-items:center; justify-content:flex-start; gap:8px;">
-                <label style="font-weight:700; margin:0;">Permanent Address</label>
-                <div class="checkbox-inline" style="margin:0 0 0 4px;">
-                  <label style="margin:0;"><input type="checkbox" id="gSameAddress" style="margin-right:4px; vertical-align:middle;">Same as Present Address</label>
-                </div>
+              <div class="form-group span-4" style="display:flex; align-items:center; gap:8px; padding-top:8px;">
+                <span style="font-weight:700;">Permanent Address</span>
+                <label style="margin:0; font-weight:500; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="gSameAddress" style="margin:0;">Same as Present Address</label>
               </div>
               <div class="form-group">
                 <label>House, Street, Block, Sector</label>
@@ -3349,163 +3644,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
             </div>
           </div>
 
-          <!-- Account Information -->
-          <div class="form-section" id="account-info">
-            <div class="section-header">
-              <i class="fas fa-university"></i>
-              <h2>Account Information</h2>
-              <i class="fas fa-chevron-down section-toggle"></i>
-            </div>
-            <div class="form-fields">
-              <div class="form-group">
-                <label>Account Number</label>
-                <input type="text" name="accountNumber" placeholder="Account number">
-                <input type="hidden" name="accountNumberNoSpace" />
-              </div>
-              <div class="form-group">
-                <label>CIF Number</label>
-                <input type="text" name="cif" placeholder="CIF number">
-              </div>
-              <div class="form-group">
-                <label>Account Ownership</label>
-                <select name="accountOwnership">
-                  <option value="">Select Ownership</option>
-                  <option value="single" selected>Single</option>
-                  <option value="joint">Joint</option>
-                </select>
-              </div>
-              <div class="form-group owner-joint-only" style="display:none;">
-                <label>2nd Applicant Name</label>
-                <input type="text" name="secondApplicantName" placeholder="Second applicant full name">
-              </div>
-              <div class="form-group owner-joint-only" style="display:none;">
-                <label>3rd Applicant Name</label>
-                <input type="text" name="thirdApplicantName" placeholder="Third applicant full name">
-              </div>
-              <div class="form-group" style="display:none;">
-                <label>Account Title (bangla)</label>
-                <input type="text" name="combinedApplicantsBn" placeholder="Account Title (bangla)">
-              </div>
-              <div class="form-group">
-                <label>Initial Deposit (BDT)</label>
-                <input type="text" name="initialDeposit" placeholder="Initial deposit amount">
-              </div>
-              <div class="form-group">
-                <label>AML Tracking Number</label>
-                <input type="text" name="amlTrackingNumber" placeholder="AML Tracking Number">
-              </div>
-              <div class="form-group">
-                <label>RM Code</label>
-                <input type="text" name="rmCode" placeholder="RM Code">
-              </div>
-              <div class="form-group">
-                <label>Cheque Book</label>
-                <select name="chequeBook">
-                  <option value="">Select</option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Debit Card</label>
-                <select name="debitCard">
-                  <option value="">Select</option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>ISR Bank</label>
-                <input type="text" name="isrBank" placeholder="ISR Bank">
-              </div>
-              <div class="form-group">
-                <label>ISR Customer</label>
-                <input type="text" name="isrCustomer" placeholder="ISR Customer">
-              </div>
-            </div>
-          </div>
-
           
-          <div class="form-section" id="present-address">
-            <div class="section-header">
-              <i class="fas fa-map-marker-alt"></i>
-              <h2>Present Address</h2>
-              <i class="fas fa-chevron-down section-toggle"></i>
-            </div>
-            <div class="form-fields">
-              <div class="form-group">
-                <label>House/Holding No.</label>
-                <input type="text" name="presentHouse" placeholder="House/Holding number">
-              </div>
-              <div class="form-group">
-                <label>Area/Village</label>
-                <input type="text" name="presentRoad" placeholder="Area/Village">
-              </div>
-              <div class="form-group">
-                <label>Post Office</label>
-                <input type="text" name="presentPO" placeholder="Post Office">
-              </div>
-              <div class="form-group">
-                <label>Post Code</label>
-                <input type="text" name="presentPostCode" placeholder="Post Code">
-              </div>
-              <div class="form-group">
-                <label>Thana/Upazila</label>
-                <input type="text" name="presentThana" placeholder="Thana/Upazila">
-              </div>
-              <div class="form-group">
-                <label>District</label>
-                <input type="text" name="presentDistrict" placeholder="District">
-              </div>
-              <div class="form-group">
-                <label>Country</label>
-                <input type="text" name="presentCountry" value="Bangladesh">
-              </div>
-            </div>
-          </div>
-
-          <!-- Permanent Address -->
-          <div class="form-section" id="permanent-address">
-            <div class="section-header">
-              <i class="fas fa-home"></i>
-              <h2>Permanent Address</h2>
-              <i class="fas fa-chevron-down section-toggle"></i>
-            </div>
-            <div class="form-fields">
-              <div class="form-group span-4 checkbox-inline">
-                <label><input type="checkbox" id="sameAddress"> Same as Present Address</label>
-              </div>
-              <div class="form-group">
-                <label>House/Holding No.</label>
-                <input type="text" name="permanentHouse" placeholder="House/Holding number">
-              </div>
-              <div class="form-group">
-                <label>Area/Village</label>
-                <input type="text" name="permanentRoad" placeholder="Area/Village">
-              </div>
-              <div class="form-group">
-                <label>Post Office</label>
-                <input type="text" name="permanentPO" placeholder="Post Office">
-              </div>
-              <div class="form-group">
-                <label>Post Code</label>
-                <input type="text" name="permanentPostCode" placeholder="Post Code">
-              </div>
-              <div class="form-group">
-                <label>Thana/Upazila</label>
-                <input type="text" name="permanentThana" placeholder="Thana/Upazila">
-              </div>
-              <div class="form-group">
-                <label>District</label>
-                <input type="text" name="permanentDistrict" placeholder="District">
-              </div>
-              <div class="form-group">
-                <label>Country</label>
-                <input type="text" name="permanentCountry" value="Bangladesh">
-              </div>
-            </div>
-          </div>
-
           <!-- Nominee Information -->
           <div class="form-section" id="nominee-info">
             <div class="section-header">
@@ -3601,8 +3740,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                 <input type="text" name="numberOfDepositWithdrawal" placeholder="Enter number of deposit/withdrawal" />
               </div>
               <div class="form-group">
-                <label>Transection Profile</label>
-                <input type="text" name="transectionProfile" placeholder="Enter Transection Profile" />
+                <label>Maximum Single Transection</label>
+                <input type="text" name="transectionProfile" placeholder="Enter Maximum Single Transection" />
               </div>
               <div class="form-group">
                 <label>Sector Code</label>
@@ -3860,17 +3999,15 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                 <label>TIN No. (If any)</label>
                 <input type="text" name="boTin" placeholder="TIN number (if any)">
               </div>
-              <div class="form-group">
+              <div class="form-group fatca-nationality-field" style="display:none;">
                 <label>Nationality</label>
                 <input type="text" name="boNationality" placeholder="Nationality" value="Bangladeshi">
               </div>
 
               <!-- Present Address header full width -->
-              <div class="form-group span-4" style="display:flex; align-items:center; justify-content:flex-start; gap:8px;">
-                <label style="font-weight:700; margin:0;">Present Address</label>
-                <div class="checkbox-inline" style="margin:0 0 0 4px;">
-                  <label style="margin:0;"><input type="checkbox" id="boSameAddressAH" style="margin-right:4px; vertical-align:middle;">Same as Account Holder Present Address</label>
-                </div>
+              <div class="form-group span-4" style="display:flex; align-items:center; gap:8px; padding-top:8px;">
+                <span style="font-weight:700;">Present Address</span>
+                <label style="margin:0; font-weight:500; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="boSameAddressAH" style="margin:0;">Same as Account Holder Present Address</label>
               </div>
               <div class="form-group">
                 <label>House, Street, Block, Sector</label>
@@ -3906,11 +4043,9 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
               </div>
 
               <!-- Permanent Address header with inline Same-as-Present checkbox (checkbox placed immediately after header) -->
-              <div class="form-group span-4" style="display:flex; align-items:center; justify-content:flex-start; gap:8px;">
-                <label style="font-weight:700; margin:0;">Permanent Address</label>
-                <div class="checkbox-inline" style="margin:0 0 0 4px;">
-                  <label style="margin:0;"><input type="checkbox" id="boSameAddress" style="margin-right:4px; vertical-align:middle;">Same as Present Address</label>
-                </div>
+              <div class="form-group span-4" style="display:flex; align-items:center; gap:8px; padding-top:8px;">
+                <span style="font-weight:700;">Permanent Address</span>
+                <label style="margin:0; font-weight:500; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="boSameAddress" style="margin:0;">Same as Present Address</label>
               </div>
               <div class="form-group">
                 <label>House, Street, Block, Sector</label>
@@ -4107,7 +4242,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         <button type="button" class="btn btn-success" id="printFormBtn"><i class="fas fa-print"></i> Print Form</button>
       </div>
       <div style="display:flex; align-items:center; gap:8px;">
-        <div style="display:flex; flex-direction:column;">
+        <div style="display:none;">
           <select id="printTargetSelect" aria-label="Print target" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px;">
             <option value="accountHolder">Account Holder</option>
             <option value="secondApplicant">2nd Applicant</option>
@@ -4140,6 +4275,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
             <option value="others">Others</option>
             <option value="beneficial-owner">Beneficial Owner</option>
             <option value="guardian">Guardian</option>
+            <option value="additional-applicant">Additional Applicant</option>
           </select>
         </div>
         <div class="preview-actions">
@@ -4228,6 +4364,23 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         <!-- Beneficial Owner Form Pages (hidden by default) -->
         <div class="form-page beneficial-owner-page" data-page="40" style="display:none;">
           <img src="Images/Beneficial Owner/Beneficial Owner Information-1_page-0001.jpg" alt="Beneficial Owner Information Page 1">
+        </div>
+        <!-- FATCA Declaration Page (hidden by default) -->
+        <div class="form-page fatca-page" data-page="50" style="display:none;">
+          <img src="Images/FATCA/FATCA_page-0001.jpg" alt="FATCA Declaration Page">
+        </div>
+        <!-- Additional Applicant Pages (one per form type, hidden by default) -->
+        <div class="form-page additional-applicant-page additional-applicant-conventional" data-page="55" style="display:none;">
+          <img src="Images/Additional Applicant/Conventional.jpg" alt="Additional Applicant - Conventional">
+        </div>
+        <div class="form-page additional-applicant-page additional-applicant-imperial" data-page="56" style="display:none;">
+          <img src="Images/Additional Applicant/Conventional imperial.jpg" alt="Additional Applicant - Conventional Imperial">
+        </div>
+        <div class="form-page additional-applicant-page additional-applicant-taqwa" data-page="57" style="display:none;">
+          <img src="Images/Additional Applicant/taqwa.jpg" alt="Additional Applicant - Taqwa">
+        </div>
+        <div class="form-page additional-applicant-page additional-applicant-taqwa-imperial" data-page="58" style="display:none;">
+          <img src="Images/Additional Applicant/taqwa imperial.jpg" alt="Additional Applicant - Taqwa Imperial">
         </div>
         <!-- Guardian Form Pages (hidden by default) -->
         <div class="form-page guardian-page" data-page="48" style="display:none;">
@@ -4335,12 +4488,39 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       if (typeof updateOverlays === 'function') updateOverlays();
     } catch (e) {}
   }
+  // Show/hide ISR Bank & ISR Customer based on account type (only for Taqwa / Taqwa Imperial)
+  function handleIsrVisibility() {
+    const isrBankGroup = document.getElementById('isrBankGroup');
+    const isrCustomerGroup = document.getElementById('isrCustomerGroup');
+    if (!isrBankGroup || !isrCustomerGroup) return;
+    const acctNum = accountNumberEl ? (accountNumberEl.value || '').replace(/\s+/g, '') : '';
+    const acctTypeName = (typeof getAccountTypeFromNumber === 'function') ? getAccountTypeFromNumber(acctNum).toLowerCase() : '';
+    const isTaqwa = acctTypeName.includes('mudarabah');
+    // ISR Bank is always hidden (auto-calculated)
+    isrBankGroup.style.display = 'none';
+    isrCustomerGroup.style.display = isTaqwa ? '' : 'none';
+  }
+  // Auto-calculate ISR Bank = 100 - ISR Customer
+  function calculateIsrBank() {
+    const isrCustomerEl = form.elements['isrCustomer'];
+    const isrBankEl = form.elements['isrBank'];
+    if (!isrCustomerEl || !isrBankEl) return;
+    const customerVal = parseFloat(isrCustomerEl.value) || 0;
+    isrBankEl.value = customerVal ? String(100 - customerVal) : '';
+  }
+  if (form.elements['isrCustomer']) {
+    form.elements['isrCustomer'].addEventListener('input', calculateIsrBank);
+    form.elements['isrCustomer'].addEventListener('change', calculateIsrBank);
+  }
   if (accountNumberEl) {
     accountNumberEl.addEventListener('input', updateAccountNumberNoSpace);
     accountNumberEl.addEventListener('change', updateAccountNumberNoSpace);
+    accountNumberEl.addEventListener('input', handleIsrVisibility);
+    accountNumberEl.addEventListener('change', handleIsrVisibility);
   }
   // initialize on load
   updateAccountNumberNoSpace();
+  // ISR visibility will be initialized after getAccountTypeFromNumber is defined (at end of init)
   const slideBranchInput = document.getElementById('slideBranchInput');
 
   function getTodayInputValue() {
@@ -4497,14 +4677,17 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       const thirdApplicantName = form.elements['thirdApplicantName']?.value || '';
       const gNameEn = form.elements['gNameEn']?.value || '';
       const boNameEn = form.elements['boNameEn']?.value || '';
+      const hasMultiApplicant = !!(secondApplicantName.trim() || thirdApplicantName.trim());
 
       // Get all options in the dropdown
       const options = printTargetSelect.querySelectorAll('option');
       let hasOtherOptions = false;
       options.forEach(option => {
         const value = option.value;
-        // Show/hide options based on corresponding name field values
-        if (value === 'secondApplicant') {
+        if (value === 'accountHolder') {
+          // Rename to "1st Applicant" when multi-applicant
+          option.textContent = hasMultiApplicant ? '1st Applicant' : 'Account Holder';
+        } else if (value === 'secondApplicant') {
           option.style.display = secondApplicantName.trim() ? 'block' : 'none';
           if (secondApplicantName.trim()) hasOtherOptions = true;
         } else if (value === 'thirdApplicant') {
@@ -4553,8 +4736,13 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
     // Wire up dropdown change listener
     printTargetSelect.addEventListener('change', function() {
+      const form = document.getElementById('account-form');
+      const hasMulti = !!(form && (
+        (form.elements['secondApplicantName']?.value || '').trim() ||
+        (form.elements['thirdApplicantName']?.value || '').trim()
+      ));
       const targetLabelMap = {
-        'accountHolder': 'Account Holder',
+        'accountHolder': hasMulti ? '1st Applicant' : 'Account Holder',
         'secondApplicant': '2nd Applicant',
         'thirdApplicant': '3rd Applicant',
         'guardian': 'Guardian',
@@ -4569,7 +4757,6 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       };
       const selectedLabel = targetLabelMap[this.value] || '';
       const selectedNameField = targetNameFieldMap[this.value] || '';
-      const form = document.getElementById('account-form');
       if (form) {
         form.dataset.printTargetLabel = selectedLabel;
         form.dataset.printTargetNameField = selectedNameField;
@@ -4590,12 +4777,16 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       const thirdApplicantName = form.elements['thirdApplicantName']?.value || '';
       const gNameEn = form.elements['gNameEn']?.value || '';
       const boNameEn = form.elements['boNameEn']?.value || '';
+      const hasMultiApplicant = !!(secondApplicantName.trim() || thirdApplicantName.trim());
 
       const options = popupPrintTargetSelect.querySelectorAll('option');
       let hasOtherOptions = false;
       options.forEach(option => {
         const value = option.value;
-        if (value === 'secondApplicant') {
+        if (value === 'accountHolder') {
+          // Rename to "1st Applicant" when multi-applicant
+          option.textContent = hasMultiApplicant ? '1st Applicant' : 'Account Holder';
+        } else if (value === 'secondApplicant') {
           option.style.display = secondApplicantName.trim() ? 'block' : 'none';
           if (secondApplicantName.trim()) hasOtherOptions = true;
         } else if (value === 'thirdApplicant') {
@@ -4643,8 +4834,13 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
     // Wire up popup dropdown change listener
     popupPrintTargetSelect.addEventListener('change', function() {
+      const form = document.getElementById('account-form');
+      const hasMulti = !!(form && (
+        (form.elements['secondApplicantName']?.value || '').trim() ||
+        (form.elements['thirdApplicantName']?.value || '').trim()
+      ));
       const targetLabelMap = {
-        'accountHolder': 'Account Holder',
+        'accountHolder': hasMulti ? '1st Applicant' : 'Account Holder',
         'secondApplicant': '2nd Applicant',
         'thirdApplicant': '3rd Applicant',
         'guardian': 'Guardian',
@@ -4659,13 +4855,16 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       };
       const selectedLabel = targetLabelMap[this.value] || '';
       const selectedNameField = targetNameFieldMap[this.value] || '';
-      const form = document.getElementById('account-form');
       if (form) {
         form.dataset.printTargetLabel = selectedLabel;
         form.dataset.printTargetNameField = selectedNameField;
       }
       if (typeof updateOverlays === 'function') {
         updateOverlays();
+      }
+      // Refresh popup fields with selected applicant's data
+      if (typeof updateOthersPopupData === 'function') {
+        updateOthersPopupData();
       }
     });
   }
@@ -4766,11 +4965,32 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'digit6', top: '90%', left: '56%', label: '6' },
       { field: 'ownership_single', top: '90%', left: '20%', label: '' },
       { field: 'ownership_joint', top: '90%', left: '26%', label: '' },
+      { field: 'ownership_anyone', top: '90%', left: '32%', label: '' },
+      { field: 'ownership_either', top: '90%', left: '38%', label: '' },
+      { field: 'ownership_others', top: '90%', left: '44%', label: '' },
+      { field: 'ownershipOthersText', top: '90%', left: '50%', label: 'Ownership Others' },
       { field: 'tick1', top: '90%', left: '20%', label: '' },
       { field: 'tick2', top: '90%', left: '26%', label: '' },
       { field: 'tick3', top: '90%', left: '32%', label: '' },
       { field: 'male', top: '90%', left: '38%', label: '' },
       { field: 'female', top: '90%', left: '44%', label: '' },
+      { field: 'thirdGender', top: '90%', left: '50%', label: '' },
+      { field: 'resident_yes', top: '90%', left: '50%', label: '' },
+      { field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { field: 'acctType_savings', top: '90%', left: '20%', label: '' },
+      { field: 'acctType_current', top: '90%', left: '26%', label: '' },
+      { field: 'acctType_snd', top: '90%', left: '32%', label: '' },
+      { field: 'acctType_fc', top: '90%', left: '38%', label: '' },
+      { field: 'acctType_rfcd', top: '90%', left: '44%', label: '' },
+      { field: 'acctType_nfcd', top: '90%', left: '50%', label: '' },
+      { field: 'acctType_others', top: '90%', left: '56%', label: '' },
+      { field: 'currency_taka', top: '92%', left: '20%', label: '' },
+      { field: 'currency_usd', top: '92%', left: '26%', label: '' },
+      { field: 'currency_euro', top: '92%', left: '32%', label: '' },
+      { field: 'currency_gbp', top: '92%', left: '38%', label: '' },
+      { field: 'currency_others', top: '92%', left: '44%', label: '' },
+      { field: 'acctTypeOthersText', top: '90%', left: '62%', label: 'Account Type Others' },
+      { field: 'currencyOthersText', top: '92%', left: '50%', label: 'Currency Others' },
       { field: 'initialDeposit', top: '88%', left: '35%', label: 'Initial Deposit' },
       { field: 'birthCertNo', top: '88%', left: '35%', label: 'Birth Certificate' },
       { field: 'chequeBook', top: '86%', left: '70%', label: 'Cheque Book' },
@@ -4799,9 +5019,14 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'guardianNid', top: '46%', left: '35%', label: 'Guardian NID' },
       { field: 'guardianPermanentAddress', top: '49%', left: '35%', label: 'Guardian Permanent Address' },
       { field: 'guardianMobile', top: '52%', left: '35%', label: 'Guardian Mobile' },
-      { field: 'tick3', top: '90%', left: '20%', label: '' },
+      { field: 'fatca_no', top: '90%', left: '20%', label: '' },
+      { field: 'fatca_yes', top: '90%', left: '20%', label: '' },
       { field: 'ownership_single', top: '90%', left: '20%', label: '' },
       { field: 'ownership_joint', top: '90%', left: '26%', label: '' },
+      { field: 'ownership_anyone', top: '90%', left: '32%', label: '' },
+      { field: 'ownership_either', top: '90%', left: '38%', label: '' },
+      { field: 'ownership_others', top: '90%', left: '44%', label: '' },
+      { field: 'ownershipOthersText', top: '90%', left: '50%', label: 'Ownership Others' },
       { field: 'digit2', top: '90%', left: '50%', label: '2' },
       { field: 'digit6', top: '90%', left: '56%', label: '6' },
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
@@ -4810,6 +5035,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer2Seal', top: '80%', left: '78%', label: 'Officer 2 Seal', sealType: 'officer2' },
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
       { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
+      { field: 'attestedSeal2', top: '79%', left: '55%', label: 'Attested Seal 2' },
     ],
     3: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -4836,6 +5062,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' }, 
       { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal' },
+      { field: 'verifiedSeal2', top: '79%', left: '55%', label: 'Verified Seal 2' },
     ]
     ,
     7: [
@@ -4843,7 +5070,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'branchName', top: '6%', left: '70%', label: 'Branch Name 3' },
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
       { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
-      { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
+      { field: 'combinedApplicants', top: '18.5%', left: '22%', label: 'Full Name (English)' },
       { field: 'accountTypeName', top: '15%', left: '50%', label: 'Type of Account' },
       { field: 'accountNature', top: '20%', left: '55%', label: '' },
       { field: 'sourceOfFundsVerify', top: '22%', left: '50%', label: "Source(s) of Funds (Verify)" },
@@ -5054,7 +5281,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'todayDate', top: '6%', left: '85%', label: 'Date' },
       { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
-      { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
+      { field: 'combinedApplicants', top: '18.5%', left: '22%', label: 'Full Name (English)' },
       { field: 'accountTypeName', top: '15%', left: '50%', label: 'Type of Account' },
       { field: 'occupation', top: '82%', left: '35%', label: 'Occupation' },
       { field: 'monthlyIncome', top: '88%', left: '35%', label: 'Probable Monthly Income' },
@@ -5108,7 +5335,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     ],
     17:[
       { field: 'accountNumberNoSpace', top: '12%', left: '28%', label: 'Account Number' },
-      { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
+      { field: 'combinedApplicants', top: '18.5%', left: '22%', label: 'Full Name (English)' },
       { field: 'tick3', top: '90%', left: '20%', label: '' },
       { field: 'tick3', top: '90%', left: '26%', label: '' },
       { field: 'tick3', top: '90%', left: '28%', label: '' },
@@ -5165,11 +5392,32 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'digit6', top: '90%', left: '56%', label: '6' },
       { field: 'ownership_single', top: '90%', left: '20%', label: '' },
       { field: 'ownership_joint', top: '90%', left: '26%', label: '' },
+      { field: 'ownership_anyone', top: '90%', left: '32%', label: '' },
+      { field: 'ownership_either', top: '90%', left: '38%', label: '' },
+      { field: 'ownership_others', top: '90%', left: '44%', label: '' },
+      { field: 'ownershipOthersText', top: '90%', left: '50%', label: 'Ownership Others' },
       { field: 'tick1', top: '90%', left: '20%', label: '' },
       { field: 'tick2', top: '90%', left: '26%', label: '' },
       { field: 'tick3', top: '90%', left: '32%', label: '' },
       { field: 'male', top: '90%', left: '38%', label: '' },
       { field: 'female', top: '90%', left: '44%', label: '' },
+      { field: 'thirdGender', top: '90%', left: '50%', label: '' },
+      { field: 'resident_yes', top: '90%', left: '50%', label: '' },
+      { field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { field: 'acctType_savings', top: '90%', left: '20%', label: '' },
+      { field: 'acctType_current', top: '90%', left: '26%', label: '' },
+      { field: 'acctType_snd', top: '90%', left: '32%', label: '' },
+      { field: 'acctType_fc', top: '90%', left: '38%', label: '' },
+      { field: 'acctType_rfcd', top: '90%', left: '44%', label: '' },
+      { field: 'acctType_nfcd', top: '90%', left: '50%', label: '' },
+      { field: 'acctType_others', top: '90%', left: '56%', label: '' },
+      { field: 'currency_taka', top: '92%', left: '20%', label: '' },
+      { field: 'currency_usd', top: '92%', left: '26%', label: '' },
+      { field: 'currency_euro', top: '92%', left: '32%', label: '' },
+      { field: 'currency_gbp', top: '92%', left: '38%', label: '' },
+      { field: 'currency_others', top: '92%', left: '44%', label: '' },
+      { field: 'acctTypeOthersText', top: '90%', left: '62%', label: 'Account Type Others' },
+      { field: 'currencyOthersText', top: '92%', left: '50%', label: 'Currency Others' },
       { field: 'initialDeposit', top: '88%', left: '35%', label: 'Initial Deposit' },
       { field: 'birthCertNo', top: '88%', left: '35%', label: 'Birth Certificate' },
       { field: 'chequeBook', top: '86%', left: '70%', label: 'Cheque Book' },
@@ -5197,9 +5445,14 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'guardianNid', top: '46%', left: '35%', label: 'Guardian NID' },
       { field: 'guardianPermanentAddress', top: '49%', left: '35%', label: 'Guardian Permanent Address' },
       { field: 'guardianMobile', top: '52%', left: '35%', label: 'Guardian Mobile' },
-      { field: 'tick3', top: '90%', left: '20%', label: '' },
+      { field: 'fatca_no', top: '90%', left: '20%', label: '' },
+      { field: 'fatca_yes', top: '90%', left: '20%', label: '' },
       { field: 'ownership_single', top: '90%', left: '20%', label: '' },
       { field: 'ownership_joint', top: '90%', left: '26%', label: '' },
+      { field: 'ownership_anyone', top: '90%', left: '32%', label: '' },
+      { field: 'ownership_either', top: '90%', left: '38%', label: '' },
+      { field: 'ownership_others', top: '90%', left: '44%', label: '' },
+      { field: 'ownershipOthersText', top: '90%', left: '50%', label: 'Ownership Others' },
       { field: 'digit2', top: '90%', left: '50%', label: '2' },
       { field: 'digit6', top: '90%', left: '56%', label: '6' },
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' },
@@ -5208,6 +5461,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer2Seal', top: '80%', left: '78%', label: 'Officer 2 Seal', sealType: 'officer2' },
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
       { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
+      { field: 'attestedSeal2', top: '79%', left: '55%', label: 'Attested Seal 2' },
     ],
     20: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -5233,6 +5487,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' }, 
       { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal' },
+      { field: 'verifiedSeal2', top: '79%', left: '55%', label: 'Verified Seal 2' },
     ],
     // Guardian preview page overlays (page 48)
     48: [
@@ -5335,11 +5590,32 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'digit6', top: '90%', left: '56%', label: '6' },
       { field: 'ownership_single', top: '90%', left: '20%', label: '' },
       { field: 'ownership_joint', top: '90%', left: '26%', label: '' },
+      { field: 'ownership_anyone', top: '90%', left: '32%', label: '' },
+      { field: 'ownership_either', top: '90%', left: '38%', label: '' },
+      { field: 'ownership_others', top: '90%', left: '44%', label: '' },
+      { field: 'ownershipOthersText', top: '90%', left: '50%', label: 'Ownership Others' },
       { field: 'tick1', top: '90%', left: '20%', label: '' },
       { field: 'tick2', top: '90%', left: '26%', label: '' },
       { field: 'tick3', top: '90%', left: '32%', label: '' },
       { field: 'male', top: '90%', left: '38%', label: '' },
       { field: 'female', top: '90%', left: '44%', label: '' },
+      { field: 'thirdGender', top: '90%', left: '50%', label: '' },
+      { field: 'resident_yes', top: '90%', left: '50%', label: '' },
+      { field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { field: 'acctType_savings', top: '90%', left: '20%', label: '' },
+      { field: 'acctType_current', top: '90%', left: '26%', label: '' },
+      { field: 'acctType_snd', top: '90%', left: '32%', label: '' },
+      { field: 'acctType_fc', top: '90%', left: '38%', label: '' },
+      { field: 'acctType_rfcd', top: '90%', left: '44%', label: '' },
+      { field: 'acctType_nfcd', top: '90%', left: '50%', label: '' },
+      { field: 'acctType_others', top: '90%', left: '56%', label: '' },
+      { field: 'currency_taka', top: '92%', left: '20%', label: '' },
+      { field: 'currency_usd', top: '92%', left: '26%', label: '' },
+      { field: 'currency_euro', top: '92%', left: '32%', label: '' },
+      { field: 'currency_gbp', top: '92%', left: '38%', label: '' },
+      { field: 'currency_others', top: '92%', left: '44%', label: '' },
+      { field: 'acctTypeOthersText', top: '90%', left: '62%', label: 'Account Type Others' },
+      { field: 'currencyOthersText', top: '92%', left: '50%', label: 'Currency Others' },
       { field: 'initialDeposit', top: '88%', left: '35%', label: 'Initial Deposit' },
       { field: 'birthCertNo', top: '88%', left: '35%', label: 'Birth Certificate' },
       { field: 'chequeBook', top: '86%', left: '70%', label: 'Cheque Book' },
@@ -5368,9 +5644,14 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'guardianNid', top: '46%', left: '35%', label: 'Guardian NID' },
       { field: 'guardianPermanentAddress', top: '49%', left: '35%', label: 'Guardian Permanent Address' },
       { field: 'guardianMobile', top: '52%', left: '35%', label: 'Guardian Mobile' },
-      { field: 'tick3', top: '90%', left: '20%', label: '' },
+      { field: 'fatca_no', top: '90%', left: '20%', label: '' },
+      { field: 'fatca_yes', top: '90%', left: '20%', label: '' },
       { field: 'ownership_single', top: '90%', left: '20%', label: '' },
       { field: 'ownership_joint', top: '90%', left: '26%', label: '' },
+      { field: 'ownership_anyone', top: '90%', left: '32%', label: '' },
+      { field: 'ownership_either', top: '90%', left: '38%', label: '' },
+      { field: 'ownership_others', top: '90%', left: '44%', label: '' },
+      { field: 'ownershipOthersText', top: '90%', left: '50%', label: 'Ownership Others' },
       { field: 'digit2', top: '90%', left: '50%', label: '2' },
       { field: 'digit6', top: '90%', left: '56%', label: '6' },
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' },
@@ -5379,6 +5660,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer2Seal', top: '80%', left: '78%', label: 'Officer 2 Seal', sealType: 'officer2' },
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
       { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
+      { field: 'attestedSeal2', top: '79%', left: '55%', label: 'Attested Seal 2' },
     ],
     26: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -5406,6 +5688,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' },
       { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal' },
+      { field: 'verifiedSeal2', top: '79%', left: '55%', label: 'Verified Seal 2' },
     ],
     // Taqwa Imperial Pages 30-35 (copy of Conventional pages 1-6)
     30: [
@@ -5455,11 +5738,32 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'digit6', top: '90%', left: '56%', label: '6' },
       { field: 'ownership_single', top: '90%', left: '20%', label: '' },
       { field: 'ownership_joint', top: '90%', left: '26%', label: '' },
+      { field: 'ownership_anyone', top: '90%', left: '32%', label: '' },
+      { field: 'ownership_either', top: '90%', left: '38%', label: '' },
+      { field: 'ownership_others', top: '90%', left: '44%', label: '' },
+      { field: 'ownershipOthersText', top: '90%', left: '50%', label: 'Ownership Others' },
       { field: 'tick1', top: '90%', left: '20%', label: '' },
       { field: 'tick2', top: '90%', left: '26%', label: '' },
       { field: 'tick3', top: '90%', left: '32%', label: '' },
       { field: 'male', top: '90%', left: '38%', label: '' },
       { field: 'female', top: '90%', left: '44%', label: '' },
+      { field: 'thirdGender', top: '90%', left: '50%', label: '' },
+      { field: 'resident_yes', top: '90%', left: '50%', label: '' },
+      { field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { field: 'acctType_savings', top: '90%', left: '20%', label: '' },
+      { field: 'acctType_current', top: '90%', left: '26%', label: '' },
+      { field: 'acctType_snd', top: '90%', left: '32%', label: '' },
+      { field: 'acctType_fc', top: '90%', left: '38%', label: '' },
+      { field: 'acctType_rfcd', top: '90%', left: '44%', label: '' },
+      { field: 'acctType_nfcd', top: '90%', left: '50%', label: '' },
+      { field: 'acctType_others', top: '90%', left: '56%', label: '' },
+      { field: 'currency_taka', top: '92%', left: '20%', label: '' },
+      { field: 'currency_usd', top: '92%', left: '26%', label: '' },
+      { field: 'currency_euro', top: '92%', left: '32%', label: '' },
+      { field: 'currency_gbp', top: '92%', left: '38%', label: '' },
+      { field: 'currency_others', top: '92%', left: '44%', label: '' },
+      { field: 'acctTypeOthersText', top: '90%', left: '62%', label: 'Account Type Others' },
+      { field: 'currencyOthersText', top: '92%', left: '50%', label: 'Currency Others' },
       { field: 'initialDeposit', top: '88%', left: '35%', label: 'Initial Deposit' },
       { field: 'birthCertNo', top: '88%', left: '35%', label: 'Birth Certificate' },
       { field: 'chequeBook', top: '86%', left: '70%', label: 'Cheque Book' },
@@ -5488,9 +5792,14 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'guardianNid', top: '46%', left: '35%', label: 'Guardian NID' },
       { field: 'guardianPermanentAddress', top: '49%', left: '35%', label: 'Guardian Permanent Address' },
       { field: 'guardianMobile', top: '52%', left: '35%', label: 'Guardian Mobile' },
-      { field: 'tick3', top: '90%', left: '20%', label: '' },
+      { field: 'fatca_no', top: '90%', left: '20%', label: '' },
+      { field: 'fatca_yes', top: '90%', left: '20%', label: '' },
       { field: 'ownership_single', top: '90%', left: '20%', label: '' },
       { field: 'ownership_joint', top: '90%', left: '26%', label: '' },
+      { field: 'ownership_anyone', top: '90%', left: '32%', label: '' },
+      { field: 'ownership_either', top: '90%', left: '38%', label: '' },
+      { field: 'ownership_others', top: '90%', left: '44%', label: '' },
+      { field: 'ownershipOthersText', top: '90%', left: '50%', label: 'Ownership Others' },
       { field: 'digit2', top: '90%', left: '50%', label: '2' },
       { field: 'digit6', top: '90%', left: '56%', label: '6' },
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' },
@@ -5499,6 +5808,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer2Seal', top: '80%', left: '78%', label: 'Officer 2 Seal', sealType: 'officer2' },
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
       { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
+      { field: 'attestedSeal2', top: '79%', left: '55%', label: 'Attested Seal 2' },
     ],
     32: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -5526,6 +5836,197 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'secondApplicantName', top: '52%', left: '35%', label: 'Second Applicant Name' }, 
       { field: 'thirdApplicantName', top: '55%', left: '35%', label: 'Third Applicant Name' },
       { field: 'verifiedSeal', top: '79%', left: '42%', label: 'Verified Seal' },
+      { field: 'verifiedSeal2', top: '79%', left: '55%', label: 'Verified Seal 2' },
+    ],
+    // FATCA Declaration Page
+    50: [
+      { field: 'branchName', top: '12.5%', left: '27%', label: 'Branch Name' },
+      { field: 'fatca_cif', top: '23%', left: '28%', label: 'Customer ID' },
+      { field: 'fatca_accountNumber', top: '26%', left: '28%', label: 'Account Number' },
+      { field: 'combinedApplicants', top: '29%', left: '28%', label: 'Name of the Account' },
+      { field: 'fatca_accountHolder', top: '36%', left: '28%', label: 'Name of Account Holder' },
+      { field: 'fatca_countryResidence', top: '39%', left: '28%', label: 'Country of Residence' },
+      { field: 'fatca_countryBirth', top: '42%', left: '28%', label: 'Country of Birth' },
+      { field: 'fatca_q1_yes', top: '48%', left: '42%', label: '' },
+      { field: 'fatca_q1_no', top: '48%', left: '47%', label: '' },
+      { field: 'fatca_q2_yes', top: '50.5%', left: '42%', label: '' },
+      { field: 'fatca_q2_no', top: '50.5%', left: '47%', label: '' },
+      { field: 'fatca_q3_yes', top: '53%', left: '42%', label: '' },
+      { field: 'fatca_q3_no', top: '53%', left: '47%', label: '' },
+      { field: 'fatca_q4_yes', top: '56%', left: '42%', label: '' },
+      { field: 'fatca_q4_no', top: '56%', left: '47%', label: '' },
+      { field: 'fatca_accountHolder', top: '89%', left: '10%', label: 'Signature Name' },
+      { field: 'fatca_date', top: '91.5%', left: '10%', label: 'Date' },
+      { field: 'officer1Seal', top: '85%', left: '55%', label: 'Officer 1 Seal', sealType: 'officer1' },
+    ],
+    // Additional Applicant Page (for 2nd/3rd applicant and guardian overlay positioning)
+    55: [
+      { field: 'applicantStaticLabel', top: '4%', left: '70%', label: '', alwaysShow: true },
+      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number', alwaysShow: true },
+      { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
+      { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
+      { field: 'fullNameBn', top: '11%', left: '35%', label: 'Name (Bangla)' },
+      { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
+      { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
+      { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
+      { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
+      { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
+      { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
+      { field: 'dob', top: '23%', left: '35%', label: 'Date of Birth' },
+      { field: 'nationality', top: '26%', left: '35%', label: 'Nationality' },
+      { field: 'presentHouse', top: '48%', left: '20%', label: 'Present Address' },
+      { field: 'presentRoad', top: '52%', left: '20%', label: 'Road' },
+      { field: 'presentPostCode', top: '52%', left: '55%', label: 'Post Code' },
+      { field: 'presentPO', top: '52%', left: '70%', label: 'PO' },
+      { field: 'presentThana', top: '52%', left: '20%', label: 'Thana' },
+      { field: 'presentDistrict', top: '52%', left: '55%', label: 'District' },
+      { field: 'presentCountry', top: '52%', left: '20%', label: 'Country' },
+      { field: 'permanentHouse', top: '60%', left: '20%', label: 'Permanent Address' },
+      { field: 'permanentRoad', top: '64%', left: '20%', label: 'Road' },
+      { field: 'permanentPostCode', top: '64%', left: '55%', label: 'Post Code' },
+      { field: 'permanentPO', top: '64%', left: '70%', label: 'PO' },
+      { field: 'permanentThana', top: '64%', left: '20%', label: 'Thana' },
+      { field: 'permanentDistrict', top: '64%', left: '55%', label: 'District' },
+      { field: 'permanentCountry', top: '64%', left: '20%', label: 'Country' },
+      { field: 'mobile', top: '72%', left: '35%', label: 'Mobile' },
+      { field: 'email', top: '75%', left: '35%', label: 'Email' },
+      { field: 'occupation', top: '82%', left: '35%', label: 'Occupation' },
+      { field: 'monthlyIncome', top: '88%', left: '35%', label: 'Probable Monthly Income' },
+      { field: 'sourceOfFund', top: '56%', left: '35%', label: 'Source of Fund' },
+      { field: 'etin', top: '88%', left: '35%', label: 'ETIN' },
+      { field: 'birthCertNo', top: '88%', left: '35%', label: 'Birth Certificate' },
+      { field: 'male', top: '90%', left: '38%', label: '' },
+      { field: 'female', top: '90%', left: '44%', label: '' },
+      { field: 'thirdGender', top: '90%', left: '50%', label: '' },
+      { field: 'resident_yes', top: '90%', left: '50%', label: '' },
+      { field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { field: 'officer1Seal', top: '85%', left: '78%', label: 'Officer 1 Seal', sealType: 'officer1' },
+    ],
+    56: [
+      { field: 'applicantStaticLabel', top: '4%', left: '70%', label: '', alwaysShow: true },
+      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number', alwaysShow: true },
+      { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
+      { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
+      { field: 'fullNameBn', top: '11%', left: '35%', label: 'Name (Bangla)' },
+      { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
+      { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
+      { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
+      { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
+      { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
+      { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
+      { field: 'dob', top: '23%', left: '35%', label: 'Date of Birth' },
+      { field: 'nationality', top: '26%', left: '35%', label: 'Nationality' },
+      { field: 'presentHouse', top: '48%', left: '20%', label: 'Present Address' },
+      { field: 'presentRoad', top: '52%', left: '20%', label: 'Road' },
+      { field: 'presentPostCode', top: '52%', left: '55%', label: 'Post Code' },
+      { field: 'presentPO', top: '52%', left: '70%', label: 'PO' },
+      { field: 'presentThana', top: '52%', left: '20%', label: 'Thana' },
+      { field: 'presentDistrict', top: '52%', left: '55%', label: 'District' },
+      { field: 'presentCountry', top: '52%', left: '20%', label: 'Country' },
+      { field: 'permanentHouse', top: '60%', left: '20%', label: 'Permanent Address' },
+      { field: 'permanentRoad', top: '64%', left: '20%', label: 'Road' },
+      { field: 'permanentPostCode', top: '64%', left: '55%', label: 'Post Code' },
+      { field: 'permanentPO', top: '64%', left: '70%', label: 'PO' },
+      { field: 'permanentThana', top: '64%', left: '20%', label: 'Thana' },
+      { field: 'permanentDistrict', top: '64%', left: '55%', label: 'District' },
+      { field: 'permanentCountry', top: '64%', left: '20%', label: 'Country' },
+      { field: 'mobile', top: '72%', left: '35%', label: 'Mobile' },
+      { field: 'email', top: '75%', left: '35%', label: 'Email' },
+      { field: 'occupation', top: '82%', left: '35%', label: 'Occupation' },
+      { field: 'monthlyIncome', top: '88%', left: '35%', label: 'Probable Monthly Income' },
+      { field: 'sourceOfFund', top: '56%', left: '35%', label: 'Source of Fund' },
+      { field: 'etin', top: '88%', left: '35%', label: 'ETIN' },
+      { field: 'birthCertNo', top: '88%', left: '35%', label: 'Birth Certificate' },
+      { field: 'male', top: '90%', left: '38%', label: '' },
+      { field: 'female', top: '90%', left: '44%', label: '' },
+      { field: 'thirdGender', top: '90%', left: '50%', label: '' },
+      { field: 'resident_yes', top: '90%', left: '50%', label: '' },
+      { field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { field: 'officer1Seal', top: '85%', left: '78%', label: 'Officer 1 Seal', sealType: 'officer1' },
+    ],
+    57: [
+      { field: 'applicantStaticLabel', top: '4%', left: '70%', label: '', alwaysShow: true },
+      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number', alwaysShow: true },
+      { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
+      { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
+      { field: 'fullNameBn', top: '11%', left: '35%', label: 'Name (Bangla)' },
+      { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
+      { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
+      { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
+      { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
+      { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
+      { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
+      { field: 'dob', top: '23%', left: '35%', label: 'Date of Birth' },
+      { field: 'nationality', top: '26%', left: '35%', label: 'Nationality' },
+      { field: 'presentHouse', top: '48%', left: '20%', label: 'Present Address' },
+      { field: 'presentRoad', top: '52%', left: '20%', label: 'Road' },
+      { field: 'presentPostCode', top: '52%', left: '55%', label: 'Post Code' },
+      { field: 'presentPO', top: '52%', left: '70%', label: 'PO' },
+      { field: 'presentThana', top: '52%', left: '20%', label: 'Thana' },
+      { field: 'presentDistrict', top: '52%', left: '55%', label: 'District' },
+      { field: 'presentCountry', top: '52%', left: '20%', label: 'Country' },
+      { field: 'permanentHouse', top: '60%', left: '20%', label: 'Permanent Address' },
+      { field: 'permanentRoad', top: '64%', left: '20%', label: 'Road' },
+      { field: 'permanentPostCode', top: '64%', left: '55%', label: 'Post Code' },
+      { field: 'permanentPO', top: '64%', left: '70%', label: 'PO' },
+      { field: 'permanentThana', top: '64%', left: '20%', label: 'Thana' },
+      { field: 'permanentDistrict', top: '64%', left: '55%', label: 'District' },
+      { field: 'permanentCountry', top: '64%', left: '20%', label: 'Country' },
+      { field: 'mobile', top: '72%', left: '35%', label: 'Mobile' },
+      { field: 'email', top: '75%', left: '35%', label: 'Email' },
+      { field: 'occupation', top: '82%', left: '35%', label: 'Occupation' },
+      { field: 'monthlyIncome', top: '88%', left: '35%', label: 'Probable Monthly Income' },
+      { field: 'sourceOfFund', top: '56%', left: '35%', label: 'Source of Fund' },
+      { field: 'etin', top: '88%', left: '35%', label: 'ETIN' },
+      { field: 'birthCertNo', top: '88%', left: '35%', label: 'Birth Certificate' },
+      { field: 'male', top: '90%', left: '38%', label: '' },
+      { field: 'female', top: '90%', left: '44%', label: '' },
+      { field: 'thirdGender', top: '90%', left: '50%', label: '' },
+      { field: 'resident_yes', top: '90%', left: '50%', label: '' },
+      { field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { field: 'officer1Seal', top: '85%', left: '78%', label: 'Officer 1 Seal', sealType: 'officer1' },
+    ],
+    58: [
+      { field: 'applicantStaticLabel', top: '4%', left: '70%', label: '', alwaysShow: true },
+      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number', alwaysShow: true },
+      { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
+      { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
+      { field: 'fullNameBn', top: '11%', left: '35%', label: 'Name (Bangla)' },
+      { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
+      { field: 'nid', top: '20%', left: '60%', label: 'NID Number' },
+      { field: 'passportNo', top: '20%', left: '66%', label: 'Passport No' },
+      { field: 'fatherName', top: '14%', left: '35%', label: 'Father Name' },
+      { field: 'motherName', top: '17%', left: '35%', label: 'Mother Name' },
+      { field: 'spouseName', top: '20%', left: '35%', label: 'Spouse Name' },
+      { field: 'dob', top: '23%', left: '35%', label: 'Date of Birth' },
+      { field: 'nationality', top: '26%', left: '35%', label: 'Nationality' },
+      { field: 'presentHouse', top: '48%', left: '20%', label: 'Present Address' },
+      { field: 'presentRoad', top: '52%', left: '20%', label: 'Road' },
+      { field: 'presentPostCode', top: '52%', left: '55%', label: 'Post Code' },
+      { field: 'presentPO', top: '52%', left: '70%', label: 'PO' },
+      { field: 'presentThana', top: '52%', left: '20%', label: 'Thana' },
+      { field: 'presentDistrict', top: '52%', left: '55%', label: 'District' },
+      { field: 'presentCountry', top: '52%', left: '20%', label: 'Country' },
+      { field: 'permanentHouse', top: '60%', left: '20%', label: 'Permanent Address' },
+      { field: 'permanentRoad', top: '64%', left: '20%', label: 'Road' },
+      { field: 'permanentPostCode', top: '64%', left: '55%', label: 'Post Code' },
+      { field: 'permanentPO', top: '64%', left: '70%', label: 'PO' },
+      { field: 'permanentThana', top: '64%', left: '20%', label: 'Thana' },
+      { field: 'permanentDistrict', top: '64%', left: '55%', label: 'District' },
+      { field: 'permanentCountry', top: '64%', left: '20%', label: 'Country' },
+      { field: 'mobile', top: '72%', left: '35%', label: 'Mobile' },
+      { field: 'email', top: '75%', left: '35%', label: 'Email' },
+      { field: 'occupation', top: '82%', left: '35%', label: 'Occupation' },
+      { field: 'monthlyIncome', top: '88%', left: '35%', label: 'Probable Monthly Income' },
+      { field: 'sourceOfFund', top: '56%', left: '35%', label: 'Source of Fund' },
+      { field: 'etin', top: '88%', left: '35%', label: 'ETIN' },
+      { field: 'birthCertNo', top: '88%', left: '35%', label: 'Birth Certificate' },
+      { field: 'male', top: '90%', left: '38%', label: '' },
+      { field: 'female', top: '90%', left: '44%', label: '' },
+      { field: 'thirdGender', top: '90%', left: '50%', label: '' },
+      { field: 'resident_yes', top: '90%', left: '50%', label: '' },
+      { field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { field: 'officer1Seal', top: '85%', left: '78%', label: 'Officer 1 Seal', sealType: 'officer1' },
     ]
   };
 
@@ -5558,7 +6059,12 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
           config.field.startsWith('credibleSourceOfFunds_') ||
           config.field.startsWith('riskLowTick') ||
           config.field.startsWith('riskHighTick') ||
-          config.field === 'male' || config.field === 'female' ||
+          config.field === 'fatca_yes' || config.field === 'fatca_no' ||
+          config.field.startsWith('fatca_q') ||
+          config.field.startsWith('resident_') ||
+          config.field.startsWith('acctType_') ||
+          config.field.startsWith('currency_') ||
+          config.field === 'male' || config.field === 'female' || config.field === 'thirdGender' ||
           config.field === 'gMale' || config.field === 'gFemale'
         );
         overlay.className = (isFixedTick || (boundEl && boundEl.type === 'checkbox') || config.field === 'chequeBook' || config.field === 'debitCard') ? 'overlay overlay-check' : 'overlay';
@@ -5894,6 +6400,26 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         return;
       }
 
+      // attestedSeal2 / verifiedSeal2: only show when 2nd or 3rd applicant has a name
+      if (field === 'attestedSeal2' || field === 'verifiedSeal2') {
+        const hasMultiApplicant = !!(
+          (form.elements['secondApplicantName'] && form.elements['secondApplicantName'].value.trim()) ||
+          (form.elements['thirdApplicantName'] && form.elements['thirdApplicantName'].value.trim())
+        );
+        if (hasMultiApplicant) {
+          // Render the same triangle seal as the original
+          const sealSvg = field === 'attestedSeal2' ? ATTESTED_SEAL_SVG : VERIFIED_SEAL_SVG;
+          renderTriangleSealOverlay(overlay, sealSvg);
+        } else {
+          overlay.innerHTML = '';
+          overlay.classList.add('overlay-empty');
+          overlay.style.width = '';
+          overlay.style.height = '';
+          overlay.style.background = '';
+        }
+        return;
+      }
+
       // Ticks: some tick overlays are conditional based on account type
       if (overlay.dataset.field && overlay.dataset.field.startsWith('tick')) {
         // Determine account type name (derived from account number or field)
@@ -5920,15 +6446,23 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
           displayValue = ownership === 'single' ? '✔' : '';
         } else if (overlay.dataset.field === 'ownership_joint') {
           displayValue = ownership === 'joint' ? '✔' : '';
+        } else if (overlay.dataset.field === 'ownership_anyone') {
+          displayValue = ownership === 'anyone' ? '✔' : '';
+        } else if (overlay.dataset.field === 'ownership_either') {
+          displayValue = ownership === 'either' ? '✔' : '';
+        } else if (overlay.dataset.field === 'ownership_others') {
+          displayValue = ownership === 'others' ? '✔' : '';
         } else {
           displayValue = '';
         }
       }
 
-      // Gender tick overlays (male/female) — bound to the select `accountGender`
-      else if (field === 'male' || field === 'female') {
+      // Gender tick overlays (male/female/thirdGender) — bound to the select `accountGender`
+      else if (field === 'male' || field === 'female' || field === 'thirdGender') {
         const genderVal = form.elements['accountGender'] ? form.elements['accountGender'].value : '';
-        displayValue = (genderVal === field) ? '✔' : '';
+        if (field === 'male') displayValue = (genderVal === 'male') ? '✔' : '';
+        else if (field === 'female') displayValue = (genderVal === 'female') ? '✔' : '';
+        else if (field === 'thirdGender') displayValue = (genderVal === 'third') ? '✔' : '';
       }
 
       // Guardian Gender tick overlays (gMale/gFemale) — bound to the select `gGender`
@@ -5953,6 +6487,88 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         } else {
           displayValue = '';
         }
+      }
+
+      // FATCA ticks: fatca_yes/fatca_no linked to FATCA dropdown, fatca_q*_yes/no linked to FATCA questions
+      else if (overlay.dataset.field && overlay.dataset.field.startsWith('fatca_')) {
+        const f = overlay.dataset.field;
+        // Skip non-tick fatca fields — handle them directly here
+        if (f === 'fatca_cif') {
+          const cifVal = form.elements['cif'] ? form.elements['cif'].value.replace(/\s+/g, '') : '';
+          displayValue = cifVal ? cifVal.split('').join('\u00A0\u00A0\u00A0') : '';
+        } else if (f === 'fatca_accountNumber') {
+          const acctVal = form.elements['accountNumber'] ? form.elements['accountNumber'].value.replace(/\s+/g, '') : '';
+          displayValue = acctVal ? acctVal.split('').join('\u00A0\u00A0\u00A0') : '';
+        } else if (f === 'fatca_date') {
+          const todayField = form.elements['todayDate'] ? form.elements['todayDate'].value : '';
+          if (todayField) {
+            const parsed = parseFormDateValue(todayField);
+            if (parsed) {
+              const dd = String(parsed.getDate()).padStart(2, '0');
+              const mm = String(parsed.getMonth() + 1).padStart(2, '0');
+              const yyyy = String(parsed.getFullYear());
+              displayValue = dd + '-' + mm + '-' + yyyy;
+            }
+          }
+        } else if (f === 'fatca_countryResidence') {
+          displayValue = form.elements['fatca_countryResidence'] ? form.elements['fatca_countryResidence'].value : '';
+        } else if (f === 'fatca_countryBirth') {
+          displayValue = form.elements['fatca_countryBirth'] ? form.elements['fatca_countryBirth'].value : '';
+        } else if (f === 'fatca_accountHolder') {
+          const sel = form.elements['fatca_accountHolder'] ? form.elements['fatca_accountHolder'].value : '';
+          if (sel === '1st') displayValue = form.elements['fullNameEn'] ? form.elements['fullNameEn'].value : '';
+          else if (sel === '2nd') displayValue = form.elements['secondApplicantName'] ? form.elements['secondApplicantName'].value : '';
+          else if (sel === '3rd') displayValue = form.elements['thirdApplicantName'] ? form.elements['thirdApplicantName'].value : '';
+          else if (sel === 'guardian') displayValue = form.elements['gNameEn'] ? form.elements['gNameEn'].value : '';
+          else if (sel === 'beneficialOwner') displayValue = form.elements['boNameEn'] ? form.elements['boNameEn'].value : '';
+          else displayValue = '';
+        } else if (f === 'fatca_yes') {
+          const fatcaVal = form.elements['fatca'] ? String(form.elements['fatca'].value || '').toLowerCase() : 'no';
+          displayValue = (fatcaVal === 'yes') ? '✔' : '';
+        } else if (f === 'fatca_no') {
+          const fatcaVal = form.elements['fatca'] ? String(form.elements['fatca'].value || '').toLowerCase() : 'no';
+          displayValue = (fatcaVal === 'no') ? '✔' : '';
+        } else if (f === 'fatca_q1_yes' || f === 'fatca_q1_no') {
+          const qVal = form.elements['fatca_q1'] ? String(form.elements['fatca_q1'].value || '').toLowerCase() : '';
+          displayValue = (f.endsWith('_yes') && qVal === 'yes') ? '✔' : (f.endsWith('_no') && qVal === 'no') ? '✔' : '';
+        } else if (f === 'fatca_q2_yes' || f === 'fatca_q2_no') {
+          const qVal = form.elements['fatca_q2'] ? String(form.elements['fatca_q2'].value || '').toLowerCase() : '';
+          displayValue = (f.endsWith('_yes') && qVal === 'yes') ? '✔' : (f.endsWith('_no') && qVal === 'no') ? '✔' : '';
+        } else if (f === 'fatca_q3_yes' || f === 'fatca_q3_no') {
+          const qVal = form.elements['fatca_q3'] ? String(form.elements['fatca_q3'].value || '').toLowerCase() : '';
+          displayValue = (f.endsWith('_yes') && qVal === 'yes') ? '✔' : (f.endsWith('_no') && qVal === 'no') ? '✔' : '';
+        } else if (f === 'fatca_q4_yes' || f === 'fatca_q4_no') {
+          const qVal = form.elements['fatca_q4'] ? String(form.elements['fatca_q4'].value || '').toLowerCase() : '';
+          displayValue = (f.endsWith('_yes') && qVal === 'yes') ? '✔' : (f.endsWith('_no') && qVal === 'no') ? '✔' : '';
+        } else {
+          displayValue = '';
+        }
+      }
+
+      // Resident Status ticks: linked to residentStatus dropdown (swapped for 2nd/3rd/guardian during print)
+      else if (overlay.dataset.field && overlay.dataset.field.startsWith('resident_')) {
+        const resVal = form.elements['residentStatus'] ? String(form.elements['residentStatus'].value || '').toLowerCase() : 'yes';
+        if (overlay.dataset.field === 'resident_yes') {
+          displayValue = (resVal === 'yes') ? '✔' : '';
+        } else if (overlay.dataset.field === 'resident_no') {
+          displayValue = (resVal === 'no') ? '✔' : '';
+        } else {
+          displayValue = '';
+        }
+      }
+
+      // Type of Account ticks: acctType_savings, acctType_current, acctType_snd, acctType_fc, acctType_rfcd, acctType_nfcd, acctType_others
+      else if (overlay.dataset.field && overlay.dataset.field.startsWith('acctType_')) {
+        const acctTypeVal = form.elements['typeOfAccount'] ? String(form.elements['typeOfAccount'].value || '').toLowerCase() : 'savings';
+        const tickType = overlay.dataset.field.replace('acctType_', '');
+        displayValue = (acctTypeVal === tickType) ? '✔' : '';
+      }
+
+      // Currency ticks: currency_taka, currency_usd, currency_euro, currency_gbp, currency_others
+      else if (overlay.dataset.field && overlay.dataset.field.startsWith('currency_')) {
+        const currVal = form.elements['currency'] ? String(form.elements['currency'].value || '').toLowerCase() : 'taka';
+        const tickCurr = overlay.dataset.field.replace('currency_', '');
+        displayValue = (currVal === tickCurr) ? '✔' : '';
       }
 
       // NID / Birth / Passport tick overlays: each has two positions. Show tick when the corresponding value exists.
@@ -6452,22 +7068,26 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         }
       }
 
-      // Combined applicants overlay: show fullNameEn + secondApplicantName + thirdApplicantName
+      // Combined applicants overlay: use override if edited in popup, otherwise build from individual names
       else if (field === 'combinedApplicants') {
+        const overrideVal = (form.elements['combinedApplicantsOverride'] && form.elements['combinedApplicantsOverride'].value) || '';
         const first = data.fullNameEn || '';
         const second = (form.elements['secondApplicantName'] && form.elements['secondApplicantName'].value) || '';
         const third = (form.elements['thirdApplicantName'] && form.elements['thirdApplicantName'].value) || '';
-
-        // Show combined box for joint applicants (join with AND) or show first name when single
         const ownershipVal = form.elements['accountOwnership'] ? form.elements['accountOwnership'].value : '';
-        if (ownershipVal === 'joint' && (second || third)) {
+
+        // If user edited the name in the popup, use that override directly
+        if (overrideVal && overrideVal.trim()) {
+          displayValue = overrideVal.trim().toUpperCase();
+          overlay.style.whiteSpace = 'nowrap';
+        } else if ((ownershipVal === 'joint' || ownershipVal === 'anyone' || ownershipVal === 'either' || ownershipVal === 'others') && (second || third)) {
           const parts = [];
           if (first) parts.push(String(first).trim());
           if (second) parts.push(String(second).trim());
           if (third) parts.push(String(third).trim());
           displayValue = parts.join(' AND ').replace(/\s+/g, ' ').trim().toUpperCase();
           overlay.style.whiteSpace = 'nowrap';
-        } else if (ownershipVal === 'single' && first) {
+        } else if (first) {
           displayValue = String(first).trim().replace(/\s+/g, ' ').toUpperCase();
           overlay.style.whiteSpace = 'nowrap';
         } else {
@@ -6475,45 +7095,31 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         }
       }
 
-      // Bangla combined applicants: use fullNameBn + translate 2nd/3rd applicants and join with ' এবং '
+      // Bangla combined applicants: use fullNameBn + app2_fullNameBn + app3_fullNameBn joined with ' এবং '
       else if (field === 'combinedApplicantsBn') {
         const first = data.fullNameBn || '';
-        const second = (form.elements['secondApplicantName'] && form.elements['secondApplicantName'].value) || '';
-        const third = (form.elements['thirdApplicantName'] && form.elements['thirdApplicantName'].value) || '';
+        const second = (form.elements['app2_fullNameBn'] && form.elements['app2_fullNameBn'].value) || '';
+        const third = (form.elements['app3_fullNameBn'] && form.elements['app3_fullNameBn'].value) || '';
         const ownershipVal = form.elements['accountOwnership'] ? form.elements['accountOwnership'].value : '';
         const inputEl = form.elements['combinedApplicantsBn'];
 
-        // Always use fullNameBn as base
         if (first && String(first).trim() !== '') {
-          // Joint account with 2nd/3rd applicants: combine fullNameBn with translated names
-          if (ownershipVal === 'joint' && (second || third)) {
-            const partsToTranslate = [];
-            if (second) partsToTranslate.push(second);
-            if (third) partsToTranslate.push(third);
-            
-            translateNamesToBn(partsToTranslate).then(bn => {
-              const parts = [first];
-              if (bn) parts.push(bn);
-              const combined = parts.join(' এবং ');
-              overlay.textContent = combined;
-              overlay.classList.remove('overlay-empty');
-              if (inputEl) inputEl.value = combined;
-            }).catch(err => {
-              console.error('Failed to translate 2nd/3rd applicants to Bangla', err);
-              overlay.textContent = first;
-              overlay.classList.remove('overlay-empty');
-              if (inputEl) inputEl.value = first;
-            });
-            displayValue = 'SKIP_FINAL_CHECK'; // Skip final empty check
+          if ((ownershipVal === 'joint' || ownershipVal === 'anyone' || ownershipVal === 'either' || ownershipVal === 'others') && (second || third)) {
+            const parts = [first.trim()];
+            if (second.trim()) parts.push(second.trim());
+            if (third.trim()) parts.push(third.trim());
+            const combined = parts.join(' এবং ');
+            overlay.textContent = combined;
+            overlay.classList.remove('overlay-empty');
+            if (inputEl) inputEl.value = combined;
           } else {
             // Single account: just show fullNameBn
             overlay.textContent = first;
             overlay.classList.remove('overlay-empty');
             if (inputEl) inputEl.value = first;
-            displayValue = 'SKIP_FINAL_CHECK'; // Skip final empty check
           }
+          displayValue = 'SKIP_FINAL_CHECK';
         } else {
-          // No fullNameBn available
           overlay.textContent = '';
           overlay.classList.add('overlay-empty');
           if (inputEl) inputEl.value = '';
@@ -6589,6 +7195,11 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         displayValue = 'Through Letter of Thanks';
       }
 
+      // Special: applicantStaticLabel - show the current applicant label from dataset
+      else if (field === 'applicantStaticLabel') {
+        displayValue = form.dataset._printApplicantLabel || '';
+      }
+
       // If this overlay represents a checkbox bound to the form, render a tick when checked
       // Special: for chequeBook and debitCard selects, render a tick for 'Yes'
       else if (field === 'chequeBook' || field === 'debitCard') {
@@ -6600,6 +7211,15 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       } else {
         displayValue = value;
 
+        // When printing 2nd/3rd applicant, override fullNameEn/fullNameBn on page 1 overlays
+        if (form.dataset._printApplicantActive === 'true') {
+          if (field === 'fullNameEn') {
+            displayValue = form.dataset._printApplicantName || value;
+          } else if (field === 'fullNameBn') {
+            displayValue = form.dataset._printApplicantNameBn || value;
+          }
+        }
+
         // If nationality is empty, show 'Bangladeshi' by default on all pages with a nationality overlay
         if (field === 'nationality' && (!displayValue || String(displayValue).trim() === '')) {
           displayValue = 'Bangladeshi';
@@ -6607,12 +7227,17 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
         // Visual formatting for E-TIN and guardian TIN: insert four non-breaking spaces between every character
         // For pages 1,18,24,30,48 add an extra hair-space (~+0.10 NBSP) for improved visual spacing
-        if ((field === 'etin' || field === 'boTin' || field === 'gTin') && value) {
+        if ((field === 'etin' || field === 'gTin') && value) {
           const cleanedTin = String(value).replace(/\s+/g, '');
           const page = overlay.dataset.page;
           const extraPages = ['1','18','24','30','48'];
+          const additionalPages = ['55','56','57','58'];
           if (extraPages.includes(String(page))) {
             const sep = '\u00A0\u00A0\u00A0\u00A0\u200A';
+            displayValue = cleanedTin.split('').join(sep);
+          } else if (additionalPages.includes(String(page))) {
+            // Pages 55-58 (Additional Applicant): slightly more spacing (~4.5 NBSPs)
+            const sep = '\u00A0\u00A0\u00A0\u00A0\u2009';
             displayValue = cleanedTin.split('').join(sep);
           } else {
             displayValue = cleanedTin.split('').join('\u00A0\u00A0\u00A0\u00A0');
@@ -6834,6 +7459,11 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
             const cleaned = String(value).replace(/\s+/g, '');
             // Insert a very narrow space (~0.10 NBSP) between every character for page 40
             displayValue = cleaned.split('').join('\u00A0\u00A0\u00A0\u00A0\u200A\u200A');
+          }
+          // Pages 55-58 (Additional Applicant): 4.25 NBSPs spacing
+          else if (overlay.dataset.page === '55' || overlay.dataset.page === '56' || overlay.dataset.page === '57' || overlay.dataset.page === '58') {
+            const cleaned = String(value).replace(/\s+/g, '');
+            displayValue = cleaned.split('').join('\u00A0\u00A0\u00A0\u00A0\u200A');
           } else {
             displayValue = formatAccountNumber(value);
           }
@@ -6845,9 +7475,19 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
           // For Others page 1 (page 7) and page 13 show CIF without injected NBSPs
           if (overlay.dataset.page === '7' || overlay.dataset.page === '13') {
             displayValue = cleanedCif;
+          }
+          // Pages 55-58 (Additional Applicant): show as "CIF Number - XXXXXXX" with no spacing
+          else if (overlay.dataset.page === '55' || overlay.dataset.page === '56' || overlay.dataset.page === '57' || overlay.dataset.page === '58') {
+            displayValue = 'CIF Number - ' + cleanedCif;
           } else {
             displayValue = cleanedCif.split('').join('\u00A0\u00A0\u00A0\u00A0');
           }
+        }
+
+        // AML Tracking Number on pages 55-58: show as "AML Tracking Number - XXXXXXX"
+        if (field === 'amlTrackingNumber' && overlay.dataset.page && (overlay.dataset.page === '55' || overlay.dataset.page === '56' || overlay.dataset.page === '57' || overlay.dataset.page === '58')) {
+          const amlRaw = String(value || '').trim();
+          displayValue = amlRaw ? 'AML Tracking Number - ' + amlRaw : '';
         }
 
         // Visual formatting for sectorCode: insert non-breaking spaces on page 15
@@ -7488,13 +8128,14 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   // Handle form type (Conventional / Conventional Imperial / Taqwa / Others) switching
   function handleFormTypeChange() {
     const formType = formTypeSelect ? formTypeSelect.value : 'conventional';
-    const conventionalPages = document.querySelectorAll('.form-page:not(.others-page):not(.imperial-page):not(.taqwa-page):not(.taqwa-imperial-page):not(.beneficial-owner-page)');
+    const conventionalPages = document.querySelectorAll('.form-page:not(.others-page):not(.imperial-page):not(.taqwa-page):not(.taqwa-imperial-page):not(.beneficial-owner-page):not(.additional-applicant-page):not(.fatca-page):not(.guardian-page)');
     const imperialPages = document.querySelectorAll('.form-page.imperial-page');
     const taqwaPages = document.querySelectorAll('.form-page.taqwa-page');
     const taqwaImperialPages = document.querySelectorAll('.form-page.taqwa-imperial-page');
     const othersPages = document.querySelectorAll('.form-page.others-page');
     const boPages = document.querySelectorAll('.form-page.beneficial-owner-page');
     const guardianPages = document.querySelectorAll('.form-page.guardian-page');
+    const additionalApplicantPages = document.querySelectorAll('.form-page.additional-applicant-page');
 
     // Hide all first
     conventionalPages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
@@ -7503,8 +8144,9 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     taqwaImperialPages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
     othersPages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
     boPages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
+    additionalApplicantPages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
 
-    // Show based on form type (explicitly set display: block instead of empty string)
+    // Show based on form type
     if (formType === 'conventional') {
       conventionalPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
     } else if (formType === 'conventional-imperial') {
@@ -7517,6 +8159,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       boPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
     } else if (formType === 'guardian') {
       guardianPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
+    } else if (formType === 'additional-applicant') {
+      additionalApplicantPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
     } else {
       othersPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
     }
@@ -7640,13 +8284,14 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
   function getPrintablePages(printType, includeSupplementaryPages) {
     const selectorMap = {
-      'conventional': '.form-page:not(.others-page):not(.imperial-page):not(.taqwa-page):not(.taqwa-imperial-page):not(.beneficial-owner-page):not(.guardian-page)',
+      'conventional': '.form-page:not(.others-page):not(.imperial-page):not(.taqwa-page):not(.taqwa-imperial-page):not(.beneficial-owner-page):not(.guardian-page):not(.fatca-page):not(.additional-applicant-page)',
       'conventional-imperial': '.form-page.imperial-page',
       'taqwa': '.form-page.taqwa-page',
       'taqwa-imperial': '.form-page.taqwa-imperial-page',
       'others': '.form-page.others-page',
       'beneficial-owner': '.form-page.beneficial-owner-page',
-      'guardian': '.form-page.guardian-page'
+      'guardian': '.form-page.guardian-page',
+      'additional-applicant': '.form-page.additional-applicant-page'
     };
 
     const includedPages = new Set();
@@ -7657,8 +8302,10 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       if (hasBeneficialOwnerPagesForPrint()) {
         document.querySelectorAll('.form-page.beneficial-owner-page').forEach(page => includedPages.add(page));
       }
-      if (hasGuardianPagesForPrint()) {
-        document.querySelectorAll('.form-page.guardian-page').forEach(page => includedPages.add(page));
+      // Include FATCA page when FATCA = Yes
+      const fatcaVal = form.elements['fatca'] ? String(form.elements['fatca'].value || '').toLowerCase() : 'no';
+      if (fatcaVal === 'yes') {
+        document.querySelectorAll('.form-page.fatca-page').forEach(page => includedPages.add(page));
       }
     }
 
@@ -7750,10 +8397,68 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   }
 
   // Print Others pages only
+  // When target is 2nd/3rd Applicant, skip TP pages (13, 14) — only print KYC and SBS
   function printOthersPages() {
     refreshPrintableData();
     const pages = getPrintablePages('others', false);
-    printPagesInIframe(pages, 'KYC, TP, SBS Print');
+    // Check both the main and popup print target dropdowns
+    const mainTarget = printTargetSelect ? printTargetSelect.value : 'accountHolder';
+    const popupTarget = popupPrintTargetSelect ? popupPrintTargetSelect.value : 'accountHolder';
+    const target = (popupTarget !== 'accountHolder') ? popupTarget : mainTarget;
+    let filteredPages = pages;
+    if (target === 'secondApplicant' || target === 'thirdApplicant' || target === 'guardian') {
+      // Exclude TP form pages (13, 14) and AOF Checklist (17)
+      filteredPages = pages.filter(function(page) {
+        const pNum = page.dataset.page;
+        return pNum !== '13' && pNum !== '14' && pNum !== '17';
+      });
+
+      // Swap 1st applicant data with selected applicant/guardian data for KYC/SBS overlays
+      const fieldsToSwap = ['nid', 'passportNo', 'birthCertNo', 'occupation', 'monthlyIncome', 'sourceOfFund', 'etin', 'mobile', 'email'];
+      const guardianFieldMap = { nid: 'gNid', passportNo: 'gPassport', birthCertNo: 'gBirthReg', occupation: 'gOccupation', monthlyIncome: 'gMonthlyIncome', sourceOfFund: 'gSourceOfFund', etin: 'gTin', mobile: 'gPhone', email: 'gEmail' };
+      let srcPrefix = '';
+      if (target === 'secondApplicant') srcPrefix = 'app2_';
+      else if (target === 'thirdApplicant') srcPrefix = 'app3_';
+
+      const savedVals = {};
+      fieldsToSwap.forEach(function(f) {
+        const el = form.elements[f];
+        if (!el) return;
+        savedVals[f] = el.value;
+        if (target === 'guardian') {
+          const gField = guardianFieldMap[f];
+          el.value = (gField && form.elements[gField]) ? form.elements[gField].value : '';
+        } else {
+          const srcEl = form.elements[srcPrefix + f];
+          el.value = srcEl ? srcEl.value : '';
+        }
+      });
+
+      // Also swap fullNameEn for the KYC name overlay
+      const savedName = form.elements['fullNameEn'] ? form.elements['fullNameEn'].value : '';
+      if (target === 'guardian') {
+        if (form.elements['fullNameEn']) form.elements['fullNameEn'].value = form.elements['gNameEn'] ? form.elements['gNameEn'].value : '';
+      } else {
+        if (form.elements['fullNameEn']) form.elements['fullNameEn'].value = form.elements[srcPrefix + 'fullNameEn'] ? form.elements[srcPrefix + 'fullNameEn'].value : '';
+      }
+
+      // Update overlays with swapped data
+      try { updateOverlays(); } catch(e) {}
+
+      printPagesInIframe(filteredPages, 'KYC, SBS Print');
+
+      // Restore original values
+      fieldsToSwap.forEach(function(f) {
+        const el = form.elements[f];
+        if (el && savedVals[f] !== undefined) el.value = savedVals[f];
+      });
+      if (form.elements['fullNameEn']) form.elements['fullNameEn'].value = savedName;
+
+      // Restore overlays
+      try { updateOverlays(); } catch(e) {}
+    } else {
+      printPagesInIframe(filteredPages, 'KYC, TP, SBS Print');
+    }
   }
 
   // Same address functionality
@@ -7877,16 +8582,19 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   function handleOwnershipChange() {
     const ownership = form.elements['accountOwnership'] ? form.elements['accountOwnership'].value : '';
     const jointEls = document.querySelectorAll('.owner-joint-only');
+    const isJoint = (ownership === 'joint' || ownership === 'anyone' || ownership === 'either' || ownership === 'others');
     jointEls.forEach(el => {
-      if (ownership === 'joint') {
+      if (isJoint) {
         el.style.display = '';
       } else {
         el.style.display = 'none';
-        // clear values when hidden
         const input = el.querySelector('input');
         if (input && input.name) input.value = '';
       }
     });
+    // Show/hide "Others" text field
+    const othersGroup = document.getElementById('ownershipOthersGroup');
+    if (othersGroup) othersGroup.style.display = (ownership === 'others') ? '' : 'none';
   }
 
   // Event Listeners
@@ -7969,6 +8677,46 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     beneficialOwnersSelect.addEventListener('change', handleBeneficialOwnerToggle);
     handleBeneficialOwnerToggle();
   }
+
+  // FATCA Declaration section: show/hide based on FATCA dropdown
+  function handleFatcaToggle() {
+    const fatcaSection = document.getElementById('fatca-declaration-section');
+    const fatcaVal = form.elements['fatca'] ? String(form.elements['fatca'].value || '').toLowerCase() : 'no';
+    if (fatcaSection) fatcaSection.style.display = (fatcaVal === 'yes') ? '' : 'none';
+    // Also show/hide the FATCA page in preview
+    document.querySelectorAll('.fatca-page').forEach(function(pg) {
+      pg.style.display = (fatcaVal === 'yes') ? 'block' : 'none';
+      if (fatcaVal === 'yes') pg.classList.add('active'); else pg.classList.remove('active');
+    });
+    // Show/hide nationality fields in all applicant sections
+    document.querySelectorAll('.fatca-nationality-field').forEach(function(el) {
+      el.style.display = (fatcaVal === 'yes') ? '' : 'none';
+    });
+  }
+  if (form.elements['fatca']) {
+    form.elements['fatca'].addEventListener('change', handleFatcaToggle);
+  }
+  handleFatcaToggle();
+
+  // Type of Account / Currency "Others" field visibility
+  function handleAcctTypeOthers() {
+    const el = document.getElementById('acctTypeOthersGroup');
+    const val = form.elements['typeOfAccount'] ? form.elements['typeOfAccount'].value : '';
+    if (el) el.style.display = (val === 'others') ? '' : 'none';
+  }
+  function handleCurrencyOthers() {
+    const el = document.getElementById('currencyOthersGroup');
+    const val = form.elements['currency'] ? form.elements['currency'].value : '';
+    if (el) el.style.display = (val === 'others') ? '' : 'none';
+  }
+  if (form.elements['typeOfAccount']) {
+    form.elements['typeOfAccount'].addEventListener('change', handleAcctTypeOthers);
+  }
+  if (form.elements['currency']) {
+    form.elements['currency'].addEventListener('change', handleCurrencyOthers);
+  }
+  handleAcctTypeOthers();
+  handleCurrencyOthers();
 
   // Beneficial Owner "Same as Nominee" dropdown
   const boSameAsNomineeSelect = document.getElementById('boSameAsNominee');
@@ -8109,6 +8857,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       const englishText = e.target.value;
       console.log('English name entered:', englishText);
       translateDebounced(englishText);
+      // Update FATCA dropdown with current name
+      try { updateApplicantSections(); } catch(ex) {}
     });
   }
 
@@ -8149,6 +8899,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     boNameEnField.addEventListener('input', (e) => {
       const englishText = e.target.value;
       boTranslateDebounced(englishText);
+      try { updateApplicantSections(); } catch(ex) {}
     });
   }
 
@@ -8174,6 +8925,71 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     gNameEnField.addEventListener('input', (e) => {
       const englishText = e.target.value;
       gTranslateDebounced(englishText);
+      try { updateApplicantSections(); } catch(ex) {}
+    });
+  }
+
+  // 2nd Applicant: auto-translate English name to Bangla
+  const app2TranslateDebounced = debounce(async (text) => {
+    if (!text || text.trim() === '') {
+      if (form.elements['app2_fullNameBn']) {
+        form.elements['app2_fullNameBn'].value = '';
+        updateOverlays();
+      }
+      return;
+    }
+    let textToTranslate = text.trim();
+    let hasTitle = false;
+    const titlePattern = /^(mst|most)(\.)?(\s+)/i;
+    const match = textToTranslate.match(titlePattern);
+    if (match) {
+      textToTranslate = textToTranslate.substring(match[0].length).trim();
+      hasTitle = true;
+    }
+    const translated = await translateText(textToTranslate);
+    if (translated && form.elements['app2_fullNameBn']) {
+      const finalResult = hasTitle ? 'মোছাঃ ' + translated : translated;
+      form.elements['app2_fullNameBn'].value = finalResult;
+      updateOverlays();
+    }
+  }, 700);
+
+  const app2NameEnField = form.elements['app2_fullNameEn'];
+  if (app2NameEnField) {
+    app2NameEnField.addEventListener('input', (e) => {
+      app2TranslateDebounced(e.target.value);
+    });
+  }
+
+  // 3rd Applicant: auto-translate English name to Bangla
+  const app3TranslateDebounced = debounce(async (text) => {
+    if (!text || text.trim() === '') {
+      if (form.elements['app3_fullNameBn']) {
+        form.elements['app3_fullNameBn'].value = '';
+        updateOverlays();
+      }
+      return;
+    }
+    let textToTranslate = text.trim();
+    let hasTitle = false;
+    const titlePattern = /^(mst|most)(\.)?(\s+)/i;
+    const match = textToTranslate.match(titlePattern);
+    if (match) {
+      textToTranslate = textToTranslate.substring(match[0].length).trim();
+      hasTitle = true;
+    }
+    const translated = await translateText(textToTranslate);
+    if (translated && form.elements['app3_fullNameBn']) {
+      const finalResult = hasTitle ? 'মোছাঃ ' + translated : translated;
+      form.elements['app3_fullNameBn'].value = finalResult;
+      updateOverlays();
+    }
+  }, 700);
+
+  const app3NameEnField = form.elements['app3_fullNameEn'];
+  if (app3NameEnField) {
+    app3NameEnField.addEventListener('input', (e) => {
+      app3TranslateDebounced(e.target.value);
     });
   }
 
@@ -8514,6 +9330,9 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
   // Apply form type visibility
   try { handleFormTypeChange(); } catch (e) {}
+
+  // Initialize ISR visibility based on account type
+  try { handleIsrVisibility(); } catch (e) {}
 
   // Left Slide Menu Toggle Logic
   const slideMenuToggle = document.getElementById('slideMenuToggle');
@@ -8911,35 +9730,74 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
   function updateOthersPopupData() {
     const selectedPrintDate = ensureTodayDateValue();
+    // Determine which applicant is selected in popup dropdown
+    const popupTarget = popupPrintTargetSelect ? popupPrintTargetSelect.value : 'accountHolder';
+    let prefix = ''; // 1st applicant uses no prefix
+    if (popupTarget === 'secondApplicant') prefix = 'app2_';
+    else if (popupTarget === 'thirdApplicant') prefix = 'app3_';
+    const isGuardian = (popupTarget === 'guardian');
+
     // Basic fields
     const accountNumber = form.elements['accountNumber']?.value || '';
-    const fullName = form.elements['fullNameEn']?.value || '';
-    const nid = form.elements['nid']?.value || '';
-    // occupation maps: personal 'occupation' (detailed) and kyc 'occupationProfession'
-    const occupationPersonal = form.elements['occupation']?.value || '';
-    const occupationKyc = form.elements['occupationProfession']?.value || '';
+    // Applicant Name: always show combined name (fixed, does not change with dropdown)
+    const overrideVal = form.elements['combinedApplicantsOverride']?.value || '';
+    const ownershipVal = form.elements['accountOwnership'] ? form.elements['accountOwnership'].value : '';
+    const firstName = form.elements['fullNameEn']?.value || '';
+    const secondName = form.elements['secondApplicantName']?.value || '';
+    const thirdName = form.elements['thirdApplicantName']?.value || '';
+    let fullName;
+    if (overrideVal.trim()) {
+      fullName = overrideVal;
+    } else if ((ownershipVal === 'joint' || ownershipVal === 'anyone' || ownershipVal === 'either' || ownershipVal === 'others') && (secondName.trim() || thirdName.trim())) {
+      const parts = [];
+      if (firstName.trim()) parts.push(firstName.trim());
+      if (secondName.trim()) parts.push(secondName.trim());
+      if (thirdName.trim()) parts.push(thirdName.trim());
+      fullName = parts.join(' AND ');
+    } else {
+      fullName = firstName;
+    }
 
-    // KYC fields and selects
+    // Get field values based on selected applicant prefix (guardian uses different field names)
+    const nid = isGuardian ? (form.elements['gNid']?.value || '') : (form.elements[prefix + 'nid']?.value || '');
+    const occupationPersonal = isGuardian ? (form.elements['gOccupation']?.value || '') : (form.elements[prefix + 'occupation']?.value || '');
+    const occupationKyc = form.elements['occupationProfession']?.value || '';
+    const monthlyIncome = isGuardian ? (form.elements['gMonthlyIncome']?.value || '') : (form.elements[prefix + 'monthlyIncome']?.value || '');
+    const sourceOfFund = isGuardian ? (form.elements['gSourceOfFund']?.value || '') : (form.elements[prefix + 'sourceOfFund']?.value || '');
+    const birthCertNo = isGuardian ? (form.elements['gBirthReg']?.value || '') : (form.elements[prefix + 'birthCertNo']?.value || '');
+    const passportNo = isGuardian ? (form.elements['gPassport']?.value || '') : (form.elements[prefix + 'passportNo']?.value || '');
+
+    // KYC fields and selects (shared across all applicants)
     const transection = form.elements['transectionProfile']?.value || '';
     const sectorCode = form.elements['sectorCode']?.value || '';
-    const sourceOfFund = form.elements['sourceOfFund']?.value || '';
     const sourceOfFundsVerify = form.elements['sourceOfFundsVerify']?.value || '';
 
     // Build editable fields in the popup and sync
     makeEditableInput('othersPrintDate', 'todayDate', selectedPrintDate, false, handleTodayDateInputChange, 'date');
     makeEditableInput('othersAccountNumber', 'accountNumber', accountNumber, false);
-    makeEditableInput('othersFullName', 'fullNameEn', fullName, false);
-    makeEditableInput('othersNID', 'nid', nid, false);
+    // Applicant Name: show name based on selection
+    makeEditableInput('othersFullName', 'combinedApplicantsOverride', fullName, false);
+    makeEditableInput('othersNID', isGuardian ? 'gNid' : prefix + 'nid', nid, false);
     // Birth cert and passport
-    makeEditableInput('othersBirthCertNo', 'birthCertNo', form.elements['birthCertNo']?.value || '', false);
-    makeEditableInput('othersPassportNo', 'passportNo', form.elements['passportNo']?.value || '', false);
-    // For the basic Occupation show personal occupation if present else KYC occupation
-    // Use single-line inputs to match Transection Profile size
-    makeEditableInput('othersOccupation', 'occupation', occupationPersonal || occupationKyc, false);
-    // Monthly Income (BDT) — show and sync with main form
-    makeEditableInput('othersMonthlyIncome', 'monthlyIncome', form.elements['monthlyIncome']?.value || '', false);
+    makeEditableInput('othersBirthCertNo', isGuardian ? 'gBirthReg' : prefix + 'birthCertNo', birthCertNo, false);
+    makeEditableInput('othersPassportNo', isGuardian ? 'gPassport' : prefix + 'passportNo', passportNo, false);
+    // Occupation
+    makeEditableInput('othersOccupation', isGuardian ? 'gOccupation' : prefix + 'occupation', occupationPersonal || occupationKyc, false);
+    // Monthly Income
+    makeEditableInput('othersMonthlyIncome', isGuardian ? 'gMonthlyIncome' : prefix + 'monthlyIncome', monthlyIncome, false);
     // Number of Deposit/Withdrawal — show and sync with main form, also trigger count sync
     makeEditableInput('othersNumberOfDepositWithdrawal', 'numberOfDepositWithdrawal', form.elements['numberOfDepositWithdrawal']?.value || '', false, typeof syncNumberOfDepositWithdrawal === 'function' ? syncNumberOfDepositWithdrawal : null);
+
+    // Hide Transection Profile and Number of Deposit/Withdrawal for 2nd/3rd applicant/guardian
+    const hideForApplicant = (popupTarget === 'secondApplicant' || popupTarget === 'thirdApplicant' || popupTarget === 'guardian');
+    const numDepWithEl = document.getElementById('othersNumberOfDepositWithdrawal');
+    const transElContainer = document.getElementById('kycTransection');
+    if (numDepWithEl && numDepWithEl.closest('.others-info-item')) {
+      numDepWithEl.closest('.others-info-item').style.display = hideForApplicant ? 'none' : '';
+    }
+    if (transElContainer && transElContainer.closest('.others-info-item')) {
+      transElContainer.closest('.others-info-item').style.display = hideForApplicant ? 'none' : '';
+    }
 
     // KYC editable fields (clone selects where appropriate)
     // Use single-line input for occupation to match Transection Profile
@@ -8963,7 +9821,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     makeEditableSelect('kycCredibleSourceOfFunds', 'credibleSourceOfFunds', 'credibleSourceOfFunds');
     makeEditableInput('kycSourceOfFundsVerify', 'sourceOfFundsVerify', sourceOfFundsVerify, false);
     makeEditableSelect('kycBeneficialOwners', 'beneficialOwners', 'beneficialOwners');
-    makeEditableInput('kycSourceOfFund', 'sourceOfFund', sourceOfFund, false);
+    makeEditableInput('kycSourceOfFund', isGuardian ? 'gSourceOfFund' : prefix + 'sourceOfFund', sourceOfFund, false);
   }
 
   if (othersBtn) {
@@ -9005,6 +9863,444 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     } catch(e) {}
   }
 
+  // ========== Multi-Applicant Section Logic ==========
+  // Show/hide 2nd & 3rd applicant sections based on name fields
+  // Show/hide 2nd & 3rd applicant sections; rename Personal Information when joint
+  const secondAppSection = document.getElementById('second-applicant-info');
+  const thirdAppSection = document.getElementById('third-applicant-info');
+  const personalInfoSection = document.getElementById('personal-info');
+  const personalInfoTitle = personalInfoSection ? personalInfoSection.querySelector('.section-header h2') : null;
+
+  function updateApplicantSections() {
+    const secondName = (form.elements['secondApplicantName'] ? form.elements['secondApplicantName'].value : '').trim();
+    const thirdName = (form.elements['thirdApplicantName'] ? form.elements['thirdApplicantName'].value : '').trim();
+    const hasMultiple = !!(secondName || thirdName);
+
+    // Show/hide sections
+    if (secondAppSection) secondAppSection.style.display = secondName ? '' : 'none';
+    if (thirdAppSection) thirdAppSection.style.display = thirdName ? '' : 'none';
+
+    // Rename Personal Information title only (Account Information never changes)
+    if (personalInfoTitle) {
+      personalInfoTitle.textContent = hasMultiple ? '1st Applicant Information' : 'Personal Information';
+    }
+
+    // Sync 2nd applicant fullNameEn ↔ secondApplicantName (keep both in sync)
+    if (secondName && form.elements['app2_fullNameEn']) {
+      // Always keep app2_fullNameEn in sync with secondApplicantName
+      if (form.elements['app2_fullNameEn'].value !== secondName) {
+        form.elements['app2_fullNameEn'].value = secondName;
+      }
+    }
+    if (thirdName && form.elements['app3_fullNameEn']) {
+      if (form.elements['app3_fullNameEn'].value !== thirdName) {
+        form.elements['app3_fullNameEn'].value = thirdName;
+      }
+    }
+
+    // Show/hide hint for 2nd/3rd applicant KYC print
+    const hintEl = document.getElementById('applicantPrintHint');
+    if (hintEl) {
+      hintEl.style.display = hasMultiple ? 'inline-flex' : 'none';
+    }
+
+    // Update FATCA Account Holder dropdown options with actual names
+    const fatcaSelect = document.getElementById('fatcaAccountHolderSelect');
+    if (fatcaSelect) {
+      const name1 = (form.elements['fullNameEn'] ? form.elements['fullNameEn'].value : '') || '1st Applicant';
+      const name2 = secondName || '2nd Applicant';
+      const name3 = thirdName || '3rd Applicant';
+      const guardianName = (form.elements['gNameEn'] ? form.elements['gNameEn'].value : '').trim();
+      const boName = (form.elements['boNameEn'] ? form.elements['boNameEn'].value : '').trim();
+      const opts = fatcaSelect.options;
+      for (var i = 0; i < opts.length; i++) {
+        if (opts[i].value === '1st') opts[i].textContent = name1 || '1st Applicant';
+        else if (opts[i].value === '2nd') { opts[i].textContent = name2; opts[i].style.display = secondName ? '' : 'none'; }
+        else if (opts[i].value === '3rd') { opts[i].textContent = name3; opts[i].style.display = thirdName ? '' : 'none'; }
+        else if (opts[i].value === 'guardian') { opts[i].textContent = guardianName || 'Guardian'; opts[i].style.display = guardianName ? '' : 'none'; }
+        else if (opts[i].value === 'beneficialOwner') { opts[i].textContent = boName || 'Beneficial Owner'; opts[i].style.display = boName ? '' : 'none'; }
+      }
+    }
+  }
+
+  // Wire up secondApplicantName and thirdApplicantName to trigger section visibility
+  const secAppNameEl = form.elements['secondApplicantName'];
+  const thirdAppNameEl = form.elements['thirdApplicantName'];
+  if (secAppNameEl) {
+    secAppNameEl.addEventListener('input', function() {
+      updateApplicantSections();
+      // Also trigger translation for 2nd applicant Bangla name
+      const val = this.value || '';
+      if (form.elements['app2_fullNameEn']) {
+        form.elements['app2_fullNameEn'].value = val;
+      }
+      try { app2TranslateDebounced(val); } catch(e) {}
+    });
+    secAppNameEl.addEventListener('change', updateApplicantSections);
+  }
+  if (thirdAppNameEl) {
+    thirdAppNameEl.addEventListener('input', function() {
+      updateApplicantSections();
+      // Also trigger translation for 3rd applicant Bangla name
+      const val = this.value || '';
+      if (form.elements['app3_fullNameEn']) {
+        form.elements['app3_fullNameEn'].value = val;
+      }
+      try { app3TranslateDebounced(val); } catch(e) {}
+    });
+    thirdAppNameEl.addEventListener('change', updateApplicantSections);
+  }
+  // Initialize on load
+  updateApplicantSections();
+
+  // ========== Multi-Applicant Print Logic ==========
+  // Override printCurrentPage to handle 2nd/3rd applicant print targets
+  // When printTarget is '2nd Applicant' or '3rd Applicant', print only page 1 with that applicant's data
+  const originalPrintCurrentPage = printCurrentPage;
+
+  function getApplicantDataMap(prefix) {
+    // Map applicant-prefixed field names to the 1st applicant field equivalents
+    const fieldMap = {
+      'fullNameEn': prefix + '_fullNameEn',
+      'fullNameBn': prefix + '_fullNameBn',
+      'dob': prefix + '_dob',
+      'fatherName': prefix + '_fatherName',
+      'motherName': prefix + '_motherName',
+      'spouseName': prefix + '_spouseName',
+      'nid': prefix + '_nid',
+      'passportNo': prefix + '_passportNo',
+      'birthCertNo': prefix + '_birthCertNo',
+      'etin': prefix + '_etin',
+      'mobile': prefix + '_mobile',
+      'email': prefix + '_email',
+      'occupation': prefix + '_occupation',
+      'monthlyIncome': prefix + '_monthlyIncome',
+      'sourceOfFund': prefix + '_sourceOfFund',
+      'nationality': prefix + '_nationality',
+      'presentHouse': prefix + '_presentHouse',
+      'presentRoad': prefix + '_presentRoad',
+      'presentPO': prefix + '_presentPO',
+      'presentPostCode': prefix + '_presentPostCode',
+      'presentThana': prefix + '_presentThana',
+      'presentDistrict': prefix + '_presentDistrict',
+      'presentCountry': prefix + '_presentCountry',
+      'permanentHouse': prefix + '_permanentHouse',
+      'permanentRoad': prefix + '_permanentRoad',
+      'permanentPO': prefix + '_permanentPO',
+      'permanentPostCode': prefix + '_permanentPostCode',
+      'permanentThana': prefix + '_permanentThana',
+      'permanentDistrict': prefix + '_permanentDistrict',
+      'permanentCountry': prefix + '_permanentCountry',
+      'amlTrackingNumber': prefix + '_amlTrackingNumber',
+      'residentStatus': prefix + '_residentStatus',
+      'accountGender': prefix + '_gender',
+      'cif': prefix + '_cif'
+    };
+    // Collect actual values
+    const data = {};
+    Object.keys(fieldMap).forEach(function(overlayField) {
+      const formField = fieldMap[overlayField];
+      const el = form.elements[formField];
+      data[overlayField] = el ? (el.value || '') : '';
+    });
+    return data;
+  }
+
+  // Patched printCurrentPage: when target is 2nd/3rd applicant, temporarily swap overlay data
+  window._printCurrentPagePatched = function() {
+    const target = printTargetSelect ? printTargetSelect.value : 'accountHolder';
+
+    if (target === 'secondApplicant' || target === 'thirdApplicant') {
+      const prefix = target === 'secondApplicant' ? 'app2' : 'app3';
+      const nameField = target === 'secondApplicant' ? 'secondApplicantName' : 'thirdApplicantName';
+      const nameVal = form.elements[nameField] ? form.elements[nameField].value.trim() : '';
+
+      if (!nameVal) {
+        showToast('No ' + (target === 'secondApplicant' ? '2nd' : '3rd') + ' Applicant name entered');
+        return;
+      }
+
+      // Get applicant data — exclude fullNameEn/fullNameBn from swap to preserve combinedApplicants
+      const appData = getApplicantDataMap(prefix);
+
+      // Temporarily swap 1st applicant field values with this applicant's values
+      // But keep combinedApplicants source fields (fullNameEn, fullNameBn) intact
+      // so the combined overlay still shows ALL applicant names correctly
+      const savedValues = {};
+      const skipFields = ['fullNameEn', 'fullNameBn']; // these feed combinedApplicants
+      Object.keys(appData).forEach(function(field) {
+        if (skipFields.includes(field)) return;
+        const el = form.elements[field];
+        if (el) {
+          savedValues[field] = el.value;
+          el.value = appData[field];
+        }
+      });
+
+      // For the fullNameEn overlay on page 1, we need it to show the selected applicant's name
+      // We do this by temporarily setting a data attribute that updateOverlays can read
+      form.dataset._printApplicantName = appData.fullNameEn || nameVal;
+      form.dataset._printApplicantNameBn = appData.fullNameBn || '';
+      form.dataset._printApplicantActive = 'true';
+      form.dataset._printApplicantLabel = target === 'secondApplicant' ? '2nd Applicant' : '3rd Applicant';
+
+      // Update overlays with swapped data
+      try { updateOverlays(); } catch(e) {}
+
+      // Use correct Additional Applicant page based on form type
+      const selectedPrintType2 = detectPrintFormType();
+      const additionalPageMap = { 'conventional': '55', 'conventional-imperial': '56', 'taqwa': '57', 'taqwa-imperial': '58' };
+      const additionalPageNum = additionalPageMap[selectedPrintType2] || '55';
+      const additionalPageEl = document.querySelector('.form-page.additional-applicant-page[data-page="' + additionalPageNum + '"]');
+      if (additionalPageEl) {
+        // Update overlays on the additional applicant page
+        const applicantLabel = target === 'secondApplicant' ? '2nd Applicant' : '3rd Applicant';
+        const page1Clone = additionalPageEl.cloneNode(true);
+        page1Clone.classList.add('active');
+        page1Clone.style.display = 'block';
+
+        // Print the cloned page using markup approach
+        const headAssets = Array.from(document.head.querySelectorAll('style, link[rel="stylesheet"]')).map(function(el) { return el.outerHTML; }).join('\n');
+        const printHtml = '<!doctype html><html lang="en"><head><meta charset="utf-8"><base href="' + escapeHtmlAttribute(document.baseURI) + '"><title>' + applicantLabel + '</title>' + headAssets +
+          '<style>html,body{margin:0;padding:0;background:#fff;}body{overflow:visible !important;}.page-container{display:block !important;padding:0 !important;margin:0 auto !important;height:auto !important;}.preview-container{margin:0 !important;padding:0 !important;max-width:none !important;}.form-page{display:block !important;margin:0 auto !important;}</style>' +
+          '</head><body><div class="page-container active" id="form-page"><div class="preview-container">' + page1Clone.outerHTML + '</div></div>' +
+          '<script>window.onload=function(){setTimeout(function(){try{window.focus();window.print();}catch(e){}},500);};<\/script></body></html>';
+        var printWin = window.open('', '_blank', 'width=900,height=700');
+        if (printWin) { printWin.document.open(); printWin.document.write(printHtml); printWin.document.close(); }
+      }
+
+      // Restore original values
+      Object.keys(savedValues).forEach(function(field) {
+        const el = form.elements[field];
+        if (el) el.value = savedValues[field];
+      });
+
+      // Clear temp print applicant data
+      delete form.dataset._printApplicantName;
+      delete form.dataset._printApplicantNameBn;
+      delete form.dataset._printApplicantActive;
+      delete form.dataset._printApplicantLabel;
+
+      // Restore overlays
+      try { updateOverlays(); } catch(e) {}
+    } else {
+      // Default: print full form (account holder) + append 2nd/3rd applicant page 1 if filled
+      const selectedPrintType = detectPrintFormType();
+      refreshPrintableData();
+      const pages = getPrintablePages(selectedPrintType, true);
+
+      // Check if 2nd/3rd applicants or guardian have data — if so, generate their page clones with swapped data
+      const applicantsToAppend = [];
+      const appConfigs = [
+        { prefix: 'app2', nameField: 'secondApplicantName', label: '2nd Applicant' },
+        { prefix: 'app3', nameField: 'thirdApplicantName', label: '3rd Applicant' },
+        { prefix: 'guardian', nameField: 'gNameEn', label: 'Guardian', isGuardian: true }
+      ];
+
+      appConfigs.forEach(function(cfg) {
+        const nameVal = form.elements[cfg.nameField] ? form.elements[cfg.nameField].value.trim() : '';
+        if (!nameVal) return;
+        // Guardian only shows if account holder is minor
+        if (cfg.isGuardian && !hasGuardianPagesForPrint()) return;
+
+        // Get this applicant's data — guardian uses different field mapping
+        var appData;
+        if (cfg.isGuardian) {
+          appData = {
+            fullNameEn: form.elements['gNameEn'] ? form.elements['gNameEn'].value : '',
+            fullNameBn: form.elements['gNameBn'] ? form.elements['gNameBn'].value : '',
+            dob: form.elements['gDob'] ? form.elements['gDob'].value : '',
+            fatherName: form.elements['gFatherName'] ? form.elements['gFatherName'].value : '',
+            motherName: form.elements['gMotherName'] ? form.elements['gMotherName'].value : '',
+            spouseName: form.elements['gSpouseName'] ? form.elements['gSpouseName'].value : '',
+            nid: form.elements['gNid'] ? form.elements['gNid'].value : '',
+            passportNo: form.elements['gPassport'] ? form.elements['gPassport'].value : '',
+            birthCertNo: form.elements['gBirthReg'] ? form.elements['gBirthReg'].value : '',
+            etin: form.elements['gTin'] ? form.elements['gTin'].value : '',
+            mobile: form.elements['gPhone'] ? form.elements['gPhone'].value : '',
+            email: form.elements['gEmail'] ? form.elements['gEmail'].value : '',
+            occupation: form.elements['gOccupation'] ? form.elements['gOccupation'].value : '',
+            monthlyIncome: form.elements['gMonthlyIncome'] ? form.elements['gMonthlyIncome'].value : '',
+            sourceOfFund: form.elements['gSourceOfFund'] ? form.elements['gSourceOfFund'].value : '',
+            nationality: form.elements['gNationality'] ? form.elements['gNationality'].value : 'Bangladeshi',
+            presentHouse: form.elements['gPresentHouse'] ? form.elements['gPresentHouse'].value : '',
+            presentRoad: form.elements['gPresentArea'] ? form.elements['gPresentArea'].value : '',
+            presentPO: form.elements['gPresentPO'] ? form.elements['gPresentPO'].value : '',
+            presentPostCode: form.elements['gPresentPostCode'] ? form.elements['gPresentPostCode'].value : '',
+            presentThana: form.elements['gPresentThana'] ? form.elements['gPresentThana'].value : '',
+            presentDistrict: form.elements['gPresentDistrict'] ? form.elements['gPresentDistrict'].value : '',
+            presentCountry: form.elements['gPresentCountry'] ? form.elements['gPresentCountry'].value : 'Bangladesh',
+            permanentHouse: form.elements['gPermanentHouse'] ? form.elements['gPermanentHouse'].value : '',
+            permanentRoad: form.elements['gPermanentArea'] ? form.elements['gPermanentArea'].value : '',
+            permanentPO: form.elements['gPermanentPO'] ? form.elements['gPermanentPO'].value : '',
+            permanentPostCode: form.elements['gPermanentPostCode'] ? form.elements['gPermanentPostCode'].value : '',
+            permanentThana: form.elements['gPermanentThana'] ? form.elements['gPermanentThana'].value : '',
+            permanentDistrict: form.elements['gPermanentDistrict'] ? form.elements['gPermanentDistrict'].value : '',
+            permanentCountry: form.elements['gPermanentCountry'] ? form.elements['gPermanentCountry'].value : 'Bangladesh',
+            amlTrackingNumber: form.elements['gAmlTrackingNumber'] ? form.elements['gAmlTrackingNumber'].value : '',
+            residentStatus: form.elements['gResidentStatus'] ? form.elements['gResidentStatus'].value : 'yes',
+            accountGender: form.elements['gGender'] ? form.elements['gGender'].value : '',
+            cif: form.elements['gCif'] ? form.elements['gCif'].value : ''
+          };
+        } else {
+          appData = getApplicantDataMap(cfg.prefix);
+        }
+
+        // Temporarily swap fields (skip fullNameEn/fullNameBn for combinedApplicants)
+        const saved = {};
+        const skipFields = ['fullNameEn', 'fullNameBn'];
+        Object.keys(appData).forEach(function(field) {
+          if (skipFields.includes(field)) return;
+          const el = form.elements[field];
+          if (el) { saved[field] = el.value; el.value = appData[field]; }
+        });
+        form.dataset._printApplicantName = appData.fullNameEn || nameVal;
+        form.dataset._printApplicantNameBn = appData.fullNameBn || '';
+        form.dataset._printApplicantActive = 'true';
+        form.dataset._printApplicantLabel = cfg.label;
+
+        // Update overlays to reflect swapped data
+        try { updateOverlays(); } catch(e) {}
+
+        // Clone the correct Additional Applicant page based on form type
+        const additionalPageMap2 = { 'conventional': '55', 'conventional-imperial': '56', 'taqwa': '57', 'taqwa-imperial': '58' };
+        const additionalPageNum2 = additionalPageMap2[selectedPrintType] || '55';
+        const additionalPage = document.querySelector('.form-page.additional-applicant-page[data-page="' + additionalPageNum2 + '"]');
+        if (additionalPage) {
+          const page1Clone = additionalPage.cloneNode(true);
+          page1Clone.classList.add('active');
+          page1Clone.style.display = 'block';
+
+          applicantsToAppend.push(page1Clone);
+        }
+
+        // Restore fields
+        Object.keys(saved).forEach(function(field) {
+          const el = form.elements[field];
+          if (el) el.value = saved[field];
+        });
+        delete form.dataset._printApplicantName;
+        delete form.dataset._printApplicantNameBn;
+        delete form.dataset._printApplicantActive;
+        delete form.dataset._printApplicantLabel;
+      });
+
+      // Restore overlays back to account holder state
+      try { updateOverlays(); } catch(e) {}
+
+      // Build final markup: insert applicant pages between page 1 and page 2
+      if (applicantsToAppend.length > 0) {
+        // Build page 1 markup separately, then insert applicant pages, then remaining pages
+        const page1Markup = buildPrintablePagesMarkup([pages[0]]);
+        const remainingPages = pages.slice(1);
+        const remainingMarkup = remainingPages.length > 0 ? buildPrintablePagesMarkup(remainingPages) : '';
+        const appendedMarkup = applicantsToAppend.map(function(el) { return el.outerHTML; }).join('');
+        const combinedMarkup = page1Markup + appendedMarkup + remainingMarkup;
+
+        // Use a custom print that takes raw markup instead of page elements
+        const existingFrame = document.getElementById('__account_opening_print_frame');
+        if (existingFrame && existingFrame.parentNode) existingFrame.parentNode.removeChild(existingFrame);
+
+        const iframe = document.createElement('iframe');
+        iframe.id = '__account_opening_print_frame';
+        iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:1px;height:1px;border:0;opacity:0.01;pointer-events:none;';
+        document.body.appendChild(iframe);
+
+        const headAssets = Array.from(document.head.querySelectorAll('style, link[rel="stylesheet"]')).map(function(el) { return el.outerHTML; }).join('\n');
+        const html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><base href="' + escapeHtmlAttribute(document.baseURI) + '"><title>Account Opening Form Print</title>' + headAssets +
+          '<style>html,body{margin:0;padding:0;background:#fff;}body{overflow:visible !important;}.page-container{display:block !important;padding:0 !important;margin:0 auto !important;height:auto !important;}.preview-container{margin:0 !important;padding:0 !important;max-width:none !important;}.form-page{display:block !important;margin:0 auto !important;}.form-page:not(.active){display:block !important;}</style>' +
+          '</head><body><div class="page-container active" id="form-page"><div class="preview-container">' + combinedMarkup + '</div></div>' +
+          '<script>window.onload=function(){setTimeout(function(){try{window.focus();window.print();}catch(e){}},300);};<\/script></body></html>';
+
+        const printDoc = iframe.contentDocument || iframe.contentWindow.document;
+        printDoc.open(); printDoc.write(html); printDoc.close();
+        setTimeout(function() { try { var f = document.getElementById('__account_opening_print_frame'); if (f && f.parentNode) f.parentNode.removeChild(f); } catch(e) {} }, 6000);
+      } else {
+        // No additional applicants — print normally
+        printPagesInIframe(pages, 'Account Opening Form Print');
+      }
+    }
+  };
+
+  // Replace the printFormBtn click handler with patched version
+  const printFormBtnEl2 = document.getElementById('printFormBtn');
+  if (printFormBtnEl2) {
+    // Remove old listener by cloning
+    const newBtn = printFormBtnEl2.cloneNode(true);
+    printFormBtnEl2.parentNode.replaceChild(newBtn, printFormBtnEl2);
+    newBtn.addEventListener('click', window._printCurrentPagePatched);
+  }
+
+  // ========== 2nd/3rd Applicant Address Copy Logic ==========
+  // "Same as 1st Applicant Address" checkbox copies 1st applicant present address to 2nd/3rd present address
+  // "Same as Present Address" checkbox copies that applicant's present address to their permanent address
+
+  function copyAddressFields(srcPrefix, destPrefix, fields) {
+    fields.forEach(function(f) {
+      const src = form.elements[srcPrefix + f];
+      const dest = form.elements[destPrefix + f];
+      if (dest) dest.value = src ? src.value : '';
+    });
+  }
+
+  const addressFields = ['House', 'Road', 'PO', 'PostCode', 'Thana', 'District', 'Country'];
+
+  // 2nd Applicant: Same as 1st Applicant Address
+  const app2SameAsFirst = document.getElementById('app2SameAsFirstAddress');
+  if (app2SameAsFirst) {
+    app2SameAsFirst.addEventListener('change', function() {
+      if (this.checked) {
+        copyAddressFields('present', 'app2_present', addressFields);
+      }
+    });
+  }
+
+  // 2nd Applicant: Permanent Same as Present
+  const app2SameAsPresent = document.getElementById('app2SameAsPresent');
+  if (app2SameAsPresent) {
+    app2SameAsPresent.addEventListener('change', function() {
+      if (this.checked) {
+        copyAddressFields('app2_present', 'app2_permanent', addressFields);
+      }
+    });
+  }
+
+  // 3rd Applicant: Same as 1st Applicant Address
+  const app3SameAsFirst = document.getElementById('app3SameAsFirstAddress');
+  if (app3SameAsFirst) {
+    app3SameAsFirst.addEventListener('change', function() {
+      if (this.checked) {
+        copyAddressFields('present', 'app3_present', addressFields);
+      }
+    });
+  }
+
+  // 3rd Applicant: Permanent Same as Present
+  const app3SameAsPresent = document.getElementById('app3SameAsPresent');
+  if (app3SameAsPresent) {
+    app3SameAsPresent.addEventListener('change', function() {
+      if (this.checked) {
+        copyAddressFields('app3_present', 'app3_permanent', addressFields);
+      }
+    });
+  }
+
+  // Guardian: Same as 1st Applicant Address
+  const gSameAsFirst = document.getElementById('gSameAsFirstAddress');
+  if (gSameAsFirst) {
+    gSameAsFirst.addEventListener('change', function() {
+      if (this.checked) {
+        const gFields = ['House', 'Area', 'PO', 'PostCode', 'Thana', 'District', 'Country'];
+        const srcMap = { House: 'presentHouse', Area: 'presentRoad', PO: 'presentPO', PostCode: 'presentPostCode', Thana: 'presentThana', District: 'presentDistrict', Country: 'presentCountry' };
+        gFields.forEach(function(f) {
+          const src = form.elements[srcMap[f]];
+          const dest = form.elements['gPresent' + f];
+          if (dest) dest.value = src ? src.value : '';
+        });
+      }
+    });
+  }
+
 })();
   </script>
   <script>
@@ -9042,23 +10338,22 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       // Run immediately and after DOM content loaded to cover timing
       document.addEventListener('DOMContentLoaded', updateGuardianVisibility);
       setTimeout(updateGuardianVisibility, 200);
-      // Introducer visibility: show when Personal Information NID is empty
-      const nidEl = document.querySelector('input[name="nid"]');
+      // Introducer visibility: controlled by "Introducer Required" dropdown in Account Information
+      const introducerDropdown = document.getElementById('introducerRequired');
       const introducerSection = document.getElementById('introducer-info');
 
       function updateIntroducerVisibility() {
         try {
           if (!introducerSection) return;
-          const nidVal = nidEl && nidEl.value ? String(nidEl.value).trim() : '';
-          introducerSection.style.display = (!nidVal) ? '' : 'none';
+          const val = introducerDropdown ? introducerDropdown.value : 'no';
+          introducerSection.style.display = (val === 'yes') ? '' : 'none';
         } catch (e) {
           console.error('updateIntroducerVisibility error', e);
         }
       }
 
-      if (nidEl) {
-        nidEl.addEventListener('change', updateIntroducerVisibility);
-        nidEl.addEventListener('input', updateIntroducerVisibility);
+      if (introducerDropdown) {
+        introducerDropdown.addEventListener('change', updateIntroducerVisibility);
       }
       document.addEventListener('DOMContentLoaded', updateIntroducerVisibility);
       setTimeout(updateIntroducerVisibility, 200);

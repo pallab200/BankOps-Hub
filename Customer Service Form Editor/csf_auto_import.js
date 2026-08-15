@@ -100,7 +100,7 @@ var csfAutoImportData = {
   "lbcObcRecipientBankName": "",
   "lbcObcRecipientBranchName": "",
   "lbcObcRecipientDistrict": "",
-  "lbcObcCollectionType": "OBC",
+  "lbcObcCollectionType": "LBC",
   "lbcObcDepositAccountText": "",
   "lbcObcInstrumentType1": "",
   "lbcObcLbcNo1": "",
@@ -164,14 +164,19 @@ var csfAutoImportData = {
   "dormantRiskAssessment": "",
   "dormantFaceToFaceInterview": "",
   "dormantSealSelect": "",
-  "tdRdTodayDate": "25/07/26",
+  "tdRdTodayDate": "",
   "tdRdCustomerName": "",
   "tdRdMobileNumber": "",
   "tdRdNumber": "",
   "tdRdRequestType": "",
   "tdRdMaturityDate": "",
+  "tdRdFixedMaturityDate": "",
+  "tdRdPrematureMaturityDate": "",
+  "tdRdDaysRemaining": "",
   "tdRdPaymentOption": "",
   "tdRdPaymentAccountNumber": "",
+  "tdRdVerificationType": "",
+  "tdRdOthersText": "",
   "tdRdSealSelect": "",
   "newctodaydate": "",
   "_textboxPositions": {
@@ -681,8 +686,8 @@ var csfAutoImportData = {
         "left": "8.1%"
       },
       "7": {
-        "top": "32.1157%",
-        "left": "44.4%"
+        "top": "31.9611%",
+        "left": "43.4%"
       },
       "8": {
         "top": "41.5064%",
@@ -701,16 +706,32 @@ var csfAutoImportData = {
         "left": "5.5%"
       },
       "12": {
-        "top": "50.8592%",
-        "left": "24.6%"
+        "top": "66.6301%",
+        "left": "58%"
       },
       "13": {
-        "top": "69.4103%",
-        "left": "66.9%"
+        "top": "67.4776%",
+        "left": "64.7%"
       },
       "14": {
-        "top": "69.3331%",
-        "left": "9.4%"
+        "top": "50.3152%",
+        "left": "25%"
+      },
+      "15": {
+        "top": "69.9886%",
+        "left": "64.5%"
+      },
+      "16": {
+        "top": "70.2879%",
+        "left": "6.9%"
+      },
+      "17": {
+        "top": "29.4789%",
+        "left": "8%"
+      },
+      "18": {
+        "top": "30.3192%",
+        "left": "40%"
       }
     },
     "dormant-activation": {
