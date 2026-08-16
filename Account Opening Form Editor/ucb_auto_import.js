@@ -1,5 +1,5 @@
 window.UCB_AUTO_IMPORT_DATA = {
-  "exportedAt": "2026-08-15T09:11:48.005Z",
+  "exportedAt": "2026-08-16T20:01:36.746Z",
   "form": {
     "branchName": "",
     "combinedApplicantsOverride": "",
@@ -7,6 +7,7 @@ window.UCB_AUTO_IMPORT_DATA = {
     "accountNumberNoSpace": "",
     "cif": "",
     "accountOwnership": "single",
+    "fullNameEn": "",
     "secondApplicantName": "",
     "thirdApplicantName": "",
     "ownershipOthersText": "",
@@ -24,7 +25,6 @@ window.UCB_AUTO_IMPORT_DATA = {
     "isrCustomer": "",
     "introducerRequired": "no",
     "fatca": "no",
-    "fullNameEn": "",
     "fullNameBn": "",
     "dob": "",
     "accountGender": "",
@@ -173,6 +173,7 @@ window.UCB_AUTO_IMPORT_DATA = {
     "nomineeRelation": "",
     "nomineeNid": "",
     "nomineeMobile": "",
+    "nomineeEmail": "",
     "nomineeShare": "100",
     "nomineeAddress": "",
     "guardianName": "",
@@ -180,6 +181,58 @@ window.UCB_AUTO_IMPORT_DATA = {
     "guardianNid": "",
     "guardianMobile": "",
     "guardianPermanentAddress": "",
+    "nom2_name": "",
+    "nom2_dob": "",
+    "nom2_relation": "",
+    "nom2_nid": "",
+    "nom2_mobile": "",
+    "nom2_email": "",
+    "nom2_share": "",
+    "nom2_address": "",
+    "nom2_guardianName": "",
+    "nom2_guardianMobile": "",
+    "nom2_guardianAddress": "",
+    "nom2_guardianNid": "",
+    "nom2_guardianRelation": "",
+    "nom3_name": "",
+    "nom3_dob": "",
+    "nom3_relation": "",
+    "nom3_nid": "",
+    "nom3_mobile": "",
+    "nom3_email": "",
+    "nom3_share": "",
+    "nom3_address": "",
+    "nom3_guardianName": "",
+    "nom3_guardianMobile": "",
+    "nom3_guardianAddress": "",
+    "nom3_guardianNid": "",
+    "nom3_guardianRelation": "",
+    "nom4_name": "",
+    "nom4_dob": "",
+    "nom4_relation": "",
+    "nom4_nid": "",
+    "nom4_mobile": "",
+    "nom4_email": "",
+    "nom4_share": "",
+    "nom4_address": "",
+    "nom4_guardianName": "",
+    "nom4_guardianMobile": "",
+    "nom4_guardianAddress": "",
+    "nom4_guardianNid": "",
+    "nom4_guardianRelation": "",
+    "nom5_name": "",
+    "nom5_dob": "",
+    "nom5_relation": "",
+    "nom5_nid": "",
+    "nom5_mobile": "",
+    "nom5_email": "",
+    "nom5_share": "",
+    "nom5_address": "",
+    "nom5_guardianName": "",
+    "nom5_guardianMobile": "",
+    "nom5_guardianAddress": "",
+    "nom5_guardianNid": "",
+    "nom5_guardianRelation": "",
     "occupationProfession": "",
     "numberOfDepositWithdrawal": "",
     "transectionProfile": "",
@@ -707,6 +760,10 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "56.321%",
       "left": "58.1%"
     },
+    "2_nomineeEmail_37": {
+      "top": "30.0243%",
+      "left": "43.6%"
+    },
     "3_accountNumber_0": {
       "top": "4.22873%",
       "left": "53.5%"
@@ -1226,6 +1283,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "19_attestedSeal2_36": {
       "top": "56.465%",
       "left": "58.3%"
+    },
+    "19_nomineeEmail_37": {
+      "top": "30.0963%",
+      "left": "43.6%"
     },
     "20_accountNumber_0": {
       "top": "4.29783%",
@@ -1758,6 +1819,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "25_attestedSeal2_36": {
       "top": "56.0331%",
       "left": "58.2%"
+    },
+    "25_nomineeEmail_37": {
+      "top": "31.0322%",
+      "left": "43.6%"
     },
     "26_accountNumber_0": {
       "top": "4.15386%",
@@ -2298,6 +2363,10 @@ window.UCB_AUTO_IMPORT_DATA = {
     "31_attestedSeal2_36": {
       "top": "56.609%",
       "left": "58.4%"
+    },
+    "31_nomineeEmail_37": {
+      "top": "30.6722%",
+      "left": "43.5%"
     },
     "32_accountNumber_0": {
       "top": "4.15386%",
@@ -3254,6 +3323,118 @@ window.UCB_AUTO_IMPORT_DATA = {
     "58_officer1Seal_39": {
       "top": "72.4006%",
       "left": "72.3%"
+    },
+    "60_accountNumber_0": {
+      "top": "14.598%",
+      "left": "53%"
+    },
+    "60_nom2_name_1": {
+      "top": "33.0359%",
+      "left": "19.4%"
+    },
+    "60_nom2_dob_2": {
+      "top": "34.7875%",
+      "left": "59.1%"
+    },
+    "60_nom2_address_3": {
+      "top": "40.2255%",
+      "left": "12.7%"
+    },
+    "60_nom2_share_4": {
+      "top": "47.8529%",
+      "left": "18.6%"
+    },
+    "60_nom2_relation_5": {
+      "top": "47.6339%",
+      "left": "46.2%"
+    },
+    "60_nom2_nid_6": {
+      "top": "54.1666%",
+      "left": "37.7%"
+    },
+    "60_nom2_mobile_7": {
+      "top": "59.8235%",
+      "left": "17%"
+    },
+    "60_nom2_email_8": {
+      "top": "59.6045%",
+      "left": "43.7%"
+    },
+    "60_nom2_guardianName_9": {
+      "top": "73.9836%",
+      "left": "16.4%"
+    },
+    "60_nom2_guardianMobile_10": {
+      "top": "73.7646%",
+      "left": "67.4%"
+    },
+    "60_nom2_guardianAddress_11": {
+      "top": "80.0783%",
+      "left": "17.6%"
+    },
+    "60_nom2_guardianNid_12": {
+      "top": "86.611%",
+      "left": "34.7%"
+    },
+    "60_nom2_guardianRelation_13": {
+      "top": "87.049%",
+      "left": "78.9%"
+    },
+    "61_accountNumber_0": {
+      "top": "14.3791%",
+      "left": "52.9%"
+    },
+    "61_nom2_name_1": {
+      "top": "33.0359%",
+      "left": "19.4%"
+    },
+    "61_nom2_dob_2": {
+      "top": "34.3496%",
+      "left": "59.4%"
+    },
+    "61_nom2_address_3": {
+      "top": "40.0065%",
+      "left": "12.8%"
+    },
+    "61_nom2_share_4": {
+      "top": "47.6339%",
+      "left": "18.4%"
+    },
+    "61_nom2_relation_5": {
+      "top": "48.0718%",
+      "left": "46%"
+    },
+    "61_nom2_nid_6": {
+      "top": "54.3856%",
+      "left": "38%"
+    },
+    "61_nom2_mobile_7": {
+      "top": "59.3856%",
+      "left": "17.3%"
+    },
+    "61_nom2_email_8": {
+      "top": "59.6045%",
+      "left": "43.7%"
+    },
+    "61_nom2_guardianName_9": {
+      "top": "73.3267%",
+      "left": "16.3%"
+    },
+    "61_nom2_guardianMobile_10": {
+      "top": "73.3267%",
+      "left": "67.2%"
+    },
+    "61_nom2_guardianAddress_11": {
+      "top": "80.0783%",
+      "left": "17.7%"
+    },
+    "61_nom2_guardianNid_12": {
+      "top": "86.1731%",
+      "left": "34.9%"
+    },
+    "61_nom2_guardianRelation_13": {
+      "top": "86.611%",
+      "left": "79.1%"
     },
     "48_gNameBn_0": {
       "top": "42.5695%",

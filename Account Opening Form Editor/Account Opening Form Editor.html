@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="assets/font-awesome.min.css">
   <!-- Auto-import: load saved form data from ucb_auto_import.js (works with file:// protocol) -->
   <script src="ucb_auto_import.js"></script>
+  <script src="sector_codes.js"></script>
   <style>
 /* Modern Unified Design System with Animations */
 :root {
@@ -603,9 +604,14 @@ body::after {
 }
 
 
-.form-group:focus-within label {
+.form-group:focus-within > label {
   color: var(--primary);
   transform: translateX(2px);
+}
+
+/* Nominee section scrollbar - only when expanded */
+#nominee-info:not(.collapsed) #nomineeFormFields {
+  max-height: 500px;
 }
 
 .form-group input,
@@ -3133,6 +3139,10 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                   <option value="others">Others</option>
                 </select>
               </div>
+              <div class="form-group">
+                <label id="applicantNameLabel">Applicant Name</label>
+                <input type="text" name="fullNameEn" id="applicantNameField" placeholder="Enter full name in English">
+              </div>
               <div class="form-group owner-joint-only" style="display:none;">
                 <label>2nd Applicant Name</label>
                 <input type="text" name="secondApplicantName" placeholder="Second applicant full name">
@@ -3242,7 +3252,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
             <div class="form-fields">
               <div class="form-group">
                 <label>Full Name (English)</label>
-                <input type="text" name="fullNameEn" placeholder="Enter full name in English">
+                <input type="text" id="personalInfoNameDisplay" placeholder="Enter full name in English" readonly style="background:#f1f5f9; cursor:not-allowed;">
               </div>
               <div class="form-group">
                 <label>Full Name (Bangla)</label>
@@ -3652,75 +3662,78 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
               <h2>Nominee Information</h2>
               <i class="fas fa-chevron-down section-toggle"></i>
             </div>
-            <div class="form-fields">
+            <div class="form-fields" style="overflow-y:auto;" id="nomineeFormFields">
               <div class="form-group">
                 <label>Nominee Name</label>
                 <input type="text" name="nomineeName" placeholder="Nominee's full name">
               </div>
               <div class="form-group">
-                <label>Nominee Date of Birth</label>
+                <label>Date of Birth</label>
                 <input type="date" name="nomineeDob">
               </div>
               <div class="form-group">
                 <label>Relationship</label>
-                <input type="text" name="nomineeRelation" placeholder="e.g., Father, Mother, Spouse">
+                <input type="text" name="nomineeRelation" placeholder="Relationship">
               </div>
               <div class="form-group">
-                <label>Nominee NID</label>
-                <input type="text" name="nomineeNid" placeholder="Nominee's NID number">
+                <label>NID/Passport/Birth Cert</label>
+                <input type="text" name="nomineeNid" placeholder="NID/Passport/Birth Cert">
               </div>
               <div class="form-group">
-                <label>Nominee Mobile</label>
-                <input type="tel" name="nomineeMobile" placeholder="Nominee's mobile number">
+                <label>Phone/Mobile</label>
+                <input type="tel" name="nomineeMobile" placeholder="Phone/Mobile">
               </div>
               <div class="form-group">
-                <label>Share (%)</label>
-                <input type="text" name="nomineeShare" value="100" placeholder="Percentage">
+                <label>E-mail</label>
+                <input type="email" name="nomineeEmail" placeholder="E-mail">
+              </div>
+              <div class="form-group">
+                <label>Percentage of Share</label>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <input type="text" name="nomineeShare" value="100" placeholder="%" style="flex:1;">
+                  <span class="totalShareIndicator" style="font-size:0.75rem; font-weight:700; white-space:nowrap; color:var(--success);">Total: 100% (must be 100%)</span>
+                </div>
               </div>
               <div class="form-group span-2">
-                <label>Nominee Address</label>
-                <div class="checkbox-inline">
-                  <input type="checkbox" id="nomineeSameAddress" name="nomineeSameAddress">
-                  <label for="nomineeSameAddress">Same as Account Holder Present Address</label>
-                </div>
-                <textarea name="nomineeAddress" placeholder="Nominee's complete address"></textarea>
+                <label>Address</label>
+                <label style="margin:0; font-weight:500; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="nomineeSameAddress" name="nomineeSameAddress" style="margin:0;">Same as Account Holder Present Address</label>
+                <input type="text" name="nomineeAddress" placeholder="Nominee's address">
               </div>
+              <!-- Guardian Information (Nominee) - inside nominee section, shown when nominee is minor -->
+              <div class="form-group span-4" id="guardian-info" style="display:none; padding-top:12px;">
+                <div style="font-weight:700; margin-bottom:10px; color:var(--primary);">Guardian Information (Nominee)</div>
+                <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
+                  <div class="form-group">
+                    <label>Guardian's Name</label>
+                    <input type="text" name="guardianName" placeholder="Guardian's full name">
+                  </div>
+                  <div class="form-group">
+                    <label>Relationship with Nominee</label>
+                    <input type="text" name="guardianRelation" placeholder="Relationship with nominee">
+                  </div>
+                  <div class="form-group">
+                    <label>Guardian NID</label>
+                    <input type="text" name="guardianNid" placeholder="Guardian's NID number">
+                  </div>
+                  <div class="form-group">
+                    <label>Phone / Mobile No.</label>
+                    <input type="tel" name="guardianMobile" placeholder="Guardian's phone/mobile number">
+                  </div>
+                  <div class="form-group span-2">
+                    <label>Permanent Address</label>
+                    <label style="margin:0; font-weight:500; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="guardianSameAddress" name="guardianSameAddress" style="margin:0;">Same as Account Holder Present Address</label>
+                    <input type="text" name="guardianPermanentAddress" placeholder="Guardian's permanent address">
+                  </div>
+                </div>
+              </div>
+              <!-- Add Nominee Button -->
+              <div class="form-group span-4" style="display:flex; align-items:center; gap:16px; padding-top:12px;">
+                <button type="button" id="addNomineeBtn" class="btn btn-primary" style="padding:8px 20px; font-size:0.85rem;"><i class="fas fa-plus"></i> Add Nominee</button>
+              </div>
+              <!-- Additional Nominees Container -->
+              <div class="form-group span-4" id="additionalNomineesContainer"></div>
             </div>
           </div>
-            <!-- Guardian Information (moved here) -->
-            <div class="form-section" id="guardian-info">
-              <div class="section-header">
-                <i class="fas fa-user-shield"></i>
-                <h2>Guardian Information (Nominee)</h2>
-                <i class="fas fa-chevron-down section-toggle"></i>
-              </div>
-              <div class="form-fields">
-                <div class="form-group">
-                  <label>Guardian's Name</label>
-                  <input type="text" name="guardianName" placeholder="Guardian's full name">
-                </div>
-                <div class="form-group">
-                  <label>Relationship with Nominee</label>
-                  <input type="text" name="guardianRelation" placeholder="Relationship with nominee">
-                </div>
-                <div class="form-group">
-                  <label>Guardian NID</label>
-                  <input type="text" name="guardianNid" placeholder="Guardian's NID number">
-                </div>
-                <div class="form-group">
-                  <label>Phone / Mobile No.</label>
-                  <input type="tel" name="guardianMobile" placeholder="Guardian's phone/mobile number">
-                </div>
-                <div class="form-group span-2">
-                  <label>Guardian Permanent Address</label>
-                  <div class="checkbox-inline">
-                    <input type="checkbox" id="guardianSameAddress" name="guardianSameAddress">
-                    <label for="guardianSameAddress">Same as Account Holder Present Address</label>
-                  </div>
-                  <textarea name="guardianPermanentAddress" placeholder="Guardian's permanent address"></textarea>
-                </div>
-              </div>
-            </div>
 
             <!-- KYC Information -->
           <div class="form-section" id="kyc-info-main">
@@ -3743,24 +3756,11 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                 <label>Maximum Single Transection</label>
                 <input type="text" name="transectionProfile" placeholder="Enter Maximum Single Transection" />
               </div>
-              <div class="form-group">
+              <div class="form-group" style="position:relative;">
                 <label>Sector Code</label>
-                <input type="text" name="sectorCode" placeholder="Enter Sector Code" list="sectorCodeHints" title="Farmer/Fishermen 901009; Businessmen/Industrialists 903009; NRB 910500; Service Holders 911000; Professionals/Self-employed 910000; Foreign Individuals 912050; Housewives 915001; Students 915002; Minor/Autistics/Disabled 915003; Retired 915004; Old/Widowed/Distressed 915005; Land Lords/Ladies 915006; Other Local Individuals 915059" />
-                <datalist id="sectorCodeHints">
-                  <option value="901009">Farmer/Fishermen</option>
-                  <option value="903009">Businessmen/Industrialists</option>
-                  <option value="910500">Non-Resident Bangladeshi</option>
-                  <option value="911000">Service Holders (Salaried Person)</option>
-                  <option value="910000">Professionals and Self-employed Persons</option>
-                  <option value="912050">Foreign Individuals</option>
-                  <option value="915001">Housewives</option>
-                  <option value="915002">Students</option>
-                  <option value="915003">Minor/Autistics/Disabled and other dependent persons</option>
-                  <option value="915004">Retired Persons</option>
-                  <option value="915005">Old/Widowed/Distressed person</option>
-                  <option value="915006">Land Lords/Ladies</option>
-                  <option value="915059">Other Local Individuals not mentioned above</option>
-                </datalist>
+                <input type="text" name="sectorCode" id="sectorCodeInput" placeholder="Search by code or name..." autocomplete="off" />
+                <div id="sectorCodeDropdown" style="display:none; position:absolute; top:100%; left:0; right:0; max-height:200px; overflow-y:auto; background:#fff; border:1px solid var(--border-color); border-radius:8px; box-shadow:var(--shadow-md); z-index:50; margin-top:4px;">
+                </div>
               </div>
 
               <!-- Row 2 -->
@@ -4274,7 +4274,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
             <option value="taqwa-imperial">Taqwa Imperial</option>
             <option value="others">Others</option>
             <option value="beneficial-owner">Beneficial Owner</option>
-            <option value="guardian">Guardian</option>
+            <option value="additional-nominee">Additional Nominee</option>
             <option value="additional-applicant">Additional Applicant</option>
           </select>
         </div>
@@ -4381,6 +4381,13 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         </div>
         <div class="form-page additional-applicant-page additional-applicant-taqwa-imperial" data-page="58" style="display:none;">
           <img src="Images/Additional Applicant/taqwa imperial.jpg" alt="Additional Applicant - Taqwa Imperial">
+        </div>
+        <!-- Nominee Pages (hidden by default) -->
+        <div class="form-page nominee-page nominee-conventional" data-page="60" style="display:none;">
+          <img src="Images/Nominee/Nominee.jpg" alt="Nominee Page - Conventional/Taqwa">
+        </div>
+        <div class="form-page nominee-page nominee-imperial" data-page="61" style="display:none;">
+          <img src="Images/Nominee/Nominee imperial.jpg" alt="Nominee Page - Imperial">
         </div>
         <!-- Guardian Form Pages (hidden by default) -->
         <div class="form-page guardian-page" data-page="48" style="display:none;">
@@ -5036,6 +5043,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
       { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
       { field: 'attestedSeal2', top: '79%', left: '55%', label: 'Attested Seal 2' },
+      { field: 'nomineeEmail', top: '36%', left: '60%', label: 'Nominee Email' },
     ],
     3: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -5462,6 +5470,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
       { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
       { field: 'attestedSeal2', top: '79%', left: '55%', label: 'Attested Seal 2' },
+      { field: 'nomineeEmail', top: '36%', left: '60%', label: 'Nominee Email' },
     ],
     20: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -5661,6 +5670,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
       { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
       { field: 'attestedSeal2', top: '79%', left: '55%', label: 'Attested Seal 2' },
+      { field: 'nomineeEmail', top: '36%', left: '60%', label: 'Nominee Email' },
     ],
     26: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -5809,6 +5819,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'officer3Seal', top: '80%', left: '88%', label: 'Officer 3 Seal', sealType: 'officer3' },
       { field: 'attestedSeal', top: '79%', left: '42%', label: 'Attested Seal' },
       { field: 'attestedSeal2', top: '79%', left: '55%', label: 'Attested Seal 2' },
+      { field: 'nomineeEmail', top: '36%', left: '60%', label: 'Nominee Email' },
     ],
     32: [
       { field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
@@ -5862,7 +5873,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     // Additional Applicant Page (for 2nd/3rd applicant and guardian overlay positioning)
     55: [
       { field: 'applicantStaticLabel', top: '4%', left: '70%', label: '', alwaysShow: true },
-      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number', alwaysShow: true },
+      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number' },
       { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
       { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
       { field: 'fullNameBn', top: '11%', left: '35%', label: 'Name (Bangla)' },
@@ -5904,7 +5915,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     ],
     56: [
       { field: 'applicantStaticLabel', top: '4%', left: '70%', label: '', alwaysShow: true },
-      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number', alwaysShow: true },
+      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number' },
       { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
       { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
       { field: 'fullNameBn', top: '11%', left: '35%', label: 'Name (Bangla)' },
@@ -5946,7 +5957,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     ],
     57: [
       { field: 'applicantStaticLabel', top: '4%', left: '70%', label: '', alwaysShow: true },
-      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number', alwaysShow: true },
+      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number' },
       { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
       { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
       { field: 'fullNameBn', top: '11%', left: '35%', label: 'Name (Bangla)' },
@@ -5988,7 +5999,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     ],
     58: [
       { field: 'applicantStaticLabel', top: '4%', left: '70%', label: '', alwaysShow: true },
-      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number', alwaysShow: true },
+      { field: 'amlTrackingNumber', top: '6%', left: '70%', label: 'AML Tracking Number' },
       { field: 'cif', top: '10%', left: '48%', label: 'CIF' },
       { field: 'fullNameEn', top: '18.5%', left: '22%', label: 'Full Name (English)' },
       { field: 'fullNameBn', top: '11%', left: '35%', label: 'Name (Bangla)' },
@@ -6027,6 +6038,40 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       { field: 'resident_yes', top: '90%', left: '50%', label: '' },
       { field: 'resident_no', top: '90%', left: '56%', label: '' },
       { field: 'officer1Seal', top: '85%', left: '78%', label: 'Officer 1 Seal', sealType: 'officer1' },
+    ],
+    // Nominee Page (additional nominee) - Conventional / Taqwa
+    60: [
+      { field: 'accountNumber', top: '10%', left: '52%', label: 'Account Number' },
+      { field: 'nom2_name', top: '28%', left: '18%', label: 'Name of Nominee', alwaysShow: true },
+      { field: 'nom2_dob', top: '28%', left: '62%', label: 'Date of Birth', alwaysShow: true },
+      { field: 'nom2_address', top: '33%', left: '10%', label: 'Address', alwaysShow: true },
+      { field: 'nom2_share', top: '38%', left: '15%', label: 'Percentage of Share', alwaysShow: true },
+      { field: 'nom2_relation', top: '38%', left: '42%', label: 'Relationship', alwaysShow: true },
+      { field: 'nom2_nid', top: '43%', left: '10%', label: 'NID/Passport/Birth Cert', alwaysShow: true },
+      { field: 'nom2_mobile', top: '48%', left: '12%', label: 'Phone/Mobile', alwaysShow: true },
+      { field: 'nom2_email', top: '48%', left: '45%', label: 'E-mail', alwaysShow: true },
+      { field: 'nom2_guardianName', top: '58%', left: '14%', label: 'Guardian Name', alwaysShow: true },
+      { field: 'nom2_guardianMobile', top: '58%', left: '65%', label: 'Guardian Phone', alwaysShow: true },
+      { field: 'nom2_guardianAddress', top: '63%', left: '14%', label: 'Guardian Address', alwaysShow: true },
+      { field: 'nom2_guardianNid', top: '68%', left: '10%', label: 'Guardian NID', alwaysShow: true },
+      { field: 'nom2_guardianRelation', top: '68%', left: '60%', label: 'Relationship with Nominee', alwaysShow: true },
+    ],
+    // Nominee Page (additional nominee) - Conventional Imperial / Taqwa Imperial
+    61: [
+      { field: 'accountNumber', top: '10%', left: '52%', label: 'Account Number' },
+      { field: 'nom2_name', top: '28%', left: '18%', label: 'Name of Nominee', alwaysShow: true },
+      { field: 'nom2_dob', top: '28%', left: '62%', label: 'Date of Birth', alwaysShow: true },
+      { field: 'nom2_address', top: '33%', left: '10%', label: 'Address', alwaysShow: true },
+      { field: 'nom2_share', top: '38%', left: '15%', label: 'Percentage of Share', alwaysShow: true },
+      { field: 'nom2_relation', top: '38%', left: '42%', label: 'Relationship', alwaysShow: true },
+      { field: 'nom2_nid', top: '43%', left: '10%', label: 'NID/Passport/Birth Cert', alwaysShow: true },
+      { field: 'nom2_mobile', top: '48%', left: '12%', label: 'Phone/Mobile', alwaysShow: true },
+      { field: 'nom2_email', top: '48%', left: '45%', label: 'E-mail', alwaysShow: true },
+      { field: 'nom2_guardianName', top: '58%', left: '14%', label: 'Guardian Name', alwaysShow: true },
+      { field: 'nom2_guardianMobile', top: '58%', left: '65%', label: 'Guardian Phone', alwaysShow: true },
+      { field: 'nom2_guardianAddress', top: '63%', left: '14%', label: 'Guardian Address', alwaysShow: true },
+      { field: 'nom2_guardianNid', top: '68%', left: '10%', label: 'Guardian NID', alwaysShow: true },
+      { field: 'nom2_guardianRelation', top: '68%', left: '60%', label: 'Relationship with Nominee', alwaysShow: true },
     ]
   };
 
@@ -7269,6 +7314,20 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
           }
         }
 
+        // Nominee 2 DOB: same format as nomineeDob on page 2
+        if (field === 'nom2_dob' && value) {
+          try {
+            const parts = String(value).split('-');
+            if (parts.length === 3) {
+              const yyyy = parts[0];
+              const mm = parts[1];
+              const dd = parts[2];
+              const gap = '\u00A0\u00A0\u00A0\u00A0\u00A0';
+              displayValue = dd + gap + mm + gap + yyyy;
+            }
+          } catch (e) {}
+        }
+
         // Special compact DOB format for Introducer: DD<4NBSP>MM<4NBSP>YYYY (digits grouped)
         // On page 25 or 31: use digit-level spacing (4 NBSPs between each digit)
         if (field === 'introducerDob' && value) {
@@ -7367,7 +7426,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
           else if (overlay.dataset.page === '1' || overlay.dataset.page === '2' || overlay.dataset.page === '3' || 
                    overlay.dataset.page === '4' || overlay.dataset.page === '5' || overlay.dataset.page === '6' ||
                    overlay.dataset.page === '18' || overlay.dataset.page === '19' || overlay.dataset.page === '20' || 
-                   overlay.dataset.page === '21' || overlay.dataset.page === '22' || overlay.dataset.page === '23') {
+                   overlay.dataset.page === '21' || overlay.dataset.page === '22' || overlay.dataset.page === '23' ||
+                   overlay.dataset.page === '60') {
             const cleaned = String(value).replace(/\s+/g, '');
             displayValue = cleaned.split('').join('\u00A0\u00A0\u00A0\u00A0\u200A');
           }
@@ -8128,14 +8188,14 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   // Handle form type (Conventional / Conventional Imperial / Taqwa / Others) switching
   function handleFormTypeChange() {
     const formType = formTypeSelect ? formTypeSelect.value : 'conventional';
-    const conventionalPages = document.querySelectorAll('.form-page:not(.others-page):not(.imperial-page):not(.taqwa-page):not(.taqwa-imperial-page):not(.beneficial-owner-page):not(.additional-applicant-page):not(.fatca-page):not(.guardian-page)');
+    const conventionalPages = document.querySelectorAll('.form-page:not(.others-page):not(.imperial-page):not(.taqwa-page):not(.taqwa-imperial-page):not(.beneficial-owner-page):not(.additional-applicant-page):not(.fatca-page):not(.guardian-page):not(.nominee-page)');
     const imperialPages = document.querySelectorAll('.form-page.imperial-page');
     const taqwaPages = document.querySelectorAll('.form-page.taqwa-page');
     const taqwaImperialPages = document.querySelectorAll('.form-page.taqwa-imperial-page');
     const othersPages = document.querySelectorAll('.form-page.others-page');
     const boPages = document.querySelectorAll('.form-page.beneficial-owner-page');
-    const guardianPages = document.querySelectorAll('.form-page.guardian-page');
     const additionalApplicantPages = document.querySelectorAll('.form-page.additional-applicant-page');
+    const nomineePages = document.querySelectorAll('.form-page.nominee-page');
 
     // Hide all first
     conventionalPages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
@@ -8145,6 +8205,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     othersPages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
     boPages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
     additionalApplicantPages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
+    nomineePages.forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
 
     // Show based on form type
     if (formType === 'conventional') {
@@ -8157,8 +8218,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       taqwaImperialPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
     } else if (formType === 'beneficial-owner') {
       boPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
-    } else if (formType === 'guardian') {
-      guardianPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
+    } else if (formType === 'additional-nominee') {
+      nomineePages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
     } else if (formType === 'additional-applicant') {
       additionalApplicantPages.forEach(page => { page.style.display = 'block'; page.classList.add('active'); });
     } else {
@@ -8284,14 +8345,15 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
   function getPrintablePages(printType, includeSupplementaryPages) {
     const selectorMap = {
-      'conventional': '.form-page:not(.others-page):not(.imperial-page):not(.taqwa-page):not(.taqwa-imperial-page):not(.beneficial-owner-page):not(.guardian-page):not(.fatca-page):not(.additional-applicant-page)',
+      'conventional': '.form-page:not(.others-page):not(.imperial-page):not(.taqwa-page):not(.taqwa-imperial-page):not(.beneficial-owner-page):not(.guardian-page):not(.fatca-page):not(.additional-applicant-page):not(.nominee-page)',
       'conventional-imperial': '.form-page.imperial-page',
       'taqwa': '.form-page.taqwa-page',
       'taqwa-imperial': '.form-page.taqwa-imperial-page',
       'others': '.form-page.others-page',
       'beneficial-owner': '.form-page.beneficial-owner-page',
       'guardian': '.form-page.guardian-page',
-      'additional-applicant': '.form-page.additional-applicant-page'
+      'additional-applicant': '.form-page.additional-applicant-page',
+      'additional-nominee': '.form-page.nominee-page'
     };
 
     const includedPages = new Set();
@@ -8307,6 +8369,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       if (fatcaVal === 'yes') {
         document.querySelectorAll('.form-page.fatca-page').forEach(page => includedPages.add(page));
       }
+      // Nominee pages are generated dynamically during print (not included statically)
     }
 
     return Array.from(document.querySelectorAll('.form-page')).filter(page => includedPages.has(page));
@@ -8321,8 +8384,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     }).join('');
   }
 
-  function printPagesInIframe(pages, title) {
-    if (!pages || pages.length === 0) {
+  function printPagesInIframe(pages, title, rawMarkup) {
+    if (!rawMarkup && (!pages || pages.length === 0)) {
       console.warn('No pages available to print');
       return;
     }
@@ -8347,7 +8410,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     const headAssets = Array.from(document.head.querySelectorAll('style, link[rel="stylesheet"]'))
       .map(element => element.outerHTML)
       .join('\n');
-    const printableMarkup = buildPrintablePagesMarkup(pages);
+    const printableMarkup = rawMarkup || buildPrintablePagesMarkup(pages);
     const html = '<!doctype html><html lang="en"><head>' +
       '<meta charset="utf-8">' +
       '<base href="' + escapeHtmlAttribute(document.baseURI) + '">' +
@@ -8671,6 +8734,25 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   sameAddressCheckbox.addEventListener('change', handleSameAddress);
   if (nomineeSameCheckbox) nomineeSameCheckbox.addEventListener('change', handleNomineeSameAddress);
   if (guardianSameCheckbox) guardianSameCheckbox.addEventListener('change', handleGuardianSameAddress);
+  // Nominee's Guardian "Same as Account Holder Present Address"
+  const nomineeGuardianSameCheckbox = document.getElementById('guardianSameAddress');
+  if (nomineeGuardianSameCheckbox) {
+    nomineeGuardianSameCheckbox.addEventListener('change', function() {
+      if (this.checked) {
+        const addrEl = form.elements['guardianPermanentAddress'];
+        if (addrEl) {
+          const parts = [];
+          if (form.elements['presentHouse'] && form.elements['presentHouse'].value) parts.push(form.elements['presentHouse'].value);
+          if (form.elements['presentRoad'] && form.elements['presentRoad'].value) parts.push(form.elements['presentRoad'].value);
+          if (form.elements['presentPO'] && form.elements['presentPO'].value) parts.push(form.elements['presentPO'].value);
+          if (form.elements['presentPostCode'] && form.elements['presentPostCode'].value) parts.push(form.elements['presentPostCode'].value);
+          if (form.elements['presentThana'] && form.elements['presentThana'].value) parts.push(form.elements['presentThana'].value);
+          if (form.elements['presentDistrict'] && form.elements['presentDistrict'].value) parts.push(form.elements['presentDistrict'].value);
+          addrEl.value = parts.join(', ');
+        }
+      }
+    });
+  }
   if (boSameAddressAHCheckbox) boSameAddressAHCheckbox.addEventListener('change', handleBOSameAddressAH);
   if (boSameAddressCheckbox) boSameAddressCheckbox.addEventListener('change', handleBoSameAddress);
   if (beneficialOwnersSelect) {
@@ -8857,6 +8939,9 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       const englishText = e.target.value;
       console.log('English name entered:', englishText);
       translateDebounced(englishText);
+      // Sync to Personal Info readonly display
+      const personalDisplay = document.getElementById('personalInfoNameDisplay');
+      if (personalDisplay) personalDisplay.value = englishText;
       // Update FATCA dropdown with current name
       try { updateApplicantSections(); } catch(ex) {}
     });
@@ -8912,11 +8997,26 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       }
       return;
     }
-    const translated = await translateText(text);
+    
+    // Check if name starts with mst, most, mst., or most. (case-insensitive)
+    let textToTranslate = text.trim();
+    let hasTitle = false;
+    const titlePattern = /^(mst|most)(\.)?(\s+)/i;
+    const match = textToTranslate.match(titlePattern);
+    
+    if (match) {
+      // Remove the title prefix (mst/most/mst./most.) from the text to translate
+      textToTranslate = textToTranslate.substring(match[0].length).trim();
+      hasTitle = true;
+    }
+    
+    const translated = await translateText(textToTranslate);
     if (translated && form.elements['gNameBn']) {
-      form.elements['gNameBn'].value = translated;
+      // If the original text had mst/most prefix, prepend মোছাঃ to the translated result
+      const finalResult = hasTitle ? 'মোছাঃ ' + translated : translated;
+      form.elements['gNameBn'].value = finalResult;
       updateOverlays();
-      console.log('Updated gNameBn field with:', translated);
+      console.log('Updated gNameBn field with:', finalResult);
     }
   }, 700);
 
@@ -9333,6 +9433,58 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
   // Initialize ISR visibility based on account type
   try { handleIsrVisibility(); } catch (e) {}
+
+  // Populate sector code with custom searchable autocomplete
+  try {
+    if (typeof window.UCB_SECTOR_CODES !== 'undefined') {
+      const sectorInput = document.getElementById('sectorCodeInput');
+      const sectorDropdown = document.getElementById('sectorCodeDropdown');
+      if (sectorInput && sectorDropdown) {
+        function filterSectorCodes(query) {
+          const q = query.toLowerCase().trim();
+          if (!q) {
+            // Show most commonly used sector codes when empty
+            const commonCodes = ['911000','910000','910500','903009','915001','915002','901009','903050','902430','915004'];
+            return commonCodes.map(function(c) { return window.UCB_SECTOR_CODES.find(function(item) { return item.code === c; }); }).filter(Boolean);
+          }
+          return window.UCB_SECTOR_CODES.filter(function(item) {
+            return item.code.includes(q) || item.name.toLowerCase().includes(q);
+          }).slice(0, 30);
+        }
+        function renderDropdown(items) {
+          if (items.length === 0) {
+            sectorDropdown.style.display = 'none';
+            return;
+          }
+          sectorDropdown.innerHTML = items.map(function(item) {
+            return '<div class="sector-option" data-code="' + item.code + '" style="padding:8px 12px; cursor:pointer; font-size:0.85rem; border-bottom:1px solid #f1f5f9; transition:background 0.1s;"><strong>' + item.code + '</strong> — ' + item.name + '</div>';
+          }).join('');
+          sectorDropdown.style.display = 'block';
+          // Click handler for options
+          sectorDropdown.querySelectorAll('.sector-option').forEach(function(opt) {
+            opt.addEventListener('mousedown', function(e) {
+              e.preventDefault();
+              sectorInput.value = this.dataset.code;
+              sectorDropdown.style.display = 'none';
+              sectorInput.dispatchEvent(new Event('input', {bubbles:true}));
+              sectorInput.dispatchEvent(new Event('change', {bubbles:true}));
+            });
+            opt.addEventListener('mouseenter', function() { this.style.background = '#eef2ff'; });
+            opt.addEventListener('mouseleave', function() { this.style.background = ''; });
+          });
+        }
+        sectorInput.addEventListener('focus', function() {
+          renderDropdown(filterSectorCodes(this.value));
+        });
+        sectorInput.addEventListener('input', function() {
+          renderDropdown(filterSectorCodes(this.value));
+        });
+        sectorInput.addEventListener('blur', function() {
+          setTimeout(function() { sectorDropdown.style.display = 'none'; }, 150);
+        });
+      }
+    }
+  } catch(e) {}
 
   // Left Slide Menu Toggle Logic
   const slideMenuToggle = document.getElementById('slideMenuToggle');
@@ -9809,7 +9961,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     if (popupSectorContainer) {
       const popupSectorInput = popupSectorContainer.querySelector('input');
       if (popupSectorInput) {
-        popupSectorInput.setAttribute('list', 'sectorCodeHints');
+        // Sector code autocomplete not needed in popup (uses main form sync)
       }
     }
     makeEditableSelect('kycClientBusiness', 'clientBusiness', 'clientBusiness');
@@ -9883,6 +10035,18 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     // Rename Personal Information title only (Account Information never changes)
     if (personalInfoTitle) {
       personalInfoTitle.textContent = hasMultiple ? '1st Applicant Information' : 'Personal Information';
+    }
+
+    // Rename Applicant Name label based on ownership
+    const applicantNameLabel = document.getElementById('applicantNameLabel');
+    if (applicantNameLabel) {
+      applicantNameLabel.textContent = hasMultiple ? '1st Applicant Name' : 'Applicant Name';
+    }
+
+    // Sync fullNameEn to Personal Info readonly display
+    const personalDisplay = document.getElementById('personalInfoNameDisplay');
+    if (personalDisplay && form.elements['fullNameEn']) {
+      personalDisplay.value = form.elements['fullNameEn'].value || '';
     }
 
     // Sync 2nd applicant fullNameEn ↔ secondApplicantName (keep both in sync)
@@ -10004,6 +10168,68 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       data[overlayField] = el ? (el.value || '') : '';
     });
     return data;
+  }
+
+  // Generate nominee pages markup for all additional nominees (max 3 per page)
+  function generateNomineePagesMarkup() {
+    const additionalNoms = document.querySelectorAll('.additional-nominee-section');
+    if (additionalNoms.length === 0) return '';
+
+    // Select correct nominee page based on detected form type
+    const detectedType = detectPrintFormType();
+    const isImperial = (detectedType === 'conventional-imperial' || detectedType === 'taqwa-imperial');
+    const nomineePageNum = isImperial ? '61' : '60';
+    const nomineePage = document.querySelector('.form-page.nominee-page[data-page="' + nomineePageNum + '"]');
+    if (!nomineePage) return '';
+
+    const accountNum = form.elements['accountNumber'] ? form.elements['accountNumber'].value : '';
+    const formattedAcct = accountNum.replace(/\s+/g, '').split('').join('\u00A0\u00A0\u00A0\u00A0\u200A');
+    let markup = '';
+
+    // Each nominee gets its own page clone (max 3 nominees per physical page not implemented yet — 1 per page for now)
+    additionalNoms.forEach(function(nomSection, idx) {
+      const prefix = 'nom' + (idx + 2) + '_';
+      const clone = nomineePage.cloneNode(true);
+      clone.classList.add('active');
+      clone.style.display = 'block';
+
+      // Find and populate overlays in the clone
+      clone.querySelectorAll('.overlay').forEach(function(overlay) {
+        const field = overlay.dataset.field;
+        if (field === 'accountNumber') {
+          overlay.textContent = formattedAcct;
+          overlay.classList.remove('overlay-empty');
+        } else if (field && field.startsWith('nom2_')) {
+          // Map nom2_ field to the actual nominee's field (nom2_, nom3_, etc.)
+          const actualField = prefix + field.replace('nom2_', '');
+          const el = form.elements[actualField];
+          let val = el ? el.value : '';
+
+          // Format DOB if it's the dob field
+          if (field === 'nom2_dob' && val) {
+            try {
+              const parts = String(val).split('-');
+              if (parts.length === 3) {
+                const gap = '\u00A0\u00A0\u00A0\u00A0\u00A0';
+                val = parts[2] + gap + parts[1] + gap + parts[0];
+              }
+            } catch(e) {}
+          }
+
+          if (val) {
+            overlay.textContent = val;
+            overlay.classList.remove('overlay-empty');
+          } else {
+            overlay.textContent = '';
+            overlay.classList.add('overlay-empty');
+          }
+        }
+      });
+
+      markup += clone.outerHTML;
+    });
+
+    return markup;
   }
 
   // Patched printCurrentPage: when target is 2nd/3rd applicant, temporarily swap overlay data
@@ -10190,12 +10416,15 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
       // Build final markup: insert applicant pages between page 1 and page 2
       if (applicantsToAppend.length > 0) {
-        // Build page 1 markup separately, then insert applicant pages, then remaining pages
+        // Build page 1 markup separately, then insert applicant pages, then page 2, then nominee pages, then remaining pages (3+)
         const page1Markup = buildPrintablePagesMarkup([pages[0]]);
-        const remainingPages = pages.slice(1);
-        const remainingMarkup = remainingPages.length > 0 ? buildPrintablePagesMarkup(remainingPages) : '';
+        const page2Markup = pages.length > 1 ? buildPrintablePagesMarkup([pages[1]]) : '';
+        const remainingAfterPage2 = pages.slice(2);
+        const remainingMarkup = remainingAfterPage2.length > 0 ? buildPrintablePagesMarkup(remainingAfterPage2) : '';
         const appendedMarkup = applicantsToAppend.map(function(el) { return el.outerHTML; }).join('');
-        const combinedMarkup = page1Markup + appendedMarkup + remainingMarkup;
+        // Generate nominee pages for additional nominees
+        const nomineeMarkup = generateNomineePagesMarkup();
+        const combinedMarkup = page1Markup + appendedMarkup + page2Markup + nomineeMarkup + remainingMarkup;
 
         // Use a custom print that takes raw markup instead of page elements
         const existingFrame = document.getElementById('__account_opening_print_frame');
@@ -10216,9 +10445,18 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         printDoc.open(); printDoc.write(html); printDoc.close();
         setTimeout(function() { try { var f = document.getElementById('__account_opening_print_frame'); if (f && f.parentNode) f.parentNode.removeChild(f); } catch(e) {} }, 6000);
       } else {
-        // No additional applicants — print normally
-        printPagesInIframe(pages, 'Account Opening Form Print');
+        // No additional applicants — but still include nominee pages after page 2
+        const nomineeMarkup = generateNomineePagesMarkup();
+        if (nomineeMarkup) {
+          const page1And2Markup = buildPrintablePagesMarkup(pages.slice(0, 2));
+          const remainingMarkup = pages.length > 2 ? buildPrintablePagesMarkup(pages.slice(2)) : '';
+          const fullMarkup = page1And2Markup + nomineeMarkup + remainingMarkup;
+          printPagesInIframe(null, 'Account Opening Form Print', fullMarkup);
+        } else {
+          printPagesInIframe(pages, 'Account Opening Form Print');
+        }
       }
+
     }
   };
 
@@ -10300,6 +10538,174 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       }
     });
   }
+
+  // ========== Add Nominee Logic ==========
+  let nomineeCount = 1; // Already have 1 nominee
+  const addNomineeBtn = document.getElementById('addNomineeBtn');
+  const additionalNomineesContainer = document.getElementById('additionalNomineesContainer');
+
+  if (addNomineeBtn && additionalNomineesContainer) {
+    addNomineeBtn.addEventListener('click', function() {
+      nomineeCount++;
+      const n = nomineeCount;
+      const prefix = 'nom' + n + '_';
+
+      const section = document.createElement('div');
+      section.className = 'additional-nominee-section';
+      section.style.cssText = 'border-top:2px solid var(--border-color); padding-top:16px; margin-top:16px;';
+      section.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+          <h4 style="margin:0; color:var(--primary); font-weight:700;">Nominee ${n}</h4>
+          <button type="button" class="btn btn-danger" style="padding:4px 12px; font-size:0.75rem;" onclick="this.closest('.additional-nominee-section').remove()"><i class="fas fa-times"></i> Remove</button>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
+          <div class="form-group"><label>Nominee Name</label><input type="text" name="${prefix}name" placeholder="Nominee's full name"></div>
+          <div class="form-group"><label>Date of Birth</label><input type="date" name="${prefix}dob" class="nom-dob-trigger" data-prefix="${prefix}"></div>
+          <div class="form-group"><label>Relationship</label><input type="text" name="${prefix}relation" placeholder="Relationship"></div>
+          <div class="form-group"><label>NID/Passport/Birth Cert</label><input type="text" name="${prefix}nid" placeholder="NID/Passport/Birth Cert"></div>
+          <div class="form-group"><label>Phone/Mobile</label><input type="tel" name="${prefix}mobile" placeholder="Phone/Mobile"></div>
+          <div class="form-group"><label>E-mail</label><input type="email" name="${prefix}email" placeholder="E-mail"></div>
+          <div class="form-group"><label>Percentage of Share</label><div style="display:flex; align-items:center; gap:8px;"><input type="text" name="${prefix}share" placeholder="%" value="" style="flex:1;"><span class="totalShareIndicator" style="font-size:0.75rem; font-weight:700; white-space:nowrap; color:var(--success);">Total: 100% (must be 100%)</span></div></div>
+          <div class="form-group span-2"><label>Address</label><label style="margin:0; font-weight:500; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" class="nom-same-address" data-prefix="${prefix}" style="margin:0;">Same as Account Holder Present Address</label><input type="text" name="${prefix}address" placeholder="Nominee's address"></div>
+          <!-- Guardian (shown when nominee DOB indicates minor) -->
+          <div class="form-group span-4 nom-guardian-section" data-prefix="${prefix}" style="display:none; padding-top:8px;">
+            <div style="font-weight:600; margin-bottom:8px; color:var(--text-secondary);">Guardian (Nominee ${n})</div>
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
+              <div class="form-group"><label>Guardian Name</label><input type="text" name="${prefix}guardianName" placeholder="Guardian name"></div>
+              <div class="form-group"><label>Phone/Mobile</label><input type="tel" name="${prefix}guardianMobile" placeholder="Phone"></div>
+              <div class="form-group span-2"><label>Permanent Address</label><label style="margin:0; font-weight:500; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" class="nom-guardian-same-address" data-prefix="${prefix}" style="margin:0;">Same as Account Holder Present Address</label><input type="text" name="${prefix}guardianAddress" placeholder="Address"></div>
+              <div class="form-group"><label>NID/Passport/Birth Cert</label><input type="text" name="${prefix}guardianNid" placeholder="NID"></div>
+              <div class="form-group"><label>Relationship with Nominee</label><input type="text" name="${prefix}guardianRelation" placeholder="Relationship"></div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      additionalNomineesContainer.appendChild(section);
+
+      // Update total share display after adding new nominee
+      validateNomineeShares(null);
+      // Wire up DOB change to show/hide guardian
+      const dobInput = section.querySelector('.nom-dob-trigger');
+      if (dobInput) {
+        dobInput.addEventListener('change', function() {
+          const guardianDiv = section.querySelector('.nom-guardian-section');
+          if (!guardianDiv) return;
+          const val = this.value;
+          if (!val) { guardianDiv.style.display = 'none'; return; }
+          const dob = new Date(val);
+          if (isNaN(dob.getTime())) { guardianDiv.style.display = 'none'; return; }
+          const today = new Date();
+          let age = today.getFullYear() - dob.getFullYear();
+          const m = today.getMonth() - dob.getMonth();
+          if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+          guardianDiv.style.display = (age < 18) ? '' : 'none';
+        });
+      }
+
+      // Wire up "Same as Account Holder Present Address" checkboxes
+      const nomSameAddr = section.querySelector('.nom-same-address');
+      if (nomSameAddr) {
+        nomSameAddr.addEventListener('change', function() {
+          if (this.checked) {
+            const pf = this.dataset.prefix;
+            const addrEl = form.elements[pf + 'address'];
+            if (addrEl) {
+              const parts = [];
+              if (form.elements['presentHouse'] && form.elements['presentHouse'].value) parts.push(form.elements['presentHouse'].value);
+              if (form.elements['presentRoad'] && form.elements['presentRoad'].value) parts.push(form.elements['presentRoad'].value);
+              if (form.elements['presentPO'] && form.elements['presentPO'].value) parts.push(form.elements['presentPO'].value);
+              if (form.elements['presentPostCode'] && form.elements['presentPostCode'].value) parts.push(form.elements['presentPostCode'].value);
+              if (form.elements['presentThana'] && form.elements['presentThana'].value) parts.push(form.elements['presentThana'].value);
+              if (form.elements['presentDistrict'] && form.elements['presentDistrict'].value) parts.push(form.elements['presentDistrict'].value);
+              addrEl.value = parts.join(', ');
+            }
+          }
+        });
+      }
+      const nomGuardianSameAddr = section.querySelector('.nom-guardian-same-address');
+      if (nomGuardianSameAddr) {
+        nomGuardianSameAddr.addEventListener('change', function() {
+          if (this.checked) {
+            const pf = this.dataset.prefix;
+            const addrEl = form.elements[pf + 'guardianAddress'];
+            if (addrEl) {
+              const parts = [];
+              if (form.elements['presentHouse'] && form.elements['presentHouse'].value) parts.push(form.elements['presentHouse'].value);
+              if (form.elements['presentRoad'] && form.elements['presentRoad'].value) parts.push(form.elements['presentRoad'].value);
+              if (form.elements['presentPO'] && form.elements['presentPO'].value) parts.push(form.elements['presentPO'].value);
+              if (form.elements['presentPostCode'] && form.elements['presentPostCode'].value) parts.push(form.elements['presentPostCode'].value);
+              if (form.elements['presentThana'] && form.elements['presentThana'].value) parts.push(form.elements['presentThana'].value);
+              if (form.elements['presentDistrict'] && form.elements['presentDistrict'].value) parts.push(form.elements['presentDistrict'].value);
+              addrEl.value = parts.join(', ');
+            }
+          }
+        });
+      }
+    });
+  }
+
+  // ========== Nominee Share Validation (total must not exceed 100) ==========
+  function validateNomineeShares(triggerEl) {
+    let total = 0;
+    // 1st nominee share
+    const firstShare = parseFloat(form.elements['nomineeShare'] ? form.elements['nomineeShare'].value : 0) || 0;
+    total += firstShare;
+    // Additional nominee shares
+    document.querySelectorAll('.additional-nominee-section').forEach(function(section, idx) {
+      const prefix = 'nom' + (idx + 2) + '_';
+      const el = form.elements[prefix + 'share'];
+      if (el) total += (parseFloat(el.value) || 0);
+    });
+
+    if (total > 100) {
+      showToast('Total nominee share cannot exceed 100%. Current total: ' + total + '%');
+      // Revert the last changed field
+      if (triggerEl) {
+        const currentVal = parseFloat(triggerEl.value) || 0;
+        const excess = total - 100;
+        triggerEl.value = Math.max(0, currentVal - excess);
+        total = 100;
+      }
+    }
+
+    // Update all total share indicators
+    document.querySelectorAll('.totalShareIndicator').forEach(function(el) {
+      el.innerHTML = 'Total: ' + total + '% (must be 100%)';
+      if (total === 100) {
+        el.style.color = 'var(--success)';
+      } else if (total > 100) {
+        el.style.color = 'var(--danger)';
+      } else {
+        el.style.color = 'var(--warning)';
+      }
+    });
+  }
+
+  // Wire up 1st nominee share validation
+  const firstNomineeShare = form.elements['nomineeShare'];
+  if (firstNomineeShare) {
+    firstNomineeShare.addEventListener('input', function() { validateNomineeShares(this); });
+    firstNomineeShare.addEventListener('change', function() { validateNomineeShares(this); });
+  }
+
+  // Use event delegation for additional nominee share fields
+  if (additionalNomineesContainer) {
+    additionalNomineesContainer.addEventListener('input', function(e) {
+      if (e.target && e.target.name && e.target.name.endsWith('_share')) {
+        validateNomineeShares(e.target);
+      }
+    });
+    // Recalculate when a nominee is removed (detect DOM change)
+    additionalNomineesContainer.addEventListener('click', function(e) {
+      if (e.target && (e.target.closest('.btn-danger') || e.target.classList.contains('fa-times'))) {
+        setTimeout(function() { validateNomineeShares(null); }, 50);
+      }
+    });
+  }
+
+  // Initial share validation on page load
+  validateNomineeShares(null);
 
 })();
   </script>

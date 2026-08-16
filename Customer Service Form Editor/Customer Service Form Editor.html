@@ -907,6 +907,43 @@ input[type="number"] {
   transform: translateX(-50%) translateY(0);
 }
 
+/* Warning Toast */
+.warning-toast {
+  position: fixed;
+  bottom: 140px;
+  left: 50%;
+  transform: translateX(-50%) translateY(30px);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: white;
+  padding: 18px 32px;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 0.95rem;
+  z-index: 2000;
+  opacity: 0;
+  transition: var(--transition-normal);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.warning-toast::before {
+  content: '⚠';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  background: var(--danger-gradient);
+  border-radius: 50%;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 12px rgba(239,68,68,0.4);
+}
+.warning-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* ============ Presets Panel ============ */
 .panel-backdrop {
   position: fixed;
@@ -1740,7 +1777,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
             <button type="button" class="form-type-btn" data-form-id="lbc-obc">
               <i class="fas fa-handshake"></i> LBC / OBC Application
             </button>
-            <button type="button" class="form-type-btn" data-form-id="solvency-certificate">
+            <button type="button" class="form-type-btn" data-form-id="solvency-certificate" style="display: none;">
               <i class="fas fa-certificate"></i> Solvency Certificate
             </button>
             <button type="button" class="form-type-btn" data-form-id="td-rd-encashment">
@@ -2489,7 +2526,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
                     </div>
                     <div class="form-group span-2" id="statementOthersDescriptionGroup" style="display: none;">
                       <label>Others Description</label>
-                      <input type="text" name="statementOthersDescription" placeholder="Enter description">
+                      <input type="text" name="statementOthersDescription" id="statementOthersDescriptionInput" placeholder="Can not be blank">
                     </div>
                   </div>
 
@@ -3298,6 +3335,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
   <!-- Toast -->
   <div class="toast" id="toast"></div>
+  <div class="warning-toast" id="warningToast"></div>
   <!-- Hidden file input for importing JSON or JavaScript -->
   <input type="file" id="importFileInput" accept=".json,application/json,.js,text/javascript" style="display:none">
 
@@ -3320,7 +3358,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     { id: 'letter-of-authorization', name: 'Letter of Authorization', src: 'Assets/Images/Letter of Authorization.jpg' },
     { id: 'lbc-obc', name: 'LBC / OBC Application', src: 'Assets/Images/LBC OBC Form.svg' },
     { id: 'lbc-obc-page2', name: 'LBC / OBC Page 2', src: 'Assets/Images/LBC OBC Form Page 2.svg', landscape: true, hidden: true },
-    { id: 'solvency-certificate', name: 'Solvency Certificate', src: 'Assets/Images/Solvency Certificate.svg' },
+    { id: 'solvency-certificate', name: 'Solvency Certificate', src: 'Assets/Images/Solvency Certificate.svg', hidden: true },
     { id: 'td-rd-encashment', name: 'TD_RD Encashment Form', src: 'Assets/Images/TD_RD Encashment Form.jpg' },
     { id: 'withdraw-no-debit', name: 'Withdraw - No Debit', src: 'Assets/Images/New Change Request Form.jpg' }
   ];
@@ -6609,6 +6647,15 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
   // Print button — uses the active preview pages and prints them with the RTGS-style iframe flow
   document.getElementById('printFormBtn').addEventListener('click', function() {
+    // Validate: if Others Certificate is checked but description is empty, warn
+    const othersCheckboxEl = document.getElementById('statementOthersCertificateTick');
+    const othersDescEl = document.getElementById('statementOthersDescriptionInput');
+    if (othersCheckboxEl && othersCheckboxEl.checked && othersDescEl && !othersDescEl.value.trim()) {
+      showWarningToast('Others Certificate description can not be blank.');
+      othersDescEl.focus();
+      return;
+    }
+
     const printPages = collectPrintablePages();
     if (printPages.length === 0) {
       showToast('No form selected!');
@@ -7067,6 +7114,14 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     toast.textContent = msg;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  function showWarningToast(msg) {
+    const warningToast = document.getElementById('warningToast');
+    if (!warningToast) return;
+    warningToast.textContent = msg;
+    warningToast.classList.add('show');
+    setTimeout(() => warningToast.classList.remove('show'), 3500);
   }
 
   // =============================================
