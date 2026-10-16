@@ -510,7 +510,7 @@ describe('messages.showSuccess and aiNidController', () => {
     ctrl.destroy();
   });
 
-  it('aiNidController handleAiEnhance syncs appState sources for front and back', async () => {
+  it('aiNidController handleAiEnhance edits a single front image via the AI edit path and leaves the back empty', async () => {
     const { createAiNidController } = await import('../src/controllers/aiNidController.js');
 
     const previewCvs = document.createElement('canvas');
@@ -557,36 +557,49 @@ describe('messages.showSuccess and aiNidController', () => {
       fail: vi.fn()
     };
 
-    // Mock global fetch to return AI response for stacked Raihan NID
+    // Single front-only upload now goes through the image-edit path (/api/v1/images).
+    // Return an image-edit shaped body for that endpoint; still answer any vision call
+    // (should not be reached) with a valid detection body.
     const origFetch = global.fetch;
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        choices: [{
-          message: {
-            content: JSON.stringify({
-              front: {
-                is_present: true,
-                corners: {
-                  top_left: { x: 0, y: 0 },
-                  top_right: { x: 1000, y: 0 },
-                  bottom_right: { x: 1000, y: 480 },
-                  bottom_left: { x: 0, y: 480 }
+    global.fetch = vi.fn().mockImplementation((url) => {
+      if (typeof url === 'string' && url.includes('/api/v1/images')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            data: [{ b64_json: 'EDITED', media_type: 'image/png' }],
+            usage: { cost: 0.001 }
+          })
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({
+          choices: [{
+            message: {
+              content: JSON.stringify({
+                front: {
+                  is_present: true,
+                  corners: {
+                    top_left: { x: 0, y: 0 },
+                    top_right: { x: 1000, y: 0 },
+                    bottom_right: { x: 1000, y: 480 },
+                    bottom_left: { x: 0, y: 480 }
+                  }
+                },
+                back: {
+                  is_present: true,
+                  corners: {
+                    top_left: { x: 0, y: 520 },
+                    top_right: { x: 1000, y: 520 },
+                    bottom_right: { x: 1000, y: 1000 },
+                    bottom_left: { x: 0, y: 1000 }
+                  }
                 }
-              },
-              back: {
-                is_present: true,
-                corners: {
-                  top_left: { x: 0, y: 520 },
-                  top_right: { x: 1000, y: 520 },
-                  bottom_right: { x: 1000, y: 1000 },
-                  bottom_left: { x: 0, y: 1000 }
-                }
-              }
-            })
-          }
-        }]
-      })
+              })
+            }
+          }]
+        })
+      });
     });
 
     localStorage.setItem('OPENROUTER_API_KEY', 'test-key');
@@ -600,13 +613,21 @@ describe('messages.showSuccess and aiNidController', () => {
 
     await ctrl.handleAiEnhance();
 
+    // Exactly ONE image-edit POST for a single source image.
+    const imageEditCalls = global.fetch.mock.calls.filter(
+      ([url]) => typeof url === 'string' && url.includes('/api/v1/images')
+    );
+    expect(imageEditCalls.length).toBe(1);
+
+    // Front source is synced; back is never set to a card (only cleared with null).
     expect(mockAppState.setSource).toHaveBeenCalledWith('front', expect.objectContaining({
       image: expect.anything()
     }));
-    expect(mockAppState.setSource).toHaveBeenCalledWith('back', expect.objectContaining({
-      image: expect.anything()
-    }));
-    expect(mockAppState.state.sources.back).not.toBeNull();
+    const backWithCanvas = mockAppState.setSource.mock.calls.some(
+      ([slot, data]) => slot === 'back' && data != null
+    );
+    expect(backWithCanvas).toBe(false);
+    expect(mockAppState.state.sources.back).toBeNull();
 
     global.fetch = origFetch;
     ctrl.destroy();

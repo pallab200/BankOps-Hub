@@ -4009,7 +4009,37 @@ Return strictly valid JSON with explicit coordinates:
     const cardW = 680;
     try {
       if (images.length === 1) {
-        return await enhanceRealNidImages(params);
+        onProgress(20, "Preparing real card image for AI editing...");
+        const frontSource2 = await downscaleDataUrl(images[0], 1600);
+        let editCost2 = 0;
+        onProgress(35, "Editing the card with AI...");
+        const frontEdit2 = await editCardImageWithAI({
+          apiKey,
+          model: DEFAULT_IMAGE_EDIT_MODEL,
+          imageDataUrl: frontSource2,
+          prompt: DEFAULT_CARD_EDIT_PROMPT,
+          onProgress
+        });
+        if (typeof frontEdit2.cost === "number") editCost2 += frontEdit2.cost;
+        onProgress(80, "Loading edited card...");
+        const frontImg2 = await loadImage(frontEdit2.dataUrl);
+        const frontCanvas2 = imageToCanvas(frontImg2);
+        onProgress(92, "Stacking edited card onto page canvas...");
+        const stackedCanvas2 = stackEnhancedCards(frontCanvas2, null, {
+          cardWidth: cardW,
+          spacing: Math.max(25, spacing),
+          bgColor,
+          targetCanvas
+        });
+        onProgress(100, "Real NID Enhancement complete!");
+        return {
+          frontCanvas: frontCanvas2,
+          backCanvas: null,
+          stackedCanvas: stackedCanvas2,
+          editCost: editCost2,
+          frontDataUrl: frontCanvas2 && typeof frontCanvas2.toDataURL === "function" ? frontCanvas2.toDataURL("image/png") : frontEdit2.dataUrl,
+          backDataUrl: null
+        };
       }
       onProgress(20, "Preparing real card images for AI editing...");
       const frontSource = await downscaleDataUrl(images[0], 1600);
@@ -4249,6 +4279,8 @@ Return strictly valid JSON with explicit coordinates:
             naturalWidth: result.backCanvas.width,
             naturalHeight: result.backCanvas.height
           });
+        } else if (!result.backCanvas && typeof appState.setSource === "function") {
+          appState.setSource("back", null);
         }
         if (result.frontDataUrl) {
           const preview1 = doc && doc.getElementById("preview1");
@@ -4273,6 +4305,18 @@ Return strictly valid JSON with explicit coordinates:
             thumb2.classList.remove(HIDDEN_CLASS7);
           }
           if (thumb2Ph && thumb2Ph.classList) thumb2Ph.classList.add(HIDDEN_CLASS7);
+        } else {
+          const preview2 = doc && doc.getElementById("preview2");
+          const preview2Cont = doc && doc.getElementById("preview2-container");
+          const thumb2 = doc && doc.getElementById("thumb2");
+          const thumb2Ph = doc && doc.getElementById("thumb2Placeholder");
+          if (preview2) preview2.src = "";
+          if (preview2Cont && preview2Cont.classList) preview2Cont.classList.add(HIDDEN_CLASS7);
+          if (thumb2 && thumb2.classList) {
+            thumb2.src = "";
+            thumb2.classList.add(HIDDEN_CLASS7);
+          }
+          if (thumb2Ph && thumb2Ph.classList) thumb2Ph.classList.remove(HIDDEN_CLASS7);
         }
         if (exportButton) {
           if (exportButton.classList) exportButton.classList.remove(HIDDEN_CLASS7);

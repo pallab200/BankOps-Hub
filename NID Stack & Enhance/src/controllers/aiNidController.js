@@ -266,6 +266,9 @@ export function createAiNidController(deps = {}) {
           naturalWidth: result.backCanvas.width,
           naturalHeight: result.backCanvas.height
         });
+      } else if (!result.backCanvas && typeof appState.setSource === 'function') {
+        // Front-only enhance: clear any back source from a previous run.
+        appState.setSource('back', null);
       }
 
       // Update thumbnails and source slots if extracted
@@ -293,6 +296,19 @@ export function createAiNidController(deps = {}) {
           thumb2.classList.remove(HIDDEN_CLASS);
         }
         if (thumb2Ph && thumb2Ph.classList) thumb2Ph.classList.add(HIDDEN_CLASS);
+      } else {
+        // Front-only result: clear any stale back thumbnail/preview from a previous run.
+        const preview2 = doc && doc.getElementById('preview2');
+        const preview2Cont = doc && doc.getElementById('preview2-container');
+        const thumb2 = doc && doc.getElementById('thumb2');
+        const thumb2Ph = doc && doc.getElementById('thumb2Placeholder');
+        if (preview2) preview2.src = '';
+        if (preview2Cont && preview2Cont.classList) preview2Cont.classList.add(HIDDEN_CLASS);
+        if (thumb2 && thumb2.classList) {
+          thumb2.src = '';
+          thumb2.classList.add(HIDDEN_CLASS);
+        }
+        if (thumb2Ph && thumb2Ph.classList) thumb2Ph.classList.remove(HIDDEN_CLASS);
       }
 
       // Enable PDF download

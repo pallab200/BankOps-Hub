@@ -986,10 +986,49 @@ export async function enhanceNidImagesWithAIEdit(params) {
   const cardW = 680;
 
   try {
-    // Single uploaded image that holds BOTH front and back: the local split is the proven
-    // way to separate them, so delegate to the existing pipeline.
+    // Single uploaded image (common case: front only, but may hold both cards): edit the
+    // whole image with the AI editor so the real card is cropped, de-skewed, cleaned and
+    // sharpened WITHOUT the old local split that mangled a front-only card. Rendered as a
+    // single clean card (front) with no back.
     if (images.length === 1) {
-      return await enhanceRealNidImages(params);
+      onProgress(20, 'Preparing real card image for AI editing...');
+      const frontSource = await downscaleDataUrl(images[0], 1600);
+
+      let editCost = 0;
+      onProgress(35, 'Editing the card with AI...');
+      const frontEdit = await editCardImageWithAI({
+        apiKey,
+        model: DEFAULT_IMAGE_EDIT_MODEL,
+        imageDataUrl: frontSource,
+        prompt: DEFAULT_CARD_EDIT_PROMPT,
+        onProgress
+      });
+      if (typeof frontEdit.cost === 'number') editCost += frontEdit.cost;
+
+      onProgress(80, 'Loading edited card...');
+      const frontImg = await loadImage(frontEdit.dataUrl);
+      const frontCanvas = imageToCanvas(frontImg);
+
+      onProgress(92, 'Stacking edited card onto page canvas...');
+      const stackedCanvas = stackEnhancedCards(frontCanvas, null, {
+        cardWidth: cardW,
+        spacing: Math.max(25, spacing),
+        bgColor,
+        targetCanvas
+      });
+
+      onProgress(100, 'Real NID Enhancement complete!');
+
+      return {
+        frontCanvas,
+        backCanvas: null,
+        stackedCanvas,
+        editCost,
+        frontDataUrl: frontCanvas && typeof frontCanvas.toDataURL === 'function'
+          ? frontCanvas.toDataURL('image/png')
+          : frontEdit.dataUrl,
+        backDataUrl: null
+      };
     }
 
     onProgress(20, 'Preparing real card images for AI editing...');
