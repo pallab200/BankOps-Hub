@@ -3,23 +3,29 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="../css/unified-theme.css">
+    <link rel="stylesheet" href="../css/unified-theme.css">
     <title>NID Stack & Enhance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/fontawesome.min.css" />
-    <link rel="stylesheet" href="css/fontawesome-fix.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="container">
       <header class="app-header">
         <div class="app-header__row">
-          <i class="fas fa-id-card-alt" aria-hidden="true"></i>
-          <h1>NID Stack & Enhance</h1>
+          <div class="app-header__title-group">
+            <i class="fas fa-id-card-alt" aria-hidden="true"></i>
+            <h1>NID Stack & Enhance</h1>
+          </div>
+          <button id="aiSettingsBtn" type="button" class="ai-settings-pill" title="Configure OpenRouter AI API Key & Model">
+            <i class="fas fa-cog" aria-hidden="true"></i>
+            <span>AI Settings</span>
+          </button>
         </div>
         <p class="lead">
-          Upload front and back NID photos, crop each as needed, tweak
-          brightness/contrast/saturation/sharpness, then export a single
-          high-quality PDF.
+          Upload front &amp; back NID photos (or 1 single photo containing both sides). Click <strong>✨ AI Enhance (OpenRouter)</strong> to automatically reconstruct a crystal-clear, standard-stacked NID with 100% information fidelity, or use manual crop &amp; adjustments.
         </p>
       </header>
 
@@ -46,8 +52,8 @@
                 <span class="upload-icon">
                   <i class="fas fa-image" aria-hidden="true"></i>
                 </span>
-                <h3>Image 1 (Front)</h3>
-                <p>NID Front Side</p>
+                <h3>Image 1 (Front / Both Sides)</h3>
+                <p>NID Front Side (or 1 photo with both sides)</p>
                 <span class="badge badge--required">Required</span>
               </div>
               <input
@@ -55,7 +61,7 @@
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
                 class="sr-only"
-                aria-label="Upload NID front image (required)"
+                aria-label="Upload NID front image or single photo with both sides"
               />
             </label>
             <button id="crop1" type="button" class="crop-btn">
@@ -74,7 +80,7 @@
                   <i class="fas fa-image" aria-hidden="true"></i>
                 </span>
                 <h3>Image 2 (Back)</h3>
-                <p>NID Back Side</p>
+                <p>NID Back Side (Optional if both in Image 1)</p>
                 <span class="badge badge--optional">Optional</span>
               </div>
               <input
@@ -151,6 +157,9 @@
         </div>
 
         <div class="buttons">
+          <button id="aiEnhanceBtn" type="button" class="primary-btn ai-btn" title="Auto-extract and reconstruct pristine stacked NID using OpenRouter AI">
+            <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>✨ AI Enhance (OpenRouter)
+          </button>
           <button id="combine" type="button" class="primary-btn">
             <i class="fas fa-layer-group" aria-hidden="true"></i>Combine Images
           </button>
@@ -373,10 +382,191 @@
       </div>
     </div>
 
+    <!-- AI Settings Modal -->
+    <div id="aiSettingsModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-content modal-content--settings" role="dialog" aria-modal="true" aria-labelledby="aiSettingsTitle">
+        <div class="modal-header">
+          <i class="fas fa-robot" aria-hidden="true"></i>
+          <h3 id="aiSettingsTitle">OpenRouter AI Configuration</h3>
+          <button id="aiSettingsClose" type="button" class="modal-close-btn" aria-label="Close Settings">
+            <i class="fas fa-times" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-group">
+            <label for="aiApiKeyInput">
+              <i class="fas fa-key" aria-hidden="true"></i> OpenRouter API Key:
+            </label>
+            <div class="input-with-button">
+              <input
+                id="aiApiKeyInput"
+                type="password"
+                placeholder="sk-or-v1-..."
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <button id="aiTestKeyBtn" type="button" class="secondary-btn btn-sm">
+                <i class="fas fa-plug" aria-hidden="true"></i> Test Key
+              </button>
+            </div>
+            <p class="field-hint">
+              Pre-configured via BankOps Hub config. You can also paste your personal OpenRouter API key.
+            </p>
+          </div>
+
+          <div class="setting-group">
+            <label for="aiModelSelect">
+              <i class="fas fa-brain" aria-hidden="true"></i> AI Vision Model:
+            </label>
+            <select id="aiModelSelect">
+              <option value="google/gemini-2.5-flash">Google: Gemini 2.5 Flash (Recommended - Ultra Fast & Precise 4-Corner Detection)</option>
+              <option value="qwen/qwen-2.5-vl-72b-instruct">Qwen: Qwen 2.5 VL 72B Instruct</option>
+              <option value="google/gemini-2.0-flash-001">Google: Gemini 2.0 Flash</option>
+              <option value="openrouter/free">OpenRouter: Free Auto Vision</option>
+            </select>
+            <p class="field-hint">
+              This model is used for reading the card. Image editing (crop, straighten, clean background, sharpen) runs automatically on an internal image model.
+            </p>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="aiSaveSettingsBtn" type="button" class="primary-btn">
+            <i class="fas fa-save" aria-hidden="true"></i> Save Settings
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Verification & Edit Modal -->
+    <div id="aiVerifyModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-content modal-content--wide" role="dialog" aria-modal="true" aria-labelledby="aiVerifyTitle">
+        <div class="modal-header">
+          <i class="fas fa-clipboard-check" aria-hidden="true"></i>
+          <h3 id="aiVerifyTitle">তথ্য যাচাই ও নিশ্চিতকরণ (AI Data Verification)</h3>
+          <button id="aiVerifyClose" type="button" class="modal-close-btn" aria-label="Close Verification">
+            <i class="fas fa-times" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="verify-alert">
+            <i class="fas fa-shield-alt" aria-hidden="true"></i>
+            <div>
+              <strong>১০০% নির্ভুলতা নীতি:</strong> NID-র কোনো তথ্য পরিবর্তন করা যাবে না। AI যা এক্সট্র্যাক্ট করেছে তা মূল কার্ডের সাথে মিলিয়ে নিন। কোনো অক্ষর বা সংখ্যা অস্পষ্ট থাকলে তা মূল কার্ড অনুযায়ী সংশোধন করুন।
+            </div>
+          </div>
+
+          <div class="verify-grid">
+            <!-- Front Card Details -->
+            <div class="verify-col">
+              <div class="verify-col-header">
+                <h4><i class="fas fa-id-badge" aria-hidden="true"></i> সামনের অংশ (Front Side)</h4>
+              </div>
+
+              <div class="verify-field">
+                <label for="aiNameBn">নাম (বাংলা):</label>
+                <input id="aiNameBn" type="text" placeholder="যেমন: তানজিল আহমেদ" />
+              </div>
+
+              <div class="verify-field">
+                <label for="aiNameEn">Name (English):</label>
+                <input id="aiNameEn" type="text" placeholder="e.g. Tanzil Ahmed" />
+              </div>
+
+              <div class="verify-field">
+                <label for="aiFather">পিতা:</label>
+                <input id="aiFather" type="text" placeholder="পিতার নাম" />
+              </div>
+
+              <div class="verify-field">
+                <label for="aiMother">মাতা:</label>
+                <input id="aiMother" type="text" placeholder="মাতার নাম" />
+              </div>
+
+              <div class="verify-row-2">
+                <div class="verify-field">
+                  <label for="aiDob">Date of Birth:</label>
+                  <input id="aiDob" type="text" placeholder="e.g. 10 Dec 1995" />
+                </div>
+                <div class="verify-field">
+                  <label for="aiNidNo">ID NO (NID নম্বর):</label>
+                  <input id="aiNidNo" type="text" placeholder="e.g. 4612505174" />
+                </div>
+              </div>
+
+              <!-- Graphic Previews -->
+              <div class="verify-thumbs-row">
+                <div class="verify-thumb-box">
+                  <span>Photo Crop:</span>
+                  <img id="aiThumbPhoto" class="thumb-preview hidden" alt="Cropped photo" />
+                </div>
+                <div class="verify-thumb-box">
+                  <span>Signature Crop:</span>
+                  <img id="aiThumbSig" class="thumb-preview hidden" alt="Cropped signature" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Back Card Details -->
+            <div class="verify-col">
+              <div class="verify-col-header">
+                <h4><i class="fas fa-id-card-alt" aria-hidden="true"></i> পেছনের অংশ (Back Side)</h4>
+              </div>
+
+              <div class="verify-field">
+                <label for="aiAddress">ঠিকানা (Address):</label>
+                <textarea id="aiAddress" rows="3" placeholder="বাসা/হোল্ডিং, গ্রাম/রাস্তা, ডাকঘর, জেলা..."></textarea>
+              </div>
+
+              <div class="verify-row-3">
+                <div class="verify-field">
+                  <label for="aiBloodGroup">Blood Group:</label>
+                  <input id="aiBloodGroup" type="text" placeholder="e.g. AB-" />
+                </div>
+                <div class="verify-field">
+                  <label for="aiPlace">স্থান:</label>
+                  <input id="aiPlace" type="text" placeholder="e.g. বগুড়া" />
+                </div>
+                <div class="verify-field">
+                  <label for="aiEdition">মুদ্রণ:</label>
+                  <input id="aiEdition" type="text" placeholder="e.g. ০১" />
+                </div>
+              </div>
+
+              <div class="verify-field">
+                <label for="aiIssueDate">প্রদানের তারিখ (Issue Date):</label>
+                <input id="aiIssueDate" type="text" placeholder="e.g. ০৮/০৮/২০১৫" />
+              </div>
+
+              <!-- Graphic Previews -->
+              <div class="verify-thumbs-row">
+                <div class="verify-thumb-box">
+                  <span>Authority Sig:</span>
+                  <img id="aiThumbAuthSig" class="thumb-preview hidden" alt="Cropped authority signature" />
+                </div>
+                <div class="verify-thumb-box verify-thumb-box--wide">
+                  <span>Barcode:</span>
+                  <img id="aiThumbBarcode" class="thumb-preview hidden" alt="Cropped barcode" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="aiApplyBtn" type="button" class="primary-btn ai-btn">
+            <i class="fas fa-check-circle" aria-hidden="true"></i> Apply &amp; Render Clean NID Stack
+          </button>
+          <button id="aiCancelBtn" type="button" class="secondary-btn">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
     <footer class="app-footer">
       <span>Developed by Tanzil Ahmed — EID 7966.</span>
     </footer>
 
+    <script src="../config.js"></script>
     <script src="libs/pdf.min.js"></script>
     <script src="libs/jspdf.umd.min.js"></script>
     <script src="libs/html2canvas.min.js"></script>
