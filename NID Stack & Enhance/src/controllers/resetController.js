@@ -139,6 +139,17 @@ export function createResetController(deps = {}) {
   const fileInput1 = resolveElement(elements, 'fileInput1', doc, 'file1');
   const fileInput2 = resolveElement(elements, 'fileInput2', doc, 'file2');
 
+  // Enhance sliders & badges
+  const enhanceSlider1 = resolveElement(elements, 'enhanceSlider1', doc, 'enhanceSlider1');
+  const enhanceSlider2 = resolveElement(elements, 'enhanceSlider2', doc, 'enhanceSlider2');
+  const enhanceSliderModal = resolveElement(elements, 'enhanceSliderModal', doc, 'enhanceSliderModal');
+  const enhanceVal1 = resolveElement(elements, 'enhanceVal1', doc, 'enhanceVal1');
+  const enhanceVal2 = resolveElement(elements, 'enhanceVal2', doc, 'enhanceVal2');
+  const enhanceValModal = resolveElement(elements, 'enhanceValModal', doc, 'enhanceValModal');
+
+  // Print Card size selector
+  const cardSizeSelect = resolveElement(elements, 'cardSizeSelect', doc, 'cardSize');
+
   // -------------------------------------------------------------------------
   // Helpers
   // -------------------------------------------------------------------------
@@ -240,6 +251,17 @@ export function createResetController(deps = {}) {
       if (messages && typeof messages.clearMessage === 'function') {
         messages.clearMessage();
       }
+
+      // 15. Reset enhance sliders and badges
+      if (enhanceSlider1) enhanceSlider1.value = '0';
+      if (enhanceSlider2) enhanceSlider2.value = '0';
+      if (enhanceSliderModal) enhanceSliderModal.value = '0';
+      if (enhanceVal1) enhanceVal1.textContent = '0%';
+      if (enhanceVal2) enhanceVal2.textContent = '0%';
+      if (enhanceValModal) enhanceValModal.textContent = '0%';
+
+      // 16. Reset card size selector to 105 mm (standard bank size)
+      if (cardSizeSelect) cardSizeSelect.value = '105';
     } catch (_err) {
       // Req 8.5 / 12.6: swallow any error so no uncaught script error escapes.
       // In a production scenario we could log this, but the requirement is zero

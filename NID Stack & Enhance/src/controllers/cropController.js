@@ -34,6 +34,8 @@ import {
   moveQuad,
   quadBoundingBox,
 } from '../core/cropGeometry.js';
+import { detectCardCorners } from '../core/cardDetection.js';
+import { enhanceImageSource } from '../core/documentEnhance.js';
 import { showGuidance } from './messages.js';
 
 /** CSS class used to hide elements. */
@@ -51,6 +53,12 @@ const SHIFT_NUDGE_PX = 10;
 const CROP_BUTTONS = Object.freeze({
   front: 'crop1',
   back: 'crop2',
+});
+
+/** Slot → auto crop button id mapping. */
+const AUTO_CROP_BUTTONS = Object.freeze({
+  front: 'autoCrop1',
+  back: 'autoCrop2',
 });
 
 /** Slot → cropInfo display element id. */
@@ -108,11 +116,21 @@ export function createCropController(deps = {}) {
   let dragStartOriginal = null;
   /** Quad corners at the start of a move drag. */
   let dragStartCorners = null;
+  /** Unenhanced base image for the open crop modal session. */
+  let modalBaseImage = null;
 
   // --- Helpers ---
 
   function byId(id) {
     return doc.getElementById(id);
+  }
+
+  function safeShowGuidance(text, options) {
+    try {
+      showGuidance(text, options);
+    } catch (_e) {
+      /* ignore if message controller is not initialized */
+    }
   }
 
   function on(el, type, handler, options) {
@@ -177,7 +195,12 @@ export function createCropController(deps = {}) {
     const canvas = getCanvas();
     if (!canvas || !cropImage || !quadCorners) return;
 
-    const ctx = canvas.getContext('2d');
+    let ctx = null;
+    try {
+      ctx = canvas.getContext('2d');
+    } catch (_e) {
+      ctx = null;
+    }
     if (!ctx) return;
 
     const cw = canvas.width;
@@ -210,9 +233,9 @@ export function createCropController(deps = {}) {
     ctx.drawImage(cropImage, 0, 0, cw, ch);
     ctx.restore();
 
-    // Draw quadrilateral border.
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
+    // Draw quadrilateral border with bright cyan accent.
+    ctx.strokeStyle = '#00d2ff';
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(displayCorners[0].x, displayCorners[0].y);
     ctx.lineTo(displayCorners[1].x, displayCorners[1].y);
@@ -221,16 +244,104 @@ export function createCropController(deps = {}) {
     ctx.closePath();
     ctx.stroke();
 
-    // Draw corner handles.
+    // Draw corner handles with outer touch ring and inner dot.
     displayCorners.forEach((corner, idx) => {
+      // Outer touch target ring
+      ctx.beginPath();
+      ctx.arc(corner.x, corner.y, HANDLE_RADIUS, 0, Math.PI * 2);
+      ctx.fillStyle = idx === activeCornerIdx ? 'rgba(0, 210, 255, 0.35)' : 'rgba(255, 255, 255, 0.2)';
+      ctx.fill();
+
+      // Inner handle
       ctx.beginPath();
       ctx.arc(corner.x, corner.y, HANDLE_RADIUS / 2, 0, Math.PI * 2);
       ctx.fillStyle = idx === activeCornerIdx ? '#00bfff' : '#ffffff';
       ctx.fill();
       ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 1.5;
       ctx.stroke();
     });
+
+    // Draw Magnifier Loupe when dragging a corner handle (Lens-style Loupe)
+    if (dragging && dragType === 'corner' && dragCornerIdx >= 0) {
+      drawLoupe(ctx, cw, ch, displayCorners[dragCornerIdx], quadCorners[dragCornerIdx]);
+    }
+  }
+
+  /**
+   * Draw circular magnifying loupe showing a 2.4x zoomed view of the corner being dragged.
+   * Mirrors the Microsoft Lens precision corner alignment experience.
+   */
+  function drawLoupe(ctx, cw, ch, displayCorner, origCorner) {
+    if (!cropImage || !origCorner) return;
+
+    const loupeRadius = 46;
+    const zoom = 2.4;
+
+    // Position loupe in the top corner opposite to the dragged corner
+    const onRight = displayCorner.x < cw / 2;
+    const loupeX = onRight ? cw - loupeRadius - 16 : loupeRadius + 16;
+    const loupeY = loupeRadius + 16;
+
+    ctx.save();
+
+    // Background circle
+    ctx.beginPath();
+    ctx.arc(loupeX, loupeY, loupeRadius, 0, Math.PI * 2);
+    ctx.fillStyle = '#0f172a';
+    ctx.fill();
+
+    // Clip circular aperture
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(loupeX, loupeY, loupeRadius, 0, Math.PI * 2);
+    ctx.clip();
+
+    // Draw zoomed image centered at origCorner
+    const srcW = (loupeRadius * 2) / (scale * zoom);
+    const srcH = (loupeRadius * 2) / (scale * zoom);
+    const srcX = origCorner.x - srcW / 2;
+    const srcY = origCorner.y - srcH / 2;
+
+    ctx.drawImage(
+      cropImage,
+      srcX, srcY, srcW, srcH,
+      loupeX - loupeRadius, loupeY - loupeRadius, loupeRadius * 2, loupeRadius * 2
+    );
+
+    // Crosshair in center of loupe
+    ctx.strokeStyle = '#00d2ff';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(loupeX - 10, loupeY);
+    ctx.lineTo(loupeX + 10, loupeY);
+    ctx.moveTo(loupeX, loupeY - 10);
+    ctx.lineTo(loupeX, loupeY + 10);
+    ctx.stroke();
+
+    // Center target dot
+    ctx.beginPath();
+    ctx.arc(loupeX, loupeY, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+
+    ctx.restore(); // end clip
+
+    // Circular white border
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(loupeX, loupeY, loupeRadius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Cyan accent ring
+    ctx.strokeStyle = '#00d2ff';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(loupeX, loupeY, loupeRadius + 2, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
   }
 
   // --- Hit testing ---
@@ -458,22 +569,28 @@ export function createCropController(deps = {}) {
 
   // --- Open / Close ---
 
-  function openCropModal(slot) {
+  function openCropModal(slot, options = {}) {
     try {
       const state = appState.getState();
       const source = state.sources[slot];
 
       // Guard: no image loaded → show guidance, don't open (Req 3.2).
       if (!source || !source.image) {
-        showGuidance('No image is available to crop. Please upload an image first.');
+        safeShowGuidance('No image is available to crop. Please upload an image first.');
         return;
       }
 
       activeSlot = slot;
       openerElement = byId(CROP_BUTTONS[slot]) || null;
 
-      // Initialize region to full bounds or restore previously stored region (Req 3.1).
-      if (source.crop && source.crop.corners) {
+      // Initialize region:
+      // If forced autoDetect OR opening for the first time without prior crop,
+      // automatically detect the 4 corners like Microsoft Lens!
+      if (options.forceAutoDetect) {
+        quadCorners = detectCardCorners(source.image, source.naturalWidth, source.naturalHeight, doc);
+        currentRegion = quadBoundingBox(quadCorners);
+        safeShowGuidance('4 corners auto-detected like Microsoft Lens. Drag handles to fine-tune.');
+      } else if (source.crop && source.crop.corners) {
         // Restore previously stored quad corners.
         quadCorners = source.crop.corners.map(c => ({ ...c }));
         currentRegion = quadBoundingBox(quadCorners);
@@ -482,16 +599,19 @@ export function createCropController(deps = {}) {
         currentRegion = { ...source.crop };
         quadCorners = regionToQuadCorners(currentRegion);
       } else {
-        currentRegion = initialRegion(source.naturalWidth, source.naturalHeight);
-        quadCorners = initialQuadCorners(source.naturalWidth, source.naturalHeight);
+        // Auto detect 4 corners by default like Microsoft Lens!
+        quadCorners = detectCardCorners(source.image, source.naturalWidth, source.naturalHeight, doc);
+        currentRegion = quadBoundingBox(quadCorners);
+        safeShowGuidance('4 corners auto-selected like Microsoft Lens. Drag handles to fine-tune.');
       }
 
-      // Size the crop canvas to fit within the viewport (Req 10.6).
+      // Size the crop canvas to fit within the viewport without scrolling (Req 10.6).
       const viewportW = (doc.defaultView && doc.defaultView.innerWidth) || 800;
       const viewportH = (doc.defaultView && doc.defaultView.innerHeight) || 600;
-      // Leave some padding for modal chrome.
-      const availW = Math.max(100, viewportW * 0.85);
-      const availH = Math.max(100, viewportH * 0.7);
+      // Reserve space for modal chrome (header, info note, enhance slider, action buttons, padding)
+      const reservedChromeH = 180;
+      const availW = Math.max(160, Math.min(viewportW * 0.88, 780));
+      const availH = Math.max(120, Math.min(viewportH - reservedChromeH, viewportH * 0.52));
 
       const sizing = sizeCropCanvas(
         source.naturalWidth,
@@ -509,6 +629,16 @@ export function createCropController(deps = {}) {
 
       // Store image reference for redraw.
       cropImage = source.image;
+      modalBaseImage = (source.image && source.image.__baseImage) || source.image;
+      if (modalBaseImage) modalBaseImage.__baseImage = modalBaseImage;
+
+      // Sync modal enhance slider with active card's enhance slider
+      const currentSlotSlider = byId(slot === 'front' ? 'enhanceSlider1' : 'enhanceSlider2');
+      const modalSlider = byId('enhanceSliderModal');
+      const modalVal = byId('enhanceValModal');
+      const initialSliderVal = currentSlotSlider ? currentSlotSlider.value : '0';
+      if (modalSlider) modalSlider.value = initialSliderVal;
+      if (modalVal) modalVal.textContent = `${initialSliderVal}%`;
 
       // Show the modal.
       const modal = getModal();
@@ -556,6 +686,7 @@ export function createCropController(deps = {}) {
     dragging = false;
     dragType = null;
     cropImage = null;
+    modalBaseImage = null;
     quadCorners = null;
 
     // Return focus to opener (Req 11.7) or nearest parent (Req 11.8).
@@ -620,12 +751,19 @@ export function createCropController(deps = {}) {
         const slot = activeSlot;
 
         const commitCrop = () => {
+          img.__baseImage = img;
           // Replace the source image with the perspective-corrected crop.
           appState.setSource(slot, {
             image: img,
             naturalWidth: outW,
             naturalHeight: outH,
           });
+
+          // Reset enhance slider for this slot to 0
+          const slider = byId(slot === 'front' ? 'enhanceSlider1' : 'enhanceSlider2');
+          const badge = byId(slot === 'front' ? 'enhanceVal1' : 'enhanceVal2');
+          if (slider) slider.value = '0';
+          if (badge) badge.textContent = '0%';
 
           // Update preview and thumbnail with the new cropped image.
           updateSlotVisuals(slot, dataUrl);
@@ -716,7 +854,12 @@ export function createCropController(deps = {}) {
     const outCanvas = doc.createElement('canvas');
     outCanvas.width = outW;
     outCanvas.height = outH;
-    const outCtx = outCanvas.getContext('2d');
+    let outCtx = null;
+    try {
+      outCtx = outCanvas.getContext('2d');
+    } catch (_e) {
+      outCtx = null;
+    }
     if (!outCtx) return null;
 
     // Draw source image to a temp canvas for pixel access via drawImage sub-rects.
@@ -828,6 +971,228 @@ export function createCropController(deps = {}) {
     }
   }
 
+  function autoDetectCurrentModal() {
+    try {
+      if (!activeSlot || !cropImage) return;
+      const bounds = getImageBounds();
+      quadCorners = detectCardCorners(cropImage, bounds.width, bounds.height, doc);
+      currentRegion = quadBoundingBox(quadCorners);
+      drawCropOverlay();
+      safeShowGuidance('4 corners auto-detected like Microsoft Lens.');
+    } catch (_err) {
+      /* Req 12.6 */
+    }
+  }
+
+  function resetToFullImage() {
+    try {
+      if (!activeSlot) return;
+      const bounds = getImageBounds();
+      quadCorners = initialQuadCorners(bounds.width, bounds.height);
+      currentRegion = quadBoundingBox(quadCorners);
+      drawCropOverlay();
+      safeShowGuidance('Corners reset to full image.');
+    } catch (_err) {
+      /* Req 12.6 */
+    }
+  }
+
+  function quickAutoCrop(slot) {
+    try {
+      const state = appState.getState();
+      const source = state.sources[slot];
+
+      if (!source || !source.image) {
+        safeShowGuidance('No image is available to auto crop. Please upload an image first.');
+        return;
+      }
+
+      const bounds = { width: source.naturalWidth, height: source.naturalHeight };
+      const corners = detectCardCorners(source.image, bounds.width, bounds.height, doc);
+      const croppedResult = perspectiveCrop(source.image, corners);
+
+      if (croppedResult) {
+        const img = croppedResult.image;
+        const dataUrl = croppedResult.dataUrl;
+        const outW = croppedResult.width;
+        const outH = croppedResult.height;
+
+        const commitCrop = () => {
+          img.__baseImage = img;
+          appState.setSource(slot, {
+            image: img,
+            naturalWidth: outW,
+            naturalHeight: outH,
+          });
+
+          // Reset enhance slider for this slot to 0
+          const slider = byId(slot === 'front' ? 'enhanceSlider1' : 'enhanceSlider2');
+          const badge = byId(slot === 'front' ? 'enhanceVal1' : 'enhanceVal2');
+          if (slider) slider.value = '0';
+          if (badge) badge.textContent = '0%';
+
+          updateSlotVisuals(slot, dataUrl);
+          displayCropInfo(slot);
+          safeShowGuidance(`Image ${slot === 'front' ? '1 (Front)' : '2 (Back)'}: Auto crop applied successfully!`);
+        };
+
+        if (img.complete && img.naturalWidth > 0) {
+          commitCrop();
+        } else {
+          img.onload = commitCrop;
+          img.onerror = () => {
+            const bbox = quadBoundingBox(corners);
+            appState.setCrop(slot, {
+              x: bbox.x,
+              y: bbox.y,
+              w: bbox.w,
+              h: bbox.h,
+              corners: corners.map(c => ({ x: Math.round(c.x), y: Math.round(c.y) })),
+            });
+            displayCropInfo(slot);
+            safeShowGuidance(`Image ${slot === 'front' ? '1 (Front)' : '2 (Back)'}: Corners detected.`);
+          };
+        }
+      } else {
+        const bbox = quadBoundingBox(corners);
+        appState.setCrop(slot, {
+          x: bbox.x,
+          y: bbox.y,
+          w: bbox.w,
+          h: bbox.h,
+          corners: corners.map(c => ({ x: Math.round(c.x), y: Math.round(c.y) })),
+        });
+        displayCropInfo(slot);
+        safeShowGuidance(`Image ${slot === 'front' ? '1 (Front)' : '2 (Back)'}: Corners detected.`);
+      }
+    } catch (_err) {
+      /* Req 12.6 */
+    }
+  }
+
+  function quickEnhance(slot, strength = 1.0) {
+    try {
+      const state = appState.getState();
+      const source = state.sources[slot];
+
+      if (!source || !source.image) {
+        safeShowGuidance(`No image is available to enhance. Please upload Image ${slot === 'front' ? '1 (Front)' : '2 (Back)'} first.`);
+        return;
+      }
+
+      const s = Math.max(0, Math.min(1.0, typeof strength === 'number' ? strength : 1.0));
+      const pct = Math.round(s * 100);
+
+      const slider = byId(slot === 'front' ? 'enhanceSlider1' : 'enhanceSlider2');
+      const badge = byId(slot === 'front' ? 'enhanceVal1' : 'enhanceVal2');
+      if (slider && Number(slider.value) !== pct) slider.value = String(pct);
+      if (badge) badge.textContent = `${pct}%`;
+
+      const base = source.image.__baseImage || source.image;
+      base.__baseImage = base;
+
+      if (s <= 0) {
+        appState.setSource(slot, {
+          image: base,
+          naturalWidth: base.naturalWidth,
+          naturalHeight: base.naturalHeight,
+        });
+        updateSlotVisuals(slot, base.src);
+        return;
+      }
+
+      const enhanced = enhanceImageSource(base, doc, s);
+      if (!enhanced) {
+        safeShowGuidance(`Could not enhance Image ${slot === 'front' ? '1 (Front)' : '2 (Back)'}.`);
+        return;
+      }
+
+      enhanced.image.__baseImage = base;
+
+      const commitEnhance = () => {
+        appState.setSource(slot, {
+          image: enhanced.image,
+          naturalWidth: enhanced.width,
+          naturalHeight: enhanced.height,
+        });
+        updateSlotVisuals(slot, enhanced.dataUrl);
+        if (s >= 1.0) {
+          safeShowGuidance(`Image ${slot === 'front' ? '1 (Front)' : '2 (Back)'}: Enhanced with 1-click!`);
+        }
+      };
+
+      if (enhanced.image.complete && enhanced.image.naturalWidth > 0) {
+        commitEnhance();
+      } else {
+        enhanced.image.onload = commitEnhance;
+        enhanced.image.onerror = () => {
+          safeShowGuidance(`Could not display enhanced image.`);
+        };
+      }
+    } catch (_err) {
+      /* Req 12.6 */
+    }
+  }
+
+  function enhanceCurrentModal(strength = 1.0) {
+    try {
+      if (!activeSlot || !cropImage) return;
+      const s = Math.max(0, Math.min(1.0, typeof strength === 'number' ? strength : 1.0));
+      const pct = Math.round(s * 100);
+
+      const modalSlider = byId('enhanceSliderModal');
+      const modalVal = byId('enhanceValModal');
+      if (modalSlider && Number(modalSlider.value) !== pct) modalSlider.value = String(pct);
+      if (modalVal) modalVal.textContent = `${pct}%`;
+
+      if (!modalBaseImage) {
+        modalBaseImage = cropImage.__baseImage || cropImage;
+        modalBaseImage.__baseImage = modalBaseImage;
+      }
+
+      if (s <= 0) {
+        cropImage = modalBaseImage;
+        drawCropOverlay();
+        return;
+      }
+
+      const enhanced = enhanceImageSource(modalBaseImage, doc, s);
+      if (!enhanced) return;
+
+      enhanced.image.__baseImage = modalBaseImage;
+
+      const commit = () => {
+        cropImage = enhanced.image;
+        drawCropOverlay();
+        if (s >= 1.0) {
+          safeShowGuidance('Image enhanced! Corners preserved.');
+        }
+      };
+
+      if (enhanced.image.complete && enhanced.image.naturalWidth > 0) {
+        commit();
+      } else {
+        enhanced.image.onload = commit;
+      }
+    } catch (_err) {
+      /* Req 12.6 */
+    }
+  }
+
+  function handleSliderInput(slot, value) {
+    const num = Math.max(0, Math.min(100, Number(value) || 0));
+    const badge = byId(slot === 'front' ? 'enhanceVal1' : 'enhanceVal2');
+    if (badge) badge.textContent = `${num}%`;
+    quickEnhance(slot, num / 100);
+  }
+
+  function handleModalSliderInput(value) {
+    const num = Math.max(0, Math.min(100, Number(value) || 0));
+    const badge = byId('enhanceValModal');
+    if (badge) badge.textContent = `${num}%`;
+    enhanceCurrentModal(num / 100);
+  }
+
   function displayCropInfo(slot) {
     const infoEl = byId(CROP_INFO_IDS[slot]);
     if (!infoEl) return;
@@ -859,6 +1224,34 @@ export function createCropController(deps = {}) {
     on(crop1Btn, 'click', () => openCropModal('front'));
     on(crop2Btn, 'click', () => openCropModal('back'));
 
+    // Wire quick auto-crop buttons on upload cards.
+    const autoCrop1Btn = byId('autoCrop1');
+    const autoCrop2Btn = byId('autoCrop2');
+    if (autoCrop1Btn) on(autoCrop1Btn, 'click', () => quickAutoCrop('front'));
+    if (autoCrop2Btn) on(autoCrop2Btn, 'click', () => quickAutoCrop('back'));
+
+    // Wire quick enhance buttons on upload cards.
+    const enhance1Btn = byId('enhance1');
+    const enhance2Btn = byId('enhance2');
+    if (enhance1Btn) on(enhance1Btn, 'click', () => quickEnhance('front', 1.0));
+    if (enhance2Btn) on(enhance2Btn, 'click', () => quickEnhance('back', 1.0));
+
+    // Wire enhance sliders on upload cards.
+    const slider1 = byId('enhanceSlider1');
+    const slider2 = byId('enhanceSlider2');
+    if (slider1) on(slider1, 'input', (e) => handleSliderInput('front', e.target.value));
+    if (slider2) on(slider2, 'input', (e) => handleSliderInput('back', e.target.value));
+
+    // Wire Auto Detect, Reset Full Image, Enhance button & slider inside modal.
+    const autoDetectBtn = byId('autoDetectCrop');
+    const resetCornersBtn = byId('resetCropCorners');
+    const modalEnhanceBtn = byId('enhanceCropModal');
+    const sliderModal = byId('enhanceSliderModal');
+    if (autoDetectBtn) on(autoDetectBtn, 'click', autoDetectCurrentModal);
+    if (resetCornersBtn) on(resetCornersBtn, 'click', resetToFullImage);
+    if (modalEnhanceBtn) on(modalEnhanceBtn, 'click', () => enhanceCurrentModal(1.0));
+    if (sliderModal) on(sliderModal, 'input', (e) => handleModalSliderInput(e.target.value));
+
     // Wire Apply/Cancel buttons.
     const applyBtn = byId('applyCrop');
     const cancelBtn = byId('cancelCrop');
@@ -889,6 +1282,7 @@ export function createCropController(deps = {}) {
     activeSlot = null;
     currentRegion = null;
     cropImage = null;
+    modalBaseImage = null;
     openerElement = null;
   }
 
@@ -896,6 +1290,13 @@ export function createCropController(deps = {}) {
     init,
     destroy,
     openCropModal,
+    quickAutoCrop,
+    quickEnhance,
+    handleSliderInput,
+    autoDetectCurrentModal,
+    resetToFullImage,
+    enhanceCurrentModal,
+    handleModalSliderInput,
     applyCrop,
     cancelCrop,
   };

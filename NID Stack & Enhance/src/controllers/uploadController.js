@@ -217,6 +217,14 @@ export function createUploadController(deps = {}) {
     if (info) info.textContent = '';
   }
 
+  /** Reset enhance slider and badge for the slot on new file load. */
+  function resetEnhanceSlider(slot) {
+    const slider = byId(slot === 'front' ? 'enhanceSlider1' : 'enhanceSlider2');
+    const badge = byId(slot === 'front' ? 'enhanceVal1' : 'enhanceVal2');
+    if (slider) slider.value = '0';
+    if (badge) badge.textContent = '0%';
+  }
+
   /**
    * Shared load routine used by BOTH the click and drop paths (D2 fix).
    *
@@ -316,6 +324,7 @@ export function createUploadController(deps = {}) {
       renderPreview(cfg, renderResult.dataUrl);
       renderThumbnail(cfg, renderResult.dataUrl);
       clearCropInfo(cfg);
+      resetEnhanceSlider(slot);
       messages.clearMessage();
       progress.complete();
 
@@ -350,6 +359,7 @@ export function createUploadController(deps = {}) {
     renderPreview(cfg, decoded.src);
     renderThumbnail(cfg, decoded.src);
     clearCropInfo(cfg);
+    resetEnhanceSlider(slot);
     messages.clearMessage();
     progress.complete();
 

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>e-GP Fetcher | BranchEase</title>
+  <style>
+    @font-face {
+      font-family: 'Exo 2';
+      font-style: normal;
+      font-weight: 400;
+      src: url('fonts/Exo2-400.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Exo 2';
+      font-style: normal;
+      font-weight: 500;
+      src: url('fonts/Exo2-500.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Exo 2';
+      font-style: normal;
+      font-weight: 600;
+      src: url('fonts/Exo2-600.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Exo 2';
+      font-style: normal;
+      font-weight: 700;
+      src: url('fonts/Exo2-700.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Exo 2';
+      font-style: normal;
+      font-weight: 800;
+      src: url('fonts/Exo2-800.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Poppins';
+      font-style: normal;
+      font-weight: 400;
+      src: url('fonts/Poppins-400.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Poppins';
+      font-style: normal;
+      font-weight: 500;
+      src: url('fonts/Poppins-500.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Poppins';
+      font-style: normal;
+      font-weight: 600;
+      src: url('fonts/Poppins-600.woff2') format('woff2');
+    }
+
+    :root {
+      /* Official United Commercial Bank (UCB) Design System */
+      --primary: #ed1b24;               /* UCB Signature Red */
+      --primary-dark: #c00000;          /* Deep Crimson Accent */
+      --primary-light: #ff4d55;         /* Vibrant Highlight */
+      --primary-ghost: rgba(237, 27, 36, 0.08);
+      --gold: #d4af37;                  /* UCB Gold Accent */
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e2530;                  /* Corporate Dark Body */
+      --text-secondary: #525b6a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --border-hover: #cbd5e1;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ed1b24;
+      --font-family-base: 'Exo 2', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family-base);
+    }
+
+    body {
+      width: 385px;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Executive UCB Header */
+    .header {
+      background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%);
+      padding: 14px 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(237, 27, 36, 0.22);
+      border-bottom: 1px solid rgba(237, 27, 36, 0.35);
+      margin: -16px -16px 14px -16px;
+    }
+
+    .header-glow-1 {
+      position: absolute;
+      top: -50%;
+      right: -15%;
+      width: 50%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(237, 27, 36, 0.28) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .header-glow-2 {
+      position: absolute;
+      bottom: -50%;
+      left: -15%;
+      width: 50%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .ucb-logo {
+      height: 28px;
+      width: auto;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+    }
+
+    .header-titles {
+      flex: 1;
+    }
+
+    .header-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .header-title-row h1 {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      margin: 0;
+      color: #ffffff;
+      background: linear-gradient(100deg, #ffffff 0%, #ffffff 40%, #ff858a 48%, #ffffff 54%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.01em;
+    }
+
+    .header-subtitle {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.86);
+      margin: 2px 0 0;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      backdrop-filter: blur(4px);
+    }
+
+    .badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+      display: inline-block;
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(0.85); }
+    }
+
+    .section-title {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .input-group input {
+      flex: 1;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .input-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-ghost);
+    }
+
+    .input-group button {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: 'Exo 2', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(237, 27, 36, 0.25);
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input-group button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(237, 27, 36, 0.35);
+    }
+
+    .input-group button:active {
+      transform: translateY(0);
+    }
+
+    .input-group button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Result Box & Financial Highlights */
+    .result-box {
+      background: var(--card-bg);
+      border: 1px solid rgba(237, 27, 36, 0.14);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+      display: none;
+      max-height: 290px;
+      overflow-y: auto;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .financial-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .fin-card {
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .fin-card.security {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 1px solid #a7f3d0;
+    }
+
+    .fin-card.docfee {
+      background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+      border: 1px solid #fecdd3;
+    }
+
+    .fin-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .fin-card.security .fin-label { color: #047857; }
+    .fin-card.docfee .fin-label { color: #be123c; }
+
+    .fin-val {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      margin-top: 2px;
+      letter-spacing: -0.01em;
+    }
+
+    .fin-card.security .fin-val { color: #065f46; }
+    .fin-card.docfee .fin-val { color: #9f1239; }
+
+    .result-row {
+      margin-bottom: 8px;
+    }
+
+    .result-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .result-label {
+      font-size: 9.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .result-val {
+      font-size: 12px;
+      color: var(--text);
+      font-weight: 600;
+      word-break: break-word;
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+
+    /* Information Card */
+    .info-card {
+      background: rgba(237, 27, 36, 0.04);
+      border: 1px dashed rgba(237, 27, 36, 0.25);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .info-card strong {
+      color: var(--primary-dark);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .status-msg {
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: -4px;
+      margin-bottom: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-glow-1"></div>
+    <div class="header-glow-2"></div>
+    <div class="header-brand">
+      <img src="icons/ucb-logo.png" alt="UCB" class="ucb-logo">
+      <div class="header-titles">
+        <div class="header-title-row">
+          <h1>e-GP Fetcher</h1>
+          <div class="badge">
+            <span class="dot"></span> Active
+          </div>
+        </div>
+        <p class="header-subtitle">United Commercial Bank PLC &middot; e-GP Live Bridge</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary);">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    Quick Tender Test
+  </div>
+
+  <div class="input-group">
+    <input type="text" id="testTenderId" placeholder="Enter Tender ID (e.g. 1131535)" />
+    <button id="testFetchBtn">Fetch</button>
+  </div>
+  <div id="statusMsg" class="status-msg"></div>
+
+  <div id="resultBox" class="result-box">
+    <!-- Financial Highlights: Security Amount & Doc Fees -->
+    <div class="financial-grid">
+      <div class="fin-card security">
+        <div class="fin-label">Security Amount</div>
+        <div class="fin-val" id="resSecurityAmount">-</div>
+      </div>
+      <div class="fin-card docfee">
+        <div class="fin-label">Document Fees</div>
+        <div class="fin-val" id="resDocFees">-</div>
+      </div>
+    </div>
+
+    <div class="result-row">
+      <div class="result-label">Tender ID</div>
+      <div class="result-val" id="resTenderId">-</div>
+    </div>
+    <div class="result-row">
+      <div class="result-label">Package No</div>
+      <div class="result-val" id="resPackageNo">-</div>
+    </div>
+    <div class="result-row">
+      <div class="result-label">IFT / App ID</div>
+      <div class="result-val" id="resIft">-</div>
+    </div>
+    <div class="result-row">
+      <div class="result-label">Organization</div>
+      <div class="result-val" id="resOrganization">-</div>
+    </div>
+    <div class="result-row">
+      <div class="result-label">Designation of Official Inviting Tender/Proposal</div>
+      <div class="result-val" id="resOfficialDesignation">-</div>
+    </div>
+    <div class="result-row">
+      <div class="result-label">Procuring Entity / Office</div>
+      <div class="result-val" id="resPe">-</div>
+    </div>
+    <div class="result-row">
+      <div class="result-label">Document last Date and Time</div>
+      <div class="result-val" id="resDocLastDate">-</div>
+    </div>
+    <div class="result-row">
+      <div class="result-label">Tender Submission Last Date and Time</div>
+      <div class="result-val" id="resSecuritySubmissionDate">-</div>
+    </div>
+    <div class="result-row">
+      <div class="result-label">Description</div>
+      <div class="result-val" id="resDesc">-</div>
+    </div>
+  </div>
+
+  <div class="info-card">
+    ⚡ <strong>Connected to e-GP Manager:</strong><br>
+    Direct e-GP fetching with active login session. Extracts <strong>Security Amount</strong>, <strong>Doc Fees</strong>, Package &amp; Recipient automatically!
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

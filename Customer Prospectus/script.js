@@ -271,23 +271,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Load Data
-    fetch('data.json')
-        .then(response => response.json())
-        .then(data => {
-            rateData = data;
-            console.log('Data loaded:', rateData);
-            // Auto-load Customer Prospectus
-            handleTabChange('prospectus');
-            // Set prospectus tab as active
-            tabs.forEach(t => t.classList.remove('active'));
-            const prospectusTab = Array.from(tabs).find(t => t.getAttribute('data-tab') === 'prospectus');
-            if (prospectusTab) prospectusTab.classList.add('active');
-        })
-        .catch(err => {
-            console.error('Error loading data:', err);
-            // Load prospectus even if data.json fails
-            handleTabChange('prospectus');
-        });
+    try {
+        fetch('data.json')
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                rateData = data;
+                console.log('Data loaded:', rateData);
+                handleTabChange('prospectus');
+                tabs.forEach(t => t.classList.remove('active'));
+                const prospectusTab = Array.from(tabs).find(t => t.getAttribute('data-tab') === 'prospectus');
+                if (prospectusTab) prospectusTab.classList.add('active');
+            })
+            .catch(err => {
+                console.warn('Note: data.json could not be loaded directly, proceeding with default rates:', err.message);
+                handleTabChange('prospectus');
+            });
+    } catch(err) {
+        console.warn('Sync fetch error:', err);
+        handleTabChange('prospectus');
+    }
 
     // Tab Switching - DISABLED (only prospectus is shown)
     // tabs.forEach(tab => {
@@ -302,31 +307,31 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleTabChange(tabId) {
         switch (tabId) {
             case 'fdr-double':
-                pageTitle.textContent = 'FDR Double Scheme';
+                if (pageTitle) pageTitle.textContent = 'FDR Double Scheme';
                 renderFDRDouble();
                 setTimeout(() => window.calculateFDRDoubleCalc?.(), 100);
                 break;
             case 'fdr':
-                pageTitle.textContent = 'FDR Fixed Deposit';
+                if (pageTitle) pageTitle.textContent = 'FDR Fixed Deposit';
                 renderFDR();
                 setTimeout(() => window.calculateFDR?.(), 100);
                 break;
             case 'dps':
-                pageTitle.textContent = 'DPS Scheme';
+                if (pageTitle) pageTitle.textContent = 'DPS Scheme';
                 renderDPS();
                 setTimeout(() => window.calculateDPS?.(), 100);
                 break;
             case 'earning-plus':
-                pageTitle.textContent = 'UCB Earning Plus';
+                if (pageTitle) pageTitle.textContent = 'UCB Earning Plus';
                 renderEarningPlus();
                 setTimeout(() => window.calculateEarningPlus?.(), 100);
                 break;
             case 'millionaire':
-                pageTitle.textContent = 'Multi-Millionaire Scheme';
+                if (pageTitle) pageTitle.textContent = 'Multi-Millionaire Scheme';
                 renderMillionaire();
                 break;
             case 'prospectus':
-                pageTitle.textContent = 'Customer Prospectus';
+                if (pageTitle) pageTitle.textContent = 'Customer Prospectus';
                 renderProspectus();
                 // Load rates from prospectus after rendering
                 setTimeout(() => {
@@ -863,8 +868,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         applyMillionaireEditLock();
 
-        // Initialize calculations
-        calculateFDRDouble();
+        // Initialize calculations safely
+        if (typeof calculateFDRDouble === 'function') {
+            calculateFDRDouble();
+        } else if (typeof window.calculateFDRDouble === 'function') {
+            window.calculateFDRDouble();
+        }
 
         // Load initial rates from inputs
         setTimeout(() => {
@@ -1225,7 +1234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Calculation Functions for Prospectus
-    window.calculateFDRDouble = function () {
+    function calculateFDRDouble() {
         const rate = parseFloat(document.getElementById('fdrDoubleRate').value);
         const resultEl = document.getElementById('fdrDoubleResult');
         const yearsInput = document.getElementById('fdrDoubleYears');
@@ -1250,9 +1259,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 monthsInput.value = m;
             }
         }
-    };
+    }
+    window.calculateFDRDouble = calculateFDRDouble;
 
-    window.calculateFDRDoubleRate = function () {
+    function calculateFDRDoubleRate() {
         const years = parseInt(document.getElementById('fdrDoubleYears').value) || 0;
         const months = parseInt(document.getElementById('fdrDoubleMonths').value) || 0;
         const rateInput = document.getElementById('fdrDoubleRate');
@@ -1273,7 +1283,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const banglaM = months.toString().replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]);
             document.getElementById('fdrDoubleResult').textContent = `${banglaY.padStart(2, '০')} বছর ${banglaM.padStart(2, '০')} মাস`;
         }
-    };
+    }
+    window.calculateFDRDoubleRate = calculateFDRDoubleRate;
 
     window.calculateFDRFixed = function (input) {
         const rate = parseFloat(input.value);

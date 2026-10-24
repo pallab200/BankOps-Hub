@@ -4,27 +4,39 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="../css/unified-theme.css">
-  <title>CIB Inquiry</title>
+  <link rel="icon" type="image/png" href="../assets/ucb-logo.png">
+  <link rel="stylesheet" href="../css/exo2.css">
+  <link rel="stylesheet" href="../css/poppins.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/unified-theme.css">
+  <title>CIB Inquiry Form Editor</title>
   <link rel="stylesheet" href="Assets/font-awesome.min.css">
+  <link rel="stylesheet" href="../css/fontawesome-fix.css">
   <style>
     :root {
-      --primary: #6366f1;
-      --primary-dark: #4f46e5;
-      --primary-light: #818cf8;
-      --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+      /* Official United Commercial Bank (UCB) Design System */
+      --primary: #ed1b24;               /* UCB Signature Red */
+      --primary-dark: #c00000;          /* Deep Crimson Accent */
+      --primary-light: #ff4d55;         /* Vibrant Highlight */
+      --primary-rgb: 237, 27, 36;
+      --primary-gradient: linear-gradient(135deg, #ed1b24 0%, #c00000 50%, #900000 100%);
 
-      --ink: #0f172a;
-      --muted: #475569;
-      --border: rgba(148, 163, 184, 0.28);
-      --border-strong: rgba(100, 116, 139, 0.34);
-      --accent: #6366f1;
-      --accent-strong: #4f46e5;
-      --accent-soft: rgba(99, 102, 241, 0.12);
-      --signal: #ec4899;
-      --signal-soft: rgba(236, 72, 153, 0.12);
-      --danger: #ef4444;
-      --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      --danger-soft: rgba(239, 68, 68, 0.12);
+      --ink: #1e2530;
+      --muted: #525b6a;
+      --border: rgba(237, 27, 36, 0.15);
+      --border-strong: rgba(237, 27, 36, 0.28);
+      --accent: #ed1b24;
+      --accent-strong: #c00000;
+      --accent-soft: rgba(237, 27, 36, 0.12);
+      --gold: #d4af37;                  /* UCB Gold Accent */
+      --gold-light: #f59e0b;
+      --signal: #ed1b24;
+      --signal-soft: rgba(237, 27, 36, 0.12);
+      --danger: #ed1b24;
+      --danger-gradient: linear-gradient(135deg, #ed1b24 0%, #c00000 100%);
+      --danger-soft: rgba(237, 27, 36, 0.12);
       --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
       --shadow-md: 0 8px 30px rgba(15, 23, 42, 0.1);
       --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.15);
@@ -35,8 +47,8 @@
       --transition-fast: 0.15s ease;
       --card-bg: rgba(255, 255, 255, 0.98);
       --bg-secondary: #f1f5f9;
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
+      --text-primary: #1e2530;
+      --text-secondary: #525b6a;
       --text-muted: #94a3b8;
       --border-color: #e2e8f0;
     }
@@ -52,7 +64,7 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "Poppins", "Segoe UI", sans-serif;
+      font-family: 'Exo 2', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       color: var(--text-primary);
       background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-secondary) 100%);
       background-attachment: fixed;
@@ -76,7 +88,7 @@
       top: -200px;
       right: -100px;
       left: auto;
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+      background: linear-gradient(135deg, rgba(237, 27, 36, 0.08), rgba(212, 175, 55, 0.06));
       animation: floatBg 20s ease-in-out infinite;
     }
 
@@ -86,7 +98,7 @@
       left: -100px;
       right: auto;
       bottom: -150px;
-      background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(168, 85, 247, 0.08));
+      background: linear-gradient(135deg, rgba(192, 0, 0, 0.06), rgba(237, 27, 36, 0.04));
       animation: floatBg 25s ease-in-out infinite reverse;
     }
 
@@ -108,11 +120,11 @@
     }
 
     @keyframes rgbCycle {
-      0%   { color: #8b5cf6; text-shadow: 0 0 6px rgba(139,92,246,0.85); }
+      0%   { color: #ff4d55; text-shadow: 0 0 6px rgba(139,92,246,0.85); }
       25%  { color: #ff6b6b; text-shadow: 0 0 6px rgba(255,107,107,0.85); }
       50%  { color: #ffd166; text-shadow: 0 0 6px rgba(255,209,102,0.9); }
       75%  { color: #4ade80; text-shadow: 0 0 6px rgba(74,222,128,0.85); }
-      100% { color: #8b5cf6; text-shadow: 0 0 6px rgba(139,92,246,0.85); }
+      100% { color: #ff4d55; text-shadow: 0 0 6px rgba(139,92,246,0.85); }
     }
 
     @keyframes rgbShift {
@@ -131,17 +143,16 @@
     .topbar {
       position: fixed;
       inset: 0 0 auto;
-      z-index: 40;
+      z-index: 100;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 18px;
-      padding: 14px 28px;
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(79, 70, 229, 0.98) 50%, rgba(139, 92, 246, 0.95) 100%);
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important;
       color: #fff;
-      backdrop-filter: blur(18px);
-      box-shadow: 0 4px 30px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 6px 24px rgba(237, 27, 36, 0.22);
+      border-bottom: 1px solid rgba(237, 27, 36, 0.35);
       animation: fadeInDown 0.5s ease-out;
       overflow: hidden;
     }
@@ -222,29 +233,33 @@
     }
 
     .nav-btn {
-      display: none;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 8px;
       background: rgba(255, 255, 255, 0.12);
       color: #fff;
-      padding: 10px 22px;
+      padding: 7px 16px;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 0.82rem;
+      font-family: inherit;
       transition: var(--transition);
     }
 
     .nav-btn:hover,
     .nav-btn:focus-visible {
       transform: translateY(-2px);
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.22);
       outline: none;
     }
 
     .nav-btn.active {
-      background: #fff;
-      border-color: #fff;
-      color: var(--primary-dark);
-      box-shadow: 0 10px 20px rgba(12, 20, 28, 0.16);
+      background: #ffffff;
+      border-color: #ffffff;
+      color: #ed1b24;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
     }
 
     .page {
@@ -912,14 +927,14 @@
 
     .print-seal {
       display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-end;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       margin: 0 auto;
       max-width: 100%;
       color: #000;
       font-weight: 800;
-      line-height: 1.2;
+      line-height: 1.25;
       text-align: center;
       word-break: break-word;
       overflow: hidden;
@@ -1384,16 +1399,30 @@
     .cib-form-page .seal-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 42px;
-      margin-top: 16px;
+      gap: 36px;
+      margin-top: 14px;
+      align-items: end;
     }
 
     .cib-form-page .seal-row .signature-entry {
-      min-height: 0;
+      min-height: 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
     }
 
     .cib-form-page .seal-row .signature-entry::before {
       display: none;
+    }
+
+    .cib-form-page .seal-row .signature-entry:not(.has-print-seal)::before {
+      content: "";
+      display: block;
+      border-top: 1px dotted #64748b;
+      margin-bottom: 6px;
+      width: 75%;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .cib-form-page .seal-row .signature-entry div {
@@ -1702,7 +1731,7 @@
       padding: 8px 14px;
       border-radius: 999px;
       font-weight: 600;
-      background: linear-gradient(90deg, #5b21b6, #7c3aed, #ec4899, #fb7185, #f97316, #f59e0b, #06b6d4, #0ea5a1, #5b21b6);
+      background: linear-gradient(90deg, #5b21b6, #7c3aed, #d4af37, #fb7185, #f97316, #f59e0b, #06b6d4, #0ea5a1, #5b21b6);
       background-size: 300% 300%;
       -webkit-background-clip: text;
       background-clip: text;
@@ -1715,12 +1744,17 @@
     .officer-seal-popup-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.58);
-      backdrop-filter: blur(5px);
-      z-index: 70;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
       opacity: 0;
       visibility: hidden;
-      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: opacity var(--transition), visibility var(--transition);
     }
 
     .officer-seal-popup-backdrop.show {
@@ -1729,35 +1763,36 @@
     }
 
     .officer-seal-popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.92);
-      width: min(960px, calc(100vw - 28px));
-      max-height: min(86vh, 760px);
+      position: relative;
+      width: min(740px, 95vw);
+      max-height: min(86vh, 580px);
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
-      border-radius: 32px;
-      background: rgba(255, 255, 255, 0.98);
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      box-shadow: 0 26px 70px rgba(15, 23, 42, 0.3);
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid rgba(237, 27, 36, 0.35);
+      box-shadow: 0 25px 65px rgba(0, 0, 0, 0.5);
       opacity: 0;
-      visibility: hidden;
-      transition: transform var(--transition), opacity var(--transition), visibility var(--transition);
+      transform: scale(0.96) translateY(8px);
+      transition: transform var(--transition), opacity var(--transition);
+      z-index: 2001;
     }
 
     .officer-seal-popup-backdrop.show .officer-seal-popup {
       opacity: 1;
-      visibility: visible;
-      transform: translate(-50%, -50%) scale(1);
+      transform: scale(1) translateY(0);
     }
 
     .officer-seal-popup-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 22px;
-      background: linear-gradient(135deg, #4f8f67 0%, #4b9469 100%);
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important;
       color: #fff;
+      border-bottom: 1px solid rgba(237, 27, 36, 0.35);
+      flex-shrink: 0;
     }
 
     .officer-seal-popup-header h3 {
@@ -1765,166 +1800,233 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 700;
+      font-family: 'Exo 2', sans-serif;
+      color: #fff;
     }
 
     .officer-seal-popup-close {
-      width: 42px;
-      height: 42px;
+      width: 36px;
+      height: 36px;
       border: none;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.18);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.16);
       color: #fff;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: var(--transition);
     }
 
     .officer-seal-popup-close:hover,
     .officer-seal-popup-close:focus-visible {
-      background: rgba(255, 255, 255, 0.28);
+      background: rgba(237, 27, 36, 0.7);
+      transform: rotate(90deg);
       outline: none;
     }
 
     .officer-seal-popup-body {
-      padding: 22px 26px 24px;
+      padding: 16px 20px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 14px;
       overflow-y: auto;
-      max-height: calc(min(86vh, 760px) - 78px);
+      overflow-x: hidden;
+      flex: 1 1 auto;
+      min-height: 0;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(237, 27, 36, 0.4) transparent;
     }
 
     .officer-seal-fields {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 22px;
-      padding-bottom: 18px;
-      border-bottom: 2px solid rgba(226, 232, 240, 0.95);
+      gap: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+      flex-shrink: 0;
     }
 
     .officer-seal-field {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .officer-seal-field label {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       font-weight: 700;
-      color: #6366f1;
+      color: #ed1b24;
+      font-family: 'Exo 2', sans-serif;
     }
 
     .officer-seal-field textarea {
       width: 100%;
-      min-height: 120px;
-      padding: 12px 13px;
-      border: 2px solid #dbe4f0;
-      border-radius: 14px;
-      font-size: 0.76rem;
-      line-height: 1.28;
+      min-height: 85px;
+      height: 76px;
+      max-height: 110px;
+      padding: 8px 12px;
+      border: 1.5px solid #dbe4f0;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      line-height: 1.35;
       font-family: inherit;
       resize: vertical;
-      background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+      background: #fafbff;
       color: var(--text-primary);
       transition: var(--transition);
+      box-sizing: border-box;
     }
 
     .officer-seal-field textarea:focus {
       outline: none;
-      border-color: #5aa072;
-      box-shadow: 0 0 0 4px rgba(90, 160, 114, 0.16);
+      border-color: #ed1b24;
+      box-shadow: 0 0 0 3px rgba(237, 27, 36, 0.15);
+      background: #ffffff;
     }
 
     .officer-seal-size-control {
       display: flex;
       align-items: center;
       gap: 14px;
-      padding-top: 8px;
+      padding: 8px 14px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      flex-shrink: 0;
     }
 
     .officer-seal-size-control label {
-      font-size: 0.9rem;
+      font-size: 0.84rem;
       font-weight: 700;
       color: var(--text-secondary);
       white-space: nowrap;
+      font-family: 'Exo 2', sans-serif;
     }
 
     .officer-seal-size-control input[type="range"] {
       flex: 1;
       cursor: pointer;
+      accent-color: #ed1b24;
+      height: 6px;
     }
 
     .officer-seal-size-control span {
-      min-width: 72px;
+      min-width: 60px;
       text-align: right;
-      font-size: 0.9rem;
+      font-size: 0.84rem;
       font-weight: 700;
       color: var(--text-primary);
+      font-family: 'Exo 2', sans-serif;
     }
 
     .seal-preview-section {
       text-align: center;
+      margin-top: 2px;
+      padding: 12px;
+      background: #fafbfe;
+      border: 1px dashed rgba(237, 27, 36, 0.25);
+      border-radius: 12px;
     }
 
     .seal-preview-title {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 16px;
-      font-size: 0.95rem;
+      margin-bottom: 10px;
+      font-size: 0.82rem;
       font-weight: 700;
       color: var(--text-secondary);
+      font-family: 'Exo 2', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .seal-preview {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 28px;
-      justify-items: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
     }
 
     .seal-item {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 224px;
-      height: 140px;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.02);
+      max-width: 100%;
+      min-width: 150px;
+      padding: 8px 12px;
+      background: #ffffff;
+      border: 1.5px dashed rgba(237, 27, 36, 0.45);
+      border-radius: 8px;
       color: #000;
       font-weight: 800;
-      line-height: 1.2;
+      line-height: 1.25;
       text-align: center;
       word-break: break-word;
       overflow: hidden;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    .seal-item:hover {
+      border-color: #ed1b24;
+      box-shadow: 0 4px 12px rgba(237, 27, 36, 0.12);
     }
 
     .seal-item-text {
       white-space: pre-wrap;
     }
 
+    .officer-seal-popup-footer {
+      padding: 12px 20px;
+      background: #ffffff;
+      border-top: 1px solid rgba(226, 232, 240, 0.95);
+      flex-shrink: 0;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+      z-index: 2;
+    }
+
     .officer-seal-save-btn {
       width: 100%;
-      padding: 14px 24px;
+      padding: 12px 20px;
       border: none;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #4f8f67 0%, #3f7e58 100%);
+      border-radius: 10px;
+      background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%);
       color: #fff;
-      font-size: 0.98rem;
+      font-size: 0.92rem;
       font-weight: 700;
       cursor: pointer;
       transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Exo 2', sans-serif;
+      box-shadow: 0 4px 14px rgba(237, 27, 36, 0.28);
     }
 
     .officer-seal-save-btn:hover,
     .officer-seal-save-btn:focus-visible {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 28px rgba(79, 143, 103, 0.28);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(237, 27, 36, 0.38);
       outline: none;
+    }
+
+    .nav-cluster,
+    .nav-btn,
+    #actionTogglePage,
+    [data-page-target="input-page"],
+    [data-page-target="preview-page"] {
+      display: none !important;
     }
 
     .preset-backdrop {
@@ -1932,7 +2034,7 @@
       inset: 0;
       background: rgba(16, 34, 53, 0.34);
       backdrop-filter: blur(8px);
-      z-index: 49;
+      z-index: 1500;
       opacity: 0;
       pointer-events: none;
       transition: var(--transition);
@@ -1947,7 +2049,7 @@
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.4);
-      z-index: 1100;
+      z-index: 1500;
       display: none;
       backdrop-filter: blur(4px);
     }
@@ -1959,7 +2061,7 @@
       width: 420px;
       height: 100%;
       background: white;
-      z-index: 1200;
+      z-index: 1501;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
       transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
       display: flex;
@@ -1988,7 +2090,7 @@
     }
 
     .preset-header h3 i {
-      color: #6366f1;
+      color: #ed1b24;
     }
 
     .preset-close {
@@ -2033,7 +2135,7 @@
 
     .preset-item:hover {
       background: white;
-      border-color: #6366f1;
+      border-color: #ed1b24;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       transform: translateX(-4px);
     }
@@ -2065,11 +2167,11 @@
 
     .preset-load {
       background: rgba(99,102,241,0.1);
-      color: #6366f1;
+      color: #ed1b24;
     }
 
     .preset-load:hover {
-      background: #6366f1;
+      background: #ed1b24;
       color: white;
     }
 
@@ -2308,16 +2410,44 @@
     </div>
   </aside>
 
-  <nav class="topbar">
-    <div class="brand">
-      <div class="brand-mark">CI</div>
-      <div class="brand-copy">
-        <h1>CIB Inquiry</h1>
+    <nav class="topbar app-header" style="background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important; padding: 12px 24px; position: fixed; inset: 0 0 auto; z-index: 100; overflow: hidden; box-shadow: 0 6px 24px rgba(237, 27, 36, 0.22); border-bottom: 1px solid rgba(237, 27, 36, 0.35); display: flex; align-items: center; justify-content: space-between;">
+    <!-- Subtle Decorative Glow Circles -->
+    <div style="position: absolute; top: -60%; right: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(237, 27, 36, 0.22) 0%, transparent 65%); pointer-events: none;"></div>
+    <div style="position: absolute; bottom: -60%; left: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 65%); pointer-events: none;"></div>
+
+    <div class="hub-brand-group" style="display: flex; align-items: center; gap: 14px; position: relative; z-index: 10;">
+      <!-- Animated UCB Logo with Cinematic Beam, Particles & Glow -->
+      <div class="ucb-logo-anim" aria-label="United Commercial Bank PLC" style="cursor: pointer;" onclick="window.location.href='../BranchEase.html'" title="Back to BranchEase Portal">
+        <div class="ucb-glow"></div>
+        <img class="ucb-logo-img" src="../assets/ucb-logo.png" alt="UCB"
+             onerror="this.src='Assets/ucb-logo.png'; this.onerror=function(){ this.closest('.ucb-logo-anim').classList.add('.ucb-fallback'); };">
+        <div class="ucb-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <svg class="ucb-beam" viewBox="0 0 1024 486" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <linearGradient id="ucbBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ff2b2b" stop-opacity="0"/>
+              <stop offset="30%" stop-color="#ff2b2b" stop-opacity="0.9"/>
+              <stop offset="60%" stop-color="#ff5a5a" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <path d="M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150"/>
+          <circle r="4" style="offset-path: path('M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150');"></circle>
+        </svg>
+        <div class="ucb-sweep"></div>
+      </div>
+
+      <div class="hub-brand-titles">
+        <h1 id="page-title" style="font-family: 'Exo 2', sans-serif !important; font-size: 1.45rem; font-weight: 800; margin: 0; line-height: 1.15; letter-spacing: -0.01em; background: linear-gradient(100deg, #ffffff 0%, #ffffff 40%, #ff858a 48%, #ffffff 54%, #ffffff 100%); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: ucbTextShine 7s ease-in-out infinite 2.5s;">CIB Inquiry Form Editor</h1>
+        <p style="margin: 2px 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.88); font-weight: 500;">United Commercial Bank PLC &middot; Credit Information Bureau</p>
       </div>
     </div>
-    <div class="nav-cluster">
-      <button type="button" class="nav-btn active" data-page-target="input-page">Information Input</button>
-      <button type="button" class="nav-btn" data-page-target="preview-page">Form Preview</button>
+
+    <div class="hub-header-meta" style="display: flex; align-items: center; gap: 12px; position: relative; z-index: 10;">
+      <div class="hub-user-pill" onclick="changePcUsername()" title="Click to change display name" style="display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 6px 14px; border-radius: 50px; color: #ed1b24; font-size: 0.76rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); cursor: pointer;">
+        <i class="fas fa-user-circle" style="font-size: 1rem;"></i>
+        <span id="headerUsername">User</span>
+      </div>
     </div>
   </nav>
 
@@ -2862,12 +2992,14 @@
           <span id="officerSealSizeValue">140px</span>
         </div>
         <div class="seal-preview-section">
-          <div class="seal-preview-title"><i class="fas fa-square"></i> Seal Preview</div>
+          <div class="seal-preview-title"><i class="fas fa-stamp"></i> Seal Preview</div>
           <div class="seal-preview">
             <div class="seal-item" id="sealPreviewOfficer"><div class="seal-item-text">Officer</div></div>
             <div class="seal-item" id="sealPreviewHeadOfBranch"><div class="seal-item-text">Head of Branch</div></div>
           </div>
         </div>
+      </div>
+      <div class="officer-seal-popup-footer">
         <button type="button" class="officer-seal-save-btn" id="saveOfficerSealBtn"><i class="fas fa-save"></i> Save Officer Seals</button>
       </div>
     </div>
@@ -3000,6 +3132,14 @@
           button.addEventListener('click', () => switchPage(button.dataset.pageTarget));
         });
 
+        const actionTogglePage = document.getElementById('actionTogglePage');
+        if (actionTogglePage) {
+          actionTogglePage.addEventListener('click', () => {
+            const isInput = document.getElementById('input-page')?.classList.contains('active');
+            switchPage(isInput ? 'preview-page' : 'input-page');
+          });
+        }
+
         document.querySelectorAll('.slide-menu [data-page-target]').forEach(button => {
           button.addEventListener('click', () => {
             switchPage(button.dataset.pageTarget);
@@ -3121,7 +3261,7 @@
         closeSlideMenu();
 
         if (action === 'clear-form') {
-          const confirmed = window.confirm('Clear the current CIB Inquiry data and keep only the base defaults?');
+          const confirmed = window.confirm('Clear the current CIB Inquiry Form Editor data and keep only the base defaults?');
           if (!confirmed) {
             return;
           }
@@ -3247,6 +3387,15 @@
         document.querySelectorAll('.nav-btn').forEach(button => {
           button.classList.toggle('active', button.dataset.pageTarget === pageId);
         });
+
+        const actionTogglePage = document.getElementById('actionTogglePage');
+        if (actionTogglePage) {
+          if (pageId === 'preview-page') {
+            actionTogglePage.innerHTML = '<i class="fas fa-edit"></i> Information Input';
+          } else {
+            actionTogglePage.innerHTML = '<i class="fas fa-eye"></i> Form Preview';
+          }
+        }
       }
 
       function updateMetrics() {
@@ -3291,12 +3440,25 @@
       function loadDraft() {
         try {
           const raw = localStorage.getItem(STORAGE_KEYS.draft);
-          if (!raw) {
-            return makeBaseState();
-          }
+          const parsed = raw ? JSON.parse(raw) : {};
+          const loaded = { ...makeBaseState(), ...parsed, bankName: FIXED_BANK_NAME };
 
-          const parsed = JSON.parse(raw);
-          return { ...makeBaseState(), ...parsed, bankName: FIXED_BANK_NAME };
+          if (!loaded.officerSealOfficer || !loaded.officerSealHeadOfBranch) {
+            try {
+              const shared = JSON.parse(localStorage.getItem(OFFICER_SEALS_KEY) || '{}');
+              if (!loaded.officerSealOfficer && shared.officer1) {
+                loaded.officerSealOfficer = formatSharedSeal(shared.officer1);
+              }
+              if (!loaded.officerSealHeadOfBranch) {
+                if (shared.officer3) loaded.officerSealHeadOfBranch = formatSharedSeal(shared.officer3);
+                else if (shared.officer2) loaded.officerSealHeadOfBranch = formatSharedSeal(shared.officer2);
+              }
+              if ((!loaded.officerSealSize || loaded.officerSealSize === '140') && shared.size) {
+                loaded.officerSealSize = String(shared.size);
+              }
+            } catch(e) {}
+          }
+          return loaded;
         } catch (error) {
           return makeBaseState();
         }
@@ -3452,15 +3614,55 @@
         presetPanel.setAttribute('aria-hidden', 'true');
       }
 
+      const OFFICER_SEALS_KEY = 'ucb_officer_seals_v1';
+
+      function formatSharedSeal(raw) {
+        if (!raw) return '';
+        if (typeof raw === 'string') return raw;
+        if (typeof raw === 'object') {
+          const lines = [];
+          if (raw.name) lines.push(raw.name);
+          if (raw.designation) lines.push(raw.designation);
+          lines.push('United Commercial Bank PLC');
+          if (raw.branch) lines.push(raw.branch + (raw.branch.toLowerCase().includes('branch') ? '' : ' Branch'));
+          if (raw.eid) lines.push('EID: ' + raw.eid);
+          return lines.join('\n');
+        }
+        return String(raw);
+      }
+
       function openOfficerSealPopup() {
+        let officerVal = state.officerSealOfficer || '';
+        let headVal = state.officerSealHeadOfBranch || '';
+        let sizeVal = state.officerSealSize || '140';
+
+        try {
+          const sharedSeals = JSON.parse(localStorage.getItem(OFFICER_SEALS_KEY) || '{}');
+          if (!officerVal && sharedSeals.officer1) {
+            officerVal = formatSharedSeal(sharedSeals.officer1);
+          }
+          if (!headVal) {
+            if (sharedSeals.officer3) {
+              headVal = formatSharedSeal(sharedSeals.officer3);
+            } else if (sharedSeals.officer2) {
+              headVal = formatSharedSeal(sharedSeals.officer2);
+            }
+          }
+          if ((!state.officerSealSize || state.officerSealSize === '140') && sharedSeals.size) {
+            sizeVal = String(sharedSeals.size);
+          }
+        } catch (e) {
+          console.warn('Error reading shared seals', e);
+        }
+
         if (officerSealOfficerInput) {
-          officerSealOfficerInput.value = state.officerSealOfficer || '';
+          officerSealOfficerInput.value = officerVal;
         }
         if (officerSealHeadOfBranchInput) {
-          officerSealHeadOfBranchInput.value = state.officerSealHeadOfBranch || '';
+          officerSealHeadOfBranchInput.value = headVal;
         }
         if (officerSealSizeInput) {
-          officerSealSizeInput.value = normalizeOfficerSealSize(state.officerSealSize);
+          officerSealSizeInput.value = normalizeOfficerSealSize(sizeVal);
         }
 
         updateOfficerSealPreviews();
@@ -3477,7 +3679,7 @@
         const sealSize = normalizeOfficerSealSize(officerSealSizeInput?.value);
         const sealWidth = Math.round(sealSize * 1.6);
         const fontSizeRem = 0.65 * (sealSize / 140);
-        const paddingPx = Math.max(8, Math.round(sealSize * 0.06));
+        const paddingPx = Math.max(6, Math.round(sealSize * 0.05));
 
         if (officerSealSizeValue) {
           officerSealSizeValue.textContent = `${sealSize}px`;
@@ -3497,6 +3699,7 @@
           }
 
           item.element.style.width = `${sealWidth}px`;
+          item.element.style.maxWidth = '100%';
           item.element.style.height = `${sealSize}px`;
           item.element.style.fontSize = `${fontSizeRem}rem`;
           item.element.style.padding = `${paddingPx}px`;
@@ -3504,17 +3707,35 @@
       }
 
       function saveOfficerSeals() {
+        const officerVal = officerSealOfficerInput?.value || '';
+        const headVal = officerSealHeadOfBranchInput?.value || '';
+        const sizeVal = String(normalizeOfficerSealSize(officerSealSizeInput?.value));
+
         if (officerSealOfficerData) {
-          officerSealOfficerData.value = officerSealOfficerInput?.value || '';
+          officerSealOfficerData.value = officerVal;
         }
         if (officerSealHeadOfBranchData) {
-          officerSealHeadOfBranchData.value = officerSealHeadOfBranchInput?.value || '';
+          officerSealHeadOfBranchData.value = headVal;
         }
         if (officerSealSizeData) {
-          officerSealSizeData.value = String(normalizeOfficerSealSize(officerSealSizeInput?.value));
+          officerSealSizeData.value = sizeVal;
         }
 
         state = sanitizeStateForCompanyMode(readFormState());
+        state.officerSealOfficer = officerVal;
+        state.officerSealHeadOfBranch = headVal;
+        state.officerSealSize = sizeVal;
+
+        try {
+          const sharedSeals = JSON.parse(localStorage.getItem(OFFICER_SEALS_KEY) || '{}');
+          sharedSeals.officer1 = officerVal;
+          sharedSeals.officer3 = headVal;
+          sharedSeals.size = parseInt(sizeVal, 10) || 140;
+          localStorage.setItem(OFFICER_SEALS_KEY, JSON.stringify(sharedSeals));
+        } catch (e) {
+          console.warn('Error saving shared seals', e);
+        }
+
         saveDraft(false);
         renderEverything();
         closeOfficerSealPopup();
@@ -3590,10 +3811,10 @@
         const sealHeight = normalizeOfficerSealSize(sizeValue);
         const sealWidth = Math.round(sealHeight * 1.6);
         const fontSizeRem = 0.65 * (sealHeight / 140);
-        const paddingPx = Math.max(8, Math.round(sealHeight * 0.06));
+        const paddingPx = Math.max(6, Math.round(sealHeight * 0.05));
 
         return `
-            <div class="print-seal" style="width: min(${sealWidth}px, 100%); height: ${sealHeight}px; font-size: ${fontSizeRem}rem; padding: ${paddingPx}px ${paddingPx}px 0;">
+          <div class="print-seal" style="width: min(${sealWidth}px, 100%); height: ${sealHeight}px; font-size: ${fontSizeRem}rem; padding: ${paddingPx}px;">
             <div class="print-seal-text">${textMultiline(trimmed)}</div>
           </div>
         `;
@@ -4268,6 +4489,22 @@
           .replace(/'/g, '&#39;');
       }
     })();
+  </script>
+  <script>
+    function syncHeaderUsername() {
+      const el = document.getElementById("headerUsername");
+      if (!el) return;
+      el.textContent = localStorage.getItem("pcUsername") || "User";
+    }
+    syncHeaderUsername();
+    window.changePcUsername = function() {
+      const current = localStorage.getItem("pcUsername") || "User";
+      const newName = prompt("Enter your name for BranchEase:", current);
+      if (newName && newName.trim()) {
+        localStorage.setItem("pcUsername", newName.trim());
+        syncHeaderUsername();
+      }
+    };
   </script>
 </body>
 </html>

@@ -193,6 +193,11 @@ window.UCB_AUTO_IMPORT_DATA = {
       "left": "677.047px",
       "width": "8%"
     },
+    "other": {
+      "top": "503.766px",
+      "left": "761.047px",
+      "width": "8%"
+    },
     "fatherName": {
       "top": "438.766px",
       "left": "192px",
@@ -281,6 +286,11 @@ window.UCB_AUTO_IMPORT_DATA = {
     "jointFemale": {
       "top": "866.688px",
       "left": "679.047px",
+      "width": "8%"
+    },
+    "jointOther": {
+      "top": "866.688px",
+      "left": "763.047px",
       "width": "8%"
     },
     "jointFatherName": {
@@ -1408,6 +1418,11 @@ window.UCB_AUTO_IMPORT_DATA = {
       "left": "673.047px",
       "width": "8%"
     },
+    "csl_other": {
+      "top": "560.766px",
+      "left": "757.047px",
+      "width": "8%"
+    },
     "csl_fatherName": {
       "top": "494.766px",
       "left": "192px",
@@ -1491,6 +1506,11 @@ window.UCB_AUTO_IMPORT_DATA = {
     "csl_jointFemale": {
       "top": "897.688px",
       "left": "678.047px",
+      "width": "8%"
+    },
+    "csl_jointOther": {
+      "top": "897.688px",
+      "left": "762.047px",
       "width": "8%"
     },
     "csl_jointFatherName": {

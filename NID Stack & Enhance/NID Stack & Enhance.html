@@ -3,86 +3,134 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="../css/unified-theme.css">
-    <title>NID Stack & Enhance</title>
+    <link rel="icon" type="image/png" href="../assets/ucb-logo.png">
+    <link rel="stylesheet" href="../css/exo2.css">
+    <link rel="stylesheet" href="../css/poppins.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/unified-theme.css" />
+    <title>NID Stack &amp; Enhance</title>
     <link rel="stylesheet" href="css/fontawesome.min.css" />
+    <link rel="stylesheet" href="css/fontawesome-fix.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!-- App Header -->
+    <header class="app-header" style="background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important; padding: 14px 24px; position: relative; overflow: hidden; box-shadow: 0 6px 24px rgba(237, 27, 36, 0.22); border-bottom: 1px solid rgba(237, 27, 36, 0.35); border-radius: 0; width: 100%;">
+        <!-- Subtle Decorative Glow Circles -->
+        <div style="position: absolute; top: -60%; right: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(237, 27, 36, 0.22) 0%, transparent 65%); pointer-events: none;"></div>
+        <div style="position: absolute; bottom: -60%; left: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 65%); pointer-events: none;"></div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 10;">
+            <div class="hub-brand-group" style="display: flex; align-items: center; gap: 14px;">
+                <!-- Animated UCB Logo with Cinematic Beam, Particles & Glow -->
+                <div class="ucb-logo-anim" aria-label="United Commercial Bank PLC" style="cursor: pointer;" onclick="window.location.href='../BranchEase.html'" title="Back to BranchEase Portal">
+                    <div class="ucb-glow"></div>
+                    <img class="ucb-logo-img" src="../assets/ucb-logo.png" alt="UCB"
+                         onerror="this.src='assets/ucb-logo.png'; this.onerror=function(){ this.closest('.ucb-logo-anim').classList.add('.ucb-fallback'); };">
+                    <div class="ucb-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <svg class="ucb-beam" viewBox="0 0 1024 486" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="ucbBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#ff2b2b" stop-opacity="0"/>
+                                <stop offset="30%" stop-color="#ff2b2b" stop-opacity="0.9"/>
+                                <stop offset="60%" stop-color="#ff5a5a" stop-opacity="1"/>
+                                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.95"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150"/>
+                        <circle r="4" style="offset-path: path('M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150');"></circle>
+                    </svg>
+                    <div class="ucb-sweep"></div>
+                </div>
+
+                <div class="hub-brand-titles">
+                    <h1 style="font-family: 'Exo 2', sans-serif !important; font-size: 1.45rem; font-weight: 800; margin: 0; line-height: 1.15; letter-spacing: -0.01em; background: linear-gradient(100deg, #ffffff 0%, #ffffff 40%, #ff858a 48%, #ffffff 54%, #ffffff 100%); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: ucbTextShine 7s ease-in-out infinite 2.5s;">NID Stack &amp; Enhance</h1>
+                    <p style="margin: 2px 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.88); font-weight: 500;">United Commercial Bank PLC &middot; NID Stacking & Enhancement</p>
+                </div>
+            </div>
+
+            <div class="hub-header-meta" style="display: flex; align-items: center; gap: 10px;">
+                <div class="hub-user-pill" onclick="changePcUsername()" title="Click to change display name" style="display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 6px 14px; border-radius: 50px; color: #ed1b24; font-size: 0.76rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); cursor: pointer;">
+                    <i class="fas fa-user-circle" style="font-size: 1rem; color: #ed1b24;"></i>
+                    <span id="headerUsername">User</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
     <div class="container">
-      <header class="app-header">
-        <div class="app-header__row">
-          <div class="app-header__title-group">
-            <i class="fas fa-id-card-alt" aria-hidden="true"></i>
-            <h1>NID Stack & Enhance</h1>
-          </div>
-          <button id="aiSettingsBtn" type="button" class="ai-settings-pill" title="Configure OpenRouter AI API Key & Model">
-            <i class="fas fa-cog" aria-hidden="true"></i>
-            <span>AI Settings</span>
-          </button>
-        </div>
-        <p class="lead">
-          Upload front &amp; back NID photos (or 1 single photo containing both sides). Click <strong>✨ AI Enhance (OpenRouter)</strong> to automatically reconstruct a crystal-clear, standard-stacked NID with 100% information fidelity, or use manual crop &amp; adjustments.
-        </p>
-      </header>
-
-      <!-- Section 1: Upload -->
-      <section class="upload-section" aria-labelledby="uploadHeading">
-        <div class="section-heading">
-          <h2 id="uploadHeading">
-            <span class="section-icon">
-              <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
-            </span>
-            Upload Images
-          </h2>
-          <p>Add NID photos — drag &amp; drop or click</p>
-        </div>
-
+      <!-- Main Studio: Front & Back Cards -->
+      <main class="nid-studio">
         <div class="inputs">
-          <!-- Front (required) -->
-          <div class="upload-card">
+          <!-- Front Side (Required) -->
+          <div class="upload-card" id="cardFront">
             <label class="dropzone" id="drop1" for="file1">
               <div class="upload-preview hidden" id="preview1-container">
                 <img id="preview1" alt="NID front image preview" />
               </div>
               <div class="dropzone-header">
                 <span class="upload-icon">
-                  <i class="fas fa-image" aria-hidden="true"></i>
+                  <i class="fas fa-id-card" aria-hidden="true"></i>
                 </span>
-                <h3>Image 1 (Front / Both Sides)</h3>
-                <p>NID Front Side (or 1 photo with both sides)</p>
+                <h3>Front Side</h3>
+                <p>Drag &amp; drop or click to upload</p>
                 <span class="badge badge--required">Required</span>
               </div>
+              <div class="cropinfo" id="cropInfo1"></div>
               <input
                 id="file1"
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
                 class="sr-only"
-                aria-label="Upload NID front image or single photo with both sides"
+                aria-label="Upload NID front image (required)"
               />
             </label>
-            <button id="crop1" type="button" class="crop-btn">
-              <i class="fas fa-crop" aria-hidden="true"></i>Crop Image 1 (Front)
-            </button>
+            <div class="enhance-bar-card">
+              <div class="enhance-bar-header">
+                <span class="enhance-label"><i class="fas fa-bolt" aria-hidden="true"></i> Enhance Intensity</span>
+                <span id="enhanceVal1" class="enhance-val-badge">0%</span>
+              </div>
+              <input
+                id="enhanceSlider1"
+                type="range"
+                min="0"
+                max="100"
+                value="0"
+                step="5"
+                class="enhance-slider"
+                aria-label="Enhance level for Image 1"
+              />
+            </div>
+            <div class="crop-actions-row">
+              <button id="autoCrop1" type="button" class="crop-btn auto-crop-btn" title="Auto detect card and crop instantly like Microsoft Lens">
+                <i class="fas fa-magic" aria-hidden="true"></i>Auto Crop
+              </button>
+              <button id="enhance1" type="button" class="crop-btn enhance-btn" title="1-click full document enhancement (whiten background, sharpen text, optimize contrast)">
+                <i class="fas fa-bolt" aria-hidden="true"></i>Auto Enhance
+              </button>
+              <button id="crop1" type="button" class="crop-btn manual-crop-btn" title="Open editor with 4 auto-detected corners">
+                <i class="fas fa-crop" aria-hidden="true"></i>Adjust Corners
+              </button>
+            </div>
           </div>
 
-          <!-- Back (optional) -->
-          <div class="upload-card">
+          <!-- Back Side (Optional) -->
+          <div class="upload-card" id="cardBack">
             <label class="dropzone" id="drop2" for="file2">
               <div class="upload-preview hidden" id="preview2-container">
                 <img id="preview2" alt="NID back image preview" />
               </div>
               <div class="dropzone-header">
                 <span class="upload-icon">
-                  <i class="fas fa-image" aria-hidden="true"></i>
+                  <i class="fas fa-id-card-alt" aria-hidden="true"></i>
                 </span>
-                <h3>Image 2 (Back)</h3>
-                <p>NID Back Side (Optional if both in Image 1)</p>
+                <h3>Back Side</h3>
+                <p>Drag &amp; drop or click to upload</p>
                 <span class="badge badge--optional">Optional</span>
               </div>
+              <div class="cropinfo" id="cropInfo2"></div>
               <input
                 id="file2"
                 type="file"
@@ -91,267 +139,124 @@
                 aria-label="Upload NID back image (optional)"
               />
             </label>
-            <button id="crop2" type="button" class="crop-btn">
-              <i class="fas fa-crop" aria-hidden="true"></i>Crop Image 2 (Back)
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Section 2: Combine Settings -->
-      <section class="options-section" aria-labelledby="combineSettingsHeading">
-        <div class="section-heading">
-          <h2 id="combineSettingsHeading">
-            <span class="section-icon">
-              <i class="fas fa-sliders-h" aria-hidden="true"></i>
-            </span>
-            Combine Settings
-          </h2>
-          <p>Customize how images are combined</p>
-        </div>
-
-        <div class="options">
-          <div class="option-item">
-            <label for="spacing">
-              <span class="option-icon">
-                <i class="fas fa-arrows-alt-h" aria-hidden="true"></i>
-              </span>
-              Spacing
-            </label>
-            <div class="field-row">
+            <div class="enhance-bar-card">
+              <div class="enhance-bar-header">
+                <span class="enhance-label"><i class="fas fa-bolt" aria-hidden="true"></i> Enhance Intensity</span>
+                <span id="enhanceVal2" class="enhance-val-badge">0%</span>
+              </div>
               <input
-                id="spacing"
-                type="number"
-                value="10"
+                id="enhanceSlider2"
+                type="range"
                 min="0"
-                max="500"
-                step="1"
-                aria-describedby="spacingUnit"
+                max="100"
+                value="0"
+                step="5"
+                class="enhance-slider"
+                aria-label="Enhance level for Image 2"
               />
-              <span class="unit" id="spacingUnit">px</span>
             </div>
-          </div>
-
-          <div class="option-item">
-            <label for="bgcolor">
-              <span class="option-icon">
-                <i class="fas fa-palette" aria-hidden="true"></i>
-              </span>
-              Background Color
-            </label>
-            <input id="bgcolor" type="color" value="#ffffff" />
-          </div>
-        </div>
-      </section>
-
-      <!-- Section 3: Actions -->
-      <section class="action-section" aria-labelledby="actionsHeading">
-        <div class="section-heading">
-          <h2 id="actionsHeading">
-            <span class="section-icon">
-              <i class="fas fa-bolt" aria-hidden="true"></i>
-            </span>
-            Actions
-          </h2>
-          <p>Combine your images or start over</p>
-        </div>
-
-        <div class="buttons">
-          <button id="aiEnhanceBtn" type="button" class="primary-btn ai-btn" title="Auto-extract and reconstruct pristine stacked NID using OpenRouter AI">
-            <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>✨ AI Enhance (OpenRouter)
-          </button>
-          <button id="combine" type="button" class="primary-btn">
-            <i class="fas fa-layer-group" aria-hidden="true"></i>Combine Images
-          </button>
-          <button id="clear" type="button" class="secondary-btn">
-            <i class="fas fa-redo" aria-hidden="true"></i>Clear All
-          </button>
-          <button id="downloadPdf" type="button" class="primary-btn hidden">
-            <i class="fas fa-file-pdf" aria-hidden="true"></i>Download Combined PDF
-          </button>
-        </div>
-
-        <div
-          id="progress"
-          class="progress hidden"
-          role="progressbar"
-          aria-label="Operation progress"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          aria-valuenow="0"
-        >
-          <div id="progressBar" class="progress-bar"></div>
-        </div>
-
-        <div
-          id="messageRegion"
-          class="message-region"
-          role="status"
-          aria-live="polite"
-        ></div>
-      </section>
-
-      <!-- Section 4: Preview -->
-      <section class="preview-section" aria-labelledby="previewHeading">
-        <h2 id="previewHeading" class="sr-only">Preview</h2>
-
-        <div class="preview-main">
-          <h3>
-            <span class="preview-icon">
-              <i class="fas fa-eye" aria-hidden="true"></i>
-            </span>
-            Combined Preview
-          </h3>
-          <div class="canvas-wrapper">
-            <div class="canvas-placeholder" id="previewCanvasPlaceholder">
-              <div class="placeholder-glow-ring">
-                <i class="fas fa-layer-group" aria-hidden="true"></i>
-              </div>
-              <div class="placeholder-text">
-                <span class="placeholder-title">No Combined Preview</span>
-                <span class="placeholder-sub">Combine images to see preview here</span>
-              </div>
-              <div class="placeholder-dots"><span></span><span></span><span></span></div>
-            </div>
-            <canvas id="previewCanvas" class="hidden" aria-label="Combined image preview"></canvas>
-          </div>
-        </div>
-
-        <div class="preview-inputs">
-          <h3>
-            <span class="preview-icon">
-              <i class="fas fa-images" aria-hidden="true"></i>
-            </span>
-            Input Images
-          </h3>
-          <div class="thumbs-container">
-            <div class="thumbwrap">
-              <div class="thumb-placeholder" id="thumb1Placeholder">
-                <i class="fas fa-id-card" aria-hidden="true"></i>
-                <span>Image 1 · Front</span>
-              </div>
-              <img id="thumb1" class="thumb hidden" alt="Image 1 (front) thumbnail" />
-              <div class="cropinfo" id="cropInfo1"></div>
-            </div>
-            <div class="thumbwrap">
-              <div class="thumb-placeholder" id="thumb2Placeholder">
-                <i class="fas fa-id-card-alt" aria-hidden="true"></i>
-                <span>Image 2 · Back</span>
-              </div>
-              <img id="thumb2" class="thumb hidden" alt="Image 2 (back) thumbnail" />
-              <div class="cropinfo" id="cropInfo2"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Section 5: Adjustments -->
-      <section class="adjustments" aria-labelledby="adjustmentsHeading">
-        <h2 id="adjustmentsHeading">
-          <i class="fas fa-sliders-h" aria-hidden="true"></i>Adjust Combined Image
-        </h2>
-
-        <div class="adjustments-grid">
-          <div>
-            <div class="adjustment-controls-card">
-              <h3>Image Adjustments</h3>
-              <div class="adj-controls">
-                <div class="control-group">
-                  <label for="adjBrightness">
-                    <i class="fas fa-sun" aria-hidden="true"></i>
-                    Brightness:
-                    <span id="adjBrightVal" class="value">100%</span>
-                  </label>
-                  <input id="adjBrightness" type="range" min="0" max="200" value="100" />
-                </div>
-                <div class="control-group">
-                  <label for="adjContrast">
-                    <i class="fas fa-adjust" aria-hidden="true"></i>
-                    Contrast:
-                    <span id="adjContrastVal" class="value">100%</span>
-                  </label>
-                  <input id="adjContrast" type="range" min="0" max="200" value="100" />
-                </div>
-                <div class="control-group">
-                  <label for="adjSaturation">
-                    <i class="fas fa-tint" aria-hidden="true"></i>
-                    Saturation:
-                    <span id="adjSatVal" class="value">100%</span>
-                  </label>
-                  <input id="adjSaturation" type="range" min="0" max="200" value="100" />
-                </div>
-                <div class="control-group">
-                  <label for="adjSharp">
-                    <i class="fas fa-magic" aria-hidden="true"></i>
-                    Sharpness:
-                    <span id="adjSharpVal" class="value">0</span>
-                  </label>
-                  <input id="adjSharp" type="range" min="0" max="100" value="0" />
-                </div>
-              </div>
-            </div>
-
-            <div class="filter-card">
-              <h3>Filters</h3>
-              <div class="filter-controls">
-                <div class="filter-field">
-                  <label for="filterSelect">
-                    <i class="fas fa-filter" aria-hidden="true"></i>
-                    Select Filter:
-                  </label>
-                  <select id="filterSelect">
-                    <option value="none">None</option>
-                    <option value="lighten">Lighten</option>
-                    <option value="document">Document (scan-like)</option>
-                    <option value="grayscale">Grayscale</option>
-                  </select>
-                </div>
-                <div class="filter-actions">
-                  <button id="applyFilter" type="button" class="primary-btn">
-                    <i class="fas fa-check" aria-hidden="true"></i>Apply
-                  </button>
-                  <button id="resetFilter" type="button" class="secondary-btn">
-                    <i class="fas fa-undo" aria-hidden="true"></i>Reset
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="adj-buttons">
-              <button id="applyAdj" type="button" class="primary-btn">
-                <i class="fas fa-check-circle" aria-hidden="true"></i>Apply Adjustments
+            <div class="crop-actions-row">
+              <button id="autoCrop2" type="button" class="crop-btn auto-crop-btn" title="Auto detect card and crop instantly like Microsoft Lens">
+                <i class="fas fa-magic" aria-hidden="true"></i>Auto Crop
               </button>
-              <button id="downloadAdjPdf" type="button" class="primary-btn hidden">
-                <i class="fas fa-file-pdf" aria-hidden="true"></i>Download Adjusted PDF
+              <button id="enhance2" type="button" class="crop-btn enhance-btn" title="1-click full document enhancement (whiten background, sharpen text, optimize contrast)">
+                <i class="fas fa-bolt" aria-hidden="true"></i>Auto Enhance
+              </button>
+              <button id="crop2" type="button" class="crop-btn manual-crop-btn" title="Open editor with 4 auto-detected corners">
+                <i class="fas fa-crop" aria-hidden="true"></i>Adjust Corners
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action & Export Hub (Replaces old Settings, Actions & Preview sections) -->
+        <section class="action-hub" aria-label="Actions and PDF Export">
+          <div class="hub-bar">
+            <!-- Settings group: Size & Spacing -->
+            <div class="hub-options">
+              <!-- Print Card Size option on A4 -->
+              <div class="hub-card-size">
+                <label for="cardSize" title="Card image print size on A4 paper">
+                  <i class="fas fa-id-card" aria-hidden="true"></i>
+                  <span>Card Size (A4):</span>
+                </label>
+                <select id="cardSize" aria-label="Select card size on A4 PDF page">
+                  <option value="105" selected>Standard Bank Size (105 mm — 120%)</option>
+                  <option value="86">Actual NID Size (86 mm — 100%)</option>
+                  <option value="125">Large Size (125 mm — 145%)</option>
+                  <option value="fit">Full Page Width (Fit A4)</option>
+                </select>
+              </div>
+
+              <!-- Spacing option -->
+              <div class="hub-spacing">
+                <label for="spacing" title="Spacing between front and back images in PDF">
+                  <i class="fas fa-arrows-alt-v" aria-hidden="true"></i>
+                  <span>Spacing:</span>
+                </label>
+                <div class="field-row">
+                  <input
+                    id="spacing"
+                    type="number"
+                    value="10"
+                    min="0"
+                    max="500"
+                    step="1"
+                    aria-describedby="spacingUnit"
+                  />
+                  <span class="unit" id="spacingUnit">px</span>
+                </div>
+                <input id="bgcolor" type="color" value="#ffffff" class="sr-only" aria-hidden="true" />
+              </div>
+            </div>
+
+            <!-- Primary Actions -->
+            <div class="hub-buttons">
+              <button id="downloadPdf" type="button" class="primary-btn hero-download-btn" title="1-click combine and download high-quality A4 PDF">
+                <i class="fas fa-file-pdf" aria-hidden="true"></i>Download PDF
+              </button>
+              <button id="clear" type="button" class="secondary-btn clear-btn" title="Reset all inputs and start over">
+                <i class="fas fa-redo" aria-hidden="true"></i>Clear All
               </button>
             </div>
           </div>
 
-          <div>
-            <div class="adj-preview">
-              <h3>
-                <i class="fas fa-check-circle" aria-hidden="true"></i>Adjusted Preview
-              </h3>
-              <div class="canvas-wrapper">
-                <div class="canvas-placeholder" id="adjustedCanvasPlaceholder">
-                  <div class="placeholder-glow-ring">
-                    <i class="fas fa-magic" aria-hidden="true"></i>
-                  </div>
-                  <div class="placeholder-text">
-                    <span class="placeholder-title">No Adjusted Preview</span>
-                    <span class="placeholder-sub">Apply adjustments to see result</span>
-                  </div>
-                  <div class="placeholder-dots"><span></span><span></span><span></span></div>
-                </div>
-                <canvas id="adjustedCanvas" class="hidden" aria-label="Adjusted image preview"></canvas>
-              </div>
-            </div>
+          <!-- Progress feedback -->
+          <div
+            id="progress"
+            class="progress hidden"
+            role="progressbar"
+            aria-label="Operation progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+          >
+            <div id="progressBar" class="progress-bar"></div>
           </div>
-        </div>
-      </section>
+
+          <!-- Message status toast -->
+          <div
+            id="messageRegion"
+            class="message-region"
+            role="status"
+            aria-live="polite"
+          ></div>
+
+          <!-- Hidden in-memory elements for seamless controller & test compatibility -->
+          <div class="sr-only" aria-hidden="true">
+            <button id="combine" type="button"></button>
+            <canvas id="previewCanvas" class="hidden" aria-label="Combined canvas"></canvas>
+            <div id="previewCanvasPlaceholder"></div>
+            <img id="thumb1" class="hidden" alt="" />
+            <div id="thumb1Placeholder"></div>
+            <img id="thumb2" class="hidden" alt="" />
+            <div id="thumb2Placeholder"></div>
+          </div>
+        </section>
+      </main>
     </div>
 
-    <!-- Cropping modal -->
+    <!-- Cropping modal (Microsoft Lens-style 4-corner perspective crop) -->
     <div id="cropModal" class="modal hidden" aria-hidden="true">
       <div
         class="modal-content"
@@ -362,201 +267,47 @@
         <div class="modal-header">
           <i class="fas fa-crop-alt" aria-hidden="true"></i>
           <h3 id="cropTitle">Crop Image</h3>
+          <span class="crop-auto-pill">
+            <i class="fas fa-magic" aria-hidden="true"></i>Auto 4-Corner Select
+          </span>
         </div>
         <div class="modal-body">
           <canvas id="cropCanvas" aria-label="Crop editor canvas"></canvas>
           <p class="modal-note">
-            <i class="fas fa-info-circle" aria-hidden="true"></i>Drag the corner
-            handles to resize, drag inside the rectangle to move. Use arrow keys
-            to nudge the active handle.
+            <i class="fas fa-info-circle" aria-hidden="true"></i>4 corners auto-detected (Microsoft Lens style). Drag handles with loupe to adjust.
           </p>
+          <div class="modal-enhance-bar">
+            <div class="enhance-bar-header">
+              <span class="enhance-label"><i class="fas fa-bolt" aria-hidden="true"></i> Enhance Intensity</span>
+              <span id="enhanceValModal" class="enhance-val-badge">0%</span>
+            </div>
+            <input
+              id="enhanceSliderModal"
+              type="range"
+              min="0"
+              max="100"
+              value="0"
+              step="5"
+              class="enhance-slider"
+              aria-label="Enhance level for crop modal"
+            />
+          </div>
         </div>
         <div class="modal-actions">
-          <button id="applyCrop" type="button" class="primary-btn">
-            <i class="fas fa-check" aria-hidden="true"></i>Apply Crop
+          <button id="enhanceCropModal" type="button" class="secondary-btn enhance-btn" title="1-click document enhancement (whiten background, sharpen text, optimize contrast)">
+            <i class="fas fa-bolt" aria-hidden="true"></i>Auto Enhance
+          </button>
+          <button id="autoDetectCrop" type="button" class="secondary-btn" title="Re-detect card 4 corners automatically">
+            <i class="fas fa-magic" aria-hidden="true"></i>Auto Detect
+          </button>
+          <button id="resetCropCorners" type="button" class="secondary-btn" title="Reset selection to full image">
+            <i class="fas fa-expand" aria-hidden="true"></i>Full Image
           </button>
           <button id="cancelCrop" type="button" class="secondary-btn">
             <i class="fas fa-times" aria-hidden="true"></i>Cancel
           </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- AI Settings Modal -->
-    <div id="aiSettingsModal" class="modal hidden" aria-hidden="true">
-      <div class="modal-content modal-content--settings" role="dialog" aria-modal="true" aria-labelledby="aiSettingsTitle">
-        <div class="modal-header">
-          <i class="fas fa-robot" aria-hidden="true"></i>
-          <h3 id="aiSettingsTitle">OpenRouter AI Configuration</h3>
-          <button id="aiSettingsClose" type="button" class="modal-close-btn" aria-label="Close Settings">
-            <i class="fas fa-times" aria-hidden="true"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="setting-group">
-            <label for="aiApiKeyInput">
-              <i class="fas fa-key" aria-hidden="true"></i> OpenRouter API Key:
-            </label>
-            <div class="input-with-button">
-              <input
-                id="aiApiKeyInput"
-                type="password"
-                placeholder="sk-or-v1-..."
-                autocomplete="off"
-                spellcheck="false"
-              />
-              <button id="aiTestKeyBtn" type="button" class="secondary-btn btn-sm">
-                <i class="fas fa-plug" aria-hidden="true"></i> Test Key
-              </button>
-            </div>
-            <p class="field-hint">
-              Pre-configured via BankOps Hub config. You can also paste your personal OpenRouter API key.
-            </p>
-          </div>
-
-          <div class="setting-group">
-            <label for="aiModelSelect">
-              <i class="fas fa-brain" aria-hidden="true"></i> AI Vision Model:
-            </label>
-            <select id="aiModelSelect">
-              <option value="google/gemini-2.5-flash">Google: Gemini 2.5 Flash (Recommended - Ultra Fast & Precise 4-Corner Detection)</option>
-              <option value="qwen/qwen-2.5-vl-72b-instruct">Qwen: Qwen 2.5 VL 72B Instruct</option>
-              <option value="google/gemini-2.0-flash-001">Google: Gemini 2.0 Flash</option>
-              <option value="openrouter/free">OpenRouter: Free Auto Vision</option>
-            </select>
-            <p class="field-hint">
-              This model is used for reading the card. Image editing (crop, straighten, clean background, sharpen) runs automatically on an internal image model.
-            </p>
-          </div>
-        </div>
-        <div class="modal-actions">
-          <button id="aiSaveSettingsBtn" type="button" class="primary-btn">
-            <i class="fas fa-save" aria-hidden="true"></i> Save Settings
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- AI Verification & Edit Modal -->
-    <div id="aiVerifyModal" class="modal hidden" aria-hidden="true">
-      <div class="modal-content modal-content--wide" role="dialog" aria-modal="true" aria-labelledby="aiVerifyTitle">
-        <div class="modal-header">
-          <i class="fas fa-clipboard-check" aria-hidden="true"></i>
-          <h3 id="aiVerifyTitle">তথ্য যাচাই ও নিশ্চিতকরণ (AI Data Verification)</h3>
-          <button id="aiVerifyClose" type="button" class="modal-close-btn" aria-label="Close Verification">
-            <i class="fas fa-times" aria-hidden="true"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="verify-alert">
-            <i class="fas fa-shield-alt" aria-hidden="true"></i>
-            <div>
-              <strong>১০০% নির্ভুলতা নীতি:</strong> NID-র কোনো তথ্য পরিবর্তন করা যাবে না। AI যা এক্সট্র্যাক্ট করেছে তা মূল কার্ডের সাথে মিলিয়ে নিন। কোনো অক্ষর বা সংখ্যা অস্পষ্ট থাকলে তা মূল কার্ড অনুযায়ী সংশোধন করুন।
-            </div>
-          </div>
-
-          <div class="verify-grid">
-            <!-- Front Card Details -->
-            <div class="verify-col">
-              <div class="verify-col-header">
-                <h4><i class="fas fa-id-badge" aria-hidden="true"></i> সামনের অংশ (Front Side)</h4>
-              </div>
-
-              <div class="verify-field">
-                <label for="aiNameBn">নাম (বাংলা):</label>
-                <input id="aiNameBn" type="text" placeholder="যেমন: তানজিল আহমেদ" />
-              </div>
-
-              <div class="verify-field">
-                <label for="aiNameEn">Name (English):</label>
-                <input id="aiNameEn" type="text" placeholder="e.g. Tanzil Ahmed" />
-              </div>
-
-              <div class="verify-field">
-                <label for="aiFather">পিতা:</label>
-                <input id="aiFather" type="text" placeholder="পিতার নাম" />
-              </div>
-
-              <div class="verify-field">
-                <label for="aiMother">মাতা:</label>
-                <input id="aiMother" type="text" placeholder="মাতার নাম" />
-              </div>
-
-              <div class="verify-row-2">
-                <div class="verify-field">
-                  <label for="aiDob">Date of Birth:</label>
-                  <input id="aiDob" type="text" placeholder="e.g. 10 Dec 1995" />
-                </div>
-                <div class="verify-field">
-                  <label for="aiNidNo">ID NO (NID নম্বর):</label>
-                  <input id="aiNidNo" type="text" placeholder="e.g. 4612505174" />
-                </div>
-              </div>
-
-              <!-- Graphic Previews -->
-              <div class="verify-thumbs-row">
-                <div class="verify-thumb-box">
-                  <span>Photo Crop:</span>
-                  <img id="aiThumbPhoto" class="thumb-preview hidden" alt="Cropped photo" />
-                </div>
-                <div class="verify-thumb-box">
-                  <span>Signature Crop:</span>
-                  <img id="aiThumbSig" class="thumb-preview hidden" alt="Cropped signature" />
-                </div>
-              </div>
-            </div>
-
-            <!-- Back Card Details -->
-            <div class="verify-col">
-              <div class="verify-col-header">
-                <h4><i class="fas fa-id-card-alt" aria-hidden="true"></i> পেছনের অংশ (Back Side)</h4>
-              </div>
-
-              <div class="verify-field">
-                <label for="aiAddress">ঠিকানা (Address):</label>
-                <textarea id="aiAddress" rows="3" placeholder="বাসা/হোল্ডিং, গ্রাম/রাস্তা, ডাকঘর, জেলা..."></textarea>
-              </div>
-
-              <div class="verify-row-3">
-                <div class="verify-field">
-                  <label for="aiBloodGroup">Blood Group:</label>
-                  <input id="aiBloodGroup" type="text" placeholder="e.g. AB-" />
-                </div>
-                <div class="verify-field">
-                  <label for="aiPlace">স্থান:</label>
-                  <input id="aiPlace" type="text" placeholder="e.g. বগুড়া" />
-                </div>
-                <div class="verify-field">
-                  <label for="aiEdition">মুদ্রণ:</label>
-                  <input id="aiEdition" type="text" placeholder="e.g. ০১" />
-                </div>
-              </div>
-
-              <div class="verify-field">
-                <label for="aiIssueDate">প্রদানের তারিখ (Issue Date):</label>
-                <input id="aiIssueDate" type="text" placeholder="e.g. ০৮/০৮/২০১৫" />
-              </div>
-
-              <!-- Graphic Previews -->
-              <div class="verify-thumbs-row">
-                <div class="verify-thumb-box">
-                  <span>Authority Sig:</span>
-                  <img id="aiThumbAuthSig" class="thumb-preview hidden" alt="Cropped authority signature" />
-                </div>
-                <div class="verify-thumb-box verify-thumb-box--wide">
-                  <span>Barcode:</span>
-                  <img id="aiThumbBarcode" class="thumb-preview hidden" alt="Cropped barcode" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-actions">
-          <button id="aiApplyBtn" type="button" class="primary-btn ai-btn">
-            <i class="fas fa-check-circle" aria-hidden="true"></i> Apply &amp; Render Clean NID Stack
-          </button>
-          <button id="aiCancelBtn" type="button" class="secondary-btn">
-            Cancel
+          <button id="applyCrop" type="button" class="primary-btn">
+            <i class="fas fa-check" aria-hidden="true"></i>Apply Crop
           </button>
         </div>
       </div>
@@ -566,10 +317,26 @@
       <span>Developed by Tanzil Ahmed — EID 7966.</span>
     </footer>
 
-    <script src="../config.js"></script>
     <script src="libs/pdf.min.js"></script>
     <script src="libs/jspdf.umd.min.js"></script>
     <script src="libs/html2canvas.min.js"></script>
     <script src="app.bundle.js"></script>
-  </body>
+  
+    <script>
+        function syncHeaderUsername() {
+            const el = document.getElementById("headerUsername");
+            if (!el) return;
+            el.textContent = localStorage.getItem("pcUsername") || "User";
+        }
+        syncHeaderUsername();
+        window.changePcUsername = function() {
+            const current = localStorage.getItem("pcUsername") || "User";
+            const newName = prompt("Enter your name for BranchEase:", current);
+            if (newName && newName.trim()) {
+                localStorage.setItem("pcUsername", newName.trim());
+                syncHeaderUsername();
+            }
+        };
+    </script>
+</body>
 </html>

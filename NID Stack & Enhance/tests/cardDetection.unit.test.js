@@ -6,6 +6,8 @@ import {
   polygonArea,
   polygonPerimeter,
   isConvex,
+  convexHull,
+  minAreaOrientedRect,
   simplifyClosedPolygon,
 } from "../src/core/cardDetection.js";
 
@@ -109,6 +111,38 @@ describe("cardDetection module", () => {
       ];
       expect(isConvex(nonConvex)).toBe(false);
     });
+
+    it("computes convex hull correctly using Monotone Chain algorithm", () => {
+      const points = [
+        { x: 10, y: 10 },
+        { x: 90, y: 10 },
+        { x: 90, y: 50 },
+        { x: 10, y: 50 },
+        { x: 50, y: 30 }, // Internal point
+        { x: 30, y: 20 }, // Internal point
+      ];
+      const hull = convexHull(points);
+      expect(hull.length).toBe(4);
+      const ordered = orderCorners(hull);
+      expect(ordered[0]).toEqual({ x: 10, y: 10 });
+      expect(ordered[1]).toEqual({ x: 90, y: 10 });
+      expect(ordered[2]).toEqual({ x: 90, y: 50 });
+      expect(ordered[3]).toEqual({ x: 10, y: 50 });
+    });
+
+    it("computes minimum-area oriented bounding rectangle via Rotating Calipers", () => {
+      const rectPoints = [
+        { x: 20, y: 20 },
+        { x: 120, y: 20 },
+        { x: 120, y: 70 },
+        { x: 20, y: 70 },
+      ];
+      const hull = convexHull(rectPoints);
+      const obb = minAreaOrientedRect(hull);
+      expect(obb).not.toBeNull();
+      expect(obb.length).toBe(4);
+      expect(polygonArea(obb)).toBeCloseTo(5000, 0);
+    });
   });
 
   describe("detectCardCornersFromPixels()", () => {
@@ -169,6 +203,32 @@ describe("cardDetection module", () => {
         expect(Math.abs(corners[i].x - expected[i].x)).toBeLessThan(40);
         expect(Math.abs(corners[i].y - expected[i].y)).toBeLessThan(40);
       }
+    });
+
+    it("recognizes pre-cropped / full-frame scanned documents and selects full document corners", () => {
+      // Simulate a document scan: light page with text lines filling across the page
+      const origW = 1200;
+      const origH = 800;
+      const scanData = new Uint8ClampedArray(300 * 200 * 4);
+      scanData.fill(240); // Paper background
+
+      // Add text/table lines across the document
+      for (let y = 10; y < 190; y += 15) {
+        for (let x = 10; x < 290; x++) {
+          const idx = (y * 300 + x) * 4;
+          scanData[idx] = 30; // dark text line
+          scanData[idx + 1] = 30;
+          scanData[idx + 2] = 30;
+        }
+      }
+
+      const corners = detectCardCornersFromPixels(scanData, 300, 200, origW, origH);
+      expect(corners.length).toBe(4);
+      // Microsoft Lens selects the full document bounds [0,0] to [origW, origH]
+      expect(corners[0]).toEqual({ x: 0, y: 0 });
+      expect(corners[1]).toEqual({ x: origW, y: 0 });
+      expect(corners[2]).toEqual({ x: origW, y: origH });
+      expect(corners[3]).toEqual({ x: 0, y: origH });
     });
 
     it("falls back gracefully to an inset rectangle on blank/uniform image", () => {

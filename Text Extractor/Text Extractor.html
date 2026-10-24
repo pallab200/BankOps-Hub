@@ -3,10 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../css/unified-theme.css">
+  <link rel="icon" type="image/png" href="../assets/ucb-logo.png">
+    <link rel="stylesheet" href="../css/exo2.css">
+    <link rel="stylesheet" href="../css/poppins.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/unified-theme.css">
     <title>Text Extractor</title>
     <link rel="stylesheet" href="../css/fontawesome.min.css">
-    <link rel="stylesheet" href="../css/fontawesome-fix.css">
     <link rel="stylesheet" href="../css/poppins.css">
     <!-- Shared config: auto-seeds OpenRouter API key into localStorage -->
     <script src="../config.js"></script>
@@ -17,17 +22,25 @@
     <style>
         /* Unified Modern Design System */
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --accent: #ec4899;
+            /* Official United Commercial Bank (UCB) Design System */
+            --primary: #ed1b24;               /* UCB Signature Red */
+            --primary-dark: #c00000;          /* Deep Crimson Accent */
+            --primary-light: #ff4d55;         /* Vibrant Highlight */
+            --primary-rgb: 237, 27, 36;
+            --primary-gradient: linear-gradient(135deg, #ed1b24 0%, #c00000 50%, #900000 100%);
+            --accent: #212529;                /* Executive Dark Charcoal */
+            --accent-dark: #121417;
+            --accent-light: #495057;
+            --gold: #d4af37;                  /* UCB Gold Accent */
+            --gold-light: #f59e0b;
             --success: #10b981;
             --warning: #f59e0b;
-            --danger: #ef4444;
-            --bg-primary: #f0f4f9;
+            --danger: #ed1b24;
+            --bg-primary: #f8fafc;
             --bg-secondary: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --border-color: #e2e8f0;
+            --text-primary: #1e2530;          /* UCB Corporate Dark Body */
+            --text-secondary: #525b6a;
+            --border-color: rgba(237, 27, 36, 0.12);
             --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
@@ -47,7 +60,7 @@
         }
 
         body {
-            font-family: 'Poppins', 'Inter', 'Segoe UI', sans-serif;
+            font-family: 'Exo 2', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
             color: var(--text-primary);
             min-height: 100vh;
@@ -59,7 +72,7 @@
         .app-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             padding: 24px 20px;
-            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25);
+            box-shadow: 0 8px 32px rgba(237, 27, 36, 0.25);
             position: relative;
             overflow: hidden;
             color: white;
@@ -205,7 +218,7 @@
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(237, 27, 36, 0.1);
         }
 
         textarea {
@@ -241,12 +254,12 @@
 
         .file-input-wrapper:hover {
             border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(237, 27, 36, 0.05);
         }
 
         .file-input-wrapper.dragover {
             border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(237, 27, 36, 0.1);
             transform: scale(1.01);
         }
 
@@ -306,7 +319,7 @@
             border-radius: 10px;
             font-weight: 700;
             font-size: 0.95rem;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 12px rgba(237, 27, 36, 0.3);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -316,7 +329,7 @@
 
         .primary-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 20px rgba(237, 27, 36, 0.4);
         }
 
         .primary-btn:disabled {
@@ -361,9 +374,9 @@
             border-radius: 20px;
             font-weight: 600;
             font-size: 0.85rem;
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(237, 27, 36, 0.1);
             color: var(--primary);
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(237, 27, 36, 0.2);
         }
 
         .status-badge.success {
@@ -452,7 +465,7 @@
 
         footer.neon-footer p {
             font-weight: 600;
-            background: linear-gradient(90deg, #6366f1, #ec4899, #f59e0b, #10b981, #3b82f6, #6366f1);
+            background: linear-gradient(90deg, #ed1b24, #ed1b24, #f59e0b, #10b981, #3b82f6, #ed1b24);
             background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -536,10 +549,10 @@
             align-items: center;
             gap: 10px;
             padding: 12px 16px;
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(237, 27, 36, 0.05);
             border-radius: 10px;
             margin-bottom: 16px;
-            border: 1px solid rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(237, 27, 36, 0.1);
         }
 
         .mode-info i {
@@ -591,13 +604,46 @@
     </style>
 </head>
 <body>
-    <header class="app-header">
-        <div class="header-content">
-            <div class="header-icon">
-                <i class="fas fa-file-alt" style="font-size: 1.8rem; color: white;"></i>
+    <header class="app-header" style="background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important; padding: 14px 24px; position: relative; overflow: hidden; box-shadow: 0 6px 24px rgba(237, 27, 36, 0.22); border-bottom: 1px solid rgba(237, 27, 36, 0.35);">
+        <!-- Subtle Decorative Glow Circles -->
+        <div style="position: absolute; top: -60%; right: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(237, 27, 36, 0.22) 0%, transparent 65%); pointer-events: none;"></div>
+        <div style="position: absolute; bottom: -60%; left: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 65%); pointer-events: none;"></div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 10;">
+            <div class="hub-brand-group" style="display: flex; align-items: center; gap: 14px;">
+                <!-- Animated UCB Logo with Cinematic Beam, Particles & Glow -->
+                <div class="ucb-logo-anim" aria-label="United Commercial Bank PLC" style="cursor: pointer;" onclick="window.location.href='../BranchEase.html'" title="Back to BranchEase Portal">
+                    <div class="ucb-glow"></div>
+                    <img class="ucb-logo-img" src="../assets/ucb-logo.png" alt="UCB"
+                         onerror="this.src='assets/ucb-logo.png'; this.onerror=function(){ this.closest('.ucb-logo-anim').classList.add('.ucb-fallback'); };">
+                    <div class="ucb-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <svg class="ucb-beam" viewBox="0 0 1024 486" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="ucbBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#ff2b2b" stop-opacity="0"/>
+                                <stop offset="30%" stop-color="#ff2b2b" stop-opacity="0.9"/>
+                                <stop offset="60%" stop-color="#ff5a5a" stop-opacity="1"/>
+                                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.95"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150"/>
+                        <circle r="4" style="offset-path: path('M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150');"></circle>
+                    </svg>
+                    <div class="ucb-sweep"></div>
+                </div>
+
+                <div class="hub-brand-titles">
+                    <h1 style="font-family: 'Exo 2', sans-serif !important; font-size: 1.45rem; font-weight: 800; margin: 0; line-height: 1.15; letter-spacing: -0.01em; background: linear-gradient(100deg, #ffffff 0%, #ffffff 40%, #ff858a 48%, #ffffff 54%, #ffffff 100%); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: ucbTextShine 7s ease-in-out infinite 2.5s;">Text Extractor</h1>
+                    <p style="margin: 2px 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.88); font-weight: 500;">United Commercial Bank PLC &middot; OCR & AI Utility</p>
+                </div>
             </div>
-            <h1 class="header-title">Text Extractor</h1>
-            <p class="header-subtitle">Extract text from PDFs & images with Bangla & English support</p>
+
+            <div class="hub-header-meta" style="display: flex; align-items: center; gap: 10px;">
+                <div class="hub-user-pill" onclick="changePcUsername()" title="Click to change display name" style="display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 6px 14px; border-radius: 50px; color: #ed1b24; font-size: 0.76rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); cursor: pointer;">
+                    <i class="fas fa-user-circle" style="font-size: 1rem;"></i>
+                    <span id="headerUsername">User</span>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -635,7 +681,7 @@
                     <button class="secondary-btn" onclick="resetSettingsDefaults()" style="background: white; color: var(--text-secondary); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 10px; font-weight: 600;">
                         <i class="fas fa-undo"></i> Reset to Defaults
                     </button>
-                    <button class="secondary-btn" id="saveSettingsBtn" onclick="saveSettings()" style="background: var(--primary); color: white; border: none; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); transition: all 0.3s ease; padding: 10px 20px; border-radius: 10px; font-weight: 600;">
+                    <button class="secondary-btn" id="saveSettingsBtn" onclick="saveSettings()" style="background: var(--primary); color: white; border: none; box-shadow: 0 4px 12px rgba(237, 27, 36, 0.2); transition: all 0.3s ease; padding: 10px 20px; border-radius: 10px; font-weight: 600;">
                         <i class="fas fa-save"></i> Save Settings
                     </button>
                 </div>
@@ -1003,6 +1049,7 @@
 </head>
 <body>
 ${paragraphs}
+
 </body>
 </html>`;
 
@@ -1699,6 +1746,22 @@ Return only the extracted text.`;
                 if (aiBtnText) aiBtnText.textContent = 'AI Extract';
             }
         }
+    </script>
+    <script>
+        function syncHeaderUsername() {
+            const el = document.getElementById("headerUsername");
+            if (!el) return;
+            el.textContent = localStorage.getItem("pcUsername") || "User";
+        }
+        syncHeaderUsername();
+        window.changePcUsername = function() {
+            const current = localStorage.getItem("pcUsername") || "User";
+            const newName = prompt("Enter your name for BranchEase:", current);
+            if (newName && newName.trim()) {
+                localStorage.setItem("pcUsername", newName.trim());
+                syncHeaderUsername();
+            }
+        };
     </script>
 </body>
 </html>

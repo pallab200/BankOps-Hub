@@ -1,5 +1,5 @@
 window.RTGS_AUTO_IMPORT_DATA = {
-  "exportedAt": "2026-06-09T17:27:28.941Z",
+  "exportedAt": "2026-10-21T18:17:43.939Z",
   "formValues": {
     "branchName": "",
     "accountNumber": "",
@@ -10,6 +10,7 @@ window.RTGS_AUTO_IMPORT_DATA = {
     "recvName": "",
     "senderContact": "",
     "amount": "",
+    "currency": "BDT",
     "reason": "business purpose",
     "recvBank": "",
     "recvBranch": "",
@@ -593,8 +594,8 @@ window.RTGS_AUTO_IMPORT_DATA = {
       "top": 65.8614
     },
     "rtgs::1::tick1::38": {
-      "left": 21.9997,
-      "top": 28.8545
+      "left": 17.3744,
+      "top": 7.20198
     },
     "beftn::1::tick3::47": {
       "left": 14.9833,
@@ -667,6 +668,230 @@ window.RTGS_AUTO_IMPORT_DATA = {
     "rtgs::2::verifiedSeal::54": {
       "left": 42.1803,
       "top": 63.0926
+    },
+    "rtgs::1::verifiedSeal::59": {
+      "left": 46.5129,
+      "top": 54.7613
+    },
+    "rtgs::1::officer2Seal::58": {
+      "left": 64.3443,
+      "top": 73.9415
+    },
+    "rtgs::1::officer1Seal::57": {
+      "left": 13.5832,
+      "top": 74.4384
+    },
+    "rtgs::1::officer1Seal::56": {
+      "left": 75.4684,
+      "top": 95.9252
+    },
+    "rtgs::1::curTickUSD::46": {
+      "left": 27.2834,
+      "top": 29.0218
+    },
+    "rtgs::1::curTickBDT::45": {
+      "left": 22.1897,
+      "top": 28.8562
+    },
+    "rtgs::1::curTickCAD::47": {
+      "left": 32.6112,
+      "top": 29.0218
+    },
+    "rtgs::1::curTickEUR::48": {
+      "left": 37.5878,
+      "top": 29.146
+    },
+    "rtgs::1::curTickGBP::49": {
+      "left": 42.74,
+      "top": 28.8976
+    },
+    "rtgs::1::curTickJPY::50": {
+      "left": 47.7166,
+      "top": 29.1874
+    },
+    "rtgs::2::verifiedSeal::60": {
+      "left": 46.2787,
+      "top": 65.9172
+    },
+    "rtgs::1::routingNumber::rtgs-routing-extra-1": {
+      "left": 60,
+      "top": 120
+    },
+    "rtgs::1::curTickBDT::44": {
+      "left": 22.3068,
+      "top": 28.939
+    },
+    "rtgs::1::curTickUSD::45": {
+      "left": 26.9906,
+      "top": 29.1046
+    },
+    "rtgs::1::curTickCAD::46": {
+      "left": 31.9087,
+      "top": 29.2702
+    },
+    "rtgs::1::curTickEUR::47": {
+      "left": 37.2365,
+      "top": 29.1874
+    },
+    "rtgs::1::curTickGBP::48": {
+      "left": 42.2717,
+      "top": 29.0632
+    },
+    "rtgs::1::curTickJPY::49": {
+      "left": 47.3068,
+      "top": 29.2703
+    },
+    "rtgs::1::officer2Seal::57": {
+      "left": 66.3348,
+      "top": 72.9893
+    },
+    "rtgs::1::verifiedSeal::58": {
+      "left": 49.3817,
+      "top": 54.6371
+    },
+    "rtgs::1::officer1Seal::55": {
+      "left": 14.5199,
+      "top": 73.1135
+    },
+    "rtgs::1::tick7::43": {
+      "left": 21.4285,
+      "top": 39.9516
+    },
+    "rtgs::1::tick6::42": {
+      "left": 21.3115,
+      "top": 38.1714
+    },
+    "rtgs::1::tick5::41": {
+      "left": 7.20137,
+      "top": 66.034
+    },
+    "rtgs::1::tick2::38": {
+      "left": 46.4286,
+      "top": 65.827
+    },
+    "rtgs::1::tick4::40": {
+      "left": 46.4872,
+      "top": 67.69
+    },
+    "rtgs::1::tick3::39": {
+      "left": 7.20142,
+      "top": 67.7314
+    },
+    "rtgs::1::officer2Seal::60": {
+      "left": 64.1686,
+      "top": 72.4511
+    },
+    "rtgs::1::verifiedSeal::61": {
+      "left": 50.7869,
+      "top": 55.3409
+    },
+    "rtgs::1::officer1Seal::59": {
+      "left": 14.2857,
+      "top": 72.4925
+    },
+    "rtgs::1::officer1Seal::58": {
+      "left": 75.8782,
+      "top": 94.3106
+    },
+    "rtgs::2::verifiedSeal::62": {
+      "left": 46.6885,
+      "top": 65.793
+    },
+    "beftn::1::acctTickCD::55": {
+      "left": 14.1686,
+      "top": 25.2449
+    },
+    "beftn::1::acctTickSB::56": {
+      "left": 18.1499,
+      "top": 25.1092
+    },
+    "beftn::1::acctTickSND::57": {
+      "left": 22.3653,
+      "top": 25.2449
+    },
+    "beftn::1::tick1::50": {
+      "left": 14.5784,
+      "top": 27.3713
+    },
+    "beftn::1::tick2::51": {
+      "left": 53.5714,
+      "top": 54.3355
+    },
+    "beftn::1::verifiedSeal::61": {
+      "left": 26.7237,
+      "top": 44.3471
+    },
+    "beftn::1::tick3::52": {
+      "left": 53.5714,
+      "top": 55.6926
+    },
+    "beftn::1::tick4::53": {
+      "left": 59.9532,
+      "top": 73.5633
+    },
+    "beftn::1::officer1Seal::59": {
+      "left": 5.26931,
+      "top": 60.6391
+    },
+    "beftn::1::officer2Seal::60": {
+      "left": 58.4894,
+      "top": 60.1001
+    },
+    "rtgs::1::officer2Seal::63": {
+      "left": 64.2272,
+      "top": 72.6995
+    },
+    "rtgs::1::officer1Seal::62": {
+      "left": 76.6393,
+      "top": 94.145
+    },
+    "rtgs::1::officer1Seal::61": {
+      "left": 14.7541,
+      "top": 72.5339
+    },
+    "rtgs::1::verifiedSeal::64": {
+      "left": 51.8408,
+      "top": 54.5957
+    },
+    "rtgs::2::verifiedSeal::65": {
+      "left": 46.63,
+      "top": 66.1656
+    },
+    "beftn::2::verifiedSeal::65": {
+      "left": 26.1967,
+      "top": 49.1999
+    },
+    "beftn::1::officer1Seal::62": {
+      "left": 5.85476,
+      "top": 96.0452
+    },
+    "beftn::1::verifiedSeal::64": {
+      "left": 24.7331,
+      "top": 44.0092
+    },
+    "beftn::1::officer2Seal::63": {
+      "left": 57.5527,
+      "top": 59.9866
+    },
+    "beftn::1::officer1Seal::61": {
+      "left": 7.72834,
+      "top": 60.0472
+    },
+    "beftn::1::acctTickSND::60": {
+      "left": 26.5807,
+      "top": 79.8067
+    },
+    "beftn::1::acctTickSB::59": {
+      "left": 21.8384,
+      "top": 79.8066
+    },
+    "beftn::1::acctTickCD::58": {
+      "left": 16.6276,
+      "top": 79.6708
+    },
+    "beftn::1::tick5::54": {
+      "left": 15.2225,
+      "top": 13.7535
     }
   },
   "senders": [],

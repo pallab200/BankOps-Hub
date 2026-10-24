@@ -99,6 +99,22 @@ function boot() {
     });
     exportCtrl.init();
 
+    // Smart 1-click Download: if not combined yet, auto-combine first in capture phase.
+    // exportCtrl.init() will then trigger exportCombined() exactly once in target phase.
+    const downloadPdfBtn = document.getElementById('downloadPdf');
+    if (downloadPdfBtn) {
+      downloadPdfBtn.addEventListener('click', (e) => {
+        const state = appState.getState();
+        if (!state.combinedImage) {
+          const ok = combineCtrl.handleCombine();
+          if (!ok) {
+            // Stop propagation if no images loaded so guidance is shown cleanly once
+            e.stopImmediatePropagation();
+          }
+        }
+      }, true);
+    }
+
     // 10. Wire the Reset controller.
     const resetCtrl = createResetController({
       appState,

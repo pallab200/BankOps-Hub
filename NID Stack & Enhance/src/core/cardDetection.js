@@ -1,19 +1,23 @@
 // cardDetection.js — Automatic 4-corner document / card boundary detection.
 //
-// Detects the 4 corners of an ID card (like NID) in an image, similar to
-// Microsoft Lens, CamScanner, and modern document scanner apps.
-//
-// Pipeline:
-//  1. Downscale to a fast processing size (max dimension ~320px) for speed (<50ms).
-//  2. Grayscale & 5-tap separable Gaussian blur to reduce text/noise.
-//  3. Multi-strategy edge and foreground extraction:
-//     - Strategy A: Sobel gradient + Non-Maximum Suppression (NMS) + hysteresis + dilation.
-//     - Strategy B: Background border color distance & flood-fill foreground mask.
-//  4. Moore-Neighbor contour tracing on binary candidate grids.
-//  5. Closed-polygon Douglas-Peucker simplification across multiple epsilon scales.
-//  6. Candidate scoring (area ratio, NID aspect ratio ~1.58, edge gradient alignment).
-//  7. Fallback to 5% inset rectangle if image is textureless/blank (never fails/throws).
-//  8. Re-scale corners back to original image coordinates in clockwise order [TL, TR, BR, BL].
+// Detects the 4 corners of an ID card (like NID) or document in an image,
+// using Microsoft Lens & OpenCV-grade computer vision techniques:
+//  1. Fast downscaling to target max dimension (~320px) for real-time performance (<50ms).
+//  2. Grayscale & 5-tap separable Gaussian blur to suppress fine noise/print textures.
+//  3. Sobel gradient magnitude computation for edge-contrast validation.
+//  4. Dual-mode document foreground segmentation:
+//     - Adaptive Otsu luminance thresholding (both positive & inverse masks).
+//     - Border background sampling & color distance masking.
+//  5. Morphological Closing (7x7 kernel) to bridge gaps, seal fragmented card edges,
+//     and fill interior text/photo voids into unified document blobs.
+//  6. Connected Component Analysis to identify candidate document shapes.
+//  7. Monotone Chain Convex Hull algorithm to wrap true document perimeters without interior noise.
+//  8. Rotating Calipers (Minimum-Area Oriented Bounding Box) to accurately fit the true
+//     outer edges even when cards have rounded corners.
+//  9. Quad scoring based on card aspect ratio (NID standard ~1.58), rectangularity, and edge alignment.
+// 10. Intelligent full-frame recognition: If the document occupies the full frame (e.g. flatbed scan
+//     or tightly framed photo), returns full document corners [0,0] to [W,H], matching Microsoft Lens.
+// 11. Total guarantee: never throws; provides safe fallback on blank or degenerate images.
 
 /** Target maximum dimension in pixels for internal CV processing. */
 export const TARGET_MAX_DIM = 320;
@@ -134,6 +138,96 @@ export function isConvex(poly) {
 }
 
 /**
+ * Monotone Chain Convex Hull algorithm - O(N log N).
+ * Computes the 2D convex hull of a set of points.
+ *
+ * @param {Array<{x:number,y:number}>} points
+ * @returns {Array<{x:number,y:number}>} convex hull vertices
+ */
+export function convexHull(points) {
+  if (!Array.isArray(points) || points.length <= 3) return points ? points.slice() : [];
+  const pts = points.slice().sort((a, b) => a.x === b.x ? a.y - b.y : a.x - b.x);
+  const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+
+  const lower = [];
+  for (const p of pts) {
+    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) {
+      lower.pop();
+    }
+    lower.push(p);
+  }
+
+  const upper = [];
+  for (let i = pts.length - 1; i >= 0; i--) {
+    const p = pts[i];
+    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) {
+      upper.pop();
+    }
+    upper.push(p);
+  }
+
+  lower.pop();
+  upper.pop();
+  return lower.concat(upper);
+}
+
+/**
+ * Minimum-Area Oriented Bounding Rectangle (Rotating Calipers).
+ * Given a convex hull, computes the tightest oriented rectangle enclosing the hull.
+ * This perfectly fits rectangular cards even when they have rounded corners.
+ *
+ * @param {Array<{x:number,y:number}>} hull
+ * @returns {Array<{x:number,y:number}>|null} 4 corner vertices
+ */
+export function minAreaOrientedRect(hull) {
+  if (!hull || hull.length < 3) return null;
+  const n = hull.length;
+  let minArea = Infinity;
+  let bestCorners = null;
+
+  for (let i = 0; i < n; i++) {
+    const p1 = hull[i];
+    const p2 = hull[(i + 1) % n];
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const len = Math.hypot(dx, dy);
+    if (len === 0) continue;
+
+    // Unit vector along edge
+    const ux = dx / len;
+    const uy = dy / len;
+    // Perpendicular unit vector
+    const vx = -uy;
+    const vy = ux;
+
+    let minU = Infinity, maxU = -Infinity;
+    let minV = Infinity, maxV = -Infinity;
+
+    for (const p of hull) {
+      const u = p.x * ux + p.y * uy;
+      const v = p.x * vx + p.y * vy;
+      if (u < minU) minU = u;
+      if (u > maxU) maxU = u;
+      if (v < minV) minV = v;
+      if (v > maxV) maxV = v;
+    }
+
+    const area = (maxU - minU) * (maxV - minV);
+    if (area < minArea) {
+      minArea = area;
+      bestCorners = [
+        { x: minU * ux + minV * vx, y: minU * uy + minV * vy },
+        { x: maxU * ux + minV * vx, y: maxU * uy + minV * vy },
+        { x: maxU * ux + maxV * vx, y: maxU * uy + maxV * vy },
+        { x: minU * ux + maxV * vx, y: minU * uy + maxV * vy },
+      ];
+    }
+  }
+
+  return bestCorners;
+}
+
+/**
  * Perpendicular distance from point p to line segment (a, b).
  */
 function perpendicularDistance(p, a, b) {
@@ -177,7 +271,6 @@ function simplifyOpenChain(points, epsilon) {
 
 /**
  * Douglas-Peucker simplification on a closed polygon loop.
- * Splits loop between two farthest points to prevent boundary seams.
  *
  * @param {Array<{x:number,y:number}>} points
  * @param {number} epsilon
@@ -205,7 +298,6 @@ export function simplifyClosedPolygon(points, epsilon) {
     }
   }
 
-  // Chain 1: idxA to idxB
   const chain1 = [];
   if (idxA < idxB) {
     for (let i = idxA; i <= idxB; i++) chain1.push(points[i]);
@@ -214,7 +306,6 @@ export function simplifyClosedPolygon(points, epsilon) {
     for (let i = 0; i <= idxB; i++) chain1.push(points[i]);
   }
 
-  // Chain 2: idxB to idxA
   const chain2 = [];
   if (idxB < idxA) {
     for (let i = idxB; i <= idxA; i++) chain2.push(points[i]);
@@ -230,164 +321,175 @@ export function simplifyClosedPolygon(points, epsilon) {
 }
 
 /**
- * If a polygon has between 5 and 10 vertices (e.g. rounded card corners),
- * extracts the 4 vertices that maximize quadrilateral area and maintain convexity.
+ * Perform morphological closing (dilation then erosion) with radius r.
+ * Seals micro-gaps and fills internal holes in document masks.
  */
-function extractQuadFromPolygon(poly) {
-  const n = poly.length;
-  if (n < 4) return null;
-  if (n === 4) return poly;
+function morphClose(src, W, H, r = 3) {
+  const total = W * H;
+  const temp = new Uint8Array(total);
+  const dst = new Uint8Array(total);
 
-  let maxA = -1;
-  let best = null;
-
-  for (let i = 0; i < n; i++) {
-    for (let j = i + 1; j < n; j++) {
-      for (let k = j + 1; k < n; k++) {
-        for (let l = k + 1; l < n; l++) {
-          const q = [poly[i], poly[j], poly[k], poly[l]];
-          const a = polygonArea(q);
-          if (a > maxA && isConvex(q)) {
-            maxA = a;
-            best = q;
-          }
+  // Dilate
+  for (let y = 0; y < H; y++) {
+    const yMin = Math.max(0, y - r);
+    const yMax = Math.min(H - 1, y + r);
+    for (let x = 0; x < W; x++) {
+      const xMin = Math.max(0, x - r);
+      const xMax = Math.min(W - 1, x + r);
+      let found = 0;
+      for (let ny = yMin; ny <= yMax && !found; ny++) {
+        const row = ny * W;
+        for (let nx = xMin; nx <= xMax; nx++) {
+          if (src[row + nx] === 1) { found = 1; break; }
         }
       }
+      temp[y * W + x] = found;
     }
   }
-  return best;
+
+  // Erode
+  for (let y = 0; y < H; y++) {
+    const yMin = Math.max(0, y - r);
+    const yMax = Math.min(H - 1, y + r);
+    for (let x = 0; x < W; x++) {
+      const xMin = Math.max(0, x - r);
+      const xMax = Math.min(W - 1, x + r);
+      let allOn = 1;
+      for (let ny = yMin; ny <= yMax && allOn; ny++) {
+        const row = ny * W;
+        for (let nx = xMin; nx <= xMax; nx++) {
+          if (temp[row + nx] === 0) { allOn = 0; break; }
+        }
+      }
+      dst[y * W + x] = allOn;
+    }
+  }
+
+  return dst;
 }
 
 /**
- * Trace the external boundary of a connected component using Moore-Neighbor algorithm.
+ * Extract connected component boundaries from binary grid.
  */
-function traceBoundary(grid, W, H, startX, startY, visited) {
-  const dx = [-1, -1,  0,  1,  1,  1,  0, -1];
-  const dy = [ 0, -1, -1, -1,  0,  1,  1,  1];
+function extractComponentBoundaries(grid, W, H, minSize) {
+  const total = W * H;
+  const visited = new Uint8Array(total);
+  const comps = [];
 
-  const points = [{ x: startX, y: startY }];
-  visited[startY * W + startX] = 1;
-
-  let cx = startX;
-  let cy = startY;
-  let backtrackDir = 0;
-  const maxSteps = 2500;
-
-  for (let step = 0; step < maxSteps; step++) {
-    let foundNext = false;
-    for (let i = 0; i < 8; i++) {
-      const dir = (backtrackDir + i) % 8;
-      const nx = cx + dx[dir];
-      const ny = cy + dy[dir];
-
-      if (nx >= 0 && nx < W && ny >= 0 && ny < H && grid[ny * W + nx] === 1) {
-        if (nx === startX && ny === startY && points.length > 3) {
-          return points; // Closed loop completed
-        }
-        points.push({ x: nx, y: ny });
-        visited[ny * W + nx] = 1;
-        cx = nx;
-        cy = ny;
-        backtrackDir = (dir + 5) % 8;
-        foundNext = true;
-        break;
-      }
-    }
-    if (!foundNext) break;
-  }
-
-  return points.length >= 10 ? points : null;
-}
-
-/**
- * Scan binary grid and extract candidate 4-corner quadrilaterals.
- */
-function findContours(grid, W, H, candidateList) {
-  const visited = new Uint8Array(W * H);
-  const minArea = W * H * 0.08;
-  const maxArea = W * H * 0.97;
-
-  for (let y = 2; y < H - 2; y++) {
+  for (let y = 1; y < H - 1; y++) {
     const row = y * W;
-    for (let x = 2; x < W - 2; x++) {
+    for (let x = 1; x < W - 1; x++) {
       const idx = row + x;
       if (grid[idx] === 1 && !visited[idx]) {
-        const contour = traceBoundary(grid, W, H, x, y, visited);
-        if (contour && contour.length >= 16) {
-          const area = polygonArea(contour);
-          if (area >= minArea && area <= maxArea) {
-            const peri = polygonPerimeter(contour);
-            for (const epsRatio of [0.015, 0.02, 0.03, 0.04, 0.05, 0.07, 0.09]) {
-              const simplified = simplifyClosedPolygon(contour, epsRatio * peri);
-              if (simplified.length === 4) {
-                candidateList.push(simplified);
-              } else if (simplified.length >= 5 && simplified.length <= 10) {
-                const quad = extractQuadFromPolygon(simplified);
-                if (quad) candidateList.push(quad);
+        const queue = [idx];
+        visited[idx] = 1;
+        let qHead = 0;
+        const boundaryPts = [];
+
+        while (qHead < queue.length) {
+          const curr = queue[qHead++];
+          const cx = curr % W;
+          const cy = (curr / W) | 0;
+
+          let isEdge = false;
+          const nbs = [curr - 1, curr + 1, curr - W, curr + W];
+          for (let i = 0; i < 4; i++) {
+            const nb = nbs[i];
+            if (nb >= 0 && nb < total) {
+              if (grid[nb] === 0) {
+                isEdge = true;
+              } else if (!visited[nb]) {
+                visited[nb] = 1;
+                queue.push(nb);
               }
+            } else {
+              isEdge = true;
             }
           }
+          if (isEdge) {
+            boundaryPts.push({ x: cx, y: cy });
+          }
+        }
+
+        if (queue.length >= minSize) {
+          comps.push({ size: queue.length, boundary: boundaryPts });
         }
       }
     }
   }
+
+  return comps;
 }
 
 /**
- * Score a candidate quad based on size, aspect ratio (NID standard ~1.58), and edge contrast.
+ * Score a candidate quad based on size, aspect ratio (NID standard ~1.58),
+ * right-angle rectangularity, and edge gradient transition.
  */
 function scoreQuad(quad, W, H, gradMap) {
   const area = polygonArea(quad);
   const totalArea = W * H;
   const areaRatio = area / totalArea;
 
-  // 1. Area score: prefer 20% to 85% of total image
-  let areaScore = 0;
-  if (areaRatio >= 0.20 && areaRatio <= 0.85) {
-    areaScore = 50;
-  } else if (areaRatio > 0.85) {
-    areaScore = 50 - (areaRatio - 0.85) * 100;
-  } else {
-    areaScore = areaRatio * 150;
-  }
-
-  // 2. Aspect ratio score (standard NID card ratio is ~1.58)
   const ordered = orderCorners(quad);
   const topW = Math.hypot(ordered[1].x - ordered[0].x, ordered[1].y - ordered[0].y);
   const botW = Math.hypot(ordered[2].x - ordered[3].x, ordered[2].y - ordered[3].y);
   const leftH = Math.hypot(ordered[3].x - ordered[0].x, ordered[3].y - ordered[0].y);
   const rightH = Math.hypot(ordered[2].x - ordered[1].x, ordered[2].y - ordered[1].y);
 
+  // Reject degenerate or excessively skewed quadrilaterals
+  const widthSkew = Math.max(topW, botW) / (Math.min(topW, botW) || 1);
+  const heightSkew = Math.max(leftH, rightH) / (Math.min(leftH, rightH) || 1);
+  if (widthSkew > 2.3 || heightSkew > 2.3) {
+    return -Infinity;
+  }
+
+  // 1. Area score
+  let areaScore = 0;
+  if (areaRatio >= 0.20 && areaRatio <= 0.85) {
+    areaScore = 50;
+  } else if (areaRatio >= 0.12 && areaRatio < 0.20) {
+    areaScore = 30;
+  } else if (areaRatio > 0.85 && areaRatio <= 0.92) {
+    areaScore = 35;
+  } else {
+    areaScore = 10;
+  }
+
+  // 2. Aspect ratio score (standard ID-1 / CR80 card ratio is ~1.586, documents ~1.3-1.5)
   const avgW = (topW + botW) / 2;
   const avgH = (leftH + rightH) / 2;
   const ratio = Math.max(avgW, avgH) / (Math.min(avgW, avgH) || 1);
 
-  // Reject degenerate / extremely-skewed quads where opposite edges are wildly
-  // unequal in length. A genuine (even perspective-tilted) card keeps opposite
-  // edges roughly comparable; a garbage quad whose corner flew off into the
-  // background has one pair of edges far longer than the other. This is the
-  // symptom the user saw (top-right corner shooting into empty background).
-  const widthSkew = Math.max(topW, botW) / (Math.min(topW, botW) || 1);
-  const heightSkew = Math.max(leftH, rightH) / (Math.min(leftH, rightH) || 1);
-  if (widthSkew > 2.4 || heightSkew > 2.4) {
-    return -Infinity;
-  }
-
   let ratioScore = 0;
-  if (ratio >= 1.25 && ratio <= 1.80) {
-    ratioScore = 35; // Ideal NID aspect ratio
+  if (ratio >= 1.25 && ratio <= 1.85) {
+    ratioScore = 35;
   } else if (ratio >= 1.05 && ratio <= 2.2) {
     ratioScore = 15;
   }
 
-  // 3. Edge gradient score (sample pixels along the 4 edges in gradMap)
+  // 3. Rectangularity: check angles near 90 deg
+  let angleScore = 0;
+  for (let i = 0; i < 4; i++) {
+    const p1 = ordered[i];
+    const p2 = ordered[(i + 1) % 4];
+    const p3 = ordered[(i + 2) % 4];
+    const v1x = p1.x - p2.x, v1y = p1.y - p2.y;
+    const v2x = p3.x - p2.x, v2y = p3.y - p2.y;
+    const d1 = Math.hypot(v1x, v1y), d2 = Math.hypot(v2x, v2y);
+    if (d1 > 0 && d2 > 0) {
+      const cosA = Math.abs((v1x * v2x + v1y * v2y) / (d1 * d2));
+      if (cosA < 0.26) angleScore += 10; // within ~15 deg of 90 degrees
+    }
+  }
+
+  // 4. Edge gradient alignment
   let edgeGradSum = 0;
   let edgeSampleCount = 0;
   if (gradMap) {
     for (let i = 0; i < 4; i++) {
       const p1 = ordered[i];
       const p2 = ordered[(i + 1) % 4];
-      const steps = 15;
+      const steps = 12;
       for (let s = 1; s < steps; s++) {
         const t = s / steps;
         const sx = Math.round(p1.x + (p2.x - p1.x) * t);
@@ -400,13 +502,13 @@ function scoreQuad(quad, W, H, gradMap) {
     }
   }
   const avgEdgeGrad = edgeSampleCount > 0 ? edgeGradSum / edgeSampleCount : 0;
-  const edgeScore = Math.min(40, avgEdgeGrad);
+  const edgeScore = Math.min(30, avgEdgeGrad);
 
-  return areaScore + ratioScore + edgeScore;
+  return areaScore + ratioScore + angleScore + edgeScore;
 }
 
 /**
- * Pure image processing core: detects card 4-corners from raw RGBA pixel data.
+ * Pure image processing core: detects document / card 4-corners from raw RGBA pixel data.
  * Total: never throws; always returns 4 valid corners.
  *
  * @param {Uint8ClampedArray|Uint8Array|Array<number>} data - RGBA pixels
@@ -420,25 +522,42 @@ export function detectCardCornersFromPixels(data, W, H, origW, origH) {
   const oW = Math.max(1, toFinite(origW, 100));
   const oH = Math.max(1, toFinite(origH, 100));
 
-  // Fallback inset rectangle (5% margin from edges)
-  const defaultCorners = [
+  // Fallback corners: 5% inset rectangle for uniform/blank images
+  const insetCorners = [
     { x: Math.round(oW * 0.05), y: Math.round(oH * 0.05) },
     { x: Math.round(oW * 0.95), y: Math.round(oH * 0.05) },
     { x: Math.round(oW * 0.95), y: Math.round(oH * 0.95) },
     { x: Math.round(oW * 0.05), y: Math.round(oH * 0.95) },
   ];
 
+  // Full-image corners for pre-cropped documents / scans
+  const fullCorners = [
+    { x: 0, y: 0 },
+    { x: oW, y: 0 },
+    { x: oW, y: oH },
+    { x: 0, y: oH },
+  ];
+
   if (!data || W < 10 || H < 10) {
-    return defaultCorners;
+    return insetCorners;
   }
 
   const totalPixels = W * H;
 
-  // 1. Grayscale conversion
+  // 1. Grayscale conversion & dynamic range measurement
   const gray = new Float32Array(totalPixels);
+  let minLum = 255, maxLum = 0;
   for (let i = 0; i < totalPixels; i++) {
     const idx = i * 4;
-    gray[i] = 0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2];
+    const lum = 0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2];
+    gray[i] = lum;
+    if (lum < minLum) minLum = lum;
+    if (lum > maxLum) maxLum = lum;
+  }
+
+  // If image is blank/uniform (dynamic range < 15), return inset fallback
+  if ((maxLum - minLum) < 15) {
+    return insetCorners;
   }
 
   // 2. Separable 5-tap Gaussian Blur [1, 4, 6, 4, 1] / 16
@@ -479,12 +598,8 @@ export function detectCardCornersFromPixels(data, W, H, origW, origH) {
     }
   }
 
-  // 3. Sobel Gradient & Direction Quantization
+  // 3. Sobel Gradient Magnitude
   const grad = new Float32Array(totalPixels);
-  const dir = new Uint8Array(totalPixels); // 0=0deg, 1=45deg, 2=90deg, 3=135deg
-  let gradSum = 0;
-  let nonZeroCount = 0;
-
   for (let y = 1; y < H - 1; y++) {
     const ym1 = (y - 1) * W;
     const y0  = y * W;
@@ -499,178 +614,110 @@ export function detectCardCornersFromPixels(data, W, H, origW, origH) {
         -blurred[ym1 + x - 1] - 2 * blurred[ym1 + x] - blurred[ym1 + x + 1] +
         blurred[yp1 + x - 1] + 2 * blurred[yp1 + x] + blurred[yp1 + x + 1];
 
-      const mag = Math.sqrt(gx * gx + gy * gy);
-      const idx = y0 + x;
-      grad[idx] = mag;
-      if (mag > 5) {
-        gradSum += mag;
-        nonZeroCount++;
-      }
-
-      let angle = (Math.atan2(gy, gx) * 180) / Math.PI;
-      if (angle < 0) angle += 180;
-      if (angle >= 22.5 && angle < 67.5) {
-        dir[idx] = 1;
-      } else if (angle >= 67.5 && angle < 112.5) {
-        dir[idx] = 2;
-      } else if (angle >= 112.5 && angle < 157.5) {
-        dir[idx] = 3;
-      } else {
-        dir[idx] = 0;
-      }
+      grad[y0 + x] = Math.sqrt(gx * gx + gy * gy);
     }
   }
 
-  // 4. Non-Maximum Suppression (NMS)
-  const nms = new Float32Array(totalPixels);
-  for (let y = 2; y < H - 2; y++) {
-    const row = y * W;
-    for (let x = 2; x < W - 2; x++) {
-      const idx = row + x;
-      const m = grad[idx];
-      if (m < 5) continue;
-
-      let n1 = 0, n2 = 0;
-      switch (dir[idx]) {
-        case 0:
-          n1 = grad[idx - 1]; n2 = grad[idx + 1];
-          break;
-        case 1:
-          n1 = grad[idx - W + 1]; n2 = grad[idx + W - 1];
-          break;
-        case 2:
-          n1 = grad[idx - W]; n2 = grad[idx + W];
-          break;
-        case 3:
-          n1 = grad[idx - W - 1]; n2 = grad[idx + W + 1];
-          break;
-      }
-
-      if (m >= n1 && m >= n2) {
-        nms[idx] = m;
-      }
-    }
-  }
-
-  // 5. Hysteresis Thresholding
-  const avgGrad = nonZeroCount > 0 ? gradSum / nonZeroCount : 20;
-  const highThresh = Math.max(15, avgGrad * 1.2);
-  const lowThresh = highThresh * 0.4;
-
-  const edges = new Uint8Array(totalPixels);
-  const strongQueue = [];
-
-  for (let y = 1; y < H - 1; y++) {
-    const row = y * W;
-    for (let x = 1; x < W - 1; x++) {
-      const idx = row + x;
-      if (nms[idx] >= highThresh) {
-        edges[idx] = 2;
-        strongQueue.push(idx);
-      } else if (nms[idx] >= lowThresh) {
-        edges[idx] = 1;
-      }
-    }
-  }
-
-  let qHead = 0;
-  while (qHead < strongQueue.length) {
-    const curr = strongQueue[qHead++];
-    const cx = curr % W;
-    const cy = (curr / W) | 0;
-
-    for (let dy = -1; dy <= 1; dy++) {
-      const ny = cy + dy;
-      if (ny < 0 || ny >= H) continue;
-      const nrow = ny * W;
-      for (let dx = -1; dx <= 1; dx++) {
-        const nx = cx + dx;
-        if (nx < 0 || nx >= W) continue;
-        const nidx = nrow + nx;
-        if (edges[nidx] === 1) {
-          edges[nidx] = 2;
-          strongQueue.push(nidx);
-        }
-      }
-    }
-  }
-
-  // 6. Binary Edge Map & Morphological Dilation (3x3)
-  const binaryEdges = new Uint8Array(totalPixels);
-  for (let i = 0; i < totalPixels; i++) {
-    binaryEdges[i] = edges[i] === 2 ? 1 : 0;
-  }
-
-  const dilated = new Uint8Array(totalPixels);
-  for (let y = 1; y < H - 1; y++) {
-    const ym1 = (y - 1) * W;
-    const y0  = y * W;
-    const yp1 = (y + 1) * W;
-    for (let x = 1; x < W - 1; x++) {
-      if (
-        binaryEdges[ym1 + x - 1] || binaryEdges[ym1 + x] || binaryEdges[ym1 + x + 1] ||
-        binaryEdges[y0 + x - 1]  || binaryEdges[y0 + x]  || binaryEdges[y0 + x + 1]  ||
-        binaryEdges[yp1 + x - 1] || binaryEdges[yp1 + x] || binaryEdges[yp1 + x + 1]
-      ) {
-        dilated[y0 + x] = 1;
-      }
-    }
-  }
-
-  // 7. Strategy B: Background border color distance mask
+  // 4. Background border statistics & color distance mask
   let bgR = 0, bgG = 0, bgB = 0, bgCount = 0;
-  function sample(px, py) {
-    const idx = (py * W + px) * 4;
-    bgR += data[idx];
-    bgG += data[idx + 1];
-    bgB += data[idx + 2];
-    bgCount++;
-  }
   for (let x = 0; x < W; x++) {
-    sample(x, 0); sample(x, 1);
-    sample(x, H - 1); sample(x, H - 2);
+    const idx0 = x * 4;
+    const idx1 = ((H - 1) * W + x) * 4;
+    bgR += data[idx0] + data[idx1];
+    bgG += data[idx0 + 1] + data[idx1 + 1];
+    bgB += data[idx0 + 2] + data[idx1 + 2];
+    bgCount += 2;
   }
-  for (let y = 2; y < H - 2; y++) {
-    sample(0, y); sample(1, y);
-    sample(W - 1, y); sample(W - 2, y);
+  for (let y = 1; y < H - 1; y++) {
+    const idx0 = (y * W) * 4;
+    const idx1 = (y * W + W - 1) * 4;
+    bgR += data[idx0] + data[idx1];
+    bgG += data[idx0 + 1] + data[idx1 + 1];
+    bgB += data[idx0 + 2] + data[idx1 + 2];
+    bgCount += 2;
   }
   bgR /= Math.max(1, bgCount);
   bgG /= Math.max(1, bgCount);
   bgB /= Math.max(1, bgCount);
 
-  const fgMask = new Uint8Array(totalPixels);
-  const colorDiffThresh = 28;
-  for (let y = 0; y < H; y++) {
-    const row = y * W;
-    for (let x = 0; x < W; x++) {
-      const idx = (row + x) * 4;
-      const dr = Math.abs(data[idx] - bgR);
-      const dg = Math.abs(data[idx + 1] - bgG);
-      const db = Math.abs(data[idx + 2] - bgB);
-      const dist = (dr + dg + db) / 3;
-      if (dist > colorDiffThresh) {
-        fgMask[row + x] = 1;
+  const colorDistMask = new Uint8Array(totalPixels);
+  for (let i = 0; i < totalPixels; i++) {
+    const idx = i * 4;
+    const dist = (Math.abs(data[idx] - bgR) + Math.abs(data[idx + 1] - bgG) + Math.abs(data[idx + 2] - bgB)) / 3;
+    if (dist > 22) {
+      colorDistMask[i] = 1;
+    }
+  }
+
+  // 5. Otsu thresholding on blurred luminance
+  const hist = new Int32Array(256);
+  for (let i = 0; i < totalPixels; i++) {
+    hist[Math.min(255, Math.max(0, Math.round(blurred[i])))]++;
+  }
+  let sumAll = 0;
+  for (let i = 0; i < 256; i++) sumAll += i * hist[i];
+  let sumB = 0, wB = 0, maxVar = 0, otsuThresh = 128;
+  for (let t = 0; t < 256; t++) {
+    wB += hist[t];
+    if (wB === 0) continue;
+    const wF = totalPixels - wB;
+    if (wF === 0) break;
+    sumB += t * hist[t];
+    const mB = sumB / wB;
+    const mF = (sumAll - sumB) / wF;
+    const between = wB * wF * (mB - mF) * (mB - mF);
+    if (between > maxVar) { maxVar = between; otsuThresh = t; }
+  }
+
+  const otsuMaskPos = new Uint8Array(totalPixels);
+  const otsuMaskInv = new Uint8Array(totalPixels);
+  for (let i = 0; i < totalPixels; i++) {
+    if (blurred[i] > otsuThresh) otsuMaskPos[i] = 1;
+    else otsuMaskInv[i] = 1;
+  }
+
+  // 6. Morphological Closing (7x7 kernel) to bridge gaps and create solid blobs
+  const closedColor = morphClose(colorDistMask, W, H, 3);
+  const closedOtsuPos = morphClose(otsuMaskPos, W, H, 3);
+  const closedOtsuInv = morphClose(otsuMaskInv, W, H, 3);
+
+  // 7. Extract Connected Components
+  const minCompSize = Math.round(totalPixels * 0.15);
+  const allComps = [
+    ...extractComponentBoundaries(closedColor, W, H, minCompSize),
+    ...extractComponentBoundaries(closedOtsuPos, W, H, minCompSize),
+    ...extractComponentBoundaries(closedOtsuInv, W, H, minCompSize),
+  ];
+
+  // 8. Generate and score candidate quads
+  const candidates = [];
+  for (const comp of allComps) {
+    const areaRatio = comp.size / totalPixels;
+    // A card on a background typically occupies between 15% and 88% of the frame
+    if (areaRatio >= 0.15 && areaRatio <= 0.88) {
+      const hull = convexHull(comp.boundary);
+      if (hull.length >= 4) {
+        // Strategy A: Minimum Area Oriented Bounding Rectangle (Rotating Calipers)
+        const orientedRect = minAreaOrientedRect(hull);
+        if (orientedRect && isConvex(orientedRect)) {
+          candidates.push(orientedRect);
+        }
+
+        // Strategy B: 4 Extreme Projections on Convex Hull
+        const extremeQuad = orderCorners(hull);
+        if (extremeQuad && isConvex(extremeQuad)) {
+          candidates.push(extremeQuad);
+        }
       }
     }
   }
 
-  // 8. Find candidate quads from both edge contours and foreground mask
-  const candidates = [];
-  findContours(dilated, W, H, candidates);
-  findContours(fgMask, W, H, candidates);
-
-  // 9. Score candidate quads
-  const minArea = totalPixels * 0.10;
-  const maxArea = totalPixels * 0.96;
-
+  // 9. Find the best scoring candidate
   let bestQuad = null;
   let bestScore = -Infinity;
 
   for (const quad of candidates) {
-    const area = polygonArea(quad);
-    if (area < minArea || area > maxArea) continue;
     if (!isConvex(quad)) continue;
-
     const score = scoreQuad(quad, W, H, grad);
     if (score > bestScore) {
       bestScore = score;
@@ -678,20 +725,23 @@ export function detectCardCornersFromPixels(data, W, H, origW, origH) {
     }
   }
 
-  // If no good card candidate was found, use default inset rectangle
-  if (!bestQuad || bestScore < 10) {
-    return defaultCorners;
+  // 10. Lens Decision Logic:
+  // If a strong candidate is found with confidence score >= 50:
+  // Return the detected card corners scaled to original image dimensions!
+  if (bestQuad && bestScore >= 50) {
+    const ordered = orderCorners(bestQuad);
+    const scaleX = oW / W;
+    const scaleY = oH / H;
+    return ordered.map(p => ({
+      x: Math.round(Math.min(oW, Math.max(0, p.x * scaleX))),
+      y: Math.round(Math.min(oH, Math.max(0, p.y * scaleY))),
+    }));
   }
 
-  // Order corners [TL, TR, BR, BL] and scale back to original image dimensions
-  const ordered = orderCorners(bestQuad);
-  const scaleX = oW / W;
-  const scaleY = oH / H;
-
-  return ordered.map(p => ({
-    x: Math.round(Math.min(Math.max(0, p.x * scaleX), oW)),
-    y: Math.round(Math.min(Math.max(0, p.y * scaleY), oH)),
-  }));
+  // If no high-contrast card on a background is found, the document is either:
+  // - A flatbed scan, pre-cropped image, or camera frame closely filled by the document:
+  // Microsoft Lens selects the full document frame [0,0] to [oW, oH]!
+  return fullCorners;
 }
 
 /**
@@ -733,12 +783,11 @@ export function detectCardCorners(imageSource, naturalWidth, naturalHeight, prov
 
     const doc = providedDoc || (typeof document !== 'undefined' ? document : null);
     if (!doc || typeof doc.createElement !== 'function') {
-      // No DOM/canvas available: fallback to inset rectangle
       return [
-        { x: Math.round(origW * 0.05), y: Math.round(origH * 0.05) },
-        { x: Math.round(origW * 0.95), y: Math.round(origH * 0.05) },
-        { x: Math.round(origW * 0.95), y: Math.round(origH * 0.95) },
-        { x: Math.round(origW * 0.05), y: Math.round(origH * 0.95) },
+        { x: 0, y: 0 },
+        { x: origW, y: 0 },
+        { x: origW, y: origH },
+        { x: 0, y: origH },
       ];
     }
 
@@ -758,10 +807,10 @@ export function detectCardCorners(imageSource, naturalWidth, naturalHeight, prov
     }
     if (!ctx) {
       return [
-        { x: Math.round(origW * 0.05), y: Math.round(origH * 0.05) },
-        { x: Math.round(origW * 0.95), y: Math.round(origH * 0.05) },
-        { x: Math.round(origW * 0.95), y: Math.round(origH * 0.95) },
-        { x: Math.round(origW * 0.05), y: Math.round(origH * 0.95) },
+        { x: 0, y: 0 },
+        { x: origW, y: 0 },
+        { x: origW, y: origH },
+        { x: 0, y: origH },
       ];
     }
 
@@ -770,14 +819,13 @@ export function detectCardCorners(imageSource, naturalWidth, naturalHeight, prov
 
     return detectCardCornersFromPixels(imgData.data, procW, procH, origW, origH);
   } catch (_err) {
-    // Total: fallback on any unexpected error
     const w = toFinite(naturalWidth, 100);
     const h = toFinite(naturalHeight, 100);
     return [
-      { x: Math.round(w * 0.05), y: Math.round(h * 0.05) },
-      { x: Math.round(w * 0.95), y: Math.round(h * 0.05) },
-      { x: Math.round(w * 0.95), y: Math.round(h * 0.95) },
-      { x: Math.round(w * 0.05), y: Math.round(h * 0.95) },
+      { x: 0, y: 0 },
+      { x: w, y: 0 },
+      { x: w, y: h },
+      { x: 0, y: h },
     ];
   }
 }

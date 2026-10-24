@@ -77,4 +77,26 @@ describe("Property 11: PDF fit and margins", () => {
       { numRuns: 200 }
     );
   });
+
+  it("caps image width at maxFitWidthMm when specified (e.g. 105 mm standard bank size)", () => {
+    // 800 x 1000 aspect ratio image
+    const fit105 = fitImageToPage(800, 1000, A4_PORTRAIT, DEFAULT_MARGIN_MM, 105);
+    expect(fit105.w).toBeCloseTo(105, 1);
+    expect(fit105.h).toBeCloseTo(105 * (1000 / 800), 1);
+    expect(Math.abs(fit105.x - (210 - fit105.w) / 2)).toBeLessThan(1e-4);
+    expect(Math.abs(fit105.y - (297 - fit105.h) / 2)).toBeLessThan(1e-4);
+
+    // 86 mm actual NID card size
+    const fit86 = fitImageToPage(800, 1000, A4_PORTRAIT, DEFAULT_MARGIN_MM, 86);
+    expect(fit86.w).toBeCloseTo(86, 1);
+    expect(Math.abs(fit86.x - (210 - fit86.w) / 2)).toBeLessThan(1e-4);
+    expect(Math.abs(fit86.y - (297 - fit86.h) / 2)).toBeLessThan(1e-4);
+  });
+
+  it("positions image in top area of page when verticalAlign is 'top'", () => {
+    const fitTop = fitImageToPage(800, 1000, A4_PORTRAIT, DEFAULT_MARGIN_MM, 105, 'top');
+    expect(fitTop.w).toBeCloseTo(105, 1);
+    expect(fitTop.y).toBeCloseTo(25.4, 1);
+    expect(Math.abs(fitTop.x - (210 - fitTop.w) / 2)).toBeLessThan(1e-4);
+  });
 });

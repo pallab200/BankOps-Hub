@@ -3,26 +3,42 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/png" href="../assets/ucb-logo.png">
+  <link rel="stylesheet" href="../css/exo2.css">
+  <link rel="stylesheet" href="../css/poppins.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/unified-theme.css">
+  <link rel="stylesheet" href="../css/fontawesome-fix.css">
   <link rel="stylesheet" href="../css/unified-theme.css">
   <title>RTGS/BEFTN Form Editor — Preview & Print</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg viewBox='0 0 24 24' fill='%236366f1'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-8-6z'/><path d='M9 12h6M9 16h6' stroke='white' stroke-width='1.5' stroke-linecap='round'/></svg>" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg viewBox='0 0 24 24' fill='%23ed1b24'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-8-6z'/><path d='M9 12h6M9 16h6' stroke='white' stroke-width='1.5' stroke-linecap='round'/></svg>" />
   <link rel="stylesheet" href="assets/font-awesome.min.css">
   <link href="assets/poppins.css" rel="stylesheet">
   <style>
 /* Modern Design System v2 */
 :root {
-  --primary: #4f46e5;
-  --primary-light: #818cf8;
-  --primary-dark: #3730a3;
-  --primary-50: #eef2ff;
-  --primary-100: #e0e7ff;
-  --accent: #ec4899;
-  --accent-light: #f9a8d4;
+  --primary: #ed1b24;               /* UCB Signature Red */
+  --primary-dark: #c00000;          /* Deep Crimson Accent */
+  --primary-light: #ff4d55;         /* Vibrant Highlight */
+  --primary-rgb: 237, 27, 36;
+  --primary-gradient: linear-gradient(135deg, #ed1b24 0%, #c00000 50%, #900000 100%);
+  --primary-50: rgba(237, 27, 36, 0.08);
+  --primary-100: rgba(237, 27, 36, 0.15);
+  --accent: #ed1b24;
+  --accent-light: #ff4d55;
+  --accent-gradient: linear-gradient(135deg, #ed1b24 0%, #c00000 100%);
+  --gold: #d4af37;                  /* UCB Gold Accent */
+  --gold-light: #f59e0b;
   --success: #10b981;
+  --success-light: #34d399;
   --warning: #f59e0b;
-  --danger: #ef4444;
-  --bg-primary: #f1f5f9;
+  --danger: #ed1b24;
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
   --bg-card: #ffffff;
+  --card-bg: #ffffff;
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
@@ -33,16 +49,19 @@
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.04);
   --shadow-lg: 0 10px 20px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.03);
+  --shadow-glow: 0 0 20px rgba(237, 27, 36, 0.35);
   --radius-xs: 6px;
   --radius-sm: 8px;
   --radius: 12px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  --transition: 0.25s ease;
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --card-bg: rgba(255, 255, 255, 0.98);
-  --bg-secondary: #f1f5f9;
+  --transition-bounce: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --font-family: 'Exo 2', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -74,7 +93,7 @@ body::after {
 body::before {
   width: 600px;
   height: 600px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+  background: linear-gradient(135deg, rgba(237, 27, 36, 0.08), rgba(192, 0, 0, 0.05));
   top: -200px;
   right: -100px;
   animation: floatBg 20s ease-in-out infinite;
@@ -83,7 +102,7 @@ body::before {
 body::after {
   width: 500px;
   height: 500px;
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(168, 85, 247, 0.08));
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.07), rgba(245, 158, 11, 0.05));
   bottom: -150px;
   left: -100px;
   animation: floatBg 25s ease-in-out infinite reverse;
@@ -121,33 +140,24 @@ body::after {
   to { opacity: 1; transform: translateX(0); }
 }
 
-header {
-  padding: 14px 24px;
-  text-align: center;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(79, 70, 229, 0.98) 50%, rgba(139, 92, 246, 0.95) 100%);
-  color: white;
+header.app-header {
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 30px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+  background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important;
+  padding: 14px 24px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-shadow: 0 6px 24px rgba(237, 27, 36, 0.22);
+  border-bottom: 1px solid rgba(237, 27, 36, 0.35);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
   animation: fadeInDown 0.5s ease-out;
+  overflow: hidden;
 }
 
-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 3s infinite;
-  pointer-events: none;
+h1, h2, h3, h4 {
+  font-family: 'Exo 2', sans-serif;
 }
-
 h1 {
   margin: 0 0 2px 0;
   font-weight: 700;
@@ -231,10 +241,11 @@ main {
 
 .form-panel:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15), 0 0 40px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12), 0 0 35px rgba(237, 27, 36, 0.18);
 }
 
 .form-panel h2 {
+  font-family: 'Exo 2', sans-serif;
   margin: 0 0 16px 0;
   color: var(--text-primary);
   font-weight: 700;
@@ -290,7 +301,7 @@ main {
 
 .form-panel input:focus, .form-panel select:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
+  box-shadow: 0 0 0 3px rgba(237, 27, 36, 0.12);
   outline: none;
 }
 
@@ -307,28 +318,28 @@ main {
 }
 
 button, .btn {
-  font-family: inherit;
-  font-size: 0.82rem;
-  padding: 8px 14px;
+  font-family: 'Exo 2', 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  padding: 8px 16px;
   border-radius: var(--radius-xs);
   border: 0;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   white-space: nowrap;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 14px rgba(237, 27, 36, 0.28);
   position: relative;
   overflow: hidden;
 }
 
 button:hover, .btn:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+  background: linear-gradient(135deg, #ff2a33 0%, #d60000 100%);
+  box-shadow: 0 8px 22px rgba(237, 27, 36, 0.42);
   transform: translateY(-2px);
 }
 
@@ -337,17 +348,39 @@ button:active, .btn:active {
 }
 
 .btn-ghost {
-  background: transparent;
+  background: #ffffff;
   color: var(--text-secondary);
   border-radius: var(--radius-xs);
-  padding: 8px 14px;
+  padding: 8px 16px;
   border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xs);
+  font-family: 'Exo 2', 'Poppins', sans-serif;
+  font-weight: 600;
 }
 
 .btn-ghost:hover {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  box-shadow: none;
+  background: rgba(237, 27, 36, 0.06);
+  color: var(--primary);
+  border-color: rgba(237, 27, 36, 0.35);
+  box-shadow: 0 2px 8px rgba(237, 27, 36, 0.12);
+}
+
+#print-btn {
+  background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%) !important;
+  box-shadow: 0 4px 14px rgba(237, 27, 36, 0.28) !important;
+}
+#print-btn:hover {
+  background: linear-gradient(135deg, #ff2a33 0%, #d60000 100%) !important;
+  box-shadow: 0 8px 22px rgba(237, 27, 36, 0.42) !important;
+}
+
+#print-beftn-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28) !important;
+}
+#print-beftn-btn:hover {
+  background: linear-gradient(135deg, #34d399 0%, #047857 100%) !important;
+  box-shadow: 0 8px 22px rgba(16, 185, 129, 0.42) !important;
 }
 
 .btn-small {
@@ -381,7 +414,7 @@ button:active, .btn:active {
   .data-panel h4 { color: var(--primary); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin: 0.5rem 0; }
   /* Data panel inputs */
   .data-panel input { border: 1px solid var(--border-color); border-radius: var(--radius-xs); padding: 8px 10px; font-size: 0.86rem; transition: all var(--transition); background: var(--bg-card); }
-  .data-panel input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08); outline: none; }
+  .data-panel input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(237, 27, 36, 0.12); outline: none; }
   .data-panel label { font-size: 0.78rem; color: var(--text-secondary); font-weight: 600; }
   /* Numeric-only invalid state */
   .numeric-invalid{ border-color:#e11d48 !important; box-shadow:0 0 0 4px rgba(225,29,72,0.06); }
@@ -511,7 +544,7 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
     /* Searchable preset dropdowns */
     .search-select{position:relative}
     .search-select input{width:100%;padding:8px 10px;border:1px solid var(--border-color);border-radius:var(--radius-xs);font-size:0.86rem;transition:all var(--transition)}
-    .search-select input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,0.08);outline:none}
+    .search-select input:focus{border-color:var(--primary);box-shadow: 0 0 0 3px rgba(237, 27, 36, 0.12);outline:none}
     .search-list{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-sm);max-height:220px;overflow:auto;z-index:2200;box-shadow:var(--shadow-lg)}
     .search-list .item{padding:9px 12px;border-bottom:1px solid var(--border-light);cursor:pointer;font-size:0.84rem;transition:background var(--transition)}
     .search-list .item:last-child{border-bottom:0}
@@ -549,10 +582,10 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
     font-weight: 700;
     letter-spacing: 0.5px;
     border-radius: 20px;
-    background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(139,92,246,0.06) 50%, rgba(236,72,153,0.05) 100%);
+    background: linear-gradient(135deg, rgba(237, 27, 36, 0.04) 0%, rgba(212, 175, 55, 0.03) 50%, rgba(255, 255, 255, 0.95) 100%);
     color: #0f172a;
     box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255,255,255,0.8);
-    border: 1px solid rgba(99,102,241,0.1);
+    border: 1px solid rgba(237, 27, 36, 0.15);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-transform: none;
@@ -594,14 +627,14 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
 }
 
 @keyframes glow {
-  0%, 100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
-  50% { box-shadow: 0 0 25px rgba(99, 102, 241, 0.5); }
+  0%, 100% { box-shadow: 0 0 15px rgba(237, 27, 36, 0.25); }
+  50% { box-shadow: 0 0 25px rgba(237, 27, 36, 0.45); }
 }
 
 .slide-menu-toggle:hover {
   padding-left: 14px;
   background: linear-gradient(135deg, var(--primary-dark), var(--accent));
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+  box-shadow: 0 0 30px rgba(237, 27, 36, 0.5);
   transform: translateY(-50%);
 }
 .slide-menu-toggle i {
@@ -645,10 +678,13 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
   align-items: center;
   justify-content: space-between;
   padding: 14px 24px;
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%);
+  border-bottom: 1px solid rgba(237, 27, 36, 0.35);
   color: white;
 }
 .slide-menu-header h3 {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700;
   font-size: 1.1rem;
   font-weight: 600;
   display: flex;
@@ -694,13 +730,13 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
   transition: var(--transition-fast);
 }
 .slide-menu-nav a:hover {
-  background: var(--bg-secondary);
-  color: #6366f1;
+  background: rgba(237, 27, 36, 0.08);
+  color: var(--primary);
 }
 .slide-menu-nav a i {
   width: 20px;
   text-align: center;
-  color: #6366f1;
+  color: var(--primary);
 }
   
   /* Developer Mode Toggle Styles */
@@ -776,63 +812,324 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
     display: flex !important;
   }
 
-  /* Officer Seal Popup */
-  .officer-seal-popup-backdrop {
-    position:fixed; top:0; left:0; right:0; bottom:0;
-    background:rgba(15,23,42,0.6); backdrop-filter:blur(4px);
-    z-index:2000; opacity:0; visibility:hidden;
-    transition:opacity 0.3s ease, visibility 0.3s ease;
+  /* Officer Seal Popup - BranchEase Redesign */
+.officer-seal-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.officer-seal-popup-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+.officer-seal-popup {
+  position: relative;
+  width: min(760px, 95vw);
+  max-height: min(88vh, 680px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(237, 27, 36, 0.35);
+  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: scale(0.96) translateY(8px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  z-index: 2001;
+}
+.officer-seal-popup-backdrop.show .officer-seal-popup {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1) translateY(0);
+}
+.officer-seal-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important;
+  color: #fff;
+  border-bottom: 1px solid rgba(237, 27, 36, 0.35);
+  flex-shrink: 0;
+}
+.officer-seal-popup-header h3 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: 'Exo 2', sans-serif;
+  color: #fff;
+}
+.officer-seal-popup-close {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+.officer-seal-popup-close:hover,
+.officer-seal-popup-close:focus-visible {
+  background: rgba(237, 27, 36, 0.8);
+  transform: rotate(90deg);
+  outline: none;
+}
+.officer-seal-popup-body {
+  padding: 18px 22px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(237, 27, 36, 0.4) transparent;
+}
+.officer-seal-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+  flex-shrink: 0;
+}
+.officer-seal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.officer-seal-field label {
+  font-weight: 700;
+  color: #ed1b24 !important;
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Exo 2', sans-serif;
+}
+.officer-seal-field input,
+.officer-seal-field textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px 12px;
+  border: 1.5px solid #dbe4f0;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  font-family: inherit;
+  resize: vertical;
+  background: #fafbff;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+.officer-seal-field input {
+  min-height: auto;
+  height: 38px;
+}
+.officer-seal-field input:focus,
+.officer-seal-field textarea:focus {
+  outline: none;
+  border-color: #ed1b24 !important;
+  box-shadow: 0 0 0 3px rgba(237, 27, 36, 0.15) !important;
+  background: #ffffff !important;
+}
+.officer-seal-controls,
+.officer-seal-size-control,
+.seal-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+.officer-seal-controls label,
+.officer-seal-size-control label,
+.seal-controls-row label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  font-family: 'Exo 2', sans-serif;
+}
+.officer-seal-controls input[type="range"],
+.officer-seal-size-control input[type="range"],
+.seal-controls-row input[type="range"] {
+  flex: 1;
+  cursor: pointer;
+  accent-color: #ed1b24 !important;
+  height: 6px;
+}
+.officer-seal-controls span,
+.officer-seal-size-control span,
+.seal-controls-row span,
+.seal-size-val {
+  min-width: 56px;
+  text-align: right;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: 'Exo 2', sans-serif;
+}
+.seal-preview-section {
+  text-align: center;
+  padding: 12px;
+  background: #fafbfe;
+  border: 1px dashed rgba(237, 27, 36, 0.25);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.seal-preview-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-family: 'Exo 2', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.seal-preview,
+.rtgs-seal-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.seal-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  min-width: 140px;
+  padding: 8px 12px;
+  background: #ffffff;
+  border: 1.5px dashed rgba(237, 27, 36, 0.45) !important;
+  border-radius: 8px;
+  color: #000;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+  word-break: break-word;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+.seal-item:hover {
+  border-color: #ed1b24 !important;
+  box-shadow: 0 4px 12px rgba(237, 27, 36, 0.15) !important;
+}
+.seal-item-text {
+  position: relative;
+  z-index: 1;
+  white-space: pre-wrap;
+}
+.seal-example {
+  text-align: center;
+  padding: 10px;
+  background: rgba(237, 27, 36, 0.06) !important;
+  border: 1px dashed rgba(237, 27, 36, 0.25) !important;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.70rem;
+  color: var(--text-secondary);
+}
+.seal-example strong {
+  color: #000;
+  display: block;
+  margin-bottom: 6px;
+}
+.officer-seal-popup-footer {
+  padding: 12px 20px;
+  background: #ffffff;
+  border-top: 1px solid rgba(226, 232, 240, 0.95);
+  flex-shrink: 0;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+  z-index: 2;
+}
+
+.officer-seal-popup input[type="range"] {
+  accent-color: #ed1b24 !important;
+  cursor: pointer;
+}
+
+.officer-seal-save-btn {
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%) !important;
+  color: #fff !important;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Exo 2', sans-serif;
+  box-shadow: 0 4px 14px rgba(237, 27, 36, 0.28) !important;
+}
+.officer-seal-save-btn:hover,
+.officer-seal-save-btn:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(237, 27, 36, 0.38) !important;
+  outline: none;
+}
+.officer-seal-save-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 1024px) {
+  .officer-seal-fields {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
-  .officer-seal-popup-backdrop.show { opacity:1; visibility:visible; }
-  .officer-seal-popup {
-    position:fixed; top:50%; left:50%;
-    transform:translate(-50%,-50%) scale(0.9);
-    background:var(--card-bg); border-radius:var(--radius-xl);
-    box-shadow:var(--shadow-lg); width:90%; max-width:500px;
-    overflow:hidden; z-index:2001; opacity:0; visibility:hidden;
-    transition:transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease, visibility 0.3s ease;
+}
+@media (max-width: 768px) {
+  .officer-seal-fields {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
-  .officer-seal-popup-backdrop.show .officer-seal-popup { opacity:1; visibility:visible; transform:translate(-50%,-50%) scale(1); }
-  .officer-seal-popup-header {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:12px 16px; background:linear-gradient(135deg,#059669 0%,#047857 100%); color:white;
+  .seal-preview {
+    gap: 16px;
   }
-  .officer-seal-popup-header h3 { font-size:0.88rem; font-weight:600; display:flex; align-items:center; gap:8px; }
-  .officer-seal-popup-close {
-    background:rgba(255,255,255,0.2); border:none; color:white;
-    width:28px; height:28px; border-radius:50%; cursor:pointer; transition:var(--transition-fast);
-  }
-  .officer-seal-popup-close:hover { background:rgba(255,255,255,0.3); }
-  .officer-seal-popup-body { padding:18px; display:flex; flex-direction:column; gap:14px; }
-  .officer-seal-fields { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:14px; padding-bottom:14px; border-bottom:2px solid var(--border-color); }
-  .officer-seal-field { display:flex; flex-direction:column; gap:8px; }
-  .officer-seal-field label { font-weight:700; color:var(--primary); font-size:0.78rem; display:flex; align-items:center; gap:6px; }
-  .officer-seal-field textarea {
-    padding:10px 11px; border:2px solid var(--border-color); border-radius:6px;
-    font-size:0.70rem; font-family:inherit; resize:vertical; min-height:100px; line-height:1.3;
-    transition:var(--transition-fast);
-  }
-  .officer-seal-field textarea:focus { outline:none; border-color:#059669; box-shadow:0 0 0 3px rgba(5,150,105,0.15); }
-  .seal-controls-row { display:flex; align-items:center; gap:12px; }
-  .seal-controls-row label { font-weight:600; color:var(--text-secondary); font-size:0.82rem; white-space:nowrap; }
-  .seal-controls-row input[type=range] { flex:1; }
-  .seal-size-val { min-width:46px; font-size:0.82rem; color:var(--text-secondary); }
-  .seal-preview-section { text-align:center; }
-  .seal-preview-title { font-weight:700; color:var(--text-secondary); margin-bottom:10px; font-size:0.78rem; display:flex; align-items:center; justify-content:center; gap:6px; }
-  .rtgs-seal-preview { display:flex; justify-content:center; gap:20px; margin-bottom:14px; flex-wrap:nowrap; }
   .seal-item {
-    width:100px; height:100px; border:none; border-radius:0; display:flex; align-items:center; justify-content:center;
-    text-align:center; font-size:0.5rem; font-weight:800; color:#000; padding:8px;
-    word-break:break-word; background:rgba(0,0,0,0.02); line-height:1.2; overflow:hidden; position:relative;
+    width: 120px;
+    height: 120px;
   }
-  .seal-item-text { position:relative; z-index:1; white-space:normal; word-break:break-word; }
-  .officer-seal-save-btn {
-    width:100%; padding:10px 16px; background:linear-gradient(135deg,#059669 0%,#047857 100%);
-    color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:600;
-    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
-    transition:var(--transition-fast);
-  }
-  .officer-seal-save-btn:hover { background:linear-gradient(135deg,#047857 0%,#065f46 100%); transform:translateY(-1px); }
+}
+
   .overlay[data-field="verifiedSeal"] {
     width:120px;
     height:120px;
@@ -854,7 +1151,37 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
       background:transparent !important; color:#000 !important;
     }
   }
-  </style>
+  
+/* RTGS Header Executive Styles */
+
+header {
+  background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important;
+  color: #fff !important;
+  padding: 12px 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  border-radius: 0 !important;
+  box-shadow: 0 6px 24px rgba(237, 27, 36, 0.22) !important;
+  border-bottom: 1px solid rgba(237, 27, 36, 0.35) !important;
+  animation: slideDown 0.5s ease-out;
+  position: relative;
+  z-index: 100;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+}
+
+.hub-header-meta {
+  margin-left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  position: relative;
+  z-index: 10;
+}
+
+</style>
   <!-- Auto-import: load saved form data from rtgs_auto_import.js (works with file:// protocol) -->
   <script src="rtgs_auto_import.js"></script>
 </head>
@@ -928,20 +1255,52 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
             <div class="seal-item" id="rtgsSealPreview2"><div class="seal-item-text">Officer 2</div></div>
           </div>
         </div>
+      </div>
+      <div class="officer-seal-popup-footer">
         <button type="button" class="officer-seal-save-btn" id="rtgsSaveOfficerSealBtn"><i class="fas fa-save"></i> Save Officer Seals</button>
       </div>
     </div>
   </div>
 
-  <header>
-    <h1>
-      <svg style="display:inline-block;width:22px;height:22px;margin-right:8px;vertical-align:middle" viewBox="0 0 24 24" fill="white">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-8-6z"/>
-        <path d="M9 12h6M9 16h6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-      RTGS / BEFTN Form Editor
-    </h1>
-    <p>Manage sender &amp; receiver presets, generate print-ready RTGS &amp; BEFTN forms</p>
+  <header class="app-header">
+    <!-- Subtle Decorative Glow Circles -->
+    <div style="position: absolute; top: -60%; right: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(237, 27, 36, 0.22) 0%, transparent 65%); pointer-events: none;"></div>
+    <div style="position: absolute; bottom: -60%; left: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 65%); pointer-events: none;"></div>
+
+    <div class="hub-brand-group" style="display: flex; align-items: center; gap: 14px; position: relative; z-index: 10;">
+      <!-- Animated UCB Logo with Cinematic Beam, Particles & Glow -->
+      <div class="ucb-logo-anim" aria-label="United Commercial Bank PLC" style="cursor: pointer;" onclick="window.location.href='../BranchEase.html'" title="Back to BranchEase Portal">
+        <div class="ucb-glow"></div>
+        <img class="ucb-logo-img" src="../assets/ucb-logo.png" alt="UCB"
+             onerror="this.src='Assets/ucb-logo.png'; this.onerror=function(){ this.closest('.ucb-logo-anim').classList.add('.ucb-fallback'); };">
+        <div class="ucb-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <svg class="ucb-beam" viewBox="0 0 1024 486" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <linearGradient id="ucbBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ff2b2b" stop-opacity="0"/>
+              <stop offset="30%" stop-color="#ff2b2b" stop-opacity="0.9"/>
+              <stop offset="60%" stop-color="#ff5a5a" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <path d="M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150"/>
+          <circle r="4" style="offset-path: path('M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150');"></circle>
+        </svg>
+        <div class="ucb-sweep"></div>
+      </div>
+
+      <div class="hub-brand-titles">
+        <h1 id="page-title" style="font-family: 'Exo 2', sans-serif !important; font-size: 1.45rem; font-weight: 800; margin: 0; line-height: 1.15; letter-spacing: -0.01em; background: linear-gradient(100deg, #ffffff 0%, #ffffff 40%, #ff858a 48%, #ffffff 54%, #ffffff 100%); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: ucbTextShine 7s ease-in-out infinite 2.5s;">RTGS / BEFTN Form Editor</h1>
+        <p style="margin: 2px 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.88); font-weight: 500;">United Commercial Bank PLC &middot; Manage Presets, Generate &amp; Print Ready Forms</p>
+      </div>
+    </div>
+
+    <div class="hub-header-meta" style="margin-left: auto; display: flex; align-items: center; gap: 12px; position: relative; z-index: 10;">
+      <div class="hub-user-pill" onclick="changePcUsername()" title="Click to change display name" style="display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 6px 14px; border-radius: 50px; color: #ed1b24; font-size: 0.76rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); cursor: pointer; white-space: nowrap;">
+        <i class="fas fa-user-circle" style="font-size: 1rem;"></i>
+        <span id="headerUsername">User</span>
+      </div>
+    </div>
   </header>
 
   <input id="import-file" type="file" accept="application/json" style="display:none">
@@ -1006,7 +1365,17 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
           <div class="form-section">
             <div class="form-section-title"><span style="font-size:1.2rem; font-weight:700; color:var(--primary)">৳</span>Payment Details</div>
           <label>Amount
-            <input name="amount" type="text" placeholder="Amount">
+            <div style="display:flex;gap:.5rem;align-items:stretch">
+              <input name="amount" type="text" placeholder="Amount" style="flex:1">
+              <select name="currency" style="width:90px;padding:.25rem">
+                <option value="BDT">BDT</option>
+                <option value="USD">USD</option>
+                <option value="CAD">CAD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="JPY">JPY</option>
+              </select>
+            </div>
           </label>
 
           <label>Reason for Payment
@@ -1063,11 +1432,11 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
                 <label style="display:block;margin-bottom:.5rem">Receiving Branch
                   <input data-name="recvBranch" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
                 </label>
-                <label style="display:block;margin-bottom:.5rem">Receiver's Name
-                  <input data-name="recvName" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
-                </label>
                 <label style="display:block;margin-bottom:.5rem">Receiver's Account No.
                   <input data-name="recvAccount" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
+                </label>
+                <label style="display:block;margin-bottom:.5rem">Receiver's Name
+                  <input data-name="recvName" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
                 </label>
                 <label style="display:block;margin-bottom:.5rem">Routing Number
                   <input data-name="routingNumber" type="text" style="width:100%;padding:.4rem;margin-top:.25rem">
@@ -1152,20 +1521,36 @@ n#lb-next{right:1rem;top:50%;transform:translateY(-50%)}
             <div class="overlay tpl-beftn" data-field="inWords2" style="top:290px;left:120px"></div>
             <div class="overlay tpl-beftn" data-field="date" style="top:12px;left:620px"></div>
             <div class="overlay tpl-beftn" data-field="dateTime" data-hide-on="beftn" style="top:12px;left:640px;display:none"></div>
-            <!-- RTGS tick marks (7 ticks) -->
-            <div class="overlay tpl-rtgs" data-field="tick1" style="top:100px;left:100px"></div>
+            <!-- RTGS tick marks -->
             <div class="overlay tpl-rtgs" data-field="tick2" style="top:150px;left:100px"></div>
             <div class="overlay tpl-rtgs" data-field="tick3" style="top:200px;left:100px"></div>
             <div class="overlay tpl-rtgs" data-field="tick4" style="top:250px;left:100px"></div>
             <div class="overlay tpl-rtgs" data-field="tick5" style="top:300px;left:100px"></div>
             <div class="overlay tpl-rtgs" data-field="tick6" style="top:350px;left:100px"></div>
             <div class="overlay tpl-rtgs" data-field="tick7" style="top:400px;left:100px"></div>
+            <!-- Currency tick marks (RTGS only). Only the selected currency's tick is shown.
+                 tick1 == BDT. Positions can be dragged in Edit positions mode. -->
+            <div class="overlay tpl-rtgs" data-field="curTickBDT" data-label="BDT" style="top:210px;left:460px"></div>
+            <div class="overlay tpl-rtgs" data-field="curTickUSD" data-label="USD" style="top:210px;left:510px"></div>
+            <div class="overlay tpl-rtgs" data-field="curTickCAD" data-label="CAD" style="top:210px;left:560px"></div>
+            <div class="overlay tpl-rtgs" data-field="curTickEUR" data-label="EUR" style="top:210px;left:610px"></div>
+            <div class="overlay tpl-rtgs" data-field="curTickGBP" data-label="GBP" style="top:210px;left:660px"></div>
+            <div class="overlay tpl-rtgs" data-field="curTickJPY" data-label="JPY" style="top:210px;left:710px"></div>
             <!-- BEFTN tick marks (5 ticks) -->
             <div class="overlay tpl-beftn" data-field="tick1" style="top:100px;left:100px"></div>
             <div class="overlay tpl-beftn" data-field="tick2" style="top:150px;left:100px"></div>
             <div class="overlay tpl-beftn" data-field="tick3" style="top:200px;left:100px"></div>
             <div class="overlay tpl-beftn" data-field="tick4" style="top:250px;left:100px"></div>
             <div class="overlay tpl-beftn" data-field="tick5" style="top:300px;left:100px"></div>
+            <!-- Account-type tick marks (BEFTN only). Driven by the 5th digit of the
+                 sender account number: 1 => CD, 2 => SB, 3 => SND. Only the matching one shows. -->
+            <div class="overlay tpl-beftn" data-field="acctTickCD" data-label="CD" style="top:120px;left:460px"></div>
+            <div class="overlay tpl-beftn" data-field="acctTickSB" data-label="SB" style="top:120px;left:510px"></div>
+            <div class="overlay tpl-beftn" data-field="acctTickSND" data-label="SND" style="top:120px;left:560px"></div>
+            <!-- Second copy of the account-type ticks (BEFTN only) -->
+            <div class="overlay tpl-beftn" data-field="acctTickCD" data-label="CD" style="top:360px;left:460px"></div>
+            <div class="overlay tpl-beftn" data-field="acctTickSB" data-label="SB" style="top:360px;left:510px"></div>
+            <div class="overlay tpl-beftn" data-field="acctTickSND" data-label="SND" style="top:360px;left:560px"></div>
             <!-- Officer Seal overlays: seal 1 appears 2× (both RTGS and BEFTN), seal 2 appears 1× -->
             <div class="overlay" data-field="officer1Seal" style="top:570px;left:40px"></div>
             <div class="overlay" data-field="officer1Seal" style="top:570px;left:280px"></div>
@@ -1424,9 +1809,12 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
   // Routing Number
   if (field === 'routingNumber') {
     if (template === 'rtgs') {
-      const txt = 'Routing: ' + displayText;
+      // displayText already carries the correct prefix ("R: " or "Routing: ") from the live preview.
+      const txt = /^\s*(R:|ROUTING:)/i.test(displayText) ? displayText : ('Routing: ' + displayText);
       return `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtmlFn(txt)}</div>`;
     } else {
+      // BEFTN print: show only the routing number; remove any display prefix.
+      displayText = String(displayText).replace(/^\s*(?:Routing|R)\s*:\s*/i, '');
       const isRouting1 = String(overlay.dataset?.label || '').trim().toLowerCase() === 'routing number 1';
       const routeSpacing = isRouting1 ? CONFIG.BEFTN_ROUTING1_SPACING : CONFIG.BEFTN_ROUTING_SPACING;
       const routeStyle = `letter-spacing:${routeSpacing}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
@@ -1661,10 +2049,26 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
   const _dateTimeStr = _displayDate + ' & ' + _timeStr;
   try{ if(form.elements['date']) form.elements['date'].value = _todayStr; }catch(e){}
   try{ if(form.elements['dateTime']) form.elements['dateTime'].value = _dateTimeStr; }catch(e){}
-    // combine currency + amount
-    const cur = data.get('currency') || '';
+    // Currency is now indicated by a tick overlay (RTGS), so the amount box shows
+    // only the numeric amount. The selected currency drives which tick is shown.
+    const cur = (data.get('currency') || 'BDT').toString().toUpperCase();
     const amt = data.get('amount') || '';
-    const currencyAmount = cur && amt ? `${cur} ${amt}` : (amt || '');
+    const currencyAmount = amt || '';
+    // Build currency tick values: only the selected currency gets a check mark.
+    const _curList = ['BDT','USD','CAD','EUR','GBP','JPY'];
+    const _curTicks = {};
+    _curList.forEach(c => { _curTicks['curTick' + c] = (c === cur) ? '✔' : ''; });
+
+    // Account-type tick (BEFTN only): the 5th digit of the sender account number
+    // selects the account type — 1 => CD, 2 => SB, 3 => SND. Only the matching
+    // tick is checked; anything else leaves all three blank.
+    const _acctDigits = (data.get('accountNumber') || '').toString().replace(/\D/g,'');
+    const _fifth = _acctDigits.length >= 5 ? _acctDigits.charAt(4) : '';
+    const _acctTicks = {
+      acctTickCD:  (_fifth === '1') ? '✔' : '',
+      acctTickSB:  (_fifth === '2') ? '✔' : '',
+      acctTickSND: (_fifth === '3') ? '✔' : ''
+    };
 
     // Generate In Words automatically (Taka and Paisha)
     let inWordsGenerated = '';
@@ -1693,6 +2097,8 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
       senderName: data.get('senderName') || '',
       senderContact: data.get('senderContact') || '',
       currencyAmount: currencyAmount,
+      // persist selected currency so the dropdown + tick restore on reload
+      currency: cur,
       // duplicate amount/inWords for BEFTN-specific extra boxes
       currencyAmount2: currencyAmount,
       inWords2: inWordsGenerated,
@@ -1711,7 +2117,11 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
       tick4: '✔',
       tick5: '✔',
       tick6: '✔',
-      tick7: '✔'
+      tick7: '✔',
+      // Currency tick marks (RTGS only) — only the selected currency is checked
+      ...(_curTicks),
+      // Account-type tick marks (BEFTN only) — driven by 5th digit of account number
+      ...(_acctTicks)
     };
 
     function humanizeFieldName(key){ return key.replace(/([A-Z])/g,' $1').replace(/[_-]/g,' ').replace(/^./,s=>s.toUpperCase()); }
@@ -1720,6 +2130,26 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
         try{
           let v = values[k] || '';
           if(v && String(v).trim() !== ''){
+            // Routing number prefixing is the single source of truth here in the live preview.
+            // For RTGS: "Routing Number 3" prints as "R: <n>", all other routing overlays as "Routing: <n>".
+            // BEFTN routing overlays stay as the raw number (spacing handled by render paths).
+            // Render paths detect the already-present prefix and do NOT add it again.
+            if(k === 'routingNumber'){
+              const tplElR = document.getElementById('template-select');
+              const tplR = (tplElR && tplElR.value) ? tplElR.value : 'rtgs';
+              if(tplR === 'rtgs'){
+                const lbl = String(el.dataset.label || '').trim().toLowerCase();
+                el.textContent = (lbl === 'routing number 3' ? 'R: ' : 'Routing: ') + v;
+                el.classList.remove('overlay-empty');
+                return;
+              } else if(tplR === 'beftn'){
+                // BEFTN must always keep only the routing number, even if the
+                // overlay previously contained an RTGS/old-format prefix.
+                el.textContent = String(v).replace(/^\s*(?:Routing|R)\s*:\s*/i, '');
+                el.classList.remove('overlay-empty');
+                return;
+              }
+            }
             // Split long inWords into 2 lines for better fitting (RTGS only)
             if(k === 'inWords' && v.length > 40){
               const mid = Math.floor(v.length / 2);
@@ -2395,6 +2825,14 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
       document.querySelectorAll('.tpl-rtgs').forEach(el => {
         el.style.display = (currentTemplate === 'rtgs') ? '' : 'none';
       });
+      // Honor data-hide-on in the live preview too: overlays whose data-hide-on
+      // lists the current template are hidden (e.g. "Account Number 1" on BEFTN).
+      document.querySelectorAll('.preview-wrap .overlay[data-hide-on]').forEach(el => {
+        try{
+          const hide = String(el.dataset.hideOn || '').split(',').map(s=>s.trim());
+          if(hide.includes(currentTemplate)) el.style.display = 'none';
+        }catch(e){}
+      });
       // update preview panel heading to reflect selected template
       try{ const h = document.querySelector('.preview-panel h2'); if(h) h.textContent = (currentTemplate && currentTemplate.toLowerCase() === 'beftn') ? 'BEFTN Form Preview' : 'RTGS Form Preview'; }catch(e){}
       // update overlays after images load. Existing image load handlers will call applySavedPositions.
@@ -2625,7 +3063,13 @@ function createOverlayHTML(overlay, template, dateOverlays, escapeHtmlFn) {
       const keyInst = `${o.page}::${o.field}::${o.instance}`;
       const keyTplLegacy = `${tpl}::${o.page}::${o.field}`;
       const keyLegacy = `${o.page}::${o.field}`;
-      const p = positions[keyTplInst] || positions[keyInst] || positions[keyTplLegacy] || positions[keyLegacy];
+      // Overlays authored with an explicit (non-numeric) data-instance are "new" overlays that must
+      // NOT inherit legacy field-wide saved positions (which would drop them onto a pre-printed label).
+      // Only honor their own instance-specific saved key.
+      const isExplicitInstance = o.instance && !/^\d+$/.test(String(o.instance));
+      const p = isExplicitInstance
+        ? (positions[keyTplInst] || positions[keyInst])
+        : (positions[keyTplInst] || positions[keyInst] || positions[keyTplLegacy] || positions[keyLegacy]);
       if(p && typeof p.left === 'number' && typeof p.top === 'number'){
         console.log(`Applying to ${keyTplInst} (or fallback): left ${p.left}%, top ${p.top}%`);
         o.el.style.left = p.left + '%';
@@ -2935,16 +3379,18 @@ async function renderPagesToImage(pages){
       }
       // If this is the routing number, prefix with 'Routing: ' for printed output
       if(field === 'routingNumber'){
-        // RTGS: keep the 'Routing: ' prefix and draw normally.
+        // RTGS: the live preview already set the correct prefix ("R: " or "Routing: ") on textContent.
+        // Only add the default prefix if none is present (defensive), never double-prefix.
         if(currentTemplate === 'rtgs'){
-          txt = 'Routing: ' + txt;
+          if(!/^\s*(R:|ROUTING:)/i.test(txt)) txt = 'Routing: ' + txt;
           ctx.font = fontSize + 'px "Times New Roman", Times, serif';
           ctx.fillText(txt, left, top);
           return;
         }
         // BEFTN: draw routing number with per-character spacing for printed PDF
         if(currentTemplate === 'beftn'){
-          // increase per-character spacing for BEFTN routing numbers
+          // BEFTN print must contain only the routing number.
+          txt = txt.replace(/^\s*(?:ROUTING|R)\s*:\s*/i, '');
           // For Routing Number 1 we want reduced spacing (tighter) compared to the BEFTN default
           const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
           // Default BEFTN multiplier (kept larger for other routing overlays)
@@ -3202,10 +3648,12 @@ function fallbackPrintHTML(pages){
   } else if (o.dataset && o.dataset.field === 'routingNumber'){
     // Prefix routing number only for RTGS; BEFTN should show only the number but with letter-spacing in print
     if(tpl === 'rtgs'){
-      const txt = 'Routing: ' + displayText;
+      // displayText already carries the correct prefix ("R: " or "Routing: ") from the live preview.
+      const txt = /^\s*(R:|ROUTING:)/i.test(displayText) ? displayText : ('Routing: ' + displayText);
       pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(txt)}</div>`;
       } else {
-        // BEFTN: apply letter-spacing for print fallback
+        // BEFTN: show only the routing number; strip any stale RTGS/old-format prefix.
+        displayText = displayText.replace(/^\s*(?:ROUTING|R)\s*:\s*/i, '');
         // Reduce spacing for Routing Number 1 specifically; keep larger spacing for other routing overlays
         const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
         const routeSpacing = isRouting1 ? CONFIG.BEFTN_ROUTING1_SPACING : CONFIG.BEFTN_ROUTING_SPACING;
@@ -3351,9 +3799,12 @@ function fallbackPrintToIframe(pages, template){
         }
       } else if (o.dataset && o.dataset.field === 'routingNumber'){
         if(tpl === 'rtgs'){
-          const txt = 'Routing: ' + displayText;
+          // displayText already carries the correct prefix ("R: " or "Routing: ") from the live preview.
+          const txt = /^\s*(R:|ROUTING:)/i.test(displayText) ? displayText : ('Routing: ' + displayText);
           pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(txt)}</div>`;
         } else {
+          // BEFTN: show only the routing number; strip any stale prefix.
+          displayText = displayText.replace(/^\s*(?:ROUTING|R)\s*:\s*/i, '');
           const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
           const routeSpacing = isRouting1 ? CONFIG.BEFTN_ROUTING1_SPACING : CONFIG.BEFTN_ROUTING_SPACING;
           const routeStyle = `letter-spacing:${routeSpacing}em;font-family:${CONFIG.FONT_FAMILY};font-size:${CONFIG.PRINT_FONT_SIZE}px;`;
@@ -3510,9 +3961,12 @@ function openPreviewWindow(pages){
   } else if (o.dataset && o.dataset.field === 'routingNumber'){
     // Prefix routing number label only for RTGS preview; BEFTN should show raw number with letter-spacing
     if(tpl === 'rtgs'){
-      displayText = 'Routing: ' + displayText;
+      // displayText already carries the correct prefix ("R: " or "Routing: ") from the live preview.
+      if(!/^\s*(R:|ROUTING:)/i.test(displayText)) displayText = 'Routing: ' + displayText;
       pageHtml += `<div class="print-overlay" style="left:${left};top:${top};">${escapeHtml(displayText)}</div>`;
       } else {
+      // BEFTN preview: show only the routing number; strip any stale prefix.
+      displayText = displayText.replace(/^\s*(?:ROUTING|R)\s*:\s*/i, '');
       // BEFTN preview: apply letter-spacing; use reduced spacing for Routing Number 1
       const isRouting1 = o.dataset && String(o.dataset.label || '').trim().toLowerCase() === 'routing number 1';
       const routeSpacing = isRouting1 ? CONFIG.BEFTN_ROUTING1_SPACING : CONFIG.BEFTN_ROUTING_SPACING;
@@ -4096,5 +4550,21 @@ function openPreviewWindow(pages){
   <footer class="site-footer">
     <span class="site-credit">Developed by Tanzil Ahmed — EID 7966</span>
   </footer>
+  <script>
+    function syncHeaderUsername() {
+      const el = document.getElementById("headerUsername");
+      if (!el) return;
+      el.textContent = localStorage.getItem("pcUsername") || "User";
+    }
+    syncHeaderUsername();
+    window.changePcUsername = function() {
+      const current = localStorage.getItem("pcUsername") || "User";
+      const newName = prompt("Enter your name for BranchEase:", current);
+      if (newName && newName.trim()) {
+        localStorage.setItem("pcUsername", newName.trim());
+        syncHeaderUsername();
+      }
+    };
+  </script>
 </body>
 </html>

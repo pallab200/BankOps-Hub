@@ -3,6 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/png" href="../assets/ucb-logo.png">
+  <link rel="stylesheet" href="../css/exo2.css">
+  <link rel="stylesheet" href="../css/poppins.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/unified-theme.css">
+  <link rel="stylesheet" href="../css/fontawesome-fix.css">
   <title>Account Opening Form Editor</title>
   <link href="assets/poppins.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/font-awesome.min.css">
@@ -11,23 +19,27 @@
   <script src="sector_codes.js"></script>
   <style>
 /* Modern Unified Design System with Animations */
+/* Official United Commercial Bank (UCB) Design System */
 :root {
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --primary-light: #818cf8;
-  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-  --accent: #ec4899;
-  --accent-light: #f472b6;
-  --accent-gradient: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+  --primary: #ed1b24;               /* UCB Signature Red */
+  --primary-dark: #c00000;          /* Deep Crimson Accent */
+  --primary-light: #ff4d55;         /* Vibrant Highlight */
+  --primary-rgb: 237, 27, 36;
+  --primary-gradient: linear-gradient(135deg, #ed1b24 0%, #c00000 50%, #900000 100%);
+  --accent: #ed1b24;
+  --accent-light: #ff4d55;
+  --accent-gradient: linear-gradient(135deg, #ed1b24 0%, #c00000 100%);
+  --gold: #d4af37;                  /* UCB Gold Accent */
+  --gold-light: #f59e0b;
   --success: #10b981;
   --success-light: #34d399;
   --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
   --warning: #f59e0b;
   --warning-light: #fbbf24;
   --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  --danger: #ef4444;
-  --danger-light: #f87171;
-  --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  --danger: #ed1b24;
+  --danger-light: #ff4d55;
+  --danger-gradient: linear-gradient(135deg, #ed1b24 0%, #c00000 100%);
   --info: #0ea5e9;
   --info-light: #38bdf8;
   --info-gradient: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
@@ -39,27 +51,17 @@
   --text-muted: #94a3b8;
   --border-color: #e2e8f0;
   --border-light: #f1f5f9;
-  --card-bg: rgba(255, 255, 255, 0.98);
-  --card-hover-bg: rgba(255, 255, 255, 1);
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 8px 30px rgba(15, 23, 42, 0.1);
-  --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.15);
-  --shadow-xl: 0 25px 60px rgba(15, 23, 42, 0.2);
-  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.2);
-  --shadow-glow-accent: 0 0 40px rgba(236, 72, 153, 0.15);
-  --radius-xs: 6px;
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
+  --shadow-primary: 0 8px 24px rgba(237, 27, 36, 0.25);
+  --shadow-glow: 0 0 20px rgba(237, 27, 36, 0.35);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-2xl: 32px;
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --radius-full: 9999px;
+  --font-family: 'Exo 2', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -2581,18 +2583,21 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   display: block;
 }
 
-/* Officer Seal Popup */
+/* Officer Seal Popup - BranchEase Redesign */
 .officer-seal-popup-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(4px);
+  inset: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(8px);
   z-index: 2000;
   opacity: 0;
   visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 .officer-seal-popup-backdrop.show {
@@ -2600,157 +2605,219 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   visibility: visible;
 }
 .officer-seal-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
-  background: var(--card-bg);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  width: 80%;
-  max-width: 648px;
+  position: relative;
+  width: min(760px, 95vw);
+  max-height: min(88vh, 680px);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  z-index: 2001;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(237, 27, 36, 0.35);
+  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.5);
   opacity: 0;
-  visibility: hidden;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, visibility 0.3s ease;
+  transform: scale(0.96) translateY(8px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  z-index: 2001;
 }
 .officer-seal-popup-backdrop.show .officer-seal-popup {
   opacity: 1;
   visibility: visible;
-  transform: translate(-50%, -50%) scale(1);
+  transform: scale(1) translateY(0);
 }
 .officer-seal-popup-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  color: white;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important;
+  color: #fff;
+  border-bottom: 1px solid rgba(237, 27, 36, 0.35);
+  flex-shrink: 0;
 }
 .officer-seal-popup-header h3 {
-  font-size: 0.88rem;
-  font-weight: 600;
+  margin: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: 'Exo 2', sans-serif;
+  color: #fff;
 }
 .officer-seal-popup-close {
-  background: rgba(255,255,255,0.2);
+  width: 34px;
+  height: 34px;
   border: none;
-  color: white;
-  width: 28px;
-  height: 28px;
   border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
   cursor: pointer;
-  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
 }
-.officer-seal-popup-close:hover {
-  background: rgba(255,255,255,0.3);
+.officer-seal-popup-close:hover,
+.officer-seal-popup-close:focus-visible {
+  background: rgba(237, 27, 36, 0.8);
+  transform: rotate(90deg);
+  outline: none;
 }
 .officer-seal-popup-body {
-  padding: 18px;
-  overflow-y: visible;
+  padding: 18px 22px;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(237, 27, 36, 0.4) transparent;
 }
 .officer-seal-fields {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 16px;
-  margin-bottom: 22px;
-  padding-bottom: 22px;
-  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+  flex-shrink: 0;
 }
 .officer-seal-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 .officer-seal-field label {
   font-weight: 700;
-  color: var(--primary);
-  font-size: 0.78rem;
+  color: #ed1b24 !important;
+  font-size: 0.82rem;
   display: flex;
   align-items: center;
   gap: 6px;
-}
-.officer-seal-field label i {
-  font-size: 0.9rem;
+  font-family: 'Exo 2', sans-serif;
 }
 .officer-seal-field input,
 .officer-seal-field textarea {
-  padding: 10px 11px;
-  border: 2px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 0.70rem;
-  transition: var(--transition-fast);
+  width: 100%;
+  min-height: 80px;
+  padding: 8px 12px;
+  border: 1.5px solid #dbe4f0;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.35;
   font-family: inherit;
   resize: vertical;
+  background: #fafbff;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
-.officer-seal-field textarea {
-  min-height: 80px;
-  line-height: 1.3;
+.officer-seal-field input {
+  min-height: auto;
+  height: 38px;
 }
 .officer-seal-field input:focus,
 .officer-seal-field textarea:focus {
   outline: none;
-  border-color: #059669;
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
-  background: rgba(5, 150, 105, 0.02);
+  border-color: #ed1b24 !important;
+  box-shadow: 0 0 0 3px rgba(237, 27, 36, 0.15) !important;
+  background: #ffffff !important;
+}
+.officer-seal-controls,
+.officer-seal-size-control,
+.seal-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+.officer-seal-controls label,
+.officer-seal-size-control label,
+.seal-controls-row label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  font-family: 'Exo 2', sans-serif;
+}
+.officer-seal-controls input[type="range"],
+.officer-seal-size-control input[type="range"],
+.seal-controls-row input[type="range"] {
+  flex: 1;
+  cursor: pointer;
+  accent-color: #ed1b24 !important;
+  height: 6px;
+}
+.officer-seal-controls span,
+.officer-seal-size-control span,
+.seal-controls-row span,
+.seal-size-val {
+  min-width: 56px;
+  text-align: right;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: 'Exo 2', sans-serif;
 }
 .seal-preview-section {
-  margin-bottom: 0;
   text-align: center;
+  padding: 12px;
+  background: #fafbfe;
+  border: 1px dashed rgba(237, 27, 36, 0.25);
+  border-radius: 12px;
   flex-shrink: 0;
 }
 .seal-preview-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--text-secondary);
-  margin-bottom: 12px;
-  font-size: 0.78rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  font-family: 'Exo 2', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
-.seal-preview {
+.seal-preview,
+.rtgs-seal-preview {
   display: flex;
   justify-content: center;
-  gap: 19px;
-  margin-bottom: 20px;
-  flex-wrap: nowrap;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 .seal-item {
-  width: 114px;
-  height: 114px;
-  border: none;
-  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  font-size: 0.53rem;
-  font-weight: 800;
+  max-width: 100%;
+  min-width: 140px;
+  padding: 8px 12px;
+  background: #ffffff;
+  border: 1.5px dashed rgba(237, 27, 36, 0.45) !important;
+  border-radius: 8px;
   color: #000;
-  padding: 10px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
   word-break: break-word;
-  background: rgba(0, 0, 0, 0.02);
-  line-height: 1.2;
   overflow: hidden;
   position: relative;
-  box-shadow: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
-.seal-item::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 0;
-  background: none;
-  opacity: 0;
-  pointer-events: none;
+.seal-item:hover {
+  border-color: #ed1b24 !important;
+  box-shadow: 0 4px 12px rgba(237, 27, 36, 0.15) !important;
 }
 .seal-item-text {
   position: relative;
@@ -2760,7 +2827,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 .seal-example {
   text-align: center;
   padding: 10px;
-  background: rgba(5, 150, 105, 0.08);
+  background: rgba(237, 27, 36, 0.06) !important;
+  border: 1px dashed rgba(237, 27, 36, 0.25) !important;
   border-radius: 6px;
   margin-bottom: 12px;
   font-size: 0.70rem;
@@ -2771,43 +2839,45 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   display: block;
   margin-bottom: 6px;
 }
-.seal-example-item {
-  width: 81px;
-  height: 81px;
-  border: none;
-  border-radius: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: #000;
-  padding: 8px;
-  margin: 12px auto;
-  background: rgba(0, 0, 0, 0.02);
-  line-height: 1.2;
-  box-shadow: none;
+
+.officer-seal-popup-footer {
+  padding: 12px 20px;
+  background: #ffffff;
+  border-top: 1px solid rgba(226, 232, 240, 0.95);
+  flex-shrink: 0;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+  z-index: 2;
 }
+
+
+.officer-seal-popup input[type="range"] {
+  accent-color: #ed1b24 !important;
+  cursor: pointer;
+}
+
 .officer-seal-save-btn {
   width: 100%;
-  padding: 14px 24px;
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  color: white;
+  padding: 12px 20px;
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%) !important;
+  color: #fff !important;
+  font-size: 0.92rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  font-family: 'Exo 2', sans-serif;
+  box-shadow: 0 4px 14px rgba(237, 27, 36, 0.28) !important;
 }
-.officer-seal-save-btn:hover {
-  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);
-  transform: translateY(-2px);
+.officer-seal-save-btn:hover,
+.officer-seal-save-btn:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(237, 27, 36, 0.38) !important;
+  outline: none;
 }
 .officer-seal-save-btn:active {
   transform: translateY(0);
@@ -2859,7 +2929,38 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     background: transparent !important;
   }
 }
-  </style>
+  
+/* Page Nav Executive Header Styles */
+
+.page-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important;
+  padding: 12px 24px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-shadow: 0 6px 24px rgba(237, 27, 36, 0.22);
+  border-bottom: 1px solid rgba(237, 27, 36, 0.35);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: fadeInDown 0.5s ease-out;
+  overflow: hidden;
+}
+
+.hub-header-meta {
+  margin-left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  position: relative;
+  z-index: 10;
+}
+
+</style>
 </head>
 <body>
   <!-- Left Slide Menu Toggle -->
@@ -2966,6 +3067,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
             <div class="seal-item" id="sealPreview3"><div class="seal-item-text">Officer 3</div></div>
           </div>
         </div>
+      </div>
+      <div class="officer-seal-popup-footer">
         <button type="button" class="officer-seal-save-btn" id="saveOfficerSealBtn"><i class="fas fa-save"></i> Save Officer Seals</button>
       </div>
     </div>
@@ -3089,14 +3192,51 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   </div>
 
   <!-- Page Navigation -->
-  <nav class="page-nav">
-    <h1><i class="fas fa-file-alt"></i>Account Opening Form</h1>
-    <div class="nav-buttons">
+  <nav class="page-nav app-header">
+    <!-- Subtle Decorative Glow Circles -->
+    <div style="position: absolute; top: -60%; right: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(237, 27, 36, 0.22) 0%, transparent 65%); pointer-events: none;"></div>
+    <div style="position: absolute; bottom: -60%; left: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 65%); pointer-events: none;"></div>
+
+    <div class="hub-brand-group" style="display: flex; align-items: center; gap: 14px; position: relative; z-index: 10;">
+      <!-- Animated UCB Logo with Cinematic Beam, Particles & Glow -->
+      <div class="ucb-logo-anim" aria-label="United Commercial Bank PLC" style="cursor: pointer;" onclick="window.location.href='../BranchEase.html'" title="Back to BranchEase Portal">
+        <div class="ucb-glow"></div>
+        <img class="ucb-logo-img" src="../assets/ucb-logo.png" alt="UCB"
+             onerror="this.src='Assets/ucb-logo.png'; this.onerror=function(){ this.closest('.ucb-logo-anim').classList.add('.ucb-fallback'); };">
+        <div class="ucb-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <svg class="ucb-beam" viewBox="0 0 1024 486" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <linearGradient id="ucbBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ff2b2b" stop-opacity="0"/>
+              <stop offset="30%" stop-color="#ff2b2b" stop-opacity="0.9"/>
+              <stop offset="60%" stop-color="#ff5a5a" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <path d="M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150"/>
+          <circle r="4" style="offset-path: path('M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150');"></circle>
+        </svg>
+        <div class="ucb-sweep"></div>
+      </div>
+
+      <div class="hub-brand-titles">
+        <h1 id="page-title" style="font-family: 'Exo 2', sans-serif !important; font-size: 1.45rem; font-weight: 800; margin: 0; line-height: 1.15; letter-spacing: -0.01em; background: linear-gradient(100deg, #ffffff 0%, #ffffff 40%, #ff858a 48%, #ffffff 54%, #ffffff 100%); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: ucbTextShine 7s ease-in-out infinite 2.5s;">Account Opening Form</h1>
+        <p style="margin: 2px 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.88); font-weight: 500;">United Commercial Bank PLC &middot; Individual Account Opening Form Editor</p>
+      </div>
+    </div>
+
+    <div class="hub-header-meta" style="margin-left: auto; display: flex; align-items: center; gap: 12px; position: relative; z-index: 10;">
+      <div class="nav-buttons">
       <button class="nav-btn active" data-page="info"><i class="fas fa-edit"></i> <span>Information Input</span></button>
       <button class="nav-btn" data-page="form"><i class="fas fa-file-image"></i> <span>Form Preview</span></button>
       <div class="header-actions">
         <span id="applicantPrintHint" style="display:none; font-size:0.75rem; color:#fbbf24; font-weight:600; margin-right:8px; white-space:nowrap; animation: pulse 2s infinite;"><i class="fas fa-arrow-right"></i> 2nd/3rd Applicant KYC, SBS print here</span>
         <button class="btn btn-info" id="othersBtn" title="View KYC, TP, SBS Information"><i class="fas fa-info-circle"></i> <span>KYC, TP, SBS Information</span></button>
+      </div>
+    </div>
+      <div class="hub-user-pill" onclick="changePcUsername()" title="Click to change display name" style="display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 6px 14px; border-radius: 50px; color: #ed1b24; font-size: 0.76rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); cursor: pointer; white-space: nowrap;">
+        <i class="fas fa-user-circle" style="font-size: 1rem;"></i>
+        <span id="headerUsername">User</span>
       </div>
     </div>
   </nav>
@@ -6075,6 +6215,19 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     ]
   };
 
+  // Generate a stable key for an overlay that won't shift when new items are added to overlayConfig.
+  // Uses page + field + label + default position instead of array index.
+  function getStableOverlayKey(pageNum, config, index) {
+    // Primary stable key: page_field_label_defaultTop_defaultLeft
+    const label = (config.label || '').replace(/\s+/g, '_');
+    return `${pageNum}_${config.field}_${label}_${config.top}_${config.left}`;
+  }
+
+  // Legacy key format (index-based) for backward compatibility with old saved positions
+  function getLegacyOverlayKey(pageNum, field, index) {
+    return `${pageNum}_${field}_${index}`;
+  }
+
   // Initialize overlays
   function initializeOverlays() {
     const savedPositions = loadPositions();
@@ -6116,12 +6269,19 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         overlay.dataset.field = config.field;
         overlay.dataset.page = pageNum;
         overlay.dataset.index = index;
+        // Store the stable key and label directly on the element for use in save/load
+        const stableKey = getStableOverlayKey(pageNum, config, index);
+        overlay.dataset.stableKey = stableKey;
+        overlay.dataset.label = config.label || '';
         
-        // Use saved position or default
-        const key = `${pageNum}_${config.field}_${index}`;
-        if (savedPositions[key]) {
-          overlay.style.top = savedPositions[key].top;
-          overlay.style.left = savedPositions[key].left;
+        // Use saved position: try stable key first, fall back to legacy index-based key
+        const legacyKey = getLegacyOverlayKey(pageNum, config.field, index);
+        if (savedPositions[stableKey]) {
+          overlay.style.top = savedPositions[stableKey].top;
+          overlay.style.left = savedPositions[stableKey].left;
+        } else if (savedPositions[legacyKey]) {
+          overlay.style.top = savedPositions[legacyKey].top;
+          overlay.style.left = savedPositions[legacyKey].left;
         } else {
           overlay.style.top = config.top;
           overlay.style.left = config.left;
@@ -6141,7 +6301,10 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         if (config.height) overlay.style.height = config.height;
         if (config.className) overlay.classList.add(config.className);
         // alwaysShow overlays should be visible regardless of value
-        if (config.alwaysShow) overlay.classList.remove('overlay-empty');
+        if (config.alwaysShow) {
+          overlay.classList.remove('overlay-empty');
+          overlay.dataset.alwaysShow = 'true';
+        }
 
         page.appendChild(overlay);
       });
@@ -7174,8 +7337,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
 
       // If this overlay is a fixed digit (digit1/digit6), always render its label (digit)
       else if (overlay.dataset.field && overlay.dataset.field.startsWith('digit')) {
-        const cfg = overlayConfig[overlay.dataset.page] && overlayConfig[overlay.dataset.page][overlay.dataset.index];
-        displayValue = (cfg && cfg.label) ? cfg.label : '';
+        // Use the label stored directly on the overlay element (stable, no index dependency)
+        displayValue = overlay.dataset.label || '';
       }
 
       // Special display for today's date:
@@ -7434,14 +7597,14 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
           // Page 24: show account number with wider gaps between each character
           else if (overlay.dataset.page === '24') {
             const cleaned = String(value).replace(/\s+/g, '');
-            // Page 24 contains two accountNumber overlays at different indices.
-            // Use different spacing per overlay index:
-            // - index 6: ~4.10 NBSPs (4 NBSPs + thin hair space)
-            // - index 7: 6 NBSPs
-            const idx = Number(overlay.dataset.index || -1);
-            if (idx === 6) {
+            // Page 24 contains two accountNumber overlays with different labels.
+            // Use different spacing per overlay label:
+            // - 'Account Number': ~4.10 NBSPs (4 NBSPs + thin hair space)
+            // - 'Account Number 1': 6 NBSPs
+            const overlayLabel = overlay.dataset.label || '';
+            if (overlayLabel === 'Account Number') {
               displayValue = cleaned.split('').join('\u00A0\u00A0\u00A0\u00A0\u200A');
-            } else if (idx === 7) {
+            } else if (overlayLabel === 'Account Number 1') {
               displayValue = cleaned.split('').join('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
             } else {
               // fallback to moderate spacing
@@ -7481,10 +7644,10 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
           // Page 30: show two account numbers with wider gaps (similar to page 24)
           else if (overlay.dataset.page === '30') {
             const cleaned = String(value).replace(/\s+/g, '');
-            const idx = Number(overlay.dataset.index || -1);
-            if (idx === 6) {
+            const overlayLabel = overlay.dataset.label || '';
+            if (overlayLabel === 'Account Number') {
               displayValue = cleaned.split('').join('\u00A0\u00A0\u00A0\u00A0\u200A');
-            } else if (idx === 7) {
+            } else if (overlayLabel === 'Account Number 1') {
               displayValue = cleaned.split('').join('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0');
             } else {
               displayValue = cleaned.split('').join('\u00A0\u00A0\u00A0\u00A0');
@@ -7657,13 +7820,15 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
             overlay.classList.add('overlay-empty');
           }
         } else {
-          const config = overlayConfig[overlay.dataset.page]?.[overlay.dataset.index];
+          // Use data attributes instead of index-based config lookup for stability
+          const isAlwaysShow = overlay.dataset.alwaysShow === 'true';
+          const overlayLabel = overlay.dataset.label || field;
           // If overlay is configured to always show, render its label and keep it visible
-          if (config && config.alwaysShow) {
-            overlay.textContent = config.label || field;
+          if (isAlwaysShow) {
+            overlay.textContent = overlayLabel;
             overlay.classList.remove('overlay-empty');
           } else {
-            overlay.textContent = config?.label || field;
+            overlay.textContent = overlayLabel;
             overlay.classList.add('overlay-empty');
           }
         }
@@ -7706,7 +7871,8 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   function savePositions() {
     const positions = {};
     document.querySelectorAll('.overlay').forEach(overlay => {
-      const key = `${overlay.dataset.page}_${overlay.dataset.field}_${overlay.dataset.index}`;
+      // Use stable key for saving positions
+      const key = overlay.dataset.stableKey || `${overlay.dataset.page}_${overlay.dataset.field}_${overlay.dataset.index}`;
       positions[key] = {
         top: overlay.style.top,
         left: overlay.style.left
@@ -7727,6 +7893,50 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       return JSON.parse(localStorage.getItem(POSITIONS_KEY) || '{}');
     } catch (e) {
       return {};
+    }
+  }
+
+  // Migrate old index-based position keys to stable keys (runs once per session)
+  function migratePositionsToStableKeys() {
+    const saved = loadPositions();
+    if (!saved || !Object.keys(saved).length) return;
+    
+    // Check if migration is needed: look for any key matching the old format (page_field_number)
+    const hasLegacyKeys = Object.keys(saved).some(key => {
+      const parts = key.split('_');
+      // Legacy keys end with a numeric index and have exactly 3 parts (page_field_index)
+      // Stable keys have more parts (page_field_label_top_left)
+      return parts.length === 3 && !isNaN(parts[2]);
+    });
+    
+    if (!hasLegacyKeys) return; // Already migrated or no legacy keys
+    
+    const newPositions = {};
+    // Build stable keys for all current config entries and map from legacy
+    Object.keys(overlayConfig).forEach(pageNum => {
+      overlayConfig[pageNum].forEach((config, index) => {
+        const legacyKey = `${pageNum}_${config.field}_${index}`;
+        const stableKey = getStableOverlayKey(pageNum, config, index);
+        
+        if (saved[legacyKey]) {
+          newPositions[stableKey] = saved[legacyKey];
+        }
+      });
+    });
+    
+    // Also preserve any stable keys that already exist in saved
+    Object.keys(saved).forEach(key => {
+      if (!newPositions[key] && key.split('_').length > 3) {
+        newPositions[key] = saved[key];
+      }
+    });
+    
+    if (Object.keys(newPositions).length > 0) {
+      try {
+        localStorage.setItem(POSITIONS_KEY, JSON.stringify(newPositions));
+      } catch (e) {
+        console.error('Failed to migrate positions', e);
+      }
     }
   }
 
@@ -7896,10 +8106,14 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
         const saved = loadPositions();
         if (saved && Object.keys(saved).length) {
           document.querySelectorAll('.overlay').forEach(overlay => {
-            const key = `${overlay.dataset.page}_${overlay.dataset.field}_${overlay.dataset.index}`;
+            const key = overlay.dataset.stableKey || `${overlay.dataset.page}_${overlay.dataset.field}_${overlay.dataset.index}`;
+            const legacyKey = `${overlay.dataset.page}_${overlay.dataset.field}_${overlay.dataset.index}`;
             if (saved[key]) {
               overlay.style.top = saved[key].top;
               overlay.style.left = saved[key].left;
+            } else if (saved[legacyKey]) {
+              overlay.style.top = saved[legacyKey].top;
+              overlay.style.left = saved[legacyKey].left;
             }
           });
         }
@@ -7993,10 +8207,14 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
     const saved = loadPositions();
     if (saved && Object.keys(saved).length) {
       document.querySelectorAll('.overlay').forEach(function (overlay) {
-        const key = overlay.dataset.page + '_' + overlay.dataset.field + '_' + overlay.dataset.index;
+        const key = overlay.dataset.stableKey || (overlay.dataset.page + '_' + overlay.dataset.field + '_' + overlay.dataset.index);
+        const legacyKey = overlay.dataset.page + '_' + overlay.dataset.field + '_' + overlay.dataset.index;
         if (saved[key]) {
           overlay.style.top = saved[key].top;
           overlay.style.left = saved[key].left;
+        } else if (saved[legacyKey]) {
+          overlay.style.top = saved[legacyKey].top;
+          overlay.style.left = saved[legacyKey].left;
         }
       });
     }
@@ -9381,6 +9599,7 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
   });
 
   // Initialize
+  migratePositionsToStableKeys(); // Migrate old index-based keys before loading overlays
   initializeOverlays();
   loadFormData();
   // If loading from storage changed the main branch field, keep slide input in sync
@@ -10764,6 +10983,22 @@ body:not(.developer-mode) .nav-btn[data-page="form"] {
       document.addEventListener('DOMContentLoaded', updateIntroducerVisibility);
       setTimeout(updateIntroducerVisibility, 200);
     })();
+  </script>
+  <script>
+    function syncHeaderUsername() {
+      const el = document.getElementById("headerUsername");
+      if (!el) return;
+      el.textContent = localStorage.getItem("pcUsername") || "User";
+    }
+    syncHeaderUsername();
+    window.changePcUsername = function() {
+      const current = localStorage.getItem("pcUsername") || "User";
+      const newName = prompt("Enter your name for BranchEase:", current);
+      if (newName && newName.trim()) {
+        localStorage.setItem("pcUsername", newName.trim());
+        syncHeaderUsername();
+      }
+    };
   </script>
 </body>
 </html>

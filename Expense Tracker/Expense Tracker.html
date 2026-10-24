@@ -3,6 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../assets/ucb-logo.png">
+  <link rel="stylesheet" href="../css/exo2.css">
+  <link rel="stylesheet" href="../css/poppins.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/unified-theme.css">
+  <link rel="stylesheet" href="../css/fontawesome.min.css">
+  <link rel="stylesheet" href="../css/fontawesome-fix.css">
     <title>Expense Tracker</title>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/datepicker.min.css">
@@ -15,29 +24,31 @@
         }
 
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --accent: #ec4899;
-            --success: #10b981;
-            --success-dark: #059669;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --bg: #f1f5f9;
-            --bg-card: #ffffff;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --text-light: #94a3b8;
-            --border: #e2e8f0;
-            --border-light: #f1f5f9;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
-            --shadow-lg: 0 10px 25px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
-            --radius: 16px;
-            --radius-sm: 10px;
-            --radius-xs: 8px;
-            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+  --primary: #ed1b24;               /* UCB Signature Red */
+  --primary-dark: #c00000;          /* Deep Crimson Accent */
+  --primary-light: #ff4d55;         /* Vibrant Highlight */
+  --primary-rgb: 237, 27, 36;
+  --accent: #ed1b24;
+  --success: #10b981;
+  --success-dark: #059669;
+  --danger: #ed1b24;
+  --warning: #f59e0b;
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 25px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 8px;
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-family: 'Exo 2', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -630,23 +641,81 @@
         .table-responsive { overflow-x: auto; }
         .table-responsive::-webkit-scrollbar { height: 6px; }
         .table-responsive::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    </style>
+    
+/* Expense Tracker Executive Header Styles */
+
+.app-header {
+  background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important;
+  color: #fff !important;
+  border-radius: var(--radius) !important;
+  padding: 14px 24px !important;
+  margin-bottom: 24px !important;
+  box-shadow: 0 6px 24px rgba(237, 27, 36, 0.22) !important;
+  border-bottom: 1px solid rgba(237, 27, 36, 0.35) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  animation: fadeUp 0.5s ease-out;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+}
+
+.hub-header-meta {
+  margin-left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  position: relative;
+  z-index: 10;
+}
+
+</style>
 </head>
 <body>
     <div class="app-wrapper">
 
         <!-- Header -->
         <header class="app-header">
-            <div class="header-content">
-                <div class="header-icon">
-                    <i class="bi bi-graph-up-arrow"></i>
-                </div>
-                <div class="header-text">
-                    <h1>Expense Tracker</h1>
-                    <p>Budget Management System for GL Accounts</p>
-                </div>
-            </div>
-        </header>
+    <!-- Subtle Decorative Glow Circles -->
+    <div style="position: absolute; top: -60%; right: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(237, 27, 36, 0.22) 0%, transparent 65%); pointer-events: none;"></div>
+    <div style="position: absolute; bottom: -60%; left: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 65%); pointer-events: none;"></div>
+
+    <div class="hub-brand-group" style="display: flex; align-items: center; gap: 14px; position: relative; z-index: 10;">
+      <!-- Animated UCB Logo with Cinematic Beam, Particles & Glow -->
+      <div class="ucb-logo-anim" aria-label="United Commercial Bank PLC" style="cursor: pointer;" onclick="window.location.href='../BranchEase.html'" title="Back to BranchEase Portal">
+        <div class="ucb-glow"></div>
+        <img class="ucb-logo-img" src="../assets/ucb-logo.png" alt="UCB"
+             onerror="this.src='Assets/ucb-logo.png'; this.onerror=function(){ this.closest('.ucb-logo-anim').classList.add('.ucb-fallback'); };">
+        <div class="ucb-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <svg class="ucb-beam" viewBox="0 0 1024 486" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <linearGradient id="ucbBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ff2b2b" stop-opacity="0"/>
+              <stop offset="30%" stop-color="#ff2b2b" stop-opacity="0.9"/>
+              <stop offset="60%" stop-color="#ff5a5a" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <path d="M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150"/>
+          <circle r="4" style="offset-path: path('M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150');"></circle>
+        </svg>
+        <div class="ucb-sweep"></div>
+      </div>
+
+      <div class="hub-brand-titles">
+        <h1 id="page-title" style="font-family: 'Exo 2', sans-serif !important; font-size: 1.45rem; font-weight: 800; margin: 0; line-height: 1.15; letter-spacing: -0.01em; background: linear-gradient(100deg, #ffffff 0%, #ffffff 40%, #ff858a 48%, #ffffff 54%, #ffffff 100%); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: ucbTextShine 7s ease-in-out infinite 2.5s;">Expense Tracker</h1>
+        <p style="margin: 2px 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.88); font-weight: 500;">United Commercial Bank PLC &middot; Budget Management System for GL Accounts</p>
+      </div>
+    </div>
+
+    <div class="hub-header-meta" style="margin-left: auto; display: flex; align-items: center; gap: 12px; position: relative; z-index: 10;">
+      <div class="hub-user-pill" onclick="changePcUsername()" title="Click to change display name" style="display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 6px 14px; border-radius: 50px; color: #ed1b24; font-size: 0.76rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); cursor: pointer; white-space: nowrap;">
+        <i class="fas fa-user-circle" style="font-size: 1rem;"></i>
+        <span id="headerUsername">User</span>
+      </div>
+    </div>
+  </header>
 
         <!-- Add New Expense -->
         <div class="section-card">
@@ -2119,5 +2188,21 @@
     document.getElementById('expenseLedgerContent').addEventListener('shown.bs.collapse', saveCollapseStates);
     document.addEventListener('DOMContentLoaded', restoreCollapseStates);
     </script>
+  <script>
+    function syncHeaderUsername() {
+      const el = document.getElementById("headerUsername");
+      if (!el) return;
+      el.textContent = localStorage.getItem("pcUsername") || "User";
+    }
+    syncHeaderUsername();
+    window.changePcUsername = function() {
+      const current = localStorage.getItem("pcUsername") || "User";
+      const newName = prompt("Enter your name for BranchEase:", current);
+      if (newName && newName.trim()) {
+        localStorage.setItem("pcUsername", newName.trim());
+        syncHeaderUsername();
+      }
+    };
+  </script>
 </body>
 </html>

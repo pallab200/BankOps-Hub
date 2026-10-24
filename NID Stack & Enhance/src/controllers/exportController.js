@@ -167,12 +167,15 @@ export function createExportController(deps = {}) {
     ? messagesDep.showError.bind(messagesDep)
     : showError;
 
-  // Resolve DOM elements for the two export buttons.
+  // Resolve DOM elements for the export buttons and size selector.
   const combinedExportBtn = resolveElement(
     elements, 'combinedExportButton', doc, 'downloadPdf',
   );
   const adjustedExportBtn = resolveElement(
     elements, 'adjustedExportButton', doc, 'downloadAdjPdf',
+  );
+  const cardSizeSelect = resolveElement(
+    elements, 'cardSizeSelect', doc, 'cardSize',
   );
 
   // -------------------------------------------------------------------------
@@ -208,9 +211,23 @@ export function createExportController(deps = {}) {
       return false;
     }
 
+    // Determine maximum card width in mm from card size selector.
+    // Defaults to 105 mm (standard bank size) to avoid oversized prints on A4.
+    let maxCardWidth = 105;
+    if (cardSizeSelect && cardSizeSelect.value) {
+      if (cardSizeSelect.value === 'fit') {
+        maxCardWidth = null;
+      } else {
+        const parsed = parseFloat(cardSizeSelect.value);
+        if (Number.isFinite(parsed) && parsed > 0) {
+          maxCardWidth = parsed;
+        }
+      }
+    }
+
     // Req 7.1, 7.2: single-page A4 portrait PDF (210 × 297 mm).
-    // Req 7.3, 7.4: use fitImageToPage for sizing with 12.7 mm margins.
-    const fit = fitFn(dims.width, dims.height, A4_PORTRAIT, DEFAULT_MARGIN_MM);
+    // Req 7.3, 7.4: use fitImageToPage for sizing with 12.7 mm margins, maxCardWidth, and top alignment.
+    const fit = fitFn(dims.width, dims.height, A4_PORTRAIT, DEFAULT_MARGIN_MM, maxCardWidth, 'top');
 
     // Build the PDF using jsPDF.
     const pdf = new JsPDF({

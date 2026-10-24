@@ -2,23 +2,38 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="icon" type="image/png" href="../assets/ucb-logo.png">
+  <link rel="stylesheet" href="../css/exo2.css">
+  <link rel="stylesheet" href="../css/poppins.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/unified-theme.css">
   <title>ISS Analyzer</title>
   <link rel="stylesheet" href="../css/unified-theme.css">
   <link rel="stylesheet" href="../css/fontawesome.min.css">
   <link rel="stylesheet" href="../css/fontawesome-fix.css">
   <style>
   :root{
-    --primary: #6366f1;
-    --primary-dark: #4f46e5;
-    --accent: #ec4899;
+    /* Official United Commercial Bank (UCB) Design System */
+    --primary: #ed1b24;               /* UCB Signature Red */
+    --primary-dark: #c00000;          /* Deep Crimson Accent */
+    --primary-light: #ff4d55;         /* Vibrant Highlight */
+    --primary-rgb: 237, 27, 36;
+    --primary-gradient: linear-gradient(135deg, #ed1b24 0%, #c00000 50%, #900000 100%);
+    --accent: #212529;                /* Executive Dark Charcoal */
+    --accent-dark: #121417;
+    --accent-light: #495057;
+    --gold: #d4af37;                  /* UCB Gold Accent */
+    --gold-light: #f59e0b;
     --success: #10b981;
     --warning: #f59e0b;
-    --danger: #ef4444;
-    --bg-primary: #f0f4f9;
+    --danger: #ed1b24;
+    --bg-primary: #f8fafc;
     --bg-secondary: #ffffff;
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --border-color: #e2e8f0;
+    --text-primary: #1e2530;          /* UCB Corporate Dark Body */
+    --text-secondary: #525b6a;
+    --border-color: rgba(237, 27, 36, 0.12);
     --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
@@ -28,7 +43,7 @@
     margin: 0;
     background: linear-gradient(135deg, var(--bg-primary) 0%, #f8fafc 100%);
     color: var(--text-primary);
-    font-family: 'Poppins', 'Inter', 'Segoe UI', system-ui, -apple-system, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Exo 2', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
@@ -85,7 +100,7 @@
   .app-title {
     font-size: 2rem;
     font-weight: 900;
-    color: #2563eb;
+    color: #ed1b24;
     letter-spacing: -0.02em;
     margin: 0;
     animation: none;
@@ -120,11 +135,11 @@
     border-radius: 10px;
     padding: 12px 28px;
     border: none;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%);
     color: #fff;
     font-weight: 700;
     font-size: 0.95rem;
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
+    box-shadow: 0 8px 24px rgba(237, 27, 36, 0.28);
     transition: all 0.3s ease;
     cursor: pointer;
     animation: floatSlow 3.6s ease-in-out infinite;
@@ -220,7 +235,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+    background: linear-gradient(90deg, #ed1b24 0%, #ff4d55 50%, #d4af37 100%);
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -252,7 +267,7 @@
     margin: 6px 0 0 0;
     line-height: 1.1;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #2563eb 0%, #6366f1 100%);
+    background: linear-gradient(135deg, #ed1b24 0%, #ed1b24 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -841,7 +856,7 @@
   background: linear-gradient(90deg,
     #5b21b6 0%,
     #7c3aed 12%,
-    #ec4899 24%,
+    #d4af37 24%,
     #fb7185 36%,
     #f97316 48%,
     #f59e0b 60%,
@@ -903,13 +918,45 @@ body.no-bgclip .footer-rgb .rgb-text{
  })();
 </script>
 <body>
-  <header class="app-header" style="text-align:center; margin-bottom:24px; padding: 40px 20px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);">
-    <!-- removed -->
-    <div style="position: relative; display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(255, 255, 255, 0.15); border-radius: 20px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px); animation: shimmer 2.5s infinite;">
-      <i class="fas fa-chart-pie" style="font-size: 2.5rem; color: #ffffff;"></i>
+    <header class="app-header" style="background: linear-gradient(135deg, #181920 0%, #291216 42%, #850f16 82%, #ed1b24 100%) !important; padding: 12px 24px; position: sticky; top: 0; z-index: 100; overflow: hidden; box-shadow: 0 6px 24px rgba(237, 27, 36, 0.22); border-bottom: 1px solid rgba(237, 27, 36, 0.35); display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; border-radius: 0;">
+    <!-- Subtle Decorative Glow Circles -->
+    <div style="position: absolute; top: -60%; right: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(237, 27, 36, 0.22) 0%, transparent 65%); pointer-events: none;"></div>
+    <div style="position: absolute; bottom: -60%; left: -15%; width: 55%; height: 220%; background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 65%); pointer-events: none;"></div>
+
+    <div class="hub-brand-group" style="display: flex; align-items: center; gap: 14px; position: relative; z-index: 10;">
+      <!-- Animated UCB Logo with Cinematic Beam, Particles & Glow -->
+      <div class="ucb-logo-anim" aria-label="United Commercial Bank PLC" style="cursor: pointer;" onclick="window.location.href='../BranchEase.html'" title="Back to BranchEase Portal">
+        <div class="ucb-glow"></div>
+        <img class="ucb-logo-img" src="../assets/ucb-logo.png" alt="UCB"
+             onerror="this.src='assets/ucb-logo.png'; this.onerror=function(){ this.closest('.ucb-logo-anim').classList.add('.ucb-fallback'); };">
+        <div class="ucb-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <svg class="ucb-beam" viewBox="0 0 1024 486" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <linearGradient id="ucbBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ff2b2b" stop-opacity="0"/>
+              <stop offset="30%" stop-color="#ff2b2b" stop-opacity="0.9"/>
+              <stop offset="60%" stop-color="#ff5a5a" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <path d="M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150"/>
+          <circle r="4" style="offset-path: path('M40 372 C 190 470, 470 470, 640 392 C 800 320, 900 250, 985 150');"></circle>
+        </svg>
+        <div class="ucb-sweep"></div>
+      </div>
+
+      <div class="hub-brand-titles">
+        <h1 id="page-title" style="font-family: 'Exo 2', sans-serif !important; font-size: 1.45rem; font-weight: 800; margin: 0; line-height: 1.15; letter-spacing: -0.01em; background: linear-gradient(100deg, #ffffff 0%, #ffffff 40%, #ff858a 48%, #ffffff 54%, #ffffff 100%); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: ucbTextShine 7s ease-in-out infinite 2.5s;">ISS Analyzer</h1>
+        <p style="margin: 2px 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.88); font-weight: 500;">United Commercial Bank PLC &middot; Portfolio Insights &amp; Analysis Dashboard</p>
+      </div>
     </div>
-    <div class="app-title" style="font-size: 2.5rem; font-weight: 900; color: #ffffff; letter-spacing: -0.03em; margin: 0; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);">ISS Analyzer</div>
-    <div style="font-size: 1rem; font-weight: 500; color: rgba(255, 255, 255, 0.9); margin-top: 8px; letter-spacing: 0.3px;">Portfolio Insights & Analysis Dashboard</div>
+
+    <div class="hub-header-meta" style="display: flex; align-items: center; gap: 10px; position: relative; z-index: 10;">
+      <div class="hub-user-pill" onclick="changePcUsername()" title="Click to change display name" style="display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 6px 14px; border-radius: 50px; color: #ed1b24; font-size: 0.76rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); cursor: pointer;">
+        <i class="fas fa-user-circle" style="font-size: 1rem;"></i>
+        <span id="headerUsername">User</span>
+      </div>
+    </div>
   </header>
   
   <style>
@@ -934,12 +981,12 @@ body.no-bgclip .footer-rgb .rgb-text{
     <div class="initial-card" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%); border: 2px solid rgba(99, 102, 241, 0.15); padding: 48px 32px; border-radius: 20px; box-shadow: 0 20px 60px rgba(99, 102, 241, 0.12); backdrop-filter: blur(10px); position: relative; overflow: hidden;">
       <div class="initial-glow" aria-hidden="true" style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%); pointer-events: none; animation: rotate 20s linear infinite;"></div>
       <div style="position: relative; z-index: 1;">
-        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 16px; margin-bottom: 24px; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%); border-radius: 16px; margin-bottom: 24px; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);">
           <i class="fas fa-file-excel" style="font-size: 2rem; color: #ffffff;"></i>
         </div>
-        <div style="font-size:1.5rem; font-weight:800; background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom:12px">Welcome to ISS Analyzer</div>
+        <div style="font-size:1.5rem; font-weight:800; background: linear-gradient(135deg, #ed1b24 0%, #d4af37 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom:12px">Welcome to ISS Analyzer</div>
         <div class="initial-sub" style="font-size: 1rem; color: #64748b; font-weight: 500; margin-bottom: 32px;">Load your spreadsheet to resume or analyze a portfolio</div>
-        <label for="file" class="file-choose-btn" role="button" tabindex="0" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 32px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #ffffff; font-weight: 700; font-size: 1rem; border-radius: 12px; cursor: pointer; border: none; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3); transition: all 0.3s ease;"><i class="fas fa-folder-open" style="font-size: 1.2rem;"></i>Choose File</label>
+        <label for="file" class="file-choose-btn" role="button" tabindex="0" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 32px; background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%); color: #ffffff; font-weight: 700; font-size: 1rem; border-radius: 12px; cursor: pointer; border: none; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3); transition: all 0.3s ease;"><i class="fas fa-folder-open" style="font-size: 1.2rem;"></i>Choose File</label>
       <input id="file" type="file" accept=".xls,.xlsx,.csv" style="display: none;" />
       <div id="notes" style="margin-top:16px;color:#64748b; font-size: 0.9rem;"></div>
       <!-- expanded credit text -->
@@ -971,17 +1018,17 @@ body.no-bgclip .footer-rgb .rgb-text{
   .selector-section{ background: #ffffff; border: 1px solid #e5e7eb; padding: 20px 24px; margin-bottom: 16px; border-radius: 14px; box-shadow: 0 2px 8px rgba(15,23,42,0.04); transition: all 0.25s ease; }
   .selector-section:hover { box-shadow: 0 4px 16px rgba(99,102,241,0.08); border-color: rgba(99,102,241,0.15); }
   .selector-section h4{ margin:0 0 14px 0; font-size: 1rem; font-weight: 800; color: #1f2937; letter-spacing: 0.01em; display: flex; align-items: center; gap: 10px; }
-  .selector-section h4::before { content: ''; display: inline-block; width: 4px; height: 18px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 3px; flex-shrink: 0; }
-  .selector-section h4 .filter-total { margin-left: auto; font-size: 0.82rem; font-weight: 700; color: #6366f1; background: rgba(99,102,241,0.08); padding: 5px 14px; border-radius: 8px; border: 1px solid rgba(99,102,241,0.12); letter-spacing: 0; text-transform: none; }
+  .selector-section h4::before { content: ''; display: inline-block; width: 4px; height: 18px; background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%); border-radius: 3px; flex-shrink: 0; }
+  .selector-section h4 .filter-total { margin-left: auto; font-size: 0.82rem; font-weight: 700; color: #ed1b24; background: rgba(99,102,241,0.08); padding: 5px 14px; border-radius: 8px; border: 1px solid rgba(99,102,241,0.12); letter-spacing: 0; text-transform: none; }
   .selector-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items:start }
   .selector-grid .col{ display:flex; flex-direction:column; gap:8px }
   .selector-grid .col .label-small{ font-size: 0.78rem; color: #6b7280; margin-bottom: 4px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
   /* make selects fluid inside columns */
   .selector-grid .col select{ width:100%; min-width:0; box-sizing:border-box; border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 10px 12px; font-size: 0.9rem; background: #fafbfc; color: #1f2937; transition: all 0.2s ease; font-family: inherit; }
-  .selector-grid .col select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); background: #fff; outline: none; }
+  .selector-grid .col select:focus { border-color: #ed1b24; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); background: #fff; outline: none; }
   .selector-grid .col select[multiple] { border-radius: 10px; padding: 6px; }
   .selector-grid .col select[multiple] option { padding: 8px 12px; border-radius: 6px; margin: 2px 0; }
-  .selector-grid .col select[multiple] option:checked { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; }
+  .selector-grid .col select[multiple] option:checked { background: linear-gradient(135deg, #ed1b24, #c00000); color: #fff; }
   /* chip row styling */
   .chip-row{ margin-top: 8px; display:flex; flex-wrap:wrap; gap: 8px; align-items:center; min-height: 36px; padding: 8px; background: #f8fafc; border-radius: 10px; border: 1px dashed #e5e7eb; }
   .chip-row .chip{ background: #ffffff; border: 1px solid rgba(99,102,241,0.15); color: #1f2937; padding: 6px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; box-shadow: 0 1px 4px rgba(99,102,241,0.06); }
@@ -1041,10 +1088,10 @@ body.no-bgclip .footer-rgb .rgb-text{
   .chip-row { transition: background 0.3s ease, border-color 0.3s ease; }
   .chip-row:hover { border-color: rgba(99,102,241,0.2); background: rgba(99,102,241,0.02); }
   /* select focus glow */
-  select:focus{ box-shadow: 0 0 0 3px rgba(99,102,241,0.1); border-color: #6366f1 }
+  select:focus{ box-shadow: 0 0 0 3px rgba(99,102,241,0.1); border-color: #ed1b24 }
   /* mode-select dropdown styling */
   .mode-select { padding: 8px 14px !important; border: 1.5px solid #e5e7eb !important; border-radius: 8px !important; font-size: 0.85rem !important; font-weight: 600 !important; background: #fff !important; color: #374151 !important; min-width: 180px !important; }
-  .mode-select:focus { border-color: #6366f1 !important; box-shadow: 0 0 0 3px rgba(99,102,241,0.1) !important; }
+  .mode-select:focus { border-color: #ed1b24 !important; box-shadow: 0 0 0 3px rgba(99,102,241,0.1) !important; }
   /* small helper for two-column single-col layouts on narrow screens */
   @media (max-width:920px){ .selector-grid{ grid-template-columns: 1fr } }
   </style>
@@ -1119,15 +1166,15 @@ body.no-bgclip .footer-rgb .rgb-text{
       <div id="securityBreakdown" style="margin-bottom:14px; padding: 12px 18px; background: linear-gradient(135deg, rgba(99,102,241,0.04), rgba(16,185,129,0.04)); border: 1px solid rgba(99,102,241,0.12); border-radius: 10px; font-size:0.85em; color:#374151; line-height:1.8;">
         <div style="font-weight:700; color:#1f2937; margin-bottom:6px; font-size:0.9rem;">Total = Customer Asset Value + SME EMF Security Value + Loan Selection (×115%)</div>
         <div style="display:flex; flex-wrap:wrap; gap:8px 24px; align-items:center;">
-          <span>Customer Asset Value: <b id="secBreakCustAsset" style="color:#6366f1;">—</b></span>
-          <span>+ SME EMF Security Value: <b id="secBreakSme" style="color:#6366f1;">—</b></span>
-          <span>+ Loan Selection (×115%): <b id="secBreakSelection" style="color:#6366f1;">—</b></span>
+          <span>Customer Asset Value: <b id="secBreakCustAsset" style="color:#ed1b24;">—</b></span>
+          <span>+ SME EMF Security Value: <b id="secBreakSme" style="color:#ed1b24;">—</b></span>
+          <span>+ Loan Selection (×115%): <b id="secBreakSelection" style="color:#ed1b24;">—</b></span>
           <span>= <b id="secBreakTotal" style="color:#059669; font-size:1rem;">—</b></span>
         </div>
       </div>
-      <div id="smeEarnestLimit" style="margin-bottom:16px; padding: 14px 20px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 10px; font-size:0.9em; color:#374151; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">SME - Earnest Money Account Limit: <b id="smeEarnestLimitVal" style="color:#6366f1; font-weight:800">—</b>
+      <div id="smeEarnestLimit" style="margin-bottom:16px; padding: 14px 20px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 10px; font-size:0.9em; color:#374151; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">SME - Earnest Money Account Limit: <b id="smeEarnestLimitVal" style="color:#ed1b24; font-weight:800">—</b>
       &nbsp; &nbsp;Pct: <input id="smeEarnestPct" type="number" step="0.01" min="0" max="100" style="width:80px; padding:8px 10px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:0.9rem; font-family:inherit;" /> %
-      &nbsp; Security Value: <b id="smeEarnestImpactVal" style="color:#6366f1; font-weight:800">—</b>
+      &nbsp; Security Value: <b id="smeEarnestImpactVal" style="color:#ed1b24; font-weight:800">—</b>
     </div>
       <div class="selector-grid">
         <div class="col">
@@ -1294,10 +1341,10 @@ body.no-bgclip .footer-rgb .rgb-text{
     #pageAll .raw-section { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(15,23,42,0.04); transition: all 0.2s ease; }
     #pageAll .raw-section:hover { box-shadow: 0 4px 16px rgba(99,102,241,0.08); border-color: rgba(99,102,241,0.15); }
     #pageAll .raw-section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-    #pageAll .raw-section-header i { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #fff; border-radius: 10px; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(99,102,241,0.2); }
+    #pageAll .raw-section-header i { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%); color: #fff; border-radius: 10px; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(99,102,241,0.2); }
     #pageAll .raw-section-header h4 { margin: 0; font-size: 1.1rem; font-weight: 800; color: #1f2937; letter-spacing: -0.01em; }
     #pageAll .raw-section-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
-    #pageAll .raw-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #fff; border: none; border-radius: 10px; font-size: 0.88rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(99,102,241,0.25); transition: all 0.2s ease; font-family: inherit; }
+    #pageAll .raw-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%); color: #fff; border: none; border-radius: 10px; font-size: 0.88rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(99,102,241,0.25); transition: all 0.2s ease; font-family: inherit; }
     #pageAll .raw-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.35); }
     #pageAll .raw-btn i { font-size: 0.85rem; }
     #pageAll .raw-total-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(16,185,129,0.04)); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; font-size: 0.9rem; font-weight: 700; color: #065f46; }
@@ -1358,7 +1405,7 @@ body.no-bgclip .footer-rgb .rgb-text{
     #pageAll .bucket-bar { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 10px; margin-top: 16px; }
     #pageAll .bucket-bar label { margin: 0; font-size: 0.88rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.03em; }
     #pageAll .bucket-bar select { padding: 8px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.9rem; font-family: inherit; background: #fff; color: #1f2937; transition: all 0.2s ease; }
-    #pageAll .bucket-bar select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); outline: none; }
+    #pageAll .bucket-bar select:focus { border-color: #ed1b24; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); outline: none; }
     /* Edit & Delete buttons in tables */
     #pageAll .raw-table-wrap tbody .cust-edit,
     #pageAll .raw-table-wrap tbody .cust-delete {
@@ -1372,7 +1419,7 @@ body.no-bgclip .footer-rgb .rgb-text{
       font-family: inherit;
     }
     #pageAll .raw-table-wrap tbody .cust-edit {
-      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      background: linear-gradient(135deg, #ed1b24 0%, #c00000 100%);
       color: #fff;
       box-shadow: 0 2px 8px rgba(99,102,241,0.2);
     }
@@ -1801,7 +1848,7 @@ body.no-bgclip .footer-rgb .rgb-text{
       .prod-popup{background:#fff;border-radius:18px;padding:0;width:92%;max-width:600px;max-height:80vh;box-shadow:0 25px 60px rgba(15,23,42,0.25);transform:translateY(24px) scale(0.95);transition:transform .35s cubic-bezier(.2,.9,.2,1),opacity .3s ease;opacity:0;position:relative;overflow:hidden;display:flex;flex-direction:column}
       .prod-popup-overlay.active .prod-popup{transform:none;opacity:1}
       .prod-popup-header{padding:24px 28px 16px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(99,102,241,0.04),rgba(236,72,153,0.02))}
-      .prod-popup-header i{color:#6366f1;font-size:1.2rem}
+      .prod-popup-header i{color:#ed1b24;font-size:1.2rem}
       .prod-popup-header h3{margin:0;font-size:1.15rem;font-weight:800;color:#1f2937;flex:1}
       .prod-popup-header .prod-popup-close{width:32px;height:32px;border-radius:8px;border:none;background:#f3f4f6;color:#6b7280;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s ease}
       .prod-popup-header .prod-popup-close:hover{background:#e5e7eb;color:#1f2937;transform:scale(1.1)}
@@ -1823,7 +1870,7 @@ body.no-bgclip .footer-rgb .rgb-text{
       .prod-popup-table tbody tr:nth-child(10){animation-delay:.30s}
       .prod-popup-table tbody tr:nth-child(n+11){animation-delay:.33s}
       .prod-popup-table tbody tr:hover{background:#f8fafc}
-      .prod-popup-table .amt-col{text-align:right;font-weight:600;color:#6366f1}
+      .prod-popup-table .amt-col{text-align:right;font-weight:600;color:#ed1b24}
       @keyframes popupRowIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
       </style>
       <div class="prod-popup-overlay" id="prodPopupOverlay">
@@ -1884,7 +1931,7 @@ body.no-bgclip .footer-rgb .rgb-text{
           popupTotal += amt;
           html += '<tr><td>'+(i+1)+'</td><td>'+m.cust+'</td><td>'+m.acct+'</td><td class="amt-col">'+(isNaN(m.amt)?'—':m.amt.toLocaleString('en-US',{maximumFractionDigits:2}))+'</td></tr>';
         });
-        html += '</tbody><tfoot><tr style="font-weight:800;border-top:2px solid #e5e7eb;background:#f8fafc;"><td colspan="3" style="text-align:right;padding:12px 14px;color:#1f2937;">Total</td><td class="amt-col" style="color:#6366f1;font-size:1.05em;">'+popupTotal.toLocaleString('en-US',{maximumFractionDigits:2})+'</td></tr></tfoot></table>';
+        html += '</tbody><tfoot><tr style="font-weight:800;border-top:2px solid #e5e7eb;background:#f8fafc;"><td colspan="3" style="text-align:right;padding:12px 14px;color:#1f2937;">Total</td><td class="amt-col" style="color:#ed1b24;font-size:1.05em;">'+popupTotal.toLocaleString('en-US',{maximumFractionDigits:2})+'</td></tr></tfoot></table>';
         if(matching.length===0) html = '<div style="text-align:center;padding:40px 20px;color:#9ca3af;font-size:0.95rem;"><i class="fas fa-search" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.4"></i>No customers found for this product</div>';
         body.innerHTML = html;
         overlay.classList.add('active');
@@ -3201,17 +3248,17 @@ function renderSelectedMiChips(){
           .ca-modal{background:#fff;border-radius:16px;padding:32px;width:90%;max-width:440px;box-shadow:0 25px 60px rgba(15,23,42,0.2);transform:translateY(20px) scale(0.97);transition:transform .3s cubic-bezier(.2,.9,.2,1),opacity .3s ease;opacity:0;position:relative}
           .ca-modal-overlay.active .ca-modal{transform:none;opacity:1}
           .ca-modal h3{margin:0 0 24px 0;font-size:1.3rem;font-weight:800;color:#1f2937;display:flex;align-items:center;gap:10px}
-          .ca-modal h3 i{color:#6366f1;font-size:1.1rem}
+          .ca-modal h3 i{color:#ed1b24;font-size:1.1rem}
           .ca-modal .ca-field{margin-bottom:16px}
           .ca-modal .ca-field label{display:block;font-size:0.85rem;font-weight:600;color:#374151;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.03em}
           .ca-modal .ca-field label .optional{font-weight:400;color:#9ca3af;text-transform:none;font-size:0.8rem;margin-left:6px}
           .ca-modal .ca-field input{width:100%;padding:12px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.95rem;font-family:inherit;transition:all .2s ease;box-sizing:border-box;background:#fafbfc}
-          .ca-modal .ca-field input:focus{outline:none;border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.1);background:#fff}
+          .ca-modal .ca-field input:focus{outline:none;border-color:#ed1b24;box-shadow:0 0 0 3px rgba(99,102,241,0.1);background:#fff}
           .ca-modal .ca-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid #f3f4f6}
           .ca-modal .ca-btn{padding:10px 22px;border-radius:10px;font-size:0.9rem;font-weight:700;cursor:pointer;border:none;transition:all .2s ease;font-family:inherit}
           .ca-modal .ca-btn-cancel{background:#f3f4f6;color:#374151}
           .ca-modal .ca-btn-cancel:hover{background:#e5e7eb}
-          .ca-modal .ca-btn-save{background:linear-gradient(135deg,#6366f1 0%,#4f46e5 100%);color:#fff;box-shadow:0 4px 12px rgba(99,102,241,0.3)}
+          .ca-modal .ca-btn-save{background:linear-gradient(135deg,#ed1b24 0%,#c00000 100%);color:#fff;box-shadow:0 4px 12px rgba(99,102,241,0.3)}
           .ca-modal .ca-btn-save:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(99,102,241,0.4)}
           </style>
           <div class="ca-modal-overlay" id="caModalOverlay">
@@ -3514,7 +3561,7 @@ function renderSelectedMiChips(){
         background: linear-gradient(90deg,
             #5b21b6 0%,
             #7c3aed 12%,
-            #ec4899 24%,
+            #d4af37 24%,
             #fb7185 36%,
             #f97316 48%,
             #f59e0b 60%,
@@ -3540,5 +3587,21 @@ function renderSelectedMiChips(){
     }
     </style>
   </footer>
+  <script>
+    function syncHeaderUsername() {
+      const el = document.getElementById("headerUsername");
+      if (!el) return;
+      el.textContent = localStorage.getItem("pcUsername") || "User";
+    }
+    syncHeaderUsername();
+    window.changePcUsername = function() {
+      const current = localStorage.getItem("pcUsername") || "User";
+      const newName = prompt("Enter your name for BranchEase:", current);
+      if (newName && newName.trim()) {
+        localStorage.setItem("pcUsername", newName.trim());
+        syncHeaderUsername();
+      }
+    };
+  </script>
 </body>
 </html>

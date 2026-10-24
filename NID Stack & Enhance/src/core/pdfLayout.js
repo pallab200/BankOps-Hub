@@ -89,6 +89,8 @@ function resolveMargin(margin, page) {
  * @param {number} imgH - source image height.
  * @param {{ widthMm: number, heightMm: number }} [page=A4_PORTRAIT] - page size in mm.
  * @param {number} [margin=DEFAULT_MARGIN_MM] - uniform margin in mm.
+ * @param {number|null} [maxFitWidthMm=null] - optional maximum width in mm to scale the image to.
+ * @param {'center'|'top'} [verticalAlign='center'] - vertical alignment on page ('top' for banking standard NID placement).
  * @returns {{ x: number, y: number, w: number, h: number }} placement in mm.
  */
 export function fitImageToPage(
@@ -96,12 +98,18 @@ export function fitImageToPage(
   imgH,
   page = A4_PORTRAIT,
   margin = DEFAULT_MARGIN_MM,
+  maxFitWidthMm = null,
+  verticalAlign = 'center',
 ) {
   const { widthMm, heightMm } = resolvePage(page);
   const m = resolveMargin(margin, { widthMm, heightMm });
 
-  const printableW = widthMm - 2 * m;
+  let printableW = widthMm - 2 * m;
   const printableH = heightMm - 2 * m;
+
+  if (Number.isFinite(maxFitWidthMm) && maxFitWidthMm > 0) {
+    printableW = Math.min(printableW, maxFitWidthMm);
+  }
 
   // Normalize degenerate image dimensions: fall back to the printable aspect
   // so the result still fits and preserves a sensible ratio.
@@ -115,10 +123,21 @@ export function fitImageToPage(
   const w = w0 * scale;
   const h = h0 * scale;
 
-  // Center within the printable area => equal left/right (and top/bottom)
-  // margins, each >= m > 0 (Req 7.4).
+  // Horizontal position: always centered (leftMargin == rightMargin)
   const x = (widthMm - w) / 2;
-  const y = (heightMm - h) / 2;
+
+  // Vertical placement:
+  // If 'top', place in the upper portion with a standard top margin (25.4 mm / 1 inch)
+  // leaving the lower half for branch seals, customer/officer signatures, and notes.
+  // Default 'center' keeps mathematical vertical centering for property tests.
+  let y;
+  if (verticalAlign === 'top') {
+    const topMargin = Math.max(m, 25.4);
+    y = Math.min(topMargin, heightMm - m - h);
+    if (y < m) y = m;
+  } else {
+    y = (heightMm - h) / 2;
+  }
 
   return { x, y, w, h };
 }

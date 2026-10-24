@@ -6,4 +6,9 @@ config.js
 
 *.txt
 .vscode/
+delete/
+.kilo/
 .kiro/
+
+# Wrangler local cache (contains account info)
+.wrangler/

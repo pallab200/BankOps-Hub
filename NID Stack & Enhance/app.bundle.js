@@ -314,12 +314,6 @@
       render(toText(text), "status", "polite", "guidance");
       minVisibleUntil = nowMs() + minVisibleMs;
     }
-    function showSuccess(text, options = {}) {
-      const requested = options && options.minVisibleMs;
-      const minVisibleMs = typeof requested === "number" && Number.isFinite(requested) && requested >= 0 ? requested : DEFAULT_MIN_VISIBLE_MS;
-      render(toText(text), "status", "polite", "success");
-      minVisibleUntil = nowMs() + minVisibleMs;
-    }
     function showError2(text) {
       minVisibleUntil = 0;
       render(toText(text), "alert", "assertive", "error");
@@ -341,7 +335,6 @@
     }
     return {
       showGuidance: showGuidance2,
-      showSuccess,
       showError: showError2,
       clearMessage,
       get element() {
@@ -734,6 +727,12 @@
       const info = byId(cfg.cropInfo);
       if (info) info.textContent = "";
     }
+    function resetEnhanceSlider(slot) {
+      const slider = byId(slot === "front" ? "enhanceSlider1" : "enhanceSlider2");
+      const badge = byId(slot === "front" ? "enhanceVal1" : "enhanceVal2");
+      if (slider) slider.value = "0";
+      if (badge) badge.textContent = "0%";
+    }
     async function loadSourceImage(file, slot) {
       const cfg = SLOT_CONFIG[slot];
       if (!cfg) {
@@ -789,6 +788,7 @@
         renderPreview(cfg, renderResult.dataUrl);
         renderThumbnail(cfg, renderResult.dataUrl);
         clearCropInfo(cfg);
+        resetEnhanceSlider(slot);
         messages.clearMessage();
         progress.complete();
         return {
@@ -814,6 +814,7 @@
       renderPreview(cfg, decoded.src);
       renderThumbnail(cfg, decoded.src);
       clearCropInfo(cfg);
+      resetEnhanceSlider(slot);
       messages.clearMessage();
       progress.complete();
       return {
@@ -918,14 +919,6 @@
       height: Math.max(0, toInt(height, 0))
     };
   }
-  function initialRegion(imgW, imgH) {
-    return {
-      x: 0,
-      y: 0,
-      w: Math.max(0, toInt(imgW, 0)),
-      h: Math.max(0, toInt(imgH, 0))
-    };
-  }
   function initialQuadCorners(imgW, imgH) {
     const w = Math.max(0, toInt(imgW, 0));
     const h = Math.max(0, toInt(imgH, 0));
@@ -1023,6 +1016,707 @@
     };
   }
 
+  // src/core/cardDetection.js
+  var TARGET_MAX_DIM = 320;
+  function toFinite2(val, fallback = 0) {
+    const n = Number(val);
+    return Number.isFinite(n) ? n : fallback;
+  }
+  function orderCorners(quad) {
+    if (!Array.isArray(quad) || quad.length < 4) {
+      return [
+        { x: 0, y: 0 },
+        { x: 0, y: 0 },
+        { x: 0, y: 0 },
+        { x: 0, y: 0 }
+      ];
+    }
+    let tl = quad[0], tr = quad[0], br = quad[0], bl = quad[0];
+    let minSum = Infinity, maxSum = -Infinity;
+    let maxDiff = -Infinity, minDiff = Infinity;
+    for (const p of quad) {
+      const px = toFinite2(p && p.x, 0);
+      const py = toFinite2(p && p.y, 0);
+      const sum = px + py;
+      const diff = px - py;
+      if (sum < minSum) {
+        minSum = sum;
+        tl = { x: px, y: py };
+      }
+      if (sum > maxSum) {
+        maxSum = sum;
+        br = { x: px, y: py };
+      }
+      if (diff > maxDiff) {
+        maxDiff = diff;
+        tr = { x: px, y: py };
+      }
+      if (diff < minDiff) {
+        minDiff = diff;
+        bl = { x: px, y: py };
+      }
+    }
+    return [tl, tr, br, bl];
+  }
+  function polygonArea(poly) {
+    if (!Array.isArray(poly) || poly.length < 3) return 0;
+    let sum = 0;
+    const n = poly.length;
+    for (let i = 0, j = n - 1; i < n; j = i++) {
+      const pi = poly[i] || { x: 0, y: 0 };
+      const pj = poly[j] || { x: 0, y: 0 };
+      sum += pj.x * pi.y - pi.x * pj.y;
+    }
+    return Math.abs(sum) / 2;
+  }
+  function isConvex(poly) {
+    if (!Array.isArray(poly) || poly.length < 4) return false;
+    let sign = 0;
+    const n = poly.length;
+    for (let i = 0; i < n; i++) {
+      const p1 = poly[i];
+      const p2 = poly[(i + 1) % n];
+      const p3 = poly[(i + 2) % n];
+      const cross = (p2.x - p1.x) * (p3.y - p2.y) - (p2.y - p1.y) * (p3.x - p2.x);
+      if (Math.abs(cross) > 1e-4) {
+        const currentSign = cross > 0 ? 1 : -1;
+        if (sign === 0) {
+          sign = currentSign;
+        } else if (currentSign !== sign) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  function convexHull(points) {
+    if (!Array.isArray(points) || points.length <= 3) return points ? points.slice() : [];
+    const pts = points.slice().sort((a, b) => a.x === b.x ? a.y - b.y : a.x - b.x);
+    const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+    const lower = [];
+    for (const p of pts) {
+      while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) {
+        lower.pop();
+      }
+      lower.push(p);
+    }
+    const upper = [];
+    for (let i = pts.length - 1; i >= 0; i--) {
+      const p = pts[i];
+      while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) {
+        upper.pop();
+      }
+      upper.push(p);
+    }
+    lower.pop();
+    upper.pop();
+    return lower.concat(upper);
+  }
+  function minAreaOrientedRect(hull) {
+    if (!hull || hull.length < 3) return null;
+    const n = hull.length;
+    let minArea = Infinity;
+    let bestCorners = null;
+    for (let i = 0; i < n; i++) {
+      const p1 = hull[i];
+      const p2 = hull[(i + 1) % n];
+      const dx = p2.x - p1.x;
+      const dy = p2.y - p1.y;
+      const len = Math.hypot(dx, dy);
+      if (len === 0) continue;
+      const ux = dx / len;
+      const uy = dy / len;
+      const vx = -uy;
+      const vy = ux;
+      let minU = Infinity, maxU = -Infinity;
+      let minV = Infinity, maxV = -Infinity;
+      for (const p of hull) {
+        const u = p.x * ux + p.y * uy;
+        const v = p.x * vx + p.y * vy;
+        if (u < minU) minU = u;
+        if (u > maxU) maxU = u;
+        if (v < minV) minV = v;
+        if (v > maxV) maxV = v;
+      }
+      const area = (maxU - minU) * (maxV - minV);
+      if (area < minArea) {
+        minArea = area;
+        bestCorners = [
+          { x: minU * ux + minV * vx, y: minU * uy + minV * vy },
+          { x: maxU * ux + minV * vx, y: maxU * uy + minV * vy },
+          { x: maxU * ux + maxV * vx, y: maxU * uy + maxV * vy },
+          { x: minU * ux + maxV * vx, y: minU * uy + maxV * vy }
+        ];
+      }
+    }
+    return bestCorners;
+  }
+  function morphClose(src, W, H, r = 3) {
+    const total = W * H;
+    const temp = new Uint8Array(total);
+    const dst = new Uint8Array(total);
+    for (let y = 0; y < H; y++) {
+      const yMin = Math.max(0, y - r);
+      const yMax = Math.min(H - 1, y + r);
+      for (let x = 0; x < W; x++) {
+        const xMin = Math.max(0, x - r);
+        const xMax = Math.min(W - 1, x + r);
+        let found = 0;
+        for (let ny = yMin; ny <= yMax && !found; ny++) {
+          const row = ny * W;
+          for (let nx = xMin; nx <= xMax; nx++) {
+            if (src[row + nx] === 1) {
+              found = 1;
+              break;
+            }
+          }
+        }
+        temp[y * W + x] = found;
+      }
+    }
+    for (let y = 0; y < H; y++) {
+      const yMin = Math.max(0, y - r);
+      const yMax = Math.min(H - 1, y + r);
+      for (let x = 0; x < W; x++) {
+        const xMin = Math.max(0, x - r);
+        const xMax = Math.min(W - 1, x + r);
+        let allOn = 1;
+        for (let ny = yMin; ny <= yMax && allOn; ny++) {
+          const row = ny * W;
+          for (let nx = xMin; nx <= xMax; nx++) {
+            if (temp[row + nx] === 0) {
+              allOn = 0;
+              break;
+            }
+          }
+        }
+        dst[y * W + x] = allOn;
+      }
+    }
+    return dst;
+  }
+  function extractComponentBoundaries(grid, W, H, minSize) {
+    const total = W * H;
+    const visited = new Uint8Array(total);
+    const comps = [];
+    for (let y = 1; y < H - 1; y++) {
+      const row = y * W;
+      for (let x = 1; x < W - 1; x++) {
+        const idx = row + x;
+        if (grid[idx] === 1 && !visited[idx]) {
+          const queue = [idx];
+          visited[idx] = 1;
+          let qHead = 0;
+          const boundaryPts = [];
+          while (qHead < queue.length) {
+            const curr = queue[qHead++];
+            const cx = curr % W;
+            const cy = curr / W | 0;
+            let isEdge = false;
+            const nbs = [curr - 1, curr + 1, curr - W, curr + W];
+            for (let i = 0; i < 4; i++) {
+              const nb = nbs[i];
+              if (nb >= 0 && nb < total) {
+                if (grid[nb] === 0) {
+                  isEdge = true;
+                } else if (!visited[nb]) {
+                  visited[nb] = 1;
+                  queue.push(nb);
+                }
+              } else {
+                isEdge = true;
+              }
+            }
+            if (isEdge) {
+              boundaryPts.push({ x: cx, y: cy });
+            }
+          }
+          if (queue.length >= minSize) {
+            comps.push({ size: queue.length, boundary: boundaryPts });
+          }
+        }
+      }
+    }
+    return comps;
+  }
+  function scoreQuad(quad, W, H, gradMap) {
+    const area = polygonArea(quad);
+    const totalArea = W * H;
+    const areaRatio = area / totalArea;
+    const ordered = orderCorners(quad);
+    const topW = Math.hypot(ordered[1].x - ordered[0].x, ordered[1].y - ordered[0].y);
+    const botW = Math.hypot(ordered[2].x - ordered[3].x, ordered[2].y - ordered[3].y);
+    const leftH = Math.hypot(ordered[3].x - ordered[0].x, ordered[3].y - ordered[0].y);
+    const rightH = Math.hypot(ordered[2].x - ordered[1].x, ordered[2].y - ordered[1].y);
+    const widthSkew = Math.max(topW, botW) / (Math.min(topW, botW) || 1);
+    const heightSkew = Math.max(leftH, rightH) / (Math.min(leftH, rightH) || 1);
+    if (widthSkew > 2.3 || heightSkew > 2.3) {
+      return -Infinity;
+    }
+    let areaScore = 0;
+    if (areaRatio >= 0.2 && areaRatio <= 0.85) {
+      areaScore = 50;
+    } else if (areaRatio >= 0.12 && areaRatio < 0.2) {
+      areaScore = 30;
+    } else if (areaRatio > 0.85 && areaRatio <= 0.92) {
+      areaScore = 35;
+    } else {
+      areaScore = 10;
+    }
+    const avgW = (topW + botW) / 2;
+    const avgH = (leftH + rightH) / 2;
+    const ratio = Math.max(avgW, avgH) / (Math.min(avgW, avgH) || 1);
+    let ratioScore = 0;
+    if (ratio >= 1.25 && ratio <= 1.85) {
+      ratioScore = 35;
+    } else if (ratio >= 1.05 && ratio <= 2.2) {
+      ratioScore = 15;
+    }
+    let angleScore = 0;
+    for (let i = 0; i < 4; i++) {
+      const p1 = ordered[i];
+      const p2 = ordered[(i + 1) % 4];
+      const p3 = ordered[(i + 2) % 4];
+      const v1x = p1.x - p2.x, v1y = p1.y - p2.y;
+      const v2x = p3.x - p2.x, v2y = p3.y - p2.y;
+      const d1 = Math.hypot(v1x, v1y), d2 = Math.hypot(v2x, v2y);
+      if (d1 > 0 && d2 > 0) {
+        const cosA = Math.abs((v1x * v2x + v1y * v2y) / (d1 * d2));
+        if (cosA < 0.26) angleScore += 10;
+      }
+    }
+    let edgeGradSum = 0;
+    let edgeSampleCount = 0;
+    if (gradMap) {
+      for (let i = 0; i < 4; i++) {
+        const p1 = ordered[i];
+        const p2 = ordered[(i + 1) % 4];
+        const steps = 12;
+        for (let s = 1; s < steps; s++) {
+          const t = s / steps;
+          const sx = Math.round(p1.x + (p2.x - p1.x) * t);
+          const sy = Math.round(p1.y + (p2.y - p1.y) * t);
+          if (sx >= 0 && sx < W && sy >= 0 && sy < H) {
+            edgeGradSum += gradMap[sy * W + sx] || 0;
+            edgeSampleCount++;
+          }
+        }
+      }
+    }
+    const avgEdgeGrad = edgeSampleCount > 0 ? edgeGradSum / edgeSampleCount : 0;
+    const edgeScore = Math.min(30, avgEdgeGrad);
+    return areaScore + ratioScore + angleScore + edgeScore;
+  }
+  function detectCardCornersFromPixels(data, W, H, origW, origH) {
+    const oW = Math.max(1, toFinite2(origW, 100));
+    const oH = Math.max(1, toFinite2(origH, 100));
+    const insetCorners = [
+      { x: Math.round(oW * 0.05), y: Math.round(oH * 0.05) },
+      { x: Math.round(oW * 0.95), y: Math.round(oH * 0.05) },
+      { x: Math.round(oW * 0.95), y: Math.round(oH * 0.95) },
+      { x: Math.round(oW * 0.05), y: Math.round(oH * 0.95) }
+    ];
+    const fullCorners = [
+      { x: 0, y: 0 },
+      { x: oW, y: 0 },
+      { x: oW, y: oH },
+      { x: 0, y: oH }
+    ];
+    if (!data || W < 10 || H < 10) {
+      return insetCorners;
+    }
+    const totalPixels = W * H;
+    const gray = new Float32Array(totalPixels);
+    let minLum = 255, maxLum = 0;
+    for (let i = 0; i < totalPixels; i++) {
+      const idx = i * 4;
+      const lum = 0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2];
+      gray[i] = lum;
+      if (lum < minLum) minLum = lum;
+      if (lum > maxLum) maxLum = lum;
+    }
+    if (maxLum - minLum < 15) {
+      return insetCorners;
+    }
+    const blurH = new Float32Array(totalPixels);
+    for (let y = 0; y < H; y++) {
+      const row = y * W;
+      for (let x = 0; x < W; x++) {
+        const x0 = Math.max(0, x - 2);
+        const x1 = Math.max(0, x - 1);
+        const x2 = x;
+        const x3 = Math.min(W - 1, x + 1);
+        const x4 = Math.min(W - 1, x + 2);
+        blurH[row + x] = (gray[row + x0] * 1 + gray[row + x1] * 4 + gray[row + x2] * 6 + gray[row + x3] * 4 + gray[row + x4] * 1) / 16;
+      }
+    }
+    const blurred = new Float32Array(totalPixels);
+    for (let y = 0; y < H; y++) {
+      const y0 = Math.max(0, y - 2) * W;
+      const y1 = Math.max(0, y - 1) * W;
+      const y2 = y * W;
+      const y3 = Math.min(H - 1, y + 1) * W;
+      const y4 = Math.min(H - 1, y + 2) * W;
+      for (let x = 0; x < W; x++) {
+        blurred[y2 + x] = (blurH[y0 + x] * 1 + blurH[y1 + x] * 4 + blurH[y2 + x] * 6 + blurH[y3 + x] * 4 + blurH[y4 + x] * 1) / 16;
+      }
+    }
+    const grad = new Float32Array(totalPixels);
+    for (let y = 1; y < H - 1; y++) {
+      const ym1 = (y - 1) * W;
+      const y0 = y * W;
+      const yp1 = (y + 1) * W;
+      for (let x = 1; x < W - 1; x++) {
+        const gx = -blurred[ym1 + x - 1] + blurred[ym1 + x + 1] + -2 * blurred[y0 + x - 1] + 2 * blurred[y0 + x + 1] + -blurred[yp1 + x - 1] + blurred[yp1 + x + 1];
+        const gy = -blurred[ym1 + x - 1] - 2 * blurred[ym1 + x] - blurred[ym1 + x + 1] + blurred[yp1 + x - 1] + 2 * blurred[yp1 + x] + blurred[yp1 + x + 1];
+        grad[y0 + x] = Math.sqrt(gx * gx + gy * gy);
+      }
+    }
+    let bgR = 0, bgG = 0, bgB = 0, bgCount = 0;
+    for (let x = 0; x < W; x++) {
+      const idx0 = x * 4;
+      const idx1 = ((H - 1) * W + x) * 4;
+      bgR += data[idx0] + data[idx1];
+      bgG += data[idx0 + 1] + data[idx1 + 1];
+      bgB += data[idx0 + 2] + data[idx1 + 2];
+      bgCount += 2;
+    }
+    for (let y = 1; y < H - 1; y++) {
+      const idx0 = y * W * 4;
+      const idx1 = (y * W + W - 1) * 4;
+      bgR += data[idx0] + data[idx1];
+      bgG += data[idx0 + 1] + data[idx1 + 1];
+      bgB += data[idx0 + 2] + data[idx1 + 2];
+      bgCount += 2;
+    }
+    bgR /= Math.max(1, bgCount);
+    bgG /= Math.max(1, bgCount);
+    bgB /= Math.max(1, bgCount);
+    const colorDistMask = new Uint8Array(totalPixels);
+    for (let i = 0; i < totalPixels; i++) {
+      const idx = i * 4;
+      const dist = (Math.abs(data[idx] - bgR) + Math.abs(data[idx + 1] - bgG) + Math.abs(data[idx + 2] - bgB)) / 3;
+      if (dist > 22) {
+        colorDistMask[i] = 1;
+      }
+    }
+    const hist = new Int32Array(256);
+    for (let i = 0; i < totalPixels; i++) {
+      hist[Math.min(255, Math.max(0, Math.round(blurred[i])))]++;
+    }
+    let sumAll = 0;
+    for (let i = 0; i < 256; i++) sumAll += i * hist[i];
+    let sumB = 0, wB = 0, maxVar = 0, otsuThresh = 128;
+    for (let t = 0; t < 256; t++) {
+      wB += hist[t];
+      if (wB === 0) continue;
+      const wF = totalPixels - wB;
+      if (wF === 0) break;
+      sumB += t * hist[t];
+      const mB = sumB / wB;
+      const mF = (sumAll - sumB) / wF;
+      const between = wB * wF * (mB - mF) * (mB - mF);
+      if (between > maxVar) {
+        maxVar = between;
+        otsuThresh = t;
+      }
+    }
+    const otsuMaskPos = new Uint8Array(totalPixels);
+    const otsuMaskInv = new Uint8Array(totalPixels);
+    for (let i = 0; i < totalPixels; i++) {
+      if (blurred[i] > otsuThresh) otsuMaskPos[i] = 1;
+      else otsuMaskInv[i] = 1;
+    }
+    const closedColor = morphClose(colorDistMask, W, H, 3);
+    const closedOtsuPos = morphClose(otsuMaskPos, W, H, 3);
+    const closedOtsuInv = morphClose(otsuMaskInv, W, H, 3);
+    const minCompSize = Math.round(totalPixels * 0.15);
+    const allComps = [
+      ...extractComponentBoundaries(closedColor, W, H, minCompSize),
+      ...extractComponentBoundaries(closedOtsuPos, W, H, minCompSize),
+      ...extractComponentBoundaries(closedOtsuInv, W, H, minCompSize)
+    ];
+    const candidates = [];
+    for (const comp of allComps) {
+      const areaRatio = comp.size / totalPixels;
+      if (areaRatio >= 0.15 && areaRatio <= 0.88) {
+        const hull = convexHull(comp.boundary);
+        if (hull.length >= 4) {
+          const orientedRect = minAreaOrientedRect(hull);
+          if (orientedRect && isConvex(orientedRect)) {
+            candidates.push(orientedRect);
+          }
+          const extremeQuad = orderCorners(hull);
+          if (extremeQuad && isConvex(extremeQuad)) {
+            candidates.push(extremeQuad);
+          }
+        }
+      }
+    }
+    let bestQuad = null;
+    let bestScore = -Infinity;
+    for (const quad of candidates) {
+      if (!isConvex(quad)) continue;
+      const score = scoreQuad(quad, W, H, grad);
+      if (score > bestScore) {
+        bestScore = score;
+        bestQuad = quad;
+      }
+    }
+    if (bestQuad && bestScore >= 50) {
+      const ordered = orderCorners(bestQuad);
+      const scaleX = oW / W;
+      const scaleY = oH / H;
+      return ordered.map((p) => ({
+        x: Math.round(Math.min(oW, Math.max(0, p.x * scaleX))),
+        y: Math.round(Math.min(oH, Math.max(0, p.y * scaleY)))
+      }));
+    }
+    return fullCorners;
+  }
+  function detectCardCorners(imageSource, naturalWidth, naturalHeight, providedDoc) {
+    try {
+      if (!imageSource) {
+        const w = toFinite2(naturalWidth, 100);
+        const h = toFinite2(naturalHeight, 100);
+        return [
+          { x: 0, y: 0 },
+          { x: w, y: 0 },
+          { x: w, y: h },
+          { x: 0, y: h }
+        ];
+      }
+      if (imageSource.data && imageSource.width && imageSource.height) {
+        const origW2 = naturalWidth || imageSource.width;
+        const origH2 = naturalHeight || imageSource.height;
+        return detectCardCornersFromPixels(imageSource.data, imageSource.width, imageSource.height, origW2, origH2);
+      }
+      const origW = naturalWidth || imageSource.naturalWidth || imageSource.width || 0;
+      const origH = naturalHeight || imageSource.naturalHeight || imageSource.height || 0;
+      if (origW <= 0 || origH <= 0) {
+        return [
+          { x: 0, y: 0 },
+          { x: 0, y: 0 },
+          { x: 0, y: 0 },
+          { x: 0, y: 0 }
+        ];
+      }
+      const doc = providedDoc || (typeof document !== "undefined" ? document : null);
+      if (!doc || typeof doc.createElement !== "function") {
+        return [
+          { x: 0, y: 0 },
+          { x: origW, y: 0 },
+          { x: origW, y: origH },
+          { x: 0, y: origH }
+        ];
+      }
+      const scale = Math.min(TARGET_MAX_DIM / origW, TARGET_MAX_DIM / origH, 1);
+      const procW = Math.max(16, Math.round(origW * scale));
+      const procH = Math.max(16, Math.round(origH * scale));
+      const canvas = doc.createElement("canvas");
+      canvas.width = procW;
+      canvas.height = procH;
+      let ctx = null;
+      try {
+        ctx = canvas.getContext("2d");
+      } catch (_e) {
+        ctx = null;
+      }
+      if (!ctx) {
+        return [
+          { x: 0, y: 0 },
+          { x: origW, y: 0 },
+          { x: origW, y: origH },
+          { x: 0, y: origH }
+        ];
+      }
+      ctx.drawImage(imageSource, 0, 0, procW, procH);
+      const imgData = ctx.getImageData(0, 0, procW, procH);
+      return detectCardCornersFromPixels(imgData.data, procW, procH, origW, origH);
+    } catch (_err) {
+      const w = toFinite2(naturalWidth, 100);
+      const h = toFinite2(naturalHeight, 100);
+      return [
+        { x: 0, y: 0 },
+        { x: w, y: 0 },
+        { x: w, y: h },
+        { x: 0, y: h }
+      ];
+    }
+  }
+
+  // src/core/documentEnhance.js
+  function clampByte(val) {
+    if (val < 0) return 0;
+    if (val > 255) return 255;
+    return Math.round(val);
+  }
+  function enhanceDocumentBuffer(data, width, height, strength = 1) {
+    const s = Number.isFinite(strength) ? Math.max(0, Math.min(1, strength)) : 1;
+    const w = Math.max(1, Math.floor(Number(width) || 0));
+    const h = Math.max(1, Math.floor(Number(height) || 0));
+    const total = w * h;
+    const out = new Uint8ClampedArray(total * 4);
+    if (!data || data.length < total * 4) {
+      if (data && data.length) {
+        out.set(data.subarray ? data.subarray(0, out.length) : data.slice(0, out.length));
+      }
+      return out;
+    }
+    if (s <= 0) {
+      out.set(data.subarray ? data.subarray(0, total * 4) : data.slice(0, total * 4));
+      return out;
+    }
+    const luma = new Float32Array(total);
+    const hist = new Int32Array(256);
+    for (let i = 0; i < total; i++) {
+      const idx = i * 4;
+      const l = Math.round(0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2]);
+      luma[i] = l;
+      hist[Math.min(255, Math.max(0, l))]++;
+    }
+    let count = 0;
+    let blackPoint = 0;
+    const p1 = total * 0.01;
+    for (let i = 0; i < 256; i++) {
+      count += hist[i];
+      if (count >= p1) {
+        blackPoint = i;
+        break;
+      }
+    }
+    count = 0;
+    let whitePoint = 255;
+    const p96 = total * 0.96;
+    for (let i = 0; i < 256; i++) {
+      count += hist[i];
+      if (count >= p96) {
+        whitePoint = i;
+        break;
+      }
+    }
+    if (whitePoint - blackPoint < 35) {
+      blackPoint = Math.max(0, blackPoint - 20);
+      whitePoint = Math.min(255, whitePoint + 20);
+    }
+    let bgR = 0, bgG = 0, bgB = 0, bgCount = 0;
+    const threshBg = whitePoint * 0.9;
+    for (let i = 0; i < total; i++) {
+      if (luma[i] >= threshBg) {
+        const idx = i * 4;
+        bgR += data[idx];
+        bgG += data[idx + 1];
+        bgB += data[idx + 2];
+        bgCount++;
+      }
+    }
+    if (bgCount > 0) {
+      bgR /= bgCount;
+      bgG /= bgCount;
+      bgB /= bgCount;
+    } else {
+      bgR = whitePoint;
+      bgG = whitePoint;
+      bgB = whitePoint;
+    }
+    const targetWhite = 252;
+    const gainR = targetWhite / Math.max(110, bgR);
+    const gainG = targetWhite / Math.max(110, bgG);
+    const gainB = targetWhite / Math.max(110, bgB);
+    const range = Math.max(1, whitePoint - blackPoint);
+    const temp = new Uint8ClampedArray(total * 4);
+    const darkFloor = 0.5 - 0.32 * s;
+    const textThresh = 0.52;
+    const bgThresh = 0.65;
+    for (let i = 0; i < total; i++) {
+      const idx = i * 4;
+      const r = data[idx] * gainR;
+      const g = data[idx + 1] * gainG;
+      const b = data[idx + 2] * gainB;
+      const a = data[idx + 3];
+      const currentLuma = 0.299 * r + 0.587 * g + 0.114 * b;
+      let norm = (currentLuma - blackPoint) / range;
+      norm = Math.max(0, Math.min(1, norm));
+      let factor;
+      if (norm > bgThresh) {
+        const t = (norm - bgThresh) / (1 - bgThresh);
+        factor = 1 + t * (0.22 + 0.26 * s);
+      } else if (norm < textThresh) {
+        const t = norm / textThresh;
+        factor = darkFloor + (1 - darkFloor) * Math.pow(t, 0.75);
+      } else {
+        factor = 1;
+      }
+      temp[idx] = clampByte(r * factor);
+      temp[idx + 1] = clampByte(g * factor);
+      temp[idx + 2] = clampByte(b * factor);
+      temp[idx + 3] = a;
+    }
+    const amount = 0.22 + 0.28 * s;
+    for (let y = 0; y < h; y++) {
+      const row = y * w;
+      const ym1 = Math.max(0, y - 1) * w;
+      const yp1 = Math.min(h - 1, y + 1) * w;
+      for (let x = 0; x < w; x++) {
+        const xm1 = Math.max(0, x - 1);
+        const xp1 = Math.min(w - 1, x + 1);
+        const idx = (row + x) * 4;
+        const idxT = (ym1 + x) * 4;
+        const idxB = (yp1 + x) * 4;
+        const idxL = (row + xm1) * 4;
+        const idxR = (row + xp1) * 4;
+        for (let c = 0; c < 3; c++) {
+          const center = temp[idx + c];
+          const neighbors = (temp[idxT + c] + temp[idxB + c] + temp[idxL + c] + temp[idxR + c]) * 0.25;
+          const diff = center - neighbors;
+          out[idx + c] = clampByte(center + diff * amount);
+        }
+        out[idx + 3] = temp[idx + 3];
+      }
+    }
+    if (s < 0.999) {
+      for (let i = 0; i < total; i++) {
+        const idx = i * 4;
+        out[idx] = clampByte(data[idx] * (1 - s) + out[idx] * s);
+        out[idx + 1] = clampByte(data[idx + 1] * (1 - s) + out[idx + 1] * s);
+        out[idx + 2] = clampByte(data[idx + 2] * (1 - s) + out[idx + 2] * s);
+      }
+    }
+    return out;
+  }
+  function enhanceImageSource(sourceImage, doc, strength = 1) {
+    try {
+      if (!sourceImage) return null;
+      const currentDoc = doc || (typeof document !== "undefined" ? document : null);
+      if (!currentDoc || typeof currentDoc.createElement !== "function") return null;
+      const width = sourceImage.naturalWidth || sourceImage.width || 0;
+      const height = sourceImage.naturalHeight || sourceImage.height || 0;
+      if (width <= 0 || height <= 0) return null;
+      const canvas = currentDoc.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      ctx.drawImage(sourceImage, 0, 0, width, height);
+      const imgData = ctx.getImageData(0, 0, width, height);
+      const enhancedData = enhanceDocumentBuffer(imgData.data, width, height, strength);
+      const outImgData = ctx.createImageData(width, height);
+      outImgData.data.set(enhancedData);
+      ctx.putImageData(outImgData, 0, 0);
+      const dataUrl = canvas.toDataURL("image/png");
+      const outImg = new Image();
+      outImg.src = dataUrl;
+      return {
+        image: outImg,
+        dataUrl,
+        width,
+        height
+      };
+    } catch (_err) {
+      return null;
+    }
+  }
+
   // src/controllers/cropController.js
   var HIDDEN_CLASS2 = "hidden";
   var HANDLE_RADIUS = 12;
@@ -1031,6 +1725,10 @@
   var CROP_BUTTONS = Object.freeze({
     front: "crop1",
     back: "crop2"
+  });
+  var AUTO_CROP_BUTTONS = Object.freeze({
+    front: "autoCrop1",
+    back: "autoCrop2"
   });
   var CROP_INFO_IDS = Object.freeze({
     front: "cropInfo1",
@@ -1058,8 +1756,15 @@
     let dragCornerIdx = -1;
     let dragStartOriginal = null;
     let dragStartCorners = null;
+    let modalBaseImage = null;
     function byId(id) {
       return doc.getElementById(id);
+    }
+    function safeShowGuidance(text, options) {
+      try {
+        showGuidance(text, options);
+      } catch (_e) {
+      }
     }
     function on(el, type, handler, options) {
       if (!el || typeof el.addEventListener !== "function") return;
@@ -1109,7 +1814,12 @@
     function drawCropOverlay() {
       const canvas = getCanvas();
       if (!canvas || !cropImage || !quadCorners) return;
-      const ctx = canvas.getContext("2d");
+      let ctx = null;
+      try {
+        ctx = canvas.getContext("2d");
+      } catch (_e) {
+        ctx = null;
+      }
       if (!ctx) return;
       const cw = canvas.width;
       const ch = canvas.height;
@@ -1131,8 +1841,8 @@
       ctx.clip();
       ctx.drawImage(cropImage, 0, 0, cw, ch);
       ctx.restore();
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#00d2ff";
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.moveTo(displayCorners[0].x, displayCorners[0].y);
       ctx.lineTo(displayCorners[1].x, displayCorners[1].y);
@@ -1142,13 +1852,76 @@
       ctx.stroke();
       displayCorners.forEach((corner, idx) => {
         ctx.beginPath();
+        ctx.arc(corner.x, corner.y, HANDLE_RADIUS, 0, Math.PI * 2);
+        ctx.fillStyle = idx === activeCornerIdx ? "rgba(0, 210, 255, 0.35)" : "rgba(255, 255, 255, 0.2)";
+        ctx.fill();
+        ctx.beginPath();
         ctx.arc(corner.x, corner.y, HANDLE_RADIUS / 2, 0, Math.PI * 2);
         ctx.fillStyle = idx === activeCornerIdx ? "#00bfff" : "#ffffff";
         ctx.fill();
         ctx.strokeStyle = "#000000";
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 1.5;
         ctx.stroke();
       });
+      if (dragging && dragType === "corner" && dragCornerIdx >= 0) {
+        drawLoupe(ctx, cw, ch, displayCorners[dragCornerIdx], quadCorners[dragCornerIdx]);
+      }
+    }
+    function drawLoupe(ctx, cw, ch, displayCorner, origCorner) {
+      if (!cropImage || !origCorner) return;
+      const loupeRadius = 46;
+      const zoom = 2.4;
+      const onRight = displayCorner.x < cw / 2;
+      const loupeX = onRight ? cw - loupeRadius - 16 : loupeRadius + 16;
+      const loupeY = loupeRadius + 16;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(loupeX, loupeY, loupeRadius, 0, Math.PI * 2);
+      ctx.fillStyle = "#0f172a";
+      ctx.fill();
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(loupeX, loupeY, loupeRadius, 0, Math.PI * 2);
+      ctx.clip();
+      const srcW = loupeRadius * 2 / (scale * zoom);
+      const srcH = loupeRadius * 2 / (scale * zoom);
+      const srcX = origCorner.x - srcW / 2;
+      const srcY = origCorner.y - srcH / 2;
+      ctx.drawImage(
+        cropImage,
+        srcX,
+        srcY,
+        srcW,
+        srcH,
+        loupeX - loupeRadius,
+        loupeY - loupeRadius,
+        loupeRadius * 2,
+        loupeRadius * 2
+      );
+      ctx.strokeStyle = "#00d2ff";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(loupeX - 10, loupeY);
+      ctx.lineTo(loupeX + 10, loupeY);
+      ctx.moveTo(loupeX, loupeY - 10);
+      ctx.lineTo(loupeX, loupeY + 10);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(loupeX, loupeY, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+      ctx.restore();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(loupeX, loupeY, loupeRadius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = "#00d2ff";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(loupeX, loupeY, loupeRadius + 2, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
     }
     function getCanvasPointer(event) {
       const canvas = getCanvas();
@@ -1330,30 +2103,36 @@
       const src = state.sources[activeSlot];
       return { width: src.naturalWidth, height: src.naturalHeight };
     }
-    function openCropModal(slot) {
+    function openCropModal(slot, options = {}) {
       try {
         const state = appState.getState();
         const source = state.sources[slot];
         if (!source || !source.image) {
-          showGuidance("No image is available to crop. Please upload an image first.");
+          safeShowGuidance("No image is available to crop. Please upload an image first.");
           return;
         }
         activeSlot = slot;
         openerElement = byId(CROP_BUTTONS[slot]) || null;
-        if (source.crop && source.crop.corners) {
+        if (options.forceAutoDetect) {
+          quadCorners = detectCardCorners(source.image, source.naturalWidth, source.naturalHeight, doc);
+          currentRegion = quadBoundingBox(quadCorners);
+          safeShowGuidance("4 corners auto-detected like Microsoft Lens. Drag handles to fine-tune.");
+        } else if (source.crop && source.crop.corners) {
           quadCorners = source.crop.corners.map((c) => ({ ...c }));
           currentRegion = quadBoundingBox(quadCorners);
         } else if (source.crop) {
           currentRegion = { ...source.crop };
           quadCorners = regionToQuadCorners(currentRegion);
         } else {
-          currentRegion = initialRegion(source.naturalWidth, source.naturalHeight);
-          quadCorners = initialQuadCorners(source.naturalWidth, source.naturalHeight);
+          quadCorners = detectCardCorners(source.image, source.naturalWidth, source.naturalHeight, doc);
+          currentRegion = quadBoundingBox(quadCorners);
+          safeShowGuidance("4 corners auto-selected like Microsoft Lens. Drag handles to fine-tune.");
         }
         const viewportW = doc.defaultView && doc.defaultView.innerWidth || 800;
         const viewportH = doc.defaultView && doc.defaultView.innerHeight || 600;
-        const availW = Math.max(100, viewportW * 0.85);
-        const availH = Math.max(100, viewportH * 0.7);
+        const reservedChromeH = 180;
+        const availW = Math.max(160, Math.min(viewportW * 0.88, 780));
+        const availH = Math.max(120, Math.min(viewportH - reservedChromeH, viewportH * 0.52));
         const sizing = sizeCropCanvas(
           source.naturalWidth,
           source.naturalHeight,
@@ -1367,6 +2146,14 @@
           canvas.height = Math.round(sizing.canvasH);
         }
         cropImage = source.image;
+        modalBaseImage = source.image && source.image.__baseImage || source.image;
+        if (modalBaseImage) modalBaseImage.__baseImage = modalBaseImage;
+        const currentSlotSlider = byId(slot === "front" ? "enhanceSlider1" : "enhanceSlider2");
+        const modalSlider = byId("enhanceSliderModal");
+        const modalVal = byId("enhanceValModal");
+        const initialSliderVal = currentSlotSlider ? currentSlotSlider.value : "0";
+        if (modalSlider) modalSlider.value = initialSliderVal;
+        if (modalVal) modalVal.textContent = `${initialSliderVal}%`;
         const modal = getModal();
         if (modal) {
           modal.classList.remove(HIDDEN_CLASS2);
@@ -1399,6 +2186,7 @@
       dragging = false;
       dragType = null;
       cropImage = null;
+      modalBaseImage = null;
       quadCorners = null;
       returnFocus();
       activeSlot = null;
@@ -1441,11 +2229,16 @@
           const outH = croppedResult.height;
           const slot = activeSlot;
           const commitCrop = () => {
+            img.__baseImage = img;
             appState.setSource(slot, {
               image: img,
               naturalWidth: outW,
               naturalHeight: outH
             });
+            const slider = byId(slot === "front" ? "enhanceSlider1" : "enhanceSlider2");
+            const badge = byId(slot === "front" ? "enhanceVal1" : "enhanceVal2");
+            if (slider) slider.value = "0";
+            if (badge) badge.textContent = "0%";
             updateSlotVisuals(slot, dataUrl);
             displayCropInfo(slot);
           };
@@ -1503,7 +2296,12 @@
       const outCanvas = doc.createElement("canvas");
       outCanvas.width = outW;
       outCanvas.height = outH;
-      const outCtx = outCanvas.getContext("2d");
+      let outCtx = null;
+      try {
+        outCtx = outCanvas.getContext("2d");
+      } catch (_e) {
+        outCtx = null;
+      }
       if (!outCtx) return null;
       const gridSize = 20;
       for (let row = 0; row < gridSize; row++) {
@@ -1576,6 +2374,192 @@
       } catch (_err) {
       }
     }
+    function autoDetectCurrentModal() {
+      try {
+        if (!activeSlot || !cropImage) return;
+        const bounds = getImageBounds();
+        quadCorners = detectCardCorners(cropImage, bounds.width, bounds.height, doc);
+        currentRegion = quadBoundingBox(quadCorners);
+        drawCropOverlay();
+        safeShowGuidance("4 corners auto-detected like Microsoft Lens.");
+      } catch (_err) {
+      }
+    }
+    function resetToFullImage() {
+      try {
+        if (!activeSlot) return;
+        const bounds = getImageBounds();
+        quadCorners = initialQuadCorners(bounds.width, bounds.height);
+        currentRegion = quadBoundingBox(quadCorners);
+        drawCropOverlay();
+        safeShowGuidance("Corners reset to full image.");
+      } catch (_err) {
+      }
+    }
+    function quickAutoCrop(slot) {
+      try {
+        const state = appState.getState();
+        const source = state.sources[slot];
+        if (!source || !source.image) {
+          safeShowGuidance("No image is available to auto crop. Please upload an image first.");
+          return;
+        }
+        const bounds = { width: source.naturalWidth, height: source.naturalHeight };
+        const corners = detectCardCorners(source.image, bounds.width, bounds.height, doc);
+        const croppedResult = perspectiveCrop(source.image, corners);
+        if (croppedResult) {
+          const img = croppedResult.image;
+          const dataUrl = croppedResult.dataUrl;
+          const outW = croppedResult.width;
+          const outH = croppedResult.height;
+          const commitCrop = () => {
+            img.__baseImage = img;
+            appState.setSource(slot, {
+              image: img,
+              naturalWidth: outW,
+              naturalHeight: outH
+            });
+            const slider = byId(slot === "front" ? "enhanceSlider1" : "enhanceSlider2");
+            const badge = byId(slot === "front" ? "enhanceVal1" : "enhanceVal2");
+            if (slider) slider.value = "0";
+            if (badge) badge.textContent = "0%";
+            updateSlotVisuals(slot, dataUrl);
+            displayCropInfo(slot);
+            safeShowGuidance(`Image ${slot === "front" ? "1 (Front)" : "2 (Back)"}: Auto crop applied successfully!`);
+          };
+          if (img.complete && img.naturalWidth > 0) {
+            commitCrop();
+          } else {
+            img.onload = commitCrop;
+            img.onerror = () => {
+              const bbox = quadBoundingBox(corners);
+              appState.setCrop(slot, {
+                x: bbox.x,
+                y: bbox.y,
+                w: bbox.w,
+                h: bbox.h,
+                corners: corners.map((c) => ({ x: Math.round(c.x), y: Math.round(c.y) }))
+              });
+              displayCropInfo(slot);
+              safeShowGuidance(`Image ${slot === "front" ? "1 (Front)" : "2 (Back)"}: Corners detected.`);
+            };
+          }
+        } else {
+          const bbox = quadBoundingBox(corners);
+          appState.setCrop(slot, {
+            x: bbox.x,
+            y: bbox.y,
+            w: bbox.w,
+            h: bbox.h,
+            corners: corners.map((c) => ({ x: Math.round(c.x), y: Math.round(c.y) }))
+          });
+          displayCropInfo(slot);
+          safeShowGuidance(`Image ${slot === "front" ? "1 (Front)" : "2 (Back)"}: Corners detected.`);
+        }
+      } catch (_err) {
+      }
+    }
+    function quickEnhance(slot, strength = 1) {
+      try {
+        const state = appState.getState();
+        const source = state.sources[slot];
+        if (!source || !source.image) {
+          safeShowGuidance(`No image is available to enhance. Please upload Image ${slot === "front" ? "1 (Front)" : "2 (Back)"} first.`);
+          return;
+        }
+        const s = Math.max(0, Math.min(1, typeof strength === "number" ? strength : 1));
+        const pct = Math.round(s * 100);
+        const slider = byId(slot === "front" ? "enhanceSlider1" : "enhanceSlider2");
+        const badge = byId(slot === "front" ? "enhanceVal1" : "enhanceVal2");
+        if (slider && Number(slider.value) !== pct) slider.value = String(pct);
+        if (badge) badge.textContent = `${pct}%`;
+        const base = source.image.__baseImage || source.image;
+        base.__baseImage = base;
+        if (s <= 0) {
+          appState.setSource(slot, {
+            image: base,
+            naturalWidth: base.naturalWidth,
+            naturalHeight: base.naturalHeight
+          });
+          updateSlotVisuals(slot, base.src);
+          return;
+        }
+        const enhanced = enhanceImageSource(base, doc, s);
+        if (!enhanced) {
+          safeShowGuidance(`Could not enhance Image ${slot === "front" ? "1 (Front)" : "2 (Back)"}.`);
+          return;
+        }
+        enhanced.image.__baseImage = base;
+        const commitEnhance = () => {
+          appState.setSource(slot, {
+            image: enhanced.image,
+            naturalWidth: enhanced.width,
+            naturalHeight: enhanced.height
+          });
+          updateSlotVisuals(slot, enhanced.dataUrl);
+          if (s >= 1) {
+            safeShowGuidance(`Image ${slot === "front" ? "1 (Front)" : "2 (Back)"}: Enhanced with 1-click!`);
+          }
+        };
+        if (enhanced.image.complete && enhanced.image.naturalWidth > 0) {
+          commitEnhance();
+        } else {
+          enhanced.image.onload = commitEnhance;
+          enhanced.image.onerror = () => {
+            safeShowGuidance(`Could not display enhanced image.`);
+          };
+        }
+      } catch (_err) {
+      }
+    }
+    function enhanceCurrentModal(strength = 1) {
+      try {
+        if (!activeSlot || !cropImage) return;
+        const s = Math.max(0, Math.min(1, typeof strength === "number" ? strength : 1));
+        const pct = Math.round(s * 100);
+        const modalSlider = byId("enhanceSliderModal");
+        const modalVal = byId("enhanceValModal");
+        if (modalSlider && Number(modalSlider.value) !== pct) modalSlider.value = String(pct);
+        if (modalVal) modalVal.textContent = `${pct}%`;
+        if (!modalBaseImage) {
+          modalBaseImage = cropImage.__baseImage || cropImage;
+          modalBaseImage.__baseImage = modalBaseImage;
+        }
+        if (s <= 0) {
+          cropImage = modalBaseImage;
+          drawCropOverlay();
+          return;
+        }
+        const enhanced = enhanceImageSource(modalBaseImage, doc, s);
+        if (!enhanced) return;
+        enhanced.image.__baseImage = modalBaseImage;
+        const commit = () => {
+          cropImage = enhanced.image;
+          drawCropOverlay();
+          if (s >= 1) {
+            safeShowGuidance("Image enhanced! Corners preserved.");
+          }
+        };
+        if (enhanced.image.complete && enhanced.image.naturalWidth > 0) {
+          commit();
+        } else {
+          enhanced.image.onload = commit;
+        }
+      } catch (_err) {
+      }
+    }
+    function handleSliderInput(slot, value) {
+      const num = Math.max(0, Math.min(100, Number(value) || 0));
+      const badge = byId(slot === "front" ? "enhanceVal1" : "enhanceVal2");
+      if (badge) badge.textContent = `${num}%`;
+      quickEnhance(slot, num / 100);
+    }
+    function handleModalSliderInput(value) {
+      const num = Math.max(0, Math.min(100, Number(value) || 0));
+      const badge = byId("enhanceValModal");
+      if (badge) badge.textContent = `${num}%`;
+      enhanceCurrentModal(num / 100);
+    }
     function displayCropInfo(slot) {
       const infoEl = byId(CROP_INFO_IDS[slot]);
       if (!infoEl) return;
@@ -1599,6 +2583,26 @@
       const crop2Btn = byId("crop2");
       on(crop1Btn, "click", () => openCropModal("front"));
       on(crop2Btn, "click", () => openCropModal("back"));
+      const autoCrop1Btn = byId("autoCrop1");
+      const autoCrop2Btn = byId("autoCrop2");
+      if (autoCrop1Btn) on(autoCrop1Btn, "click", () => quickAutoCrop("front"));
+      if (autoCrop2Btn) on(autoCrop2Btn, "click", () => quickAutoCrop("back"));
+      const enhance1Btn = byId("enhance1");
+      const enhance2Btn = byId("enhance2");
+      if (enhance1Btn) on(enhance1Btn, "click", () => quickEnhance("front", 1));
+      if (enhance2Btn) on(enhance2Btn, "click", () => quickEnhance("back", 1));
+      const slider1 = byId("enhanceSlider1");
+      const slider2 = byId("enhanceSlider2");
+      if (slider1) on(slider1, "input", (e) => handleSliderInput("front", e.target.value));
+      if (slider2) on(slider2, "input", (e) => handleSliderInput("back", e.target.value));
+      const autoDetectBtn = byId("autoDetectCrop");
+      const resetCornersBtn = byId("resetCropCorners");
+      const modalEnhanceBtn = byId("enhanceCropModal");
+      const sliderModal = byId("enhanceSliderModal");
+      if (autoDetectBtn) on(autoDetectBtn, "click", autoDetectCurrentModal);
+      if (resetCornersBtn) on(resetCornersBtn, "click", resetToFullImage);
+      if (modalEnhanceBtn) on(modalEnhanceBtn, "click", () => enhanceCurrentModal(1));
+      if (sliderModal) on(sliderModal, "input", (e) => handleModalSliderInput(e.target.value));
       const applyBtn = byId("applyCrop");
       const cancelBtn = byId("cancelCrop");
       on(applyBtn, "click", () => applyCrop());
@@ -1621,12 +2625,20 @@
       activeSlot = null;
       currentRegion = null;
       cropImage = null;
+      modalBaseImage = null;
       openerElement = null;
     }
     return {
       init,
       destroy,
       openCropModal,
+      quickAutoCrop,
+      quickEnhance,
+      handleSliderInput,
+      autoDetectCurrentModal,
+      resetToFullImage,
+      enhanceCurrentModal,
+      handleModalSliderInput,
       applyCrop,
       cancelCrop
     };
@@ -1890,7 +2902,7 @@
   function isIdentity(brightness, contrast, saturation, sharpness) {
     return toNumber(brightness, ADJUSTMENT_DEFAULTS.brightness) === 100 && toNumber(contrast, ADJUSTMENT_DEFAULTS.contrast) === 100 && toNumber(saturation, ADJUSTMENT_DEFAULTS.saturation) === 100 && toNumber(sharpness, ADJUSTMENT_DEFAULTS.sharpness) === 0;
   }
-  function clampByte(value) {
+  function clampByte2(value) {
     if (value <= 0) return 0;
     if (value >= 255) return 255;
     return Math.round(value);
@@ -1912,9 +2924,9 @@
       const rr = (sr + (1 - sr) * s) * r + (sg - sg * s) * g + (sb - sb * s) * bl;
       const gg = (sr - sr * s) * r + (sg + (1 - sg) * s) * g + (sb - sb * s) * bl;
       const bb = (sr - sr * s) * r + (sg - sg * s) * g + (sb + (1 - sb) * s) * bl;
-      out[i] = clampByte(rr);
-      out[i + 1] = clampByte(gg);
-      out[i + 2] = clampByte(bb);
+      out[i] = clampByte2(rr);
+      out[i + 1] = clampByte2(gg);
+      out[i + 2] = clampByte2(bb);
       out[i + 3] = src[i + 3];
     }
   }
@@ -1941,9 +2953,9 @@
             b += src[sIdx + 2] * weight;
           }
         }
-        out[idx] = clampByte(r);
-        out[idx + 1] = clampByte(g);
-        out[idx + 2] = clampByte(b);
+        out[idx] = clampByte2(r);
+        out[idx + 1] = clampByte2(g);
+        out[idx + 2] = clampByte2(b);
         out[idx + 3] = src[idx + 3];
       }
     }
@@ -2209,7 +3221,7 @@
   var LUMA_R = 0.299;
   var LUMA_G = 0.587;
   var LUMA_B = 0.114;
-  function clampByte2(v) {
+  function clampByte3(v) {
     if (v < 0) return 0;
     if (v > 255) return 255;
     return v;
@@ -2232,9 +3244,9 @@
     }
     if (filter === "lighten") {
       for (let i = 0; i + 3 < length; i += 4) {
-        out[i] = clampByte2(Math.round(out[i] * 1.08 + 12));
-        out[i + 1] = clampByte2(Math.round(out[i + 1] * 1.08 + 12));
-        out[i + 2] = clampByte2(Math.round(out[i + 2] * 1.08 + 12));
+        out[i] = clampByte3(Math.round(out[i] * 1.08 + 12));
+        out[i + 1] = clampByte3(Math.round(out[i + 1] * 1.08 + 12));
+        out[i + 2] = clampByte3(Math.round(out[i + 2] * 1.08 + 12));
       }
       return out;
     }
@@ -2250,7 +3262,7 @@
     for (let i = 0; i + 3 < length; i += 4) {
       let l = Math.round(LUMA_R * out[i] + LUMA_G * out[i + 1] + LUMA_B * out[i + 2]);
       l = Math.round(DOC_CONTRAST_FACTOR * (l - 128) + 128 + DOC_BRIGHTNESS_OFFSET);
-      l = clampByte2(l);
+      l = clampByte3(l);
       out[i] = l;
       out[i + 1] = l;
       out[i + 2] = l;
@@ -2448,18 +3460,28 @@
     if (m > ceiling) m = ceiling;
     return m;
   }
-  function fitImageToPage(imgW, imgH, page = A4_PORTRAIT, margin = DEFAULT_MARGIN_MM) {
+  function fitImageToPage(imgW, imgH, page = A4_PORTRAIT, margin = DEFAULT_MARGIN_MM, maxFitWidthMm = null, verticalAlign = "center") {
     const { widthMm, heightMm } = resolvePage(page);
     const m = resolveMargin(margin, { widthMm, heightMm });
-    const printableW = widthMm - 2 * m;
+    let printableW = widthMm - 2 * m;
     const printableH = heightMm - 2 * m;
+    if (Number.isFinite(maxFitWidthMm) && maxFitWidthMm > 0) {
+      printableW = Math.min(printableW, maxFitWidthMm);
+    }
     const w0 = Number.isFinite(imgW) && imgW > 0 ? imgW : printableW;
     const h0 = Number.isFinite(imgH) && imgH > 0 ? imgH : printableH;
     const scale = Math.min(printableW / w0, printableH / h0);
     const w = w0 * scale;
     const h = h0 * scale;
     const x = (widthMm - w) / 2;
-    const y = (heightMm - h) / 2;
+    let y;
+    if (verticalAlign === "top") {
+      const topMargin = Math.max(m, 25.4);
+      y = Math.min(topMargin, heightMm - m - h);
+      if (y < m) y = m;
+    } else {
+      y = (heightMm - h) / 2;
+    }
     return { x, y, w, h };
   }
 
@@ -2530,6 +3552,12 @@
       doc,
       "downloadAdjPdf"
     );
+    const cardSizeSelect = resolveElement2(
+      elements,
+      "cardSizeSelect",
+      doc,
+      "cardSize"
+    );
     function buildAndSavePdf(sourceImage, filename) {
       const JsPDF = getJsPDFConstructor(win);
       if (!JsPDF) {
@@ -2546,7 +3574,18 @@
         msgShowError(EXPORT_FAILED_MESSAGE);
         return false;
       }
-      const fit = fitFn(dims.width, dims.height, A4_PORTRAIT, DEFAULT_MARGIN_MM);
+      let maxCardWidth = 105;
+      if (cardSizeSelect && cardSizeSelect.value) {
+        if (cardSizeSelect.value === "fit") {
+          maxCardWidth = null;
+        } else {
+          const parsed = parseFloat(cardSizeSelect.value);
+          if (Number.isFinite(parsed) && parsed > 0) {
+            maxCardWidth = parsed;
+          }
+        }
+      }
+      const fit = fitFn(dims.width, dims.height, A4_PORTRAIT, DEFAULT_MARGIN_MM, maxCardWidth, "top");
       const pdf = new JsPDF({
         orientation: "portrait",
         unit: "mm",
@@ -2675,6 +3714,13 @@
     const filterSelect = resolveElement3(elements, "filterSelect", doc, "filterSelect");
     const fileInput1 = resolveElement3(elements, "fileInput1", doc, "file1");
     const fileInput2 = resolveElement3(elements, "fileInput2", doc, "file2");
+    const enhanceSlider1 = resolveElement3(elements, "enhanceSlider1", doc, "enhanceSlider1");
+    const enhanceSlider2 = resolveElement3(elements, "enhanceSlider2", doc, "enhanceSlider2");
+    const enhanceSliderModal = resolveElement3(elements, "enhanceSliderModal", doc, "enhanceSliderModal");
+    const enhanceVal1 = resolveElement3(elements, "enhanceVal1", doc, "enhanceVal1");
+    const enhanceVal2 = resolveElement3(elements, "enhanceVal2", doc, "enhanceVal2");
+    const enhanceValModal = resolveElement3(elements, "enhanceValModal", doc, "enhanceValModal");
+    const cardSizeSelect = resolveElement3(elements, "cardSizeSelect", doc, "cardSize");
     function hide(el) {
       if (el && el.classList) el.classList.add(HIDDEN_CLASS6);
     }
@@ -2731,6 +3777,13 @@
         if (messages && typeof messages.clearMessage === "function") {
           messages.clearMessage();
         }
+        if (enhanceSlider1) enhanceSlider1.value = "0";
+        if (enhanceSlider2) enhanceSlider2.value = "0";
+        if (enhanceSliderModal) enhanceSliderModal.value = "0";
+        if (enhanceVal1) enhanceVal1.textContent = "0%";
+        if (enhanceVal2) enhanceVal2.textContent = "0%";
+        if (enhanceValModal) enhanceValModal.textContent = "0%";
+        if (cardSizeSelect) cardSizeSelect.value = "105";
       } catch (_err) {
       }
     }
@@ -2751,1639 +3804,6 @@
       init,
       destroy,
       handleReset
-    };
-  }
-
-  // src/core/nidImageEnhancer.js
-  function clampByte3(val) {
-    if (val < 0) return 0;
-    if (val > 255) return 255;
-    return Math.round(val);
-  }
-  function makePoint(x, y) {
-    const rx = Math.round(x);
-    const ry = Math.round(y);
-    const pt = [ry, rx];
-    pt.x = rx;
-    pt.y = ry;
-    return pt;
-  }
-  function normalizeQuad(corners, naturalW = 1e3, naturalH = 1e3) {
-    if (!corners) {
-      return {
-        top_left: makePoint(0, 0),
-        top_right: makePoint(1e3, 0),
-        bottom_right: makePoint(1e3, 1e3),
-        bottom_left: makePoint(0, 1e3)
-      };
-    }
-    if (corners.xmin !== void 0 && corners.ymin !== void 0 && corners.xmax !== void 0 && corners.ymax !== void 0) {
-      const { xmin, ymin, xmax, ymax } = corners;
-      return normalizeQuad({
-        top_left: { x: xmin, y: ymin },
-        top_right: { x: xmax, y: ymin },
-        bottom_right: { x: xmax, y: ymax },
-        bottom_left: { x: xmin, y: ymax }
-      }, naturalW, naturalH);
-    }
-    if (Array.isArray(corners) && corners.length === 4) {
-      const [c0, c1, c2, c3] = corners.map(Number);
-      let xmin, ymin, xmax, ymax;
-      const span02 = Math.abs(c2 - c0);
-      const span13 = Math.abs(c3 - c1);
-      if (span02 >= span13) {
-        xmin = c0;
-        ymin = c1;
-        xmax = c2;
-        ymax = c3;
-      } else {
-        ymin = c0;
-        xmin = c1;
-        ymax = c2;
-        xmax = c3;
-      }
-      return normalizeQuad({
-        top_left: { x: xmin, y: ymin },
-        top_right: { x: xmax, y: ymin },
-        bottom_right: { x: xmax, y: ymax },
-        bottom_left: { x: xmin, y: ymax }
-      }, naturalW, naturalH);
-    }
-    const { top_left, top_right, bottom_right, bottom_left } = corners;
-    if (!top_left || !top_right || !bottom_right || !bottom_left) {
-      return {
-        top_left: makePoint(0, 0),
-        top_right: makePoint(1e3, 0),
-        bottom_right: makePoint(1e3, 1e3),
-        bottom_left: makePoint(0, 1e3)
-      };
-    }
-    let isX0 = true;
-    if (Array.isArray(top_left) && Array.isArray(top_right)) {
-      const d0 = Math.abs(Number(top_right[0]) - Number(top_left[0]));
-      const d1 = Math.abs(Number(top_right[1]) - Number(top_left[1]));
-      isX0 = d0 >= d1;
-    }
-    const parseRawPt = (p) => {
-      if (typeof p === "object" && !Array.isArray(p)) {
-        if (p.x !== void 0 && p.y !== void 0) {
-          return { x: Number(p.x), y: Number(p.y) };
-        }
-      }
-      if (Array.isArray(p)) {
-        const v0 = Number(p[0]) || 0;
-        const v1 = Number(p[1]) || 0;
-        return isX0 ? { x: v0, y: v1 } : { x: v1, y: v0 };
-      }
-      return { x: 0, y: 0 };
-    };
-    const pTL = parseRawPt(top_left);
-    const pTR = parseRawPt(top_right);
-    const pBR = parseRawPt(bottom_right);
-    const pBL = parseRawPt(bottom_left);
-    const maxX = Math.max(pTL.x, pTR.x, pBR.x, pBL.x);
-    const maxY = Math.max(pTL.y, pTR.y, pBR.y, pBL.y);
-    const minX = Math.min(pTL.x, pTR.x, pBR.x, pBL.x);
-    const minY = Math.min(pTL.y, pTR.y, pBR.y, pBL.y);
-    const spanX = maxX - minX || 1;
-    const spanY = maxY - minY || 1;
-    let isPixels = false;
-    if (maxX > 1e3 || maxY > 1e3) {
-      isPixels = true;
-    } else if (Array.isArray(top_left) && (naturalW !== 1e3 || naturalH !== 1e3) && maxX <= naturalW * 1.05 && maxY <= naturalH * 1.05) {
-      isPixels = true;
-    }
-    const toNormalizedPoint = (pt) => {
-      let nx = isPixels ? pt.x / naturalW * 1e3 : pt.x;
-      let ny = isPixels ? pt.y / naturalH * 1e3 : pt.y;
-      if (maxX <= 1.05 && maxY <= 1.05) {
-        nx = pt.x * 1e3;
-        ny = pt.y * 1e3;
-      }
-      return makePoint(
-        Math.max(0, Math.min(1e3, nx)),
-        Math.max(0, Math.min(1e3, ny))
-      );
-    };
-    return {
-      top_left: toNormalizedPoint(pTL),
-      top_right: toNormalizedPoint(pTR),
-      bottom_right: toNormalizedPoint(pBR),
-      bottom_left: toNormalizedPoint(pBL)
-    };
-  }
-  function expandQuadSafetyMargin(corners, options = {}) {
-    const {
-      marginPct = 0.01,
-      minPadUnits = 5,
-      snapThreshold = 10,
-      maxCoord = 1e3,
-      maxPad = {}
-      // { top, bottom, left, right } caps for multi-card separation
-    } = options;
-    const q = normalizeQuad(corners);
-    const tl = q.top_left;
-    const tr = q.top_right;
-    const br = q.bottom_right;
-    const bl = q.bottom_left;
-    const minX = Math.min(tl.x, tr.x, bl.x, br.x);
-    const maxX = Math.max(tl.x, tr.x, bl.x, br.x);
-    const minY = Math.min(tl.y, tr.y, bl.y, br.y);
-    const maxY = Math.max(tl.y, tr.y, bl.y, br.y);
-    const w = maxX - minX;
-    const h = maxY - minY;
-    const rawPadX = Math.max(minPadUnits, Math.round(w * marginPct));
-    const rawPadY = Math.max(minPadUnits, Math.round(h * marginPct));
-    const padTop = maxPad.top !== void 0 ? Math.max(0, Math.min(rawPadY, maxPad.top)) : rawPadY;
-    const padBottom = maxPad.bottom !== void 0 ? Math.max(0, Math.min(rawPadY, maxPad.bottom)) : rawPadY;
-    const padLeft = maxPad.left !== void 0 ? Math.max(0, Math.min(rawPadX, maxPad.left)) : rawPadX;
-    const padRight = maxPad.right !== void 0 ? Math.max(0, Math.min(rawPadX, maxPad.right)) : rawPadX;
-    const snap = (val, min, max, allowSnap = true) => {
-      if (allowSnap) {
-        if (val <= snapThreshold) return min;
-        if (val >= max - snapThreshold) return max;
-      }
-      return Math.max(min, Math.min(max, Math.round(val)));
-    };
-    return {
-      top_left: makePoint(
-        snap(tl.x - padLeft, 0, maxCoord, padLeft > 0),
-        snap(tl.y - padTop, 0, maxCoord, padTop > 0)
-      ),
-      top_right: makePoint(
-        snap(tr.x + padRight, 0, maxCoord, padRight > 0),
-        snap(tr.y - padTop, 0, maxCoord, padTop > 0)
-      ),
-      bottom_right: makePoint(
-        snap(br.x + padRight, 0, maxCoord, padRight > 0),
-        snap(br.y + padBottom, 0, maxCoord, padBottom > 0)
-      ),
-      bottom_left: makePoint(
-        snap(bl.x - padLeft, 0, maxCoord, padLeft > 0),
-        snap(bl.y + padBottom, 0, maxCoord, padBottom > 0)
-      )
-    };
-  }
-  function separateAndExpandCards(frontInfo, backInfo, naturalW = 1e3, naturalH = 1e3) {
-    const fRaw = frontInfo.corners || frontInfo.bounds || frontInfo.box_2d;
-    const bRaw = backInfo.corners || backInfo.bounds || backInfo.box_2d;
-    const fQuad = normalizeQuad(fRaw, naturalW, naturalH);
-    const bQuad = normalizeQuad(bRaw, naturalW, naturalH);
-    const getBounds = (q) => {
-      const xs = [q.top_left.x, q.top_right.x, q.bottom_right.x, q.bottom_left.x];
-      const ys = [q.top_left.y, q.top_right.y, q.bottom_right.y, q.bottom_left.y];
-      return {
-        minX: Math.min(...xs),
-        maxX: Math.max(...xs),
-        minY: Math.min(...ys),
-        maxY: Math.max(...ys),
-        centerX: xs.reduce((a, b) => a + b, 0) / 4,
-        centerY: ys.reduce((a, b) => a + b, 0) / 4
-      };
-    };
-    const fBox = getBounds(fQuad);
-    const bBox = getBounds(bQuad);
-    const diffX = Math.abs(fBox.centerX - bBox.centerX);
-    const diffY = Math.abs(fBox.centerY - bBox.centerY);
-    const isHorizontal = diffX > diffY;
-    if (isHorizontal) {
-      const frontIsLeft = fBox.centerX < bBox.centerX;
-      const leftBox = frontIsLeft ? fBox : bBox;
-      const rightBox = frontIsLeft ? bBox : fBox;
-      const gapX = rightBox.minX - leftBox.maxX;
-      const maxPadX = gapX > 6 ? Math.floor(gapX / 2) - 2 : 0;
-      const leftMaxPad = { right: maxPadX };
-      const rightMaxPad = { left: maxPadX };
-      const expFront = expandQuadSafetyMargin(fQuad, {
-        marginPct: 0.01,
-        minPadUnits: 5,
-        snapThreshold: 10,
-        maxPad: frontIsLeft ? leftMaxPad : rightMaxPad
-      });
-      const expBack = expandQuadSafetyMargin(bQuad, {
-        marginPct: 0.01,
-        minPadUnits: 5,
-        snapThreshold: 10,
-        maxPad: frontIsLeft ? rightMaxPad : leftMaxPad
-      });
-      if (frontIsLeft) {
-        const midX = Math.round((Math.max(expFront.top_right.x, expFront.bottom_right.x) + Math.min(expBack.top_left.x, expBack.bottom_left.x)) / 2);
-        if (expFront.top_right.x >= expBack.top_left.x) {
-          expFront.top_right = makePoint(midX - 1, expFront.top_right.y);
-          expFront.bottom_right = makePoint(midX - 1, expFront.bottom_right.y);
-          expBack.top_left = makePoint(midX + 1, expBack.top_left.y);
-          expBack.bottom_left = makePoint(midX + 1, expBack.bottom_left.y);
-        }
-      } else {
-        const midX = Math.round((Math.max(expBack.top_right.x, expBack.bottom_right.x) + Math.min(expFront.top_left.x, expFront.bottom_left.x)) / 2);
-        if (expBack.top_right.x >= expFront.top_left.x) {
-          expBack.top_right = makePoint(midX - 1, expBack.top_right.y);
-          expBack.bottom_right = makePoint(midX - 1, expBack.bottom_right.y);
-          expFront.top_left = makePoint(midX + 1, expFront.top_left.y);
-          expFront.bottom_left = makePoint(midX + 1, expFront.bottom_left.y);
-        }
-      }
-      return { frontCorners: expFront, backCorners: expBack };
-    } else {
-      const frontIsTop = fBox.centerY < bBox.centerY;
-      const topBox = frontIsTop ? fBox : bBox;
-      const bottomBox = frontIsTop ? bBox : fBox;
-      const gapY = bottomBox.minY - topBox.maxY;
-      const maxPadY = gapY > 6 ? Math.floor(gapY / 2) - 2 : 0;
-      const topMaxPad = { bottom: maxPadY };
-      const bottomMaxPad = { top: maxPadY };
-      const expFront = expandQuadSafetyMargin(fQuad, {
-        marginPct: 0.01,
-        minPadUnits: 5,
-        snapThreshold: 10,
-        maxPad: frontIsTop ? topMaxPad : bottomMaxPad
-      });
-      const expBack = expandQuadSafetyMargin(bQuad, {
-        marginPct: 0.01,
-        minPadUnits: 5,
-        snapThreshold: 10,
-        maxPad: frontIsTop ? bottomMaxPad : topMaxPad
-      });
-      if (frontIsTop) {
-        const fBot = Math.max(expFront.bottom_left.y, expFront.bottom_right.y);
-        const bTop = Math.min(expBack.top_left.y, expBack.top_right.y);
-        if (fBot > bTop) {
-          const midY = Math.round((fBot + bTop) / 2);
-          expFront.bottom_left = makePoint(expFront.bottom_left.x, midY);
-          expFront.bottom_right = makePoint(expFront.bottom_right.x, midY);
-          expBack.top_left = makePoint(expBack.top_left.x, midY);
-          expBack.top_right = makePoint(expBack.top_right.x, midY);
-        }
-      } else {
-        const bBot = Math.max(expBack.bottom_left.y, expBack.bottom_right.y);
-        const fTop = Math.min(expFront.top_left.y, expFront.top_right.y);
-        if (bBot > fTop) {
-          const midY = Math.round((bBot + fTop) / 2);
-          expBack.bottom_left = makePoint(expBack.bottom_left.x, midY);
-          expBack.bottom_right = makePoint(expBack.bottom_right.x, midY);
-          expFront.top_left = makePoint(expFront.top_left.x, midY);
-          expFront.top_right = makePoint(expFront.top_right.x, midY);
-        }
-      }
-      return { frontCorners: expFront, backCorners: expBack };
-    }
-  }
-  function calculateCardHeight(corners, naturalW, naturalH, targetW = 700) {
-    if (!corners || !naturalW || !naturalH) return Math.round(targetW * 0.6306);
-    const q = normalizeQuad(corners, naturalW, naturalH);
-    const pTL = { x: q.top_left.x / 1e3 * naturalW, y: q.top_left.y / 1e3 * naturalH };
-    const pTR = { x: q.top_right.x / 1e3 * naturalW, y: q.top_right.y / 1e3 * naturalH };
-    const pBR = { x: q.bottom_right.x / 1e3 * naturalW, y: q.bottom_right.y / 1e3 * naturalH };
-    const pBL = { x: q.bottom_left.x / 1e3 * naturalW, y: q.bottom_left.y / 1e3 * naturalH };
-    const topW = Math.hypot(pTR.x - pTL.x, pTR.y - pTL.y);
-    const botW = Math.hypot(pBR.x - pBL.x, pBR.y - pBL.y);
-    const leftH = Math.hypot(pBL.x - pTL.x, pBL.y - pTL.y);
-    const rightH = Math.hypot(pBR.x - pTR.x, pBR.y - pTR.y);
-    const quadW = (topW + botW) / 2 || 1;
-    const quadH = (leftH + rightH) / 2 || 1;
-    const ratio = quadH / quadW;
-    const clampedRatio = Math.max(0.58, Math.min(0.68, ratio));
-    return Math.round(targetW * clampedRatio);
-  }
-  function warpPerspectiveQuad(sourceImg, corners, targetW, targetH, options = {}) {
-    const naturalW = sourceImg.naturalWidth || sourceImg.width || 1;
-    const naturalH = sourceImg.naturalHeight || sourceImg.height || 1;
-    const finalH = targetH || calculateCardHeight(corners, naturalW, naturalH, targetW);
-    let canvas;
-    if (typeof document !== "undefined") {
-      canvas = document.createElement("canvas");
-    } else {
-      return { width: targetW, height: finalH };
-    }
-    canvas.width = targetW;
-    canvas.height = finalH;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return canvas;
-    const resolvedCorners = options.expandMargin !== false ? expandQuadSafetyMargin(corners) : normalizeQuad(corners, naturalW, naturalH);
-    const pTL = { x: resolvedCorners.top_left.x / 1e3 * naturalW, y: resolvedCorners.top_left.y / 1e3 * naturalH };
-    const pTR = { x: resolvedCorners.top_right.x / 1e3 * naturalW, y: resolvedCorners.top_right.y / 1e3 * naturalH };
-    const pBR = { x: resolvedCorners.bottom_right.x / 1e3 * naturalW, y: resolvedCorners.bottom_right.y / 1e3 * naturalH };
-    const pBL = { x: resolvedCorners.bottom_left.x / 1e3 * naturalW, y: resolvedCorners.bottom_left.y / 1e3 * naturalH };
-    const isAxisAligned = Math.abs(pTL.y - pTR.y) < 8 && Math.abs(pBL.y - pBR.y) < 8 && Math.abs(pTL.x - pBL.x) < 8 && Math.abs(pTR.x - pBR.x) < 8;
-    if (isAxisAligned) {
-      const sx = Math.max(0, Math.round(pTL.x));
-      const sy = Math.max(0, Math.round(pTL.y));
-      const sw = Math.min(naturalW - sx, Math.round(pTR.x - pTL.x));
-      const sh = Math.min(naturalH - sy, Math.round(pBL.y - pTL.y));
-      if (sw > 0 && sh > 0) {
-        ctx.drawImage(sourceImg, sx, sy, sw, sh, 0, 0, targetW, finalH);
-        return canvas;
-      }
-    }
-    let srcCanvas;
-    if (typeof document !== "undefined") {
-      srcCanvas = document.createElement("canvas");
-    } else {
-      return canvas;
-    }
-    srcCanvas.width = naturalW;
-    srcCanvas.height = naturalH;
-    const srcCtx = srcCanvas.getContext("2d");
-    if (!srcCtx) return canvas;
-    srcCtx.drawImage(sourceImg, 0, 0);
-    let srcImgData;
-    try {
-      srcImgData = srcCtx.getImageData(0, 0, naturalW, naturalH);
-    } catch (_e) {
-      ctx.drawImage(sourceImg, 0, 0, targetW, finalH);
-      return canvas;
-    }
-    const srcPixels = srcImgData.data;
-    const dstImgData = ctx.createImageData(targetW, finalH);
-    const dstPixels = dstImgData.data;
-    for (let dy = 0; dy < finalH; dy++) {
-      const ty = dy / finalH;
-      for (let dx = 0; dx < targetW; dx++) {
-        const tx = dx / targetW;
-        const sx = (1 - tx) * (1 - ty) * pTL.x + tx * (1 - ty) * pTR.x + tx * ty * pBR.x + (1 - tx) * ty * pBL.x;
-        const sy = (1 - tx) * (1 - ty) * pTL.y + tx * (1 - ty) * pTR.y + tx * ty * pBR.y + (1 - tx) * ty * pBL.y;
-        const ix = Math.max(0, Math.min(naturalW - 1, Math.round(sx)));
-        const iy = Math.max(0, Math.min(naturalH - 1, Math.round(sy)));
-        const srcIdx = (iy * naturalW + ix) * 4;
-        const dstIdx = (dy * targetW + dx) * 4;
-        dstPixels[dstIdx] = srcPixels[srcIdx];
-        dstPixels[dstIdx + 1] = srcPixels[srcIdx + 1];
-        dstPixels[dstIdx + 2] = srcPixels[srcIdx + 2];
-        dstPixels[dstIdx + 3] = srcPixels[srcIdx + 3];
-      }
-    }
-    ctx.putImageData(dstImgData, 0, 0);
-    return canvas;
-  }
-  function enhanceRealCardImage(cardCanvas, options = {}) {
-    const {
-      cleanBackground = true,
-      contrastBoost = 1.15,
-      brightnessBoost = 1.04,
-      sharpenAmount = 25,
-      addBorder = false
-    } = options;
-    const w = cardCanvas.width;
-    const h = cardCanvas.height;
-    const ctx = cardCanvas.getContext("2d");
-    if (!ctx || w <= 0 || h <= 0) return cardCanvas;
-    let imgData;
-    try {
-      imgData = ctx.getImageData(0, 0, w, h);
-    } catch (_e) {
-      return cardCanvas;
-    }
-    const d = imgData.data;
-    if (cleanBackground) {
-      for (let i = 0; i < d.length; i += 4) {
-        const r = d[i];
-        const g = d[i + 1];
-        const b = d[i + 2];
-        const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-        const sat = Math.max(r, g, b) - Math.min(r, g, b);
-        if (lum > 155 && sat < 45) {
-          const factor = (lum - 155) / 100;
-          d[i] = clampByte3(r + (255 - r) * factor * 0.95);
-          d[i + 1] = clampByte3(g + (255 - g) * factor * 0.95);
-          d[i + 2] = clampByte3(b + (255 - b) * factor * 0.95);
-        } else if (lum < 110 && sat < 35) {
-          d[i] = clampByte3(r * 0.72);
-          d[i + 1] = clampByte3(g * 0.72);
-          d[i + 2] = clampByte3(b * 0.72);
-        } else if (contrastBoost !== 1) {
-          d[i] = clampByte3((r - 128) * contrastBoost + 128 * brightnessBoost);
-          d[i + 1] = clampByte3((g - 128) * contrastBoost + 128 * brightnessBoost);
-          d[i + 2] = clampByte3((b - 128) * contrastBoost + 128 * brightnessBoost);
-        }
-      }
-    }
-    if (sharpenAmount > 0) {
-      const orig = new Uint8ClampedArray(d);
-      const alpha = Math.min(0.6, sharpenAmount / 100 * 0.6);
-      for (let y = 1; y < h - 1; y++) {
-        for (let x = 1; x < w - 1; x++) {
-          const idx = (y * w + x) * 4;
-          for (let c = 0; c < 3; c++) {
-            const center = orig[idx + c];
-            const up = orig[((y - 1) * w + x) * 4 + c];
-            const down = orig[((y + 1) * w + x) * 4 + c];
-            const left = orig[(y * w + (x - 1)) * 4 + c];
-            const right = orig[(y * w + (x + 1)) * 4 + c];
-            const laplacian = 4 * center - up - down - left - right;
-            d[idx + c] = clampByte3(center + alpha * laplacian);
-          }
-        }
-      }
-    }
-    const edgeDist = 3;
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        if (x < edgeDist || x >= w - edgeDist || y < edgeDist || y >= h - edgeDist) {
-          const idx = (y * w + x) * 4;
-          const r = d[idx], g = d[idx + 1], b = d[idx + 2];
-          if (r > g + 25 && b > g + 25 || r > g + 35 && r > b + 35 || b > r + 30 && b > g + 20 || r < 45 && g < 45 && b < 45) {
-            d[idx] = 255;
-            d[idx + 1] = 255;
-            d[idx + 2] = 255;
-          }
-        }
-      }
-    }
-    ctx.putImageData(imgData, 0, 0);
-    if (addBorder) {
-      ctx.strokeStyle = "#000000";
-      ctx.lineWidth = 2.5;
-      ctx.strokeRect(1, 1, w - 2, h - 2);
-    }
-    return cardCanvas;
-  }
-  function trimCardBackgroundPerimeter(cardCanvas) {
-    if (!cardCanvas || !cardCanvas.getContext) return cardCanvas;
-    const w = cardCanvas.width;
-    const h = cardCanvas.height;
-    if (w <= 10 || h <= 10) return cardCanvas;
-    const ctx = cardCanvas.getContext("2d");
-    if (!ctx) return cardCanvas;
-    let imgData;
-    try {
-      imgData = ctx.getImageData(0, 0, w, h);
-    } catch (_e) {
-      return cardCanvas;
-    }
-    const d = imgData.data;
-    const isBgPixel = (r, g, b) => {
-      if (r > g + 40 && r > b + 40 && r > 80) return true;
-      if (b > g + 20 && r > g + 20 && (r + b) / 2 > 80) return true;
-      if (b > r + 30 && b > g + 15 && b > 80) return true;
-      return false;
-    };
-    const maxEdgeX = Math.min(25, Math.floor(w * 0.04));
-    const maxEdgeY = Math.min(15, Math.floor(h * 0.04));
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        if (x < maxEdgeX || x >= w - maxEdgeX || y < maxEdgeY || y >= h - maxEdgeY) {
-          const idx = (y * w + x) * 4;
-          const r = d[idx], g = d[idx + 1], b = d[idx + 2];
-          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-          if (lum > 80 && isBgPixel(r, g, b)) {
-            d[idx] = 255;
-            d[idx + 1] = 255;
-            d[idx + 2] = 255;
-          }
-        }
-      }
-    }
-    ctx.putImageData(imgData, 0, 0);
-    return cardCanvas;
-  }
-  function stackEnhancedCards(frontCanvas, backCanvas, options = {}) {
-    const {
-      spacing = 55,
-      bgColor = "#ffffff",
-      targetCanvas = null,
-      cardWidth = 680
-    } = options;
-    const hasFront = frontCanvas && frontCanvas.width > 0;
-    const hasBack = backCanvas && backCanvas.width > 0;
-    const frontH = hasFront ? Math.round(cardWidth * frontCanvas.height / frontCanvas.width) : Math.round(cardWidth * 0.6306);
-    const backH = hasBack ? Math.round(cardWidth * backCanvas.height / backCanvas.width) : Math.round(cardWidth * 0.6306);
-    const marginX = 110;
-    const marginTop = 100;
-    const marginBottom = 100;
-    let contentH = 0;
-    if (hasFront && hasBack) {
-      contentH = frontH + spacing + backH;
-    } else if (hasFront) {
-      contentH = frontH;
-    } else if (hasBack) {
-      contentH = backH;
-    } else {
-      contentH = frontH + spacing + backH;
-    }
-    const pageW = cardWidth + marginX * 2;
-    const pageH = contentH + marginTop + marginBottom;
-    let canvas = targetCanvas;
-    if (!canvas) {
-      if (typeof document !== "undefined") {
-        canvas = document.createElement("canvas");
-      } else {
-        return { width: pageW, height: pageH };
-      }
-    }
-    canvas.width = pageW;
-    canvas.height = pageH;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return canvas;
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, pageW, pageH);
-    let currentY = marginTop;
-    const cardX = marginX;
-    if (hasFront) {
-      ctx.drawImage(frontCanvas, cardX, currentY, cardWidth, frontH);
-      currentY += frontH + spacing;
-    }
-    if (hasBack) {
-      ctx.drawImage(backCanvas, cardX, currentY, cardWidth, backH);
-    }
-    return canvas;
-  }
-
-  // src/core/aiNidService.js
-  var DEFAULT_MODEL = "google/gemini-2.5-flash";
-  var FALLBACK_MODELS = [
-    "google/gemini-2.5-flash",
-    "qwen/qwen-2.5-vl-72b-instruct",
-    "google/gemini-2.0-flash-001",
-    "openrouter/free"
-  ];
-  var DEFAULT_IMAGE_EDIT_MODEL = "google/gemini-2.5-flash-image";
-  var IMAGE_EDIT_FALLBACK_MODELS = [
-    "google/gemini-3.1-flash-image",
-    "google/gemini-3-pro-image",
-    "google/gemini-2.5-flash-image"
-  ];
-  var DEFAULT_CARD_EDIT_PROMPT = `Edit this photo of a Bangladeshi National Identity (NID) card into a clean, flat, document-quality scan.
-
-Make these changes to the image:
-1. Crop tightly and exactly to the 4 physical edges of the card itself. Remove everything outside the card: bedsheet, table, floor, fingers, hands, plastic sleeve, lanyard pouch, clear/colored plastic holder, and clip holes.
-2. De-skew and flatten the perspective so the card is a straight, upright rectangle viewed head-on (correct any tilt, rotation, or keystone distortion).
-3. Replace the background around the card with pure white.
-4. Gently sharpen so the text, numbers, and photo are crisp and readable. Even out lighting and remove camera shadows and glare.
-
-STRICT PRESERVATION \u2014 do NOT change the real information in any way:
-- Do NOT alter, add, remove, re-type, translate, or regenerate ANY text, Bengali or English characters, name, father/mother name, date of birth, ID / NID number, or any digits.
-- Do NOT change or redraw the person's photograph, the signature, the national emblem, the golden chip, the barcode, the flower graphic, or the machine-readable (MRZ) lines.
-- Keep every pixel of the real card content exactly as it is. Only crop, straighten, clean the background, and sharpen. This is a real identity document; copy the real information precisely, never invent or substitute anything.`;
-  function getStoredApiKey() {
-    if (typeof localStorage !== "undefined") {
-      const key = localStorage.getItem("OPENROUTER_API_KEY");
-      if (key && key.trim().length > 0) return key.trim();
-    }
-    if (typeof window !== "undefined" && window.OPENROUTER_API_KEY) {
-      return String(window.OPENROUTER_API_KEY).trim();
-    }
-    return "";
-  }
-  function setStoredApiKey(key) {
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem("OPENROUTER_API_KEY", (key || "").trim());
-    }
-  }
-  function getStoredModel() {
-    if (typeof localStorage !== "undefined") {
-      const migrated = localStorage.getItem("NID_MODEL_MIGRATED_V3");
-      if (!migrated) {
-        try {
-          localStorage.setItem("NID_MODEL_MIGRATED_V3", "true");
-          localStorage.setItem("OPENROUTER_MODEL", DEFAULT_MODEL);
-        } catch (_e) {
-        }
-        return DEFAULT_MODEL;
-      }
-      const m = localStorage.getItem("OPENROUTER_MODEL");
-      if (m && m.trim().length > 0) return m.trim();
-    }
-    return DEFAULT_MODEL;
-  }
-  function setStoredModel(model) {
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem("OPENROUTER_MODEL", (model || "").trim());
-    }
-  }
-  function fileToDataUrl(file) {
-    return new Promise((resolve, reject) => {
-      if (!file) return reject(new Error("No file provided"));
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (err) => reject(err || new Error("Failed to read file"));
-      reader.readAsDataURL(file);
-    });
-  }
-  function loadImage(src) {
-    return new Promise((resolve, reject) => {
-      if (!src) return reject(new Error("No image source"));
-      if (typeof Image === "undefined") {
-        return resolve({ width: 600, height: 400, naturalWidth: 600, naturalHeight: 400, src });
-      }
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      let loaded = false;
-      img.onload = () => {
-        if (!loaded) {
-          loaded = true;
-          resolve(img);
-        }
-      };
-      img.onerror = () => {
-        if (!loaded) {
-          loaded = true;
-          reject(new Error("Failed to load image"));
-        }
-      };
-      img.src = src;
-      if (typeof process !== "undefined" && process.env && (process.env.VITEST || false)) {
-        setTimeout(() => {
-          if (!loaded) {
-            loaded = true;
-            try {
-              Object.defineProperty(img, "naturalWidth", { value: 800, configurable: true });
-              Object.defineProperty(img, "naturalHeight", { value: 600, configurable: true });
-            } catch (_e) {
-            }
-            resolve(img);
-          }
-        }, 10);
-      }
-    });
-  }
-  async function downscaleDataUrl(dataUrl, maxEdge = 1600) {
-    if (!dataUrl || typeof dataUrl !== "string") return dataUrl;
-    if (typeof document === "undefined") return dataUrl;
-    let img;
-    try {
-      img = await loadImage(dataUrl);
-    } catch (_e) {
-      return dataUrl;
-    }
-    const w = img.naturalWidth || img.width || 0;
-    const h = img.naturalHeight || img.height || 0;
-    if (!w || !h) return dataUrl;
-    const longest = Math.max(w, h);
-    if (longest <= maxEdge) return dataUrl;
-    const scale = maxEdge / longest;
-    const targetW = Math.max(1, Math.round(w * scale));
-    const targetH = Math.max(1, Math.round(h * scale));
-    const canvas = document.createElement("canvas");
-    canvas.width = targetW;
-    canvas.height = targetH;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return dataUrl;
-    try {
-      ctx.drawImage(img, 0, 0, targetW, targetH);
-      return canvas.toDataURL("image/jpeg", 0.92);
-    } catch (_e) {
-      return dataUrl;
-    }
-  }
-  function parseDetectionBox(rawBox, naturalW = 1e3, naturalH = 1e3) {
-    if (!rawBox) return [0, 0, 1e3, 1e3];
-    const q = normalizeQuad(rawBox, naturalW, naturalH);
-    return [
-      Math.round(q.top_left.y),
-      Math.round(q.top_left.x),
-      Math.round(q.bottom_right.y),
-      Math.round(q.bottom_right.x)
-    ];
-  }
-  function parseDetectionCorners(rawCorners, naturalW = 1e3, naturalH = 1e3) {
-    if (!rawCorners || typeof rawCorners !== "object") return null;
-    return normalizeQuad(rawCorners, naturalW, naturalH);
-  }
-  var NID_DETECTION_PROMPT = `You are an expert document segmentation computer vision AI specialized in Bangladeshi National Identity (NID) cards (both Smart NID Chip Cards and laminated / Temporary Paper NID Cards).
-
-Analyze this image carefully.
-The image contains photograph(s), scan(s), or graphics of Bangladeshi NID card(s). The card may be placed on a bedsheet, table, floor, held in human hands, or enclosed inside a plastic lanyard sleeve/pouch/holder.
-
-CRITICAL RULES \u2014 DETECT THE 4 CORNERS OF THE PHYSICAL CARD ONLY:
-1. EXCLUDE ALL EXTERNAL BACKGROUND AND HOLDERS:
-   - Completely ignore and exclude any lanyard pouch, plastic sleeve/holder, transparent edges, colored plastic frames (e.g. purple, blue, clear plastic), clip holes, bedsheets, table surfaces, fingers, or hands.
-   - The 4 corners MUST snap PRECISELY to the 4 rounded corners of the authentic physical card itself (CR-80 plastic card or paper card perimeter).
-   - "background full remove korte hobe. 4 ta corner er edge milate hobe." Do NOT include even 1 millimeter of the surrounding plastic sleeve, table, or bedsheet in the card boundary!
-
-2. TWO SEPARATE CARDS (FRONT AND BACK):
-   - Every Bangladeshi NID document has TWO separate parts: FRONT and BACK.
-   - When both parts appear in the image (stacked vertically or placed side-by-side):
-     YOU MUST ALWAYS DETECT AND RETURN BOTH AS TWO SEPARATE CARDS!
-     NEVER combine them into one bounding box.
-     NEVER mark "back.is_present": false if the back section is visible!
-
-3. CARD SPECIFICS:
-   - For Paper NID / Temporary NID ("\u09B8\u09BE\u09AE\u09DF\u09BF\u0995 \u099C\u09BE\u09A4\u09C0\u09DF \u09AA\u09B0\u09BF\u099A\u09DF \u09AA\u09A4\u09CD\u09B0"):
-     * FRONT CARD: Starts at top emblem and "\u0997\u09A3\u09AA\u09CD\u09B0\u099C\u09BE\u09A4\u09A8\u09CD\u09A4\u09CD\u09B0\u09C0 \u09AC\u09BE\u0982\u09B2\u09BE\u09A6\u09C7\u09B6 \u09B8\u09B0\u0995\u09BE\u09B0", contains photo, name, father/mother name, DOB, and ends right below "ID NO: ...".
-     * BACK CARD: Starts at "\u098F\u0987 \u0995\u09BE\u09B0\u09CD\u09A1\u099F\u09BF \u0997\u09A3\u09AA\u09CD\u09B0\u099C\u09BE\u09A4\u09A8\u09CD\u09A4\u09CD\u09B0\u09C0 \u09AC\u09BE\u0982\u09B2\u09BE\u09A6\u09C7\u09B6 \u09B8\u09B0\u0995\u09BE\u09B0\u09C7\u09B0 \u09B8\u09AE\u09CD\u09AA\u09A4\u09CD\u09A4\u09BF...", contains address ("\u09A0\u09BF\u0995\u09BE\u09A8\u09BE: ..."), issue/expiry dates, signature, and barcode.
-   - For Smart NID Chip Cards:
-     * FRONT CARD: National emblem, "\u0997\u09A3\u09AA\u09CD\u09B0\u099C\u09BE\u09A4\u09A8\u09CD\u09A4\u09CD\u09B0\u09C0 \u09AC\u09BE\u0982\u09B2\u09BE\u09A6\u09C7\u09B6 \u09B8\u09B0\u0995\u09BE\u09B0", photo, golden chip, Bengali name, English name, DOB, NID No.
-     * BACK CARD: Barcode at top, address ("\u09A0\u09BF\u0995\u09BE\u09A8\u09BE"), blood group, issue date, signature, flower graphic, and 3-line MRZ text at bottom.
-   - Standard CR-80 card aspect ratio is 85.6mm x 53.98mm (~1.586 : 1, or height ~63% of width).
-
-4. 100% PRESERVATION WITH ZERO TEXT/EMBLEM CLIPPING:
-   - "\u0995\u09CB\u09A8\u09CB \u0985\u0982\u09B6\u0987 \u0995\u09BE\u099F\u09BE \u09AF\u09BE\u09AC\u09C7 \u09A8\u09BE" \u2014 Every single millimeter of authentic card content must be preserved: emblem, photo, chip, signature, barcode, and MRZ lines.
-   - For FRONT card: The bottom edge MUST extend below the holder's signature and the full NID number (e.g. "280 451 1984"). NEVER slice off or cut through the signature or NID number!
-   - For BACK card: The top edge MUST include the full barcode. The left edge MUST include the full Bengali address ("\u09A0\u09BF\u0995\u09BE\u09A8\u09BE: ..."). The bottom edge MUST include all 3 full lines of machine-readable MRZ text (e.g. "KHATUN<<..."). NEVER slice off or cut through MRZ lines!
-   - Always expand the boundary outward rather than cutting inward into any text or signature.
-
-Coordinates must be returned in 0-1000 normalized scale (where 0,0 is top-left, 1000,1000 is bottom-right):
-Return strictly valid JSON with explicit coordinates:
-{
-  "front": {
-    "is_present": true,
-    "corners": {
-      "top_left": { "x": number, "y": number },
-      "top_right": { "x": number, "y": number },
-      "bottom_right": { "x": number, "y": number },
-      "bottom_left": { "x": number, "y": number }
-    },
-    "bounds": { "xmin": number, "ymin": number, "xmax": number, "ymax": number },
-    "box_2d": [xmin, ymin, xmax, ymax],
-    "rotation_degrees": 0
-  },
-  "back": {
-    "is_present": true,
-    "corners": {
-      "top_left": { "x": number, "y": number },
-      "top_right": { "x": number, "y": number },
-      "bottom_right": { "x": number, "y": number },
-      "bottom_left": { "x": number, "y": number }
-    },
-    "bounds": { "xmin": number, "ymin": number, "xmax": number, "ymax": number },
-    "box_2d": [xmin, ymin, xmax, ymax],
-    "rotation_degrees": 0
-  },
-  "enhancement": {
-    "brightness": 105,
-    "contrast": 115,
-    "sharpness": 25,
-    "clean_background": true
-  }
-}`;
-  async function detectCardBoundariesWithAI(params) {
-    const {
-      apiKey = getStoredApiKey(),
-      model = getStoredModel(),
-      images = [],
-      onProgress = () => {
-      }
-    } = params;
-    if (!apiKey || apiKey.trim().length === 0) {
-      throw new Error("OpenRouter API Key is required. Please set it in Settings.");
-    }
-    if (!images || images.length === 0) {
-      throw new Error("Please upload at least one NID image.");
-    }
-    const candidateModels = [model, ...FALLBACK_MODELS.filter((m) => m !== model)];
-    let lastError = null;
-    let parsed = null;
-    for (let i = 0; i < candidateModels.length; i++) {
-      const activeModel = candidateModels[i];
-      onProgress(20 + i * 5, `Analyzing real NID card boundaries with ${activeModel.split("/").pop()}...`);
-      const userContent = [{ type: "text", text: NID_DETECTION_PROMPT }];
-      images.forEach((imgDataUrl) => {
-        userContent.push({
-          type: "image_url",
-          image_url: { url: imgDataUrl }
-        });
-      });
-      const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-      const timeoutId = controller ? setTimeout(() => controller.abort(), 6e4) : null;
-      let response;
-      try {
-        response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-            "HTTP-Referer": typeof window !== "undefined" ? window.location.origin : "http://localhost",
-            "X-Title": "NID Stack & Enhance"
-          },
-          body: JSON.stringify({
-            model: activeModel,
-            messages: [{ role: "user", content: userContent }],
-            temperature: 0
-          }),
-          signal: controller ? controller.signal : void 0
-        });
-      } catch (err) {
-        if (timeoutId) clearTimeout(timeoutId);
-        if (err.name === "AbortError") {
-          lastError = new Error("AI request timed out. Please check your connection and try again.");
-          continue;
-        }
-        lastError = err;
-        continue;
-      }
-      if (timeoutId) clearTimeout(timeoutId);
-      if (!response.ok) {
-        let errBody;
-        try {
-          errBody = await response.json();
-        } catch (_e) {
-        }
-        const msg = errBody?.error?.message || response.statusText || "OpenRouter API error";
-        lastError = new Error(`OpenRouter Error (${response.status}): ${msg}`);
-        if ((response.status === 429 || response.status === 404 || response.status === 503 || response.status === 500) && i < candidateModels.length - 1) {
-          onProgress(30 + i * 5, `${activeModel.split("/").pop()} busy (${response.status}), switching to fallback model...`);
-          continue;
-        }
-        throw lastError;
-      }
-      onProgress(70, "Processing card geometry & coordinates...");
-      let data;
-      try {
-        data = await response.json();
-      } catch (e) {
-        lastError = new Error("Invalid JSON response from OpenRouter API.");
-        continue;
-      }
-      const rawContent = data?.choices?.[0]?.message?.content;
-      if (!rawContent) {
-        lastError = new Error("No response returned by AI model.");
-        continue;
-      }
-      let cleaned = rawContent.trim();
-      if (cleaned.startsWith("```json")) {
-        cleaned = cleaned.replace(/^```json\s*/i, "").replace(/```\s*$/i, "");
-      } else if (cleaned.startsWith("```")) {
-        cleaned = cleaned.replace(/^```\s*/i, "").replace(/```\s*$/i, "");
-      }
-      try {
-        parsed = JSON.parse(cleaned);
-        break;
-      } catch (_e) {
-        const match = cleaned.match(/\{[\s\S]*\}/);
-        if (match) {
-          try {
-            parsed = JSON.parse(match[0]);
-            break;
-          } catch (err2) {
-            lastError = new Error("Failed to parse AI detection JSON: " + err2.message);
-          }
-        } else {
-          lastError = new Error("Invalid JSON received from AI model.");
-        }
-      }
-    }
-    if (!parsed) {
-      throw lastError || new Error("Failed to detect card boundaries with AI.");
-    }
-    return parsed;
-  }
-  async function enhanceRealNidImages(params) {
-    const {
-      apiKey = getStoredApiKey(),
-      model = getStoredModel(),
-      images = [],
-      targetCanvas = null,
-      spacing = 55,
-      bgColor = "#ffffff",
-      onProgress = () => {
-      }
-    } = params;
-    const detection = await detectCardBoundariesWithAI({
-      apiKey,
-      model,
-      images,
-      onProgress
-    });
-    onProgress(80, "De-skewing and cropping real card images...");
-    const frontSourceDataUrl = images[0];
-    const backSourceDataUrl = images.length > 1 ? images[1] : images[0];
-    const frontImg = await loadImage(frontSourceDataUrl);
-    const backImg = await loadImage(backSourceDataUrl);
-    const frontInfo = detection.front || {};
-    const backInfo = detection.back || {};
-    const enhanceParams = detection.enhancement || {};
-    const fW = frontImg.naturalWidth || frontImg.width || 1e3;
-    const fH = frontImg.naturalHeight || frontImg.height || 1e3;
-    const bW = backImg.naturalWidth || backImg.width || 1e3;
-    const bH = backImg.naturalHeight || backImg.height || 1e3;
-    if (frontInfo.is_present !== false) {
-      if (frontInfo.box_2d) {
-        frontInfo.box_2d = parseDetectionBox(frontInfo.box_2d, fW, fH);
-      }
-      if (frontInfo.corners) {
-        frontInfo.corners = parseDetectionCorners(frontInfo.corners, fW, fH) || frontInfo.corners;
-      }
-    }
-    if (backInfo.is_present !== false) {
-      if (backInfo.box_2d) {
-        backInfo.box_2d = parseDetectionBox(backInfo.box_2d, bW, bH);
-      }
-      if (backInfo.corners) {
-        backInfo.corners = parseDetectionCorners(backInfo.corners, bW, bH) || backInfo.corners;
-      }
-    }
-    if (images.length === 1) {
-      let hasFront = frontInfo && frontInfo.is_present !== false && (frontInfo.corners || frontInfo.bounds || frontInfo.box_2d);
-      let hasBack = backInfo && backInfo.is_present !== false && (backInfo.corners || backInfo.bounds || backInfo.box_2d);
-      if (hasFront && !hasBack) {
-        const fQuad = normalizeQuad(frontInfo.corners || frontInfo.bounds || frontInfo.box_2d, fW, fH);
-        const fMinY = Math.min(fQuad.top_left.y, fQuad.top_right.y);
-        const fMaxY = Math.max(fQuad.bottom_left.y, fQuad.bottom_right.y);
-        const fMinX = Math.min(fQuad.top_left.x, fQuad.bottom_left.x);
-        const fMaxX = Math.max(fQuad.top_right.x, fQuad.bottom_right.x);
-        const spanX = Math.max(10, fMaxX - fMinX);
-        const spanY = Math.max(10, fMaxY - fMinY);
-        const pxSpanX = spanX / 1e3 * fW;
-        const pxSpanY = spanY / 1e3 * fH;
-        const aspectHtoW = pxSpanY / (pxSpanX || 1);
-        if (aspectHtoW > 0.82 || fMaxY - fMinY > 700) {
-          const midY = Math.round((fMinY + fMaxY) / 2);
-          frontInfo.is_present = true;
-          frontInfo.corners = {
-            top_left: makePoint(fMinX, fMinY),
-            top_right: makePoint(fMaxX, fMinY),
-            bottom_right: makePoint(fMaxX, midY),
-            bottom_left: makePoint(fMinX, midY)
-          };
-          backInfo.is_present = true;
-          backInfo.corners = {
-            top_left: makePoint(fMinX, midY),
-            top_right: makePoint(fMaxX, midY),
-            bottom_right: makePoint(fMaxX, fMaxY),
-            bottom_left: makePoint(fMinX, fMaxY)
-          };
-          hasBack = true;
-        } else if (fMaxY <= 750) {
-          backInfo.is_present = true;
-          const topY = Math.min(950, fMaxY + 2);
-          backInfo.corners = {
-            top_left: makePoint(0, topY),
-            top_right: makePoint(1e3, topY),
-            bottom_right: makePoint(1e3, 1e3),
-            bottom_left: makePoint(0, 1e3)
-          };
-          hasBack = true;
-        } else if (fMaxX <= 750) {
-          backInfo.is_present = true;
-          const leftX = Math.min(950, fMaxX + 2);
-          backInfo.corners = {
-            top_left: makePoint(leftX, 0),
-            top_right: makePoint(1e3, 0),
-            bottom_right: makePoint(1e3, 1e3),
-            bottom_left: makePoint(leftX, 1e3)
-          };
-          hasBack = true;
-        }
-      } else if (!hasFront && hasBack) {
-        const bQuad = normalizeQuad(backInfo.corners || backInfo.bounds || backInfo.box_2d, bW, bH);
-        const bMinY = Math.min(bQuad.top_left.y, bQuad.top_right.y);
-        const bMaxY = Math.max(bQuad.bottom_left.y, bQuad.bottom_right.y);
-        const bMinX = Math.min(bQuad.top_left.x, bQuad.bottom_left.x);
-        const bMaxX = Math.max(bQuad.top_right.x, bQuad.bottom_right.x);
-        const spanX = Math.max(10, bMaxX - bMinX);
-        const spanY = Math.max(10, bMaxY - bMinY);
-        const pxSpanX = spanX / 1e3 * bW;
-        const pxSpanY = spanY / 1e3 * bH;
-        const aspectHtoW = pxSpanY / (pxSpanX || 1);
-        if (aspectHtoW > 0.82 || bMaxY - bMinY > 700) {
-          const midY = Math.round((bMinY + bMaxY) / 2);
-          frontInfo.is_present = true;
-          frontInfo.corners = {
-            top_left: makePoint(bMinX, bMinY),
-            top_right: makePoint(bMaxX, bMinY),
-            bottom_right: makePoint(bMaxX, midY),
-            bottom_left: makePoint(bMinX, midY)
-          };
-          backInfo.is_present = true;
-          backInfo.corners = {
-            top_left: makePoint(bMinX, midY),
-            top_right: makePoint(bMaxX, midY),
-            bottom_right: makePoint(bMaxX, bMaxY),
-            bottom_left: makePoint(bMinX, bMaxY)
-          };
-          hasFront = true;
-        } else if (bMinY >= 250) {
-          frontInfo.is_present = true;
-          const botY = Math.max(50, bMinY - 2);
-          frontInfo.corners = {
-            top_left: makePoint(0, 0),
-            top_right: makePoint(1e3, 0),
-            bottom_right: makePoint(1e3, botY),
-            bottom_left: makePoint(0, botY)
-          };
-          hasFront = true;
-        } else if (bMinX >= 250) {
-          frontInfo.is_present = true;
-          const rightX = Math.max(50, bMinX - 2);
-          frontInfo.corners = {
-            top_left: makePoint(0, 0),
-            top_right: makePoint(rightX, 0),
-            bottom_right: makePoint(rightX, 1e3),
-            bottom_left: makePoint(0, 1e3)
-          };
-          hasFront = true;
-        }
-      }
-      if (!hasFront || !hasBack) {
-        const imgAspect = fH / (fW || 1);
-        if (imgAspect >= 0.85) {
-          if (!hasFront) {
-            frontInfo.is_present = true;
-            frontInfo.corners = {
-              top_left: makePoint(0, 0),
-              top_right: makePoint(1e3, 0),
-              bottom_right: makePoint(1e3, 500),
-              bottom_left: makePoint(0, 500)
-            };
-          }
-          if (!hasBack) {
-            backInfo.is_present = true;
-            backInfo.corners = {
-              top_left: makePoint(0, 500),
-              top_right: makePoint(1e3, 500),
-              bottom_right: makePoint(1e3, 1e3),
-              bottom_left: makePoint(0, 1e3)
-            };
-          }
-        } else {
-          if (!hasFront) {
-            frontInfo.is_present = true;
-            frontInfo.corners = {
-              top_left: makePoint(0, 0),
-              top_right: makePoint(500, 0),
-              bottom_right: makePoint(500, 1e3),
-              bottom_left: makePoint(0, 1e3)
-            };
-          }
-          if (!hasBack) {
-            backInfo.is_present = true;
-            backInfo.corners = {
-              top_left: makePoint(500, 0),
-              top_right: makePoint(1e3, 0),
-              bottom_right: makePoint(1e3, 1e3),
-              bottom_left: makePoint(500, 1e3)
-            };
-          }
-        }
-      }
-    }
-    const cardW = 700;
-    let frontCorners = null;
-    let backCorners = null;
-    if (images.length === 1 && frontInfo.is_present !== false && backInfo.is_present !== false) {
-      const separated = separateAndExpandCards(frontInfo, backInfo, fW, fH);
-      frontCorners = separated.frontCorners;
-      backCorners = separated.backCorners;
-    } else {
-      if (frontInfo.is_present !== false) {
-        const raw = frontInfo.corners || frontInfo.box_2d || [0, 0, 1e3, 1e3];
-        frontCorners = expandQuadSafetyMargin(raw, { marginPct: 0.01, minPadUnits: 5 });
-      }
-      if (backInfo.is_present !== false) {
-        const raw = backInfo.corners || backInfo.box_2d || [0, 0, 1e3, 1e3];
-        backCorners = expandQuadSafetyMargin(raw, { marginPct: 0.01, minPadUnits: 5 });
-      }
-    }
-    const frontH = calculateCardHeight(
-      frontCorners,
-      frontImg.naturalWidth || frontImg.width,
-      frontImg.naturalHeight || frontImg.height,
-      cardW
-    );
-    const backH = calculateCardHeight(
-      backCorners,
-      backImg.naturalWidth || backImg.width,
-      backImg.naturalHeight || backImg.height,
-      cardW
-    );
-    let frontCanvas = null;
-    let backCanvas = null;
-    if (frontInfo.is_present !== false) {
-      const rawFront = warpPerspectiveQuad(frontImg, frontCorners, cardW, frontH, { expandMargin: false });
-      const trimmedFront = trimCardBackgroundPerimeter(rawFront);
-      frontCanvas = enhanceRealCardImage(trimmedFront, {
-        cleanBackground: enhanceParams.clean_background !== false,
-        contrastBoost: (enhanceParams.contrast || 115) / 100,
-        brightnessBoost: (enhanceParams.brightness || 105) / 100,
-        sharpenAmount: enhanceParams.sharpness || 25,
-        addBorder: false
-      });
-    }
-    if (backInfo.is_present !== false) {
-      const rawBack = warpPerspectiveQuad(backImg, backCorners, cardW, backH, { expandMargin: false });
-      const trimmedBack = trimCardBackgroundPerimeter(rawBack);
-      backCanvas = enhanceRealCardImage(trimmedBack, {
-        cleanBackground: enhanceParams.clean_background !== false,
-        contrastBoost: (enhanceParams.contrast || 115) / 100,
-        brightnessBoost: (enhanceParams.brightness || 105) / 100,
-        sharpenAmount: enhanceParams.sharpness || 25,
-        addBorder: false
-      });
-    }
-    onProgress(92, "Stacking real enhanced cards onto page canvas...");
-    const stackedCanvas = stackEnhancedCards(frontCanvas, backCanvas, {
-      cardWidth: cardW,
-      spacing: Math.max(25, spacing),
-      bgColor,
-      targetCanvas
-    });
-    onProgress(100, "Real NID Enhancement complete!");
-    return {
-      detection,
-      frontCanvas,
-      backCanvas,
-      stackedCanvas,
-      frontDataUrl: frontCanvas && typeof frontCanvas.toDataURL === "function" ? frontCanvas.toDataURL("image/png") : null,
-      backDataUrl: backCanvas && typeof backCanvas.toDataURL === "function" ? backCanvas.toDataURL("image/png") : null
-    };
-  }
-  async function editCardImageWithAI(params) {
-    const {
-      apiKey = getStoredApiKey(),
-      model = DEFAULT_IMAGE_EDIT_MODEL,
-      imageDataUrl,
-      prompt = DEFAULT_CARD_EDIT_PROMPT,
-      onProgress = () => {
-      }
-    } = params || {};
-    if (!apiKey || apiKey.trim().length === 0) {
-      throw new Error("OpenRouter API Key is required. Please set it in Settings.");
-    }
-    if (!imageDataUrl) {
-      throw new Error("No source image provided for AI editing.");
-    }
-    if (typeof fetch === "undefined") {
-      throw new Error("Network fetch is not available in this environment.");
-    }
-    const candidateModels = [];
-    [model || DEFAULT_IMAGE_EDIT_MODEL, ...IMAGE_EDIT_FALLBACK_MODELS].forEach((m) => {
-      if (m && !candidateModels.includes(m)) candidateModels.push(m);
-    });
-    let lastError = null;
-    for (let i = 0; i < candidateModels.length; i++) {
-      const activeModel = candidateModels[i];
-      onProgress(40 + i * 5, `Editing real NID card with ${activeModel.split("/").pop()}...`);
-      const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-      const timeoutId = controller ? setTimeout(() => controller.abort(), 6e4) : null;
-      let response;
-      try {
-        response = await fetch("https://openrouter.ai/api/v1/images", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-            "HTTP-Referer": typeof window !== "undefined" ? window.location.origin : "http://localhost",
-            "X-Title": "NID Stack & Enhance"
-          },
-          body: JSON.stringify({
-            model: activeModel,
-            prompt,
-            input_references: [
-              {
-                type: "image_url",
-                image_url: { url: imageDataUrl }
-              }
-            ]
-          }),
-          signal: controller ? controller.signal : void 0
-        });
-      } catch (err) {
-        if (timeoutId) clearTimeout(timeoutId);
-        if (err && err.name === "AbortError") {
-          lastError = new Error("AI image edit timed out. Please check your connection and try again.");
-          continue;
-        }
-        lastError = err instanceof Error ? err : new Error(String(err));
-        continue;
-      }
-      if (timeoutId) clearTimeout(timeoutId);
-      if (!response.ok) {
-        let errBody;
-        try {
-          errBody = await response.json();
-        } catch (_e) {
-        }
-        const msg = errBody?.error?.message || response.statusText || "OpenRouter image API error";
-        const status = response.status;
-        if (status === 401 || status === 403) {
-          throw new Error(`Your OpenRouter key lacks access to image-editing models (${status}): ${msg}`);
-        }
-        lastError = new Error(`OpenRouter image Error (${status}): ${msg}`);
-        const isRefusal = status === 400 && /could not generate|STOP|refus/i.test(msg);
-        const isRetryable = status === 429 || status === 500 || status === 502 || status === 503 || isRefusal;
-        if (isRetryable && i < candidateModels.length - 1) {
-          onProgress(45 + i * 5, `${activeModel.split("/").pop()} unavailable (${status}), trying another image model...`);
-          continue;
-        }
-        throw lastError;
-      }
-      let data;
-      try {
-        data = await response.json();
-      } catch (_e) {
-        lastError = new Error("Invalid JSON response from OpenRouter image API.");
-        continue;
-      }
-      const first = data?.data?.[0];
-      const b64 = first?.b64_json;
-      if (!b64) {
-        lastError = new Error("The image model did not return an edited image.");
-        continue;
-      }
-      const mediaType = first?.media_type || "image/png";
-      const dataUrl = `data:${mediaType};base64,${b64}`;
-      const cost = data?.usage && typeof data.usage.cost === "number" ? data.usage.cost : null;
-      return { dataUrl, model: activeModel, cost };
-    }
-    throw lastError || new Error("Failed to edit the card image with AI.");
-  }
-  function imageToCanvas(img) {
-    if (typeof document === "undefined") return null;
-    const w = img.naturalWidth || img.width || 0;
-    const h = img.naturalHeight || img.height || 0;
-    if (!w || !h) return null;
-    const canvas = document.createElement("canvas");
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return null;
-    ctx.drawImage(img, 0, 0, w, h);
-    return canvas;
-  }
-  async function enhanceNidImagesWithAIEdit(params) {
-    const {
-      apiKey = getStoredApiKey(),
-      images = [],
-      targetCanvas = null,
-      spacing = 55,
-      bgColor = "#ffffff",
-      onProgress = () => {
-      }
-    } = params || {};
-    if (!apiKey || apiKey.trim().length === 0) {
-      throw new Error("OpenRouter API Key is required. Please set it in Settings.");
-    }
-    if (!images || images.length === 0) {
-      throw new Error("Please upload at least one NID image.");
-    }
-    const cardW = 680;
-    try {
-      if (images.length === 1) {
-        onProgress(20, "Preparing real card image for AI editing...");
-        const frontSource2 = await downscaleDataUrl(images[0], 1600);
-        let editCost2 = 0;
-        onProgress(35, "Editing the card with AI...");
-        const frontEdit2 = await editCardImageWithAI({
-          apiKey,
-          model: DEFAULT_IMAGE_EDIT_MODEL,
-          imageDataUrl: frontSource2,
-          prompt: DEFAULT_CARD_EDIT_PROMPT,
-          onProgress
-        });
-        if (typeof frontEdit2.cost === "number") editCost2 += frontEdit2.cost;
-        onProgress(80, "Loading edited card...");
-        const frontImg2 = await loadImage(frontEdit2.dataUrl);
-        const frontCanvas2 = imageToCanvas(frontImg2);
-        onProgress(92, "Stacking edited card onto page canvas...");
-        const stackedCanvas2 = stackEnhancedCards(frontCanvas2, null, {
-          cardWidth: cardW,
-          spacing: Math.max(25, spacing),
-          bgColor,
-          targetCanvas
-        });
-        onProgress(100, "Real NID Enhancement complete!");
-        return {
-          frontCanvas: frontCanvas2,
-          backCanvas: null,
-          stackedCanvas: stackedCanvas2,
-          editCost: editCost2,
-          frontDataUrl: frontCanvas2 && typeof frontCanvas2.toDataURL === "function" ? frontCanvas2.toDataURL("image/png") : frontEdit2.dataUrl,
-          backDataUrl: null
-        };
-      }
-      onProgress(20, "Preparing real card images for AI editing...");
-      const frontSource = await downscaleDataUrl(images[0], 1600);
-      const backSource = await downscaleDataUrl(images[1], 1600);
-      let editCost = 0;
-      onProgress(35, "Editing the front card with AI...");
-      const frontEdit = await editCardImageWithAI({
-        apiKey,
-        model: DEFAULT_IMAGE_EDIT_MODEL,
-        imageDataUrl: frontSource,
-        prompt: DEFAULT_CARD_EDIT_PROMPT,
-        onProgress
-      });
-      if (typeof frontEdit.cost === "number") editCost += frontEdit.cost;
-      onProgress(60, "Editing the back card with AI...");
-      const backEdit = await editCardImageWithAI({
-        apiKey,
-        model: DEFAULT_IMAGE_EDIT_MODEL,
-        imageDataUrl: backSource,
-        prompt: DEFAULT_CARD_EDIT_PROMPT,
-        onProgress
-      });
-      if (typeof backEdit.cost === "number") editCost += backEdit.cost;
-      onProgress(80, "Loading edited cards...");
-      const frontImg = await loadImage(frontEdit.dataUrl);
-      const backImg = await loadImage(backEdit.dataUrl);
-      const frontCanvas = imageToCanvas(frontImg);
-      const backCanvas = imageToCanvas(backImg);
-      onProgress(92, "Stacking edited cards onto page canvas...");
-      const stackedCanvas = stackEnhancedCards(frontCanvas, backCanvas, {
-        cardWidth: cardW,
-        spacing: Math.max(25, spacing),
-        bgColor,
-        targetCanvas
-      });
-      onProgress(100, "Real NID Enhancement complete!");
-      return {
-        frontCanvas,
-        backCanvas,
-        stackedCanvas,
-        editCost,
-        frontDataUrl: frontCanvas && typeof frontCanvas.toDataURL === "function" ? frontCanvas.toDataURL("image/png") : frontEdit.dataUrl,
-        backDataUrl: backCanvas && typeof backCanvas.toDataURL === "function" ? backCanvas.toDataURL("image/png") : backEdit.dataUrl
-      };
-    } catch (err) {
-      onProgress(30, "AI image editing unavailable, falling back to local enhancement...");
-      return await enhanceRealNidImages(params);
-    }
-  }
-
-  // src/controllers/aiNidController.js
-  var HIDDEN_CLASS7 = "hidden";
-  function createAiNidController(deps = {}) {
-    const {
-      appState,
-      messages,
-      progress,
-      document: doc = typeof document !== "undefined" ? document : void 0
-    } = deps;
-    if (!appState) throw new Error("createAiNidController requires appState");
-    if (!messages) throw new Error("createAiNidController requires messages");
-    if (!progress) throw new Error("createAiNidController requires progress");
-    const aiButton = doc && doc.getElementById("aiEnhanceBtn");
-    const aiSettingsBtn = doc && doc.getElementById("aiSettingsBtn");
-    const aiSettingsModal = doc && doc.getElementById("aiSettingsModal");
-    const aiSettingsClose = doc && doc.getElementById("aiSettingsClose");
-    const aiApiKeyInput = doc && doc.getElementById("aiApiKeyInput");
-    const aiModelSelect = doc && doc.getElementById("aiModelSelect");
-    const aiSaveSettingsBtn = doc && doc.getElementById("aiSaveSettingsBtn");
-    const aiTestKeyBtn = doc && doc.getElementById("aiTestKeyBtn");
-    const previewCanvas = doc && doc.getElementById("previewCanvas");
-    const previewPlaceholder = doc && doc.getElementById("previewCanvasPlaceholder");
-    const exportButton = doc && doc.getElementById("downloadPdf");
-    function notifySuccess(text) {
-      if (messages && typeof messages.showSuccess === "function") {
-        messages.showSuccess(text);
-      } else if (messages && typeof messages.showGuidance === "function") {
-        messages.showGuidance(text);
-      }
-    }
-    function notifyError(text) {
-      if (messages && typeof messages.showError === "function") {
-        messages.showError(text);
-      }
-    }
-    function notifyGuidance(text) {
-      if (messages && typeof messages.showGuidance === "function") {
-        messages.showGuidance(text);
-      }
-    }
-    function syncSettingsInputs() {
-      if (aiApiKeyInput) {
-        aiApiKeyInput.value = getStoredApiKey();
-      }
-      if (aiModelSelect) {
-        aiModelSelect.value = getStoredModel();
-      }
-    }
-    function openSettings() {
-      syncSettingsInputs();
-      if (aiSettingsModal) {
-        aiSettingsModal.classList.remove(HIDDEN_CLASS7);
-        aiSettingsModal.setAttribute("aria-hidden", "false");
-      }
-    }
-    function closeSettings() {
-      if (aiSettingsModal) {
-        aiSettingsModal.classList.add(HIDDEN_CLASS7);
-        aiSettingsModal.setAttribute("aria-hidden", "true");
-      }
-    }
-    function handleSaveSettings() {
-      const key = aiApiKeyInput ? aiApiKeyInput.value.trim() : "";
-      const model = aiModelSelect ? aiModelSelect.value.trim() : "";
-      setStoredApiKey(key);
-      if (model) setStoredModel(model);
-      notifySuccess("AI settings saved successfully.");
-      closeSettings();
-    }
-    async function handleTestKey() {
-      const key = aiApiKeyInput ? aiApiKeyInput.value.trim() : getStoredApiKey();
-      if (!key) {
-        notifyError("Please enter an API Key to test.");
-        return;
-      }
-      const btnText = aiTestKeyBtn ? aiTestKeyBtn.textContent : "";
-      if (aiTestKeyBtn) {
-        aiTestKeyBtn.disabled = true;
-        aiTestKeyBtn.textContent = "Testing...";
-      }
-      try {
-        const res = await fetch("https://openrouter.ai/api/v1/auth/key", {
-          headers: { Authorization: `Bearer ${key}` }
-        });
-        const data = await res.json();
-        if (res.ok && data?.data) {
-          notifySuccess(`API Key valid! Usage: $${(data.data.usage || 0).toFixed(4)}.`);
-        } else {
-          notifyError(data?.error?.message || "Invalid API Key.");
-        }
-      } catch (err) {
-        notifyError("Connection failed: " + err.message);
-      } finally {
-        if (aiTestKeyBtn) {
-          aiTestKeyBtn.disabled = false;
-          aiTestKeyBtn.textContent = btnText;
-        }
-      }
-    }
-    async function handleAiEnhance() {
-      const state = appState.getState();
-      const frontSlot = state.sources.front;
-      const backSlot = state.sources.back;
-      if (!frontSlot || !frontSlot.image) {
-        notifyGuidance("Please upload an NID image in Image 1 (Front or Both sides) first.");
-        const file1 = doc && doc.getElementById("file1");
-        if (file1) file1.click();
-        return;
-      }
-      const apiKey = getStoredApiKey();
-      if (!apiKey) {
-        openSettings();
-        notifyGuidance("Please configure your OpenRouter API Key to start AI Enhance.");
-        return;
-      }
-      try {
-        progress.begin();
-        progress.set(10);
-        const images = [];
-        async function getSlotImageDataUrl(slot) {
-          if (!slot || !slot.image) return null;
-          if (slot.file && slot.file.type && slot.file.type.startsWith("image/")) {
-            try {
-              return await fileToDataUrl(slot.file);
-            } catch (_e) {
-            }
-          }
-          if (slot.image.src && typeof slot.image.src === "string" && slot.image.src.startsWith("data:image/")) {
-            return slot.image.src;
-          }
-          try {
-            const w = slot.naturalWidth || slot.image.naturalWidth || slot.image.width || 1e3;
-            const h = slot.naturalHeight || slot.image.naturalHeight || slot.image.height || 1e3;
-            const cvs = doc ? doc.createElement("canvas") : document.createElement("canvas");
-            cvs.width = Math.min(2400, w);
-            cvs.height = Math.min(2400, Math.round(cvs.width * h / w));
-            const ctx = cvs.getContext("2d");
-            ctx.drawImage(slot.image, 0, 0, cvs.width, cvs.height);
-            return cvs.toDataURL("image/jpeg", 0.92);
-          } catch (_e) {
-            if (slot.image && slot.image.src && typeof slot.image.src === "string") {
-              return slot.image.src;
-            }
-            return null;
-          }
-        }
-        const d1 = await getSlotImageDataUrl(frontSlot);
-        if (d1) images.push(d1);
-        if (backSlot && backSlot.image) {
-          const d2 = await getSlotImageDataUrl(backSlot);
-          if (d2) images.push(d2);
-        }
-        const spacing = appState.getState().settings.spacing || 55;
-        const bgColor = appState.getState().settings.backgroundColor || "#ffffff";
-        const result = await enhanceNidImagesWithAIEdit({
-          apiKey,
-          model: getStoredModel(),
-          images,
-          targetCanvas: previewCanvas,
-          spacing: Math.max(25, spacing),
-          bgColor,
-          onProgress: (pct, statusText) => {
-            progress.set(pct);
-            if (statusText) notifyGuidance(statusText);
-          }
-        });
-        progress.set(90);
-        if (previewCanvas && previewCanvas.classList) previewCanvas.classList.remove(HIDDEN_CLASS7);
-        if (previewPlaceholder && previewPlaceholder.classList) previewPlaceholder.classList.add(HIDDEN_CLASS7);
-        if (typeof appState.setCombinedImage === "function") {
-          appState.setCombinedImage(previewCanvas);
-        }
-        if (result.frontCanvas && typeof appState.setSource === "function") {
-          const frontImg = typeof Image !== "undefined" ? new Image() : result.frontCanvas;
-          if (result.frontDataUrl) frontImg.src = result.frontDataUrl;
-          appState.setSource("front", {
-            image: frontImg,
-            naturalWidth: result.frontCanvas.width,
-            naturalHeight: result.frontCanvas.height
-          });
-        }
-        if (result.backCanvas && typeof appState.setSource === "function") {
-          const backImg = typeof Image !== "undefined" ? new Image() : result.backCanvas;
-          if (result.backDataUrl) backImg.src = result.backDataUrl;
-          appState.setSource("back", {
-            image: backImg,
-            naturalWidth: result.backCanvas.width,
-            naturalHeight: result.backCanvas.height
-          });
-        } else if (!result.backCanvas && typeof appState.setSource === "function") {
-          appState.setSource("back", null);
-        }
-        if (result.frontDataUrl) {
-          const preview1 = doc && doc.getElementById("preview1");
-          const thumb1 = doc && doc.getElementById("thumb1");
-          const thumb1Ph = doc && doc.getElementById("thumb1Placeholder");
-          if (preview1) preview1.src = result.frontDataUrl;
-          if (thumb1 && thumb1.classList) {
-            thumb1.src = result.frontDataUrl;
-            thumb1.classList.remove(HIDDEN_CLASS7);
-          }
-          if (thumb1Ph && thumb1Ph.classList) thumb1Ph.classList.add(HIDDEN_CLASS7);
-        }
-        if (result.backDataUrl) {
-          const preview2 = doc && doc.getElementById("preview2");
-          const preview2Cont = doc && doc.getElementById("preview2-container");
-          const thumb2 = doc && doc.getElementById("thumb2");
-          const thumb2Ph = doc && doc.getElementById("thumb2Placeholder");
-          if (preview2) preview2.src = result.backDataUrl;
-          if (preview2Cont && preview2Cont.classList) preview2Cont.classList.remove(HIDDEN_CLASS7);
-          if (thumb2 && thumb2.classList) {
-            thumb2.src = result.backDataUrl;
-            thumb2.classList.remove(HIDDEN_CLASS7);
-          }
-          if (thumb2Ph && thumb2Ph.classList) thumb2Ph.classList.add(HIDDEN_CLASS7);
-        } else {
-          const preview2 = doc && doc.getElementById("preview2");
-          const preview2Cont = doc && doc.getElementById("preview2-container");
-          const thumb2 = doc && doc.getElementById("thumb2");
-          const thumb2Ph = doc && doc.getElementById("thumb2Placeholder");
-          if (preview2) preview2.src = "";
-          if (preview2Cont && preview2Cont.classList) preview2Cont.classList.add(HIDDEN_CLASS7);
-          if (thumb2 && thumb2.classList) {
-            thumb2.src = "";
-            thumb2.classList.add(HIDDEN_CLASS7);
-          }
-          if (thumb2Ph && thumb2Ph.classList) thumb2Ph.classList.remove(HIDDEN_CLASS7);
-        }
-        if (exportButton) {
-          if (exportButton.classList) exportButton.classList.remove(HIDDEN_CLASS7);
-          exportButton.disabled = false;
-        }
-        if (typeof appState.setExportCombinedVisible === "function") {
-          appState.setExportCombinedVisible(true);
-        }
-        progress.set(100);
-        progress.complete();
-        notifySuccess("\u2728 Real NID images successfully enhanced & stacked without altering any information!");
-      } catch (err) {
-        progress.fail();
-        const msg = err && err.message ? err.message : String(err);
-        if (/lacks access to image-editing|image-model access/i.test(msg)) {
-          notifyError("The image model refused or your OpenRouter key lacks image-model access. Add image-model access to your key, then try again. (" + msg + ")");
-        } else {
-          notifyError("AI Enhancement error: " + msg);
-        }
-      }
-    }
-    function handleOverlayClick(e) {
-      if (e.target === aiSettingsModal) closeSettings();
-    }
-    function handleKeyDown(e) {
-      if (e.key === "Escape") {
-        closeSettings();
-      }
-    }
-    function init() {
-      if (aiButton) {
-        aiButton.addEventListener("click", handleAiEnhance);
-      }
-      if (aiSettingsBtn) {
-        aiSettingsBtn.addEventListener("click", openSettings);
-      }
-      if (aiSettingsClose) {
-        aiSettingsClose.addEventListener("click", closeSettings);
-      }
-      if (aiSaveSettingsBtn) {
-        aiSaveSettingsBtn.addEventListener("click", handleSaveSettings);
-      }
-      if (aiTestKeyBtn) {
-        aiTestKeyBtn.addEventListener("click", handleTestKey);
-      }
-      if (doc) {
-        doc.addEventListener("keydown", handleKeyDown);
-      }
-      if (aiSettingsModal) {
-        aiSettingsModal.addEventListener("click", handleOverlayClick);
-      }
-    }
-    function destroy() {
-      if (aiButton) aiButton.removeEventListener("click", handleAiEnhance);
-      if (aiSettingsBtn) aiSettingsBtn.removeEventListener("click", openSettings);
-      if (aiSettingsClose) aiSettingsClose.removeEventListener("click", closeSettings);
-      if (aiSaveSettingsBtn) aiSaveSettingsBtn.removeEventListener("click", handleSaveSettings);
-      if (aiTestKeyBtn) aiTestKeyBtn.removeEventListener("click", handleTestKey);
-      if (doc) doc.removeEventListener("keydown", handleKeyDown);
-      if (aiSettingsModal) aiSettingsModal.removeEventListener("click", handleOverlayClick);
-    }
-    return {
-      init,
-      destroy,
-      handleAiEnhance,
-      openSettings,
-      closeSettings
     };
   }
 
@@ -4435,6 +3855,18 @@ Return strictly valid JSON with explicit coordinates:
         window
       });
       exportCtrl.init();
+      const downloadPdfBtn = document.getElementById("downloadPdf");
+      if (downloadPdfBtn) {
+        downloadPdfBtn.addEventListener("click", (e) => {
+          const state = appState.getState();
+          if (!state.combinedImage) {
+            const ok = combineCtrl.handleCombine();
+            if (!ok) {
+              e.stopImmediatePropagation();
+            }
+          }
+        }, true);
+      }
       const resetCtrl = createResetController({
         appState,
         progress,
@@ -4442,13 +3874,6 @@ Return strictly valid JSON with explicit coordinates:
         document
       });
       resetCtrl.init();
-      const aiNidCtrl = createAiNidController({
-        appState,
-        messages,
-        progress,
-        document
-      });
-      aiNidCtrl.init();
       if (typeof window !== "undefined") {
         window.__nidApp = {
           appState,
