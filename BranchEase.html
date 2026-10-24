@@ -13316,7 +13316,7 @@ CALCULATION RULES:
 
             grid.innerHTML = favs.map(id => {
 
-                const app = window.appData?.find(a => a.id === id);
+                const app = appData?.find(a => a.id === id);
 
                 if (!app) return '';
 
