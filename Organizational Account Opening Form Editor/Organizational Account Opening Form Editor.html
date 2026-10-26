@@ -788,12 +788,13 @@ body::after {
 
 /* Transaction Profile Styles */
 .transaction-table-wrapper {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 16px;
+  background: linear-gradient(135deg, #ffffff 0%, var(--bg-primary) 100%);
+  border-radius: var(--radius-lg);
   padding: 0;
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(148, 163, 184, 0.1);
+  box-shadow: var(--shadow-md), 0 0 0 1px var(--border-color);
   overflow: visible;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Poppins', 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
 /* Layout: place deposits left and withdrawals right on wider screens */
@@ -833,7 +834,7 @@ body::after {
 }
 
 .transaction-table-wrapper:hover {
-  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(148, 163, 184, 0.15);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(var(--primary-rgb), 0.15);
   transform: translateY(-2px);
 }
 
@@ -842,7 +843,7 @@ body::after {
   align-items: center;
   gap: 12px;
   padding: 20px 24px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: var(--primary-gradient);
   border-bottom: 3px solid;
   position: relative;
   overflow: hidden;
@@ -880,6 +881,7 @@ body::after {
   letter-spacing: 0.3px;
   z-index: 1;
   flex: 1;
+  font-family: 'Poppins', 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
 .transaction-header .badge {
@@ -897,20 +899,20 @@ body::after {
 }
 
 .deposit-header {
-  border-bottom-color: #10b981;
+  border-bottom-color: var(--success-light);
 }
 
 .deposit-header i {
-  color: #10b981;
+  color: var(--success-light);
   animation: depositPulse 2s ease-in-out infinite;
 }
 
 .withdrawal-header {
-  border-bottom-color: #ef4444;
+  border-bottom-color: var(--gold);
 }
 
 .withdrawal-header i {
-  color: #ef4444;
+  color: var(--gold-light);
   animation: withdrawalPulse 2s ease-in-out infinite;
 }
 
@@ -945,11 +947,12 @@ body::after {
   text-align: left;
   font-weight: 700;
   font-size: 13px;
-  color: #334155;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 2px solid #cbd5e1;
+  border-bottom: 2px solid var(--border-color);
   white-space: nowrap;
+  font-family: 'Poppins', 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
 .transaction-table th.number-col,
@@ -968,18 +971,19 @@ body::after {
 }
 
 .transaction-table tbody tr.total-row {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border-top: 2px solid #3b82f6;
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.06) 0%, rgba(var(--primary-rgb), 0.12) 100%);
+  border-top: 2px solid var(--primary);
 }
 
 .transaction-table tbody tr.total-row:hover {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.12) 0%, rgba(var(--primary-rgb), 0.18) 100%);
 }
 
 .transaction-table td {
   padding: 16px 20px;
   font-size: 14px;
-  color: #475569;
+  color: var(--text-secondary);
+  font-family: 'Poppins', 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
 .transaction-table td.particulars-col {
@@ -1000,45 +1004,45 @@ body::after {
 
 .td-content i {
   font-size: 16px;
-  color: #64748b;
+  color: var(--text-muted);
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  border-radius: 8px;
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-color) 100%);
+  border-radius: var(--radius-sm);
   transition: all 0.2s ease;
 }
 
 .transaction-table tbody tr:hover .td-content i {
-  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #6366f1;
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.12) 0%, rgba(var(--primary-rgb), 0.2) 100%);
+  color: var(--primary);
   transform: scale(1.1);
 }
 
 .td-content.total-label {
   font-weight: 700;
-  color: #1e40af;
+  color: var(--primary-dark);
 }
 
 .td-content.total-label i {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: var(--primary-gradient);
   color: #ffffff;
 }
 
 .table-input {
   width: 100%;
   padding: 10px 14px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 500;
-  color: #1e293b;
+  color: var(--text-primary);
   background: #ffffff;
   transition: all 0.2s ease;
   text-align: center;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
 /* Ensure deposit & withdrawal boxes are equal height on wide screens */
@@ -1072,26 +1076,26 @@ body::after {
 
 .table-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  background: #f0f9ff;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--primary);
+  background: rgba(var(--primary-rgb), 0.04);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
 }
 
 .table-input::placeholder {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-weight: 400;
 }
 
 .table-input.total-input {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border-color: #3b82f6;
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.06) 0%, rgba(var(--primary-rgb), 0.12) 100%);
+  border-color: var(--primary);
   font-weight: 700;
-  color: #1e40af;
+  color: var(--primary-dark);
   cursor: not-allowed;
 }
 
 .table-input.total-input:focus {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.12) 0%, rgba(var(--primary-rgb), 0.18) 100%);
 }
 
 @media (max-width: 1200px) {
@@ -3619,10 +3623,9 @@ input:checked + .slider:before {
                 <input type="email" name="businessEmail" placeholder="Email Address">
               </div>
               <div class="form-group span-2">
-                <label>Business/Office Address</label>
-                <div class="checkbox-inline">
-                  <input type="checkbox" id="businessSameAddress">
-                  <label for="businessSameAddress">Same as Account Holder Present Address</label>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <label style="margin:0;">Business/Office Address</label>
+                  <label style="margin:0; font-weight:500; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="businessSameAddress" style="margin:0;">Same as Account Holder Present Address</label>
                 </div>
                 <input type="text" name="businessAddress" placeholder="Business/Office Address">
               </div>
@@ -3803,6 +3806,10 @@ input:checked + .slider:before {
                   <option value="no">No (Non-Resident)</option>
                 </select>
               </div>
+              <div class="form-group resident-country-field" style="display:none;">
+                <label>Country Name</label>
+                <input type="text" name="residentCountry" placeholder="Country Name">
+              </div>
 
               <!-- Present Address (inside Individual Information) -->
               <div class="form-group span-4" style="margin-top: 16px;">
@@ -3828,9 +3835,7 @@ input:checked + .slider:before {
               <!-- Permanent Address (inside Individual Information) -->
               <div class="form-group span-4" style="margin-top: 16px; display:flex; align-items:center; gap:8px;">
                 <label style="font-weight:700; margin:0;"><i class="fas fa-home" style="margin-right:6px;"></i>Permanent Address</label>
-                <div class="checkbox-inline" style="margin:0;">
-                  <label style="margin:0;"><input type="checkbox" id="sameAddress" style="margin-right:4px; vertical-align:middle;">Same as Present Address</label>
-                </div>
+                <label style="margin:0; font-weight:500; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><input type="checkbox" id="sameAddress" style="margin:0;">Same as Present Address</label>
               </div>
               <div class="form-group">
                 <label>Area/Village</label>
@@ -3878,6 +3883,7 @@ input:checked + .slider:before {
               <div class="form-group"><label>Relation with Organization</label><input type="text" name="app2_sourceOfFund" placeholder="Relation with Organization"></div>
               <div class="form-group fatca-nationality-field" style="display:none;"><label>Nationality</label><input type="text" name="app2_nationality" value="Bangladeshi" placeholder="Nationality"></div>
               <div class="form-group"><label>Resident Status</label><select name="app2_residentStatus"><option value="yes">Yes (Resident)</option><option value="no">No (Non-Resident)</option></select></div>
+              <div class="form-group resident-country-field" style="display:none;"><label>Country Name</label><input type="text" name="app2_residentCountry" placeholder="Country Name"></div>
               <!-- Present Address -->
               <div class="form-group span-4" style="margin-top:16px; display:flex; align-items:center; gap:8px;">
                 <label style="font-weight:700; margin:0;"><i class="fas fa-map-marker-alt" style="margin-right:6px;"></i>Present Address</label>
@@ -3926,6 +3932,7 @@ input:checked + .slider:before {
               <div class="form-group"><label>Relation with Organization</label><input type="text" name="app3_sourceOfFund" placeholder="Relation with Organization"></div>
               <div class="form-group fatca-nationality-field" style="display:none;"><label>Nationality</label><input type="text" name="app3_nationality" value="Bangladeshi" placeholder="Nationality"></div>
               <div class="form-group"><label>Resident Status</label><select name="app3_residentStatus"><option value="yes">Yes (Resident)</option><option value="no">No (Non-Resident)</option></select></div>
+              <div class="form-group resident-country-field" style="display:none;"><label>Country Name</label><input type="text" name="app3_residentCountry" placeholder="Country Name"></div>
               <!-- Present Address -->
               <div class="form-group span-4" style="margin-top:16px; display:flex; align-items:center; gap:8px;">
                 <label style="font-weight:700; margin:0;"><i class="fas fa-map-marker-alt" style="margin-right:6px;"></i>Present Address</label>
@@ -5088,6 +5095,7 @@ input:checked + .slider:before {
       { id: 'p2_nationality', field: 'nationality', top: '63%', left: '35%', label: 'Nationality' },
       { id: 'p2_resident_yes', field: 'resident_yes', top: '90%', left: '50%', label: '' },
       { id: 'p2_resident_no', field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { id: 'p2_residentCountry', field: 'residentCountry', top: '92.5%', left: '56%', label: 'Resident Country' },
       { id: 'p2_fatca_yes', field: 'fatca_yes', top: '90%', left: '62%', label: '' },
       { id: 'p2_fatca_no', field: 'fatca_no', top: '90%', left: '68%', label: '' },
       { id: 'p2_businessPhone', field: 'businessPhone', top: '42%', left: '22%', label: 'Business Phone' },
@@ -5491,6 +5499,7 @@ input:checked + .slider:before {
       { id: 'p25_nationality', field: 'nationality', top: '63%', left: '35%', label: 'Nationality' },
       { id: 'p25_resident_yes', field: 'resident_yes', top: '90%', left: '50%', label: '' },
       { id: 'p25_resident_no', field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { id: 'p25_residentCountry', field: 'residentCountry', top: '92.5%', left: '56%', label: 'Resident Country' },
       { id: 'p25_fatca_yes', field: 'fatca_yes', top: '90%', left: '62%', label: '' },
       { id: 'p25_fatca_no', field: 'fatca_no', top: '90%', left: '68%', label: '' },
       { id: 'p25_businessPhone', field: 'businessPhone', top: '42%', left: '22%', label: 'Business Phone' },
@@ -5602,8 +5611,6 @@ input:checked + .slider:before {
     ],
     // Additional Applicant page (Conventional) — for 2nd/3rd applicant print (data swapped into unprefixed fields)
     55: [
-      { id: 'p55_branchName', field: 'branchName', top: '6%', left: '70%', label: 'Branch Name' },
-      { id: 'p55_todayDate', field: 'todayDate', top: '6%', left: '85%', label: 'Date' },
       { id: 'p55_accountNumber', field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
       { id: 'p55_cif', field: 'cif', top: '10%', left: '48%', label: 'CIF' },
       { id: 'p55_amlTrackingNumber', field: 'amlTrackingNumber', top: '35%', left: '35%', label: 'AML Tracking No.' },
@@ -5633,12 +5640,11 @@ input:checked + .slider:before {
       { id: 'p55_nationality', field: 'nationality', top: '63%', left: '35%', label: 'Nationality' },
       { id: 'p55_resident_yes', field: 'resident_yes', top: '90%', left: '50%', label: '' },
       { id: 'p55_resident_no', field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { id: 'p55_residentCountry', field: 'residentCountry', top: '92.5%', left: '56%', label: 'Resident Country' },
       { id: 'p55_officer1Seal', field: 'officer1Seal', top: '80%', left: '68%', label: 'Officer 1 Seal', sealType: 'officer1' },
     ],
     // Additional Applicant page (Taqwa) — same layout as conventional
     57: [
-      { id: 'p57_branchName', field: 'branchName', top: '6%', left: '70%', label: 'Branch Name' },
-      { id: 'p57_todayDate', field: 'todayDate', top: '6%', left: '85%', label: 'Date' },
       { id: 'p57_accountNumber', field: 'accountNumber', top: '12%', left: '28%', label: 'Account Number' },
       { id: 'p57_cif', field: 'cif', top: '10%', left: '48%', label: 'CIF' },
       { id: 'p57_amlTrackingNumber', field: 'amlTrackingNumber', top: '35%', left: '35%', label: 'AML Tracking No.' },
@@ -5668,6 +5674,7 @@ input:checked + .slider:before {
       { id: 'p57_nationality', field: 'nationality', top: '63%', left: '35%', label: 'Nationality' },
       { id: 'p57_resident_yes', field: 'resident_yes', top: '90%', left: '50%', label: '' },
       { id: 'p57_resident_no', field: 'resident_no', top: '90%', left: '56%', label: '' },
+      { id: 'p57_residentCountry', field: 'residentCountry', top: '92.5%', left: '56%', label: 'Resident Country' },
       { id: 'p57_officer1Seal', field: 'officer1Seal', top: '80%', left: '68%', label: 'Officer 1 Seal', sealType: 'officer1' },
     ],
     // FATCA Declaration Page
@@ -6185,6 +6192,14 @@ input:checked + .slider:before {
         if (field === 'resident_yes') displayValue = (resVal === 'yes') ? '✔' : '';
         else if (field === 'resident_no') displayValue = (resVal === 'no') ? '✔' : '';
         else displayValue = '';
+      }
+
+      // Resident Country name — only shown when Resident Status = No (Non-Resident).
+      // Bound to the unprefixed residentCountry field (swapped per applicant during print).
+      else if (field === 'residentCountry') {
+        const resVal = form.elements['residentStatus'] ? String(form.elements['residentStatus'].value || '').toLowerCase() : 'yes';
+        const countryVal = form.elements['residentCountry'] ? String(form.elements['residentCountry'].value || '').trim() : '';
+        displayValue = (resVal === 'no') ? countryVal : '';
       }
 
       // FATCA Yes/No ticks (fatca_yes/fatca_no) — bound to the FATCA dropdown
@@ -7424,8 +7439,8 @@ input:checked + .slider:before {
         return; // Skip to next overlay
       }
 
-      // Hide tick2 on page 1
-      if (field === 'tick2' && overlay.dataset.page === '1') {
+      // Hide tick2 on page 1 and page 24
+      if (field === 'tick2' && (overlay.dataset.page === '1' || overlay.dataset.page === '24')) {
         overlay.style.display = 'none';
         return;
       }
@@ -7539,6 +7554,8 @@ input:checked + .slider:before {
 
       // Refresh applicant sections + share totals after restore
       try { if (typeof updateApplicantSections === 'function') updateApplicantSections(); } catch (e) {}
+      // Re-apply resident country field visibility after restore (per applicant)
+      try { if (typeof handleResidentCountryToggle === 'function') handleResidentCountryToggle(); } catch (e) {}
       try { if (typeof validateNomineeShares === 'function') validateNomineeShares(null); } catch (e) {}
       // Re-apply nominee guardian (minor) visibility after restore
       try { if (typeof updateFirstNomineeGuardianVisibility === 'function') updateFirstNomineeGuardianVisibility(); } catch (e) {}
@@ -8140,6 +8157,7 @@ input:checked + .slider:before {
       'accountGender': prefix + '_gender',
       'nationality': prefix + '_nationality',
       'residentStatus': prefix + '_residentStatus',
+      'residentCountry': prefix + '_residentCountry',
       'cif': prefix + '_cif'
     };
     const dataMap = {};
@@ -8271,6 +8289,9 @@ input:checked + .slider:before {
       } catch (e) {}
       injectedPrintNodes = null;
 
+      // Move the live nominee page back to its original DOM position.
+      try { if (typeof restoreNomineePagePosition === 'function') restoreNomineePagePosition(); } catch (e) {}
+
       if (formTypeSelect) {
         formTypeSelect.value = currentFormType;
         handleFormTypeChange();
@@ -8332,17 +8353,63 @@ input:checked + .slider:before {
         try { updateOverlays(); } catch (e) {}
       });
 
-      // Now that all clones are captured, inject them after the template
-      applicantClones.forEach(function(clone) {
-        applicantTemplate.parentNode.insertBefore(clone, applicantTemplate.nextSibling);
-        injected.push(clone);
-      });
+      // Inject the captured clones between page 2 and page 3 of the selected form type
+      // (conventional: before data-page="3"; taqwa: before data-page="26"). This places
+      // the additional applicant page(s) right after the 2nd page of the main form.
+      // Fall back to inserting after the template if the anchor page isn't found.
+      const anchorPageNum = (formType === 'taqwa') ? '26' : '3';
+      const anchorPage = document.querySelector('.form-page[data-page="' + anchorPageNum + '"]');
+      if (anchorPage && anchorPage.parentNode) {
+        // Insert each clone immediately before the anchor, in order (app2 then app3),
+        // so the resulting sequence is: page2 -> app2 -> app3 -> page3.
+        applicantClones.forEach(function(clone) {
+          anchorPage.parentNode.insertBefore(clone, anchorPage);
+          injected.push(clone);
+        });
+      } else {
+        // Fallback: keep original behaviour (after the template)
+        applicantClones.forEach(function(clone) {
+          applicantTemplate.parentNode.insertBefore(clone, applicantTemplate.nextSibling);
+          injected.push(clone);
+        });
+      }
     }
 
-    // ----- Additional Nominees -----
-    // 1st nominee renders on the LIVE page 41. Each additional nominee (#2, #3, ...) gets
-    // its own cloned nominee page, exactly like the Additional Applicant behaviour.
-    if (typeof generateNomineePageClones === 'function') {
+    // ----- Nominee page + Additional Nominees -----
+    // Desired print order between page 2 and page 3:
+    //   page2 -> additional applicant(s) -> nominee page -> additional nominee(s) -> page3
+    // The live nominee page (41) is temporarily relocated to just before the anchor
+    // (after the additional applicant clones), and the additional-nominee clones are
+    // inserted right after it. The live page is moved back to its original DOM spot in
+    // printFormTypePages()'s finally block (see restoreNomineePagePosition()).
+    const anchorPageNumN = (formType === 'taqwa') ? '26' : '3';
+    const anchorPageN = document.querySelector('.form-page[data-page="' + anchorPageNumN + '"]');
+    const nomineeLivePage = document.querySelector('.form-page.nominee-page[data-page="41"]');
+
+    // Only relocate/show the nominee page when it is actually meant to be printed
+    // (a 1st nominee name exists, or additional nominees exist). printFormTypePages()
+    // already set its display accordingly before calling this function.
+    const nomineeVisible = nomineeLivePage &&
+      window.getComputedStyle(nomineeLivePage).display !== 'none';
+
+    if (anchorPageN && anchorPageN.parentNode && nomineeLivePage && nomineeVisible) {
+      // Remember original position so it can be restored after printing.
+      __nomineePageOriginalParent = nomineeLivePage.parentNode;
+      __nomineePageOriginalNextSibling = nomineeLivePage.nextSibling;
+      __relocatedNomineePage = nomineeLivePage;
+      // Move the live nominee page to just before the anchor (after applicant clones).
+      anchorPageN.parentNode.insertBefore(nomineeLivePage, anchorPageN);
+
+      // Then build and insert additional-nominee clones immediately after it.
+      if (typeof generateNomineePageClones === 'function') {
+        const nomineeClones = generateNomineePageClones();
+        nomineeClones.forEach(function(pageNode) {
+          anchorPageN.parentNode.insertBefore(pageNode, anchorPageN);
+          injected.push(pageNode);
+        });
+      }
+    } else if (typeof generateNomineePageClones === 'function') {
+      // Fallback: anchor or nominee page missing — keep original behaviour.
       const nomineeClones = generateNomineePageClones();
       const nomineeTemplate = document.querySelector('.form-page.nominee-page[data-page="41"]');
       nomineeClones.forEach(function(pageNode) {
@@ -8356,6 +8423,26 @@ input:checked + .slider:before {
     }
 
     return injected;
+  }
+
+  // Tracks the live nominee page relocation so it can be restored after printing.
+  let __relocatedNomineePage = null;
+  let __nomineePageOriginalParent = null;
+  let __nomineePageOriginalNextSibling = null;
+
+  // Restore the live nominee page to its original DOM position after a print run.
+  function restoreNomineePagePosition() {
+    try {
+      if (__relocatedNomineePage && __nomineePageOriginalParent) {
+        __nomineePageOriginalParent.insertBefore(
+          __relocatedNomineePage,
+          __nomineePageOriginalNextSibling
+        );
+      }
+    } catch (e) {}
+    __relocatedNomineePage = null;
+    __nomineePageOriginalParent = null;
+    __nomineePageOriginalNextSibling = null;
   }
 
   function printCurrentPage() {
@@ -8797,6 +8884,34 @@ input:checked + .slider:before {
     form.elements['fatca'].addEventListener('change', handleFatcaToggle);
   }
   handleFatcaToggle();
+
+  // Resident Country: show the Country Name field only when Resident Status = No.
+  // Each applicant (1st / app2 / app3) toggles its own country field based on its
+  // own residentStatus select, keeping the overlay/field mapping per-applicant.
+  function handleResidentCountryToggle() {
+    const residentConfigs = [
+      { statusName: 'residentStatus', fieldName: 'residentCountry' },
+      { statusName: 'app2_residentStatus', fieldName: 'app2_residentCountry' },
+      { statusName: 'app3_residentStatus', fieldName: 'app3_residentCountry' }
+    ];
+    residentConfigs.forEach(function(cfg) {
+      const statusEl = form.elements[cfg.statusName];
+      const countryEl = form.elements[cfg.fieldName];
+      if (!countryEl) return;
+      const group = countryEl.closest('.resident-country-field');
+      const isNonResident = statusEl ? String(statusEl.value || '').toLowerCase() === 'no' : false;
+      if (group) group.style.display = isNonResident ? '' : 'none';
+      // Clear the value when hidden so a stale country doesn't print.
+      if (!isNonResident) countryEl.value = '';
+    });
+    if (typeof updateOverlays === 'function') updateOverlays();
+  }
+  ['residentStatus', 'app2_residentStatus', 'app3_residentStatus'].forEach(function(name) {
+    if (form.elements[name]) {
+      form.elements[name].addEventListener('change', handleResidentCountryToggle);
+    }
+  });
+  handleResidentCountryToggle();
 
   // Ownership change: show/hide joint applicant fields
   const ownershipSelect = form.elements['accountOwnership'];

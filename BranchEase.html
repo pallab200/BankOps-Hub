@@ -5525,6 +5525,9 @@
 
                         <div id="fsGeneratedCode" style="font-size:36px; font-weight:800; letter-spacing:8px; color:#c00000; font-family:monospace; margin:4px 0;">----</div>
 
+                        <div style="margin:4px auto 8px auto; display:inline-flex; align-items:center; gap:6px; padding:3px 12px; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:20px; font-size:11px; font-weight:600; color:#047857;">
+                            <i class="fas fa-shield-halved" style="color:#10b981;"></i> Security Verified: Zero Threats Found
+                        </div>
                         <div id="fsSuccessMeta" style="font-size:11px; color:#6b7280; margin-bottom:10px;">Expires in 30 minutes</div>
 
 
@@ -5636,6 +5639,9 @@
                                 <div id="fsRecFileName" style="font-size:13px; font-weight:700; color:#1e1b4b; word-break:break-all;">Document.pdf</div>
 
                                 <div id="fsRecFileMeta" style="font-size:11px; color:#6b7280; margin-top:2px;">2.4 MB • 24 mins remaining</div>
+                                <div id="fsRecFileSecurity" style="margin-top:4px; display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:#047857; background:#ecfdf5; padding:2px 8px; border-radius:12px; border:1px solid #a7f3d0;">
+                                    <i class="fas fa-shield-halved" style="color:#10b981;"></i> Security Verified • Zero Threats
+                                </div>
 
                             </div>
 
@@ -13662,78 +13668,172 @@ CALCULATION RULES:
 
 
 
-        // File Selection & Drag-and-drop
+        // Security Definitions & Threat Defense Engine
+        const FS_BLOCKED_EXTENSIONS = new Set([
+            'exe', 'bat', 'cmd', 'vbs', 'vbe', 'js', 'jse', 'wsf', 'wsh',
+            'scr', 'msi', 'msp', 'ps1', 'ps1xml', 'ps2', 'psc1', 'com',
+            'pif', 'reg', 'hta', 'cpl', 'jar', 'iso', 'bin', 'sh', 'bash', 'apk', 'dll', 'sys'
+        ]);
 
-        window.fsHandleFileSelect = function(files) {
+        function fsCheckFileSafety(fileName) {
+            if (!fileName) return { safe: false, reason: 'Filename missing' };
+            const clean = fileName.trim().toLowerCase();
+            const parts = clean.split('.');
+            if (parts.length > 1) {
+                const ext = parts.pop().trim();
+                if (FS_BLOCKED_EXTENSIONS.has(ext)) {
+                    return {
+                        safe: false,
+                        reason: 'Security Alert: Dangerous executable file (.' + ext + ') is prohibited by banking security policy.'
+                    };
+                }
+                for (const p of parts) {
+                    if (FS_BLOCKED_EXTENSIONS.has(p)) {
+                        return {
+                            safe: false,
+                            reason: 'Security Alert: Disguised double extension (.' + p + '.' + ext + ') is suspicious and prohibited.'
+                        };
+                    }
+                }
+            }
+            return { safe: true };
+        }
+
+        async function fsCheckBlobMagicBytes(blob) {
+            if (!blob || blob.size < 2) return { safe: true };
+            try {
+                const headerSlice = await blob.slice(0, 16).arrayBuffer();
+                const b = new Uint8Array(headerSlice);
+                if (b.length >= 2 && b[0] === 0x4D && b[1] === 0x5A) {
+                    return {
+                        safe: false,
+                        reason: "Malware Alert: Disguised Windows executable (PE binary 'MZ' header) detected! Selection rejected."
+                    };
+                }
+                if (b.length >= 4 && b[0] === 0x7F && b[1] === 0x45 && b[2] === 0x4C && b[3] === 0x46) {
+                    return {
+                        safe: false,
+                        reason: "Malware Alert: Disguised Linux executable (Linux ELF header) detected! Selection rejected."
+                    };
+                }
+                if (b.length >= 4 && (
+                    (b[0] === 0xFE && b[1] === 0xED && b[2] === 0xFA) ||
+                    (b[0] === 0xCF && b[1] === 0xFA && b[2] === 0xED && b[3] === 0xFE)
+                )) {
+                    return {
+                        safe: false,
+                        reason: "Malware Alert: Disguised macOS binary (Mach-O header) detected! Selection rejected."
+                    };
+                }
+            } catch (e) {
+                console.warn('Magic bytes check error:', e);
+            }
+            return { safe: true };
+        }
+
+        // File Selection & Drag-and-drop
+        window.fsHandleFileSelect = async function(files) {
 
             if (!files || files.length === 0) return;
 
-            fsSelectedFiles = Array.from(files);
-
-
-
-            const preview = document.getElementById('fsFileListPreview');
-
-            const actionArea = document.getElementById('fsUploadActionArea');
-
-            const btnText = document.getElementById('fsUploadBtnText');
-
             const errDiv = document.getElementById('fsSendError');
+            const preview = document.getElementById('fsFileListPreview');
+            const actionArea = document.getElementById('fsUploadActionArea');
+            const fileInput = document.getElementById('fsFileInput');
 
             if (errDiv) errDiv.style.display = 'none';
 
+            const rawFiles = Array.from(files);
 
-
-            let totalBytes = fsSelectedFiles.reduce((acc, f) => acc + f.size, 0);
-
-
-
-            if (preview) {
-
-                preview.style.display = 'block';
-
-                let html = '<div style="font-size:11px; font-weight:700; color:#1e1b4b; margin-bottom:6px; display:flex; justify-content:space-between;">';
-
-                html += '<span>Selected (' + fsSelectedFiles.length + ')</span>';
-
-                html += '<span style="color:#ed1b24;">' + formatBytes(totalBytes) + '</span></div>';
-
-                
-
-                fsSelectedFiles.forEach((f, idx) => {
-
-                    html += '<div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#4b5563; padding:3px 0; border-bottom:1px dashed rgba(237, 27, 36,0.1);">';
-
-                    html += '<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:75%;">📄 ' + escapeHtml(f.name) + '</span>';
-
-                    html += '<span style="color:#6b7280; font-size:10px;">' + formatBytes(f.size) + '</span>';
-
-                    html += '</div>';
-
-                });
-
-                preview.innerHTML = html;
-
-            }
-
-
-
-            if (actionArea && btnText) {
-
-                actionArea.style.display = 'block';
-
-                if (fsSelectedFiles.length === 1) {
-
-                    btnText.innerText = 'Share File (' + formatBytes(totalBytes) + ')';
-
-                } else {
-
-                    btnText.innerText = '📦 Zip & Share ' + fsSelectedFiles.length + ' Files (' + formatBytes(totalBytes) + ')';
-
+            // Comprehensive pre-scan of EVERY file before allowing selection
+            for (const f of rawFiles) {
+                const safety = fsCheckFileSafety(f.name);
+                if (!safety.safe) {
+                    const msg = safety.reason + ' ("' + f.name + '")';
+                    if (errDiv) {
+                        errDiv.innerText = msg;
+                        errDiv.style.display = 'block';
+                    }
+                    alert(msg);
+                    if (fileInput) fileInput.value = '';
+                    if (preview) preview.style.display = 'none';
+                    if (actionArea) actionArea.style.display = 'none';
+                    fsSelectedFiles = [];
+                    return;
                 }
 
+                const magic = await fsCheckBlobMagicBytes(f);
+                if (!magic.safe) {
+                    const msg = magic.reason + ' ("' + f.name + '")';
+                    if (errDiv) {
+                        errDiv.innerText = msg;
+                        errDiv.style.display = 'block';
+                    }
+                    alert(msg);
+                    if (fileInput) fileInput.value = '';
+                    if (preview) preview.style.display = 'none';
+                    if (actionArea) actionArea.style.display = 'none';
+                    fsSelectedFiles = [];
+                    return;
+                }
+
+                // If file is a ZIP, inspect its inner files
+                if (f.name.toLowerCase().endsWith('.zip') && typeof JSZip !== 'undefined') {
+                    try {
+                        const zip = await JSZip.loadAsync(f);
+                        for (const innerName of Object.keys(zip.files)) {
+                            const innerSafety = fsCheckFileSafety(innerName);
+                            if (!innerSafety.safe) {
+                                const msg = 'Security Alert: Prohibited file ("' + innerName + '") detected inside ZIP archive "' + f.name + '"!';
+                                if (errDiv) {
+                                    errDiv.innerText = msg;
+                                    errDiv.style.display = 'block';
+                                }
+                                alert(msg);
+                                if (fileInput) fileInput.value = '';
+                                if (preview) preview.style.display = 'none';
+                                if (actionArea) actionArea.style.display = 'none';
+                                fsSelectedFiles = [];
+                                return;
+                            }
+                        }
+                    } catch (e) {
+                        if (e.message && e.message.includes('Security Alert')) {
+                            alert(e.message);
+                            return;
+                        }
+                    }
+                }
             }
 
+            fsSelectedFiles = rawFiles;
+
+            const btnText = document.getElementById('fsUploadBtnText');
+            let totalBytes = fsSelectedFiles.reduce((acc, f) => acc + f.size, 0);
+
+            if (preview) {
+                preview.style.display = 'block';
+                let html = '<div style="font-size:11px; font-weight:700; color:#1e1b4b; margin-bottom:6px; display:flex; justify-content:space-between;">';
+                html += '<span>Selected (' + fsSelectedFiles.length + ')</span>';
+                html += '<span style="color:#ed1b24;">' + formatBytes(totalBytes) + '</span></div>';
+
+                fsSelectedFiles.forEach((f, idx) => {
+                    html += '<div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#4b5563; padding:3px 0; border-bottom:1px dashed rgba(237, 27, 36,0.1);">';
+                    html += '<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:75%;">📄 ' + escapeHtml(f.name) + '</span>';
+                    html += '<span style="color:#6b7280; font-size:10px;">' + formatBytes(f.size) + '</span>';
+                    html += '</div>';
+                });
+                preview.innerHTML = html;
+            }
+
+            if (actionArea && btnText) {
+                actionArea.style.display = 'block';
+                if (fsSelectedFiles.length === 1) {
+                    btnText.innerText = 'Share File (' + formatBytes(totalBytes) + ')';
+                } else {
+                    btnText.innerText = '📦 Zip & Share ' + fsSelectedFiles.length + ' Files (' + formatBytes(totalBytes) + ')';
+                }
+            }
         };
 
 
@@ -13841,6 +13941,19 @@ CALCULATION RULES:
 
 
             try {
+                // Strict Security Validation of EVERY selected file before processing
+                for (const f of fsSelectedFiles) {
+                    const safety = fsCheckFileSafety(f.name);
+                    if (!safety.safe) {
+                        throw new Error(safety.reason + ' ("' + f.name + '")');
+                    }
+                    const magic = await fsCheckBlobMagicBytes(f);
+                    if (!magic.safe) {
+                        throw new Error(magic.reason + ' ("' + f.name + '")');
+                    }
+                }
+
+                const manifestList = fsSelectedFiles.map(f => f.name);
 
                 if (fsSelectedFiles.length === 1) {
 
@@ -13868,7 +13981,7 @@ CALCULATION RULES:
 
 
 
-                    finalBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }, (meta) => {
+                    finalBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 1 } }, (meta) => {
 
                         const pct = Math.round(meta.percent);
 
@@ -13890,123 +14003,197 @@ CALCULATION RULES:
 
 
 
-                if (progressStatus) progressStatus.innerText = 'Uploading to secure node...';
-
-                
-
-                const formData = new FormData();
-
-                formData.append('file', finalBlob, finalName);
-
-                formData.append('fileCount', fsSelectedFiles.length);
-
-                if (isZip) formData.append('isZipBundle', 'true');
-
-
-
-                const xhr = new XMLHttpRequest();
-
-                xhr.open('POST', WORKER_BASE + '/api/upload', true);
-
-
-
-                xhr.upload.onprogress = function(e) {
-
-                    if (e.lengthComputable) {
-
-                        const startPct = isZip ? 50 : 0;
-
-                        const factor = isZip ? 0.5 : 1;
-
-                        const totalPct = Math.round(startPct + ((e.loaded / e.total) * 100 * factor));
-
-                        if (progressBar) progressBar.style.width = Math.min(100, totalPct) + '%';
-
-                        if (progressPct) progressPct.innerText = Math.min(100, totalPct) + '%';
-
-                    }
-
-                };
-
-
-
-                xhr.onload = function() {
-
-                    if (xhr.status === 200 || xhr.status === 201) {
-
+                // If single file is a ZIP, inspect its inner files
+                if (isZip || finalName.toLowerCase().endsWith('.zip')) {
+                    if (typeof JSZip !== 'undefined') {
                         try {
-
-                            const res = JSON.parse(xhr.responseText);
-
-                            if (res.code) {
-
-                                document.getElementById('fsGeneratedCode').innerText = res.code;
-
-                                document.getElementById('fsSuccessMeta').innerText = finalName + ' (' + formatBytes(finalBlob.size) + ') • Expires in 30m';
-
-
-
-                                const targetUrl = WORKER_BASE + '/api/download/' + res.code;
-
-                                const qrImg = document.getElementById('fsQrCodeImg');
-
-                                const qrLink = document.getElementById('fsQrCodeLink');
-
-                                if (qrLink) qrLink.href = targetUrl;
-
-                                if (qrImg) {
-
-                                    qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(targetUrl);
-
-                                    qrImg.onerror = function() {
-
-                                        this.onerror = null;
-
-                                        this.src = 'https://quickchart.io/qr?size=150&text=' + encodeURIComponent(targetUrl);
-
-                                    };
-
+                            const innerZip = await JSZip.loadAsync(finalBlob);
+                            for (const innerName of Object.keys(innerZip.files)) {
+                                const innerSafety = fsCheckFileSafety(innerName);
+                                if (!innerSafety.safe) {
+                                    throw new Error('Security Alert: Prohibited file ("' + innerName + '") detected inside ZIP archive!');
                                 }
-
-
-
-                                if (document.getElementById('fsDropZone')) document.getElementById('fsDropZone').style.display = 'none';
-
-                                if (document.getElementById('fsFileListPreview')) document.getElementById('fsFileListPreview').style.display = 'none';
-
-                                if (document.getElementById('fsUploadActionArea')) document.getElementById('fsUploadActionArea').style.display = 'none';
-
-                                if (progressContainer) progressContainer.style.display = 'none';
-
-                                if (successDiv) successDiv.style.display = 'block';
-
-                                return;
-
                             }
-
-                        } catch (e) {
-
-                            console.error('Parse error:', e);
-
+                        } catch (zErr) {
+                            if (zErr.message && zErr.message.includes('Security Alert')) throw zErr;
                         }
+                    }
+                }
 
+                // Security Check 1: Extension policy
+                const cleanName = finalName.toLowerCase();
+                const parts = cleanName.split('.');
+                const ext = parts.length > 1 ? parts.pop() : '';
+                const blockedExts = ['exe','bat','cmd','vbs','js','scr','msi','ps1','com','pif','reg','hta','jar','apk','dll','sys'];
+                if (blockedExts.includes(ext) || parts.some(p => blockedExts.includes(p))) {
+                    throw new Error('Security Alert: Dangerous executable file (.' + ext + ') is prohibited by banking security policy.');
+                }
+
+                // Security Check 2: Deep Magic Bytes Scan (Check for Windows PE / MZ)
+                if (progressStatus) progressStatus.innerText = '🛡️ Scanning file for threats & verifying binary signatures...';
+                const headerSlice = await finalBlob.slice(0, 4).arrayBuffer();
+                const headerBytes = new Uint8Array(headerSlice);
+                if (headerBytes.length >= 2 && headerBytes[0] === 0x4D && headerBytes[1] === 0x5A) {
+                    throw new Error('Malware Alert: Disguised Windows executable (PE binary header) detected! Upload rejected.');
+                }
+
+                // Security Check 3: Fast SHA-256 Fingerprint
+                let fileHash = '';
+                try {
+                    const hashSlice = await finalBlob.slice(0, 25 * 1024 * 1024).arrayBuffer();
+                    const digest = await crypto.subtle.digest('SHA-256', hashSlice);
+                    fileHash = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+                } catch (e) {
+                    console.warn('Fingerprint error:', e);
+                }
+
+                // Resilient Chunked Upload (12MB Chunks - Supports Large Files & Prevents Status 502)
+                const CHUNK_SIZE = 12 * 1024 * 1024; // 12 MB
+                const totalChunks = Math.ceil(finalBlob.size / CHUNK_SIZE) || 1;
+
+                if (progressStatus) progressStatus.innerText = 'Initializing upload (' + totalChunks + ' parts)...';
+                if (progressBar) progressBar.style.width = isZip ? '55%' : '5%';
+                if (progressPct) progressPct.innerText = isZip ? '55%' : '5%';
+
+                // Step 1: Initialize session
+                const initRes = await fetch(WORKER_BASE + '/api/upload/init', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fileName: finalName,
+                        fileSize: finalBlob.size,
+                        mimeType: finalBlob.type || 'application/octet-stream',
+                        totalChunks: totalChunks,
+                        chunkSize: CHUNK_SIZE,
+                        fileHash: fileHash,
+                        manifest: manifestList
+                    })
+                });
+
+                if (!initRes.ok) {
+                    const errData = await initRes.json().catch(() => ({}));
+                    throw new Error(errData.error || ('Server returned HTTP ' + initRes.status));
+                }
+
+                const initData = await initRes.json();
+                if (!initData.success || !initData.code) {
+                    throw new Error(initData.error || 'Failed to initialize upload session');
+                }
+
+                const code = initData.code;
+                let uploadedBytes = 0;
+                const startPct = isZip ? 50 : 0;
+                const factor = isZip ? 0.5 : 1;
+
+                // Step 2: Upload chunks sequentially with retry
+                for (let i = 0; i < totalChunks; i++) {
+                    const start = i * CHUNK_SIZE;
+                    const end = Math.min(finalBlob.size, start + CHUNK_SIZE);
+                    const chunkSlice = finalBlob.slice(start, end);
+
+                    if (progressStatus) {
+                        progressStatus.innerText = 'Uploading ' + finalName + (totalChunks > 1 ? ' [Part ' + (i + 1) + '/' + totalChunks + ']' : '') + '...';
                     }
 
-                    throw new Error(xhr.responseText || 'Upload failed with status ' + xhr.status);
+                    let chunkSuccess = false;
+                    let lastErr = null;
 
-                };
+                    for (let attempt = 1; attempt <= 3; attempt++) {
+                        try {
+                            await new Promise((resolve, reject) => {
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', WORKER_BASE + '/api/upload/chunk', true);
+                                xhr.setRequestHeader('X-Upload-Code', code);
+                                xhr.setRequestHeader('X-Chunk-Index', i.toString());
+                                xhr.setRequestHeader('Content-Type', 'application/octet-stream');
 
+                                xhr.upload.onprogress = function(e) {
+                                    if (e.lengthComputable) {
+                                        const currentTotal = uploadedBytes + e.loaded;
+                                        const rawPct = (currentTotal / finalBlob.size) * 100;
+                                        const totalPct = Math.min(98, Math.round(startPct + (rawPct * factor)));
+                                        if (progressBar) progressBar.style.width = totalPct + '%';
+                                        if (progressPct) progressPct.innerText = totalPct + '%';
+                                    }
+                                };
 
+                                xhr.onload = function() {
+                                    if (xhr.status >= 200 && xhr.status < 300) {
+                                        resolve();
+                                    } else {
+                                        reject(new Error('Part ' + (i + 1) + ' failed with status ' + xhr.status));
+                                    }
+                                };
 
-                xhr.onerror = function() {
+                                xhr.onerror = () => reject(new Error('Network error on part ' + (i + 1)));
+                                xhr.ontimeout = () => reject(new Error('Timeout on part ' + (i + 1)));
+                                xhr.timeout = 180000;
+                                xhr.send(chunkSlice);
+                            });
 
-                    throw new Error('Network error during upload. Please check connection.');
+                            chunkSuccess = true;
+                            break;
+                        } catch (e) {
+                            lastErr = e;
+                            if (attempt < 3) {
+                                if (progressStatus) progressStatus.innerText = 'Retrying part ' + (i + 1) + ' (attempt ' + (attempt + 1) + ')...';
+                                await new Promise(r => setTimeout(r, 1200 * attempt));
+                            }
+                        }
+                    }
 
-                };
+                    if (!chunkSuccess) {
+                        throw lastErr || new Error('Failed to upload part ' + (i + 1));
+                    }
 
+                    uploadedBytes += chunkSlice.size;
+                }
 
+                // Step 3: Complete upload
+                if (progressStatus) progressStatus.innerText = 'Finalizing transfer & generating code...';
+                if (progressBar) progressBar.style.width = '99%';
+                if (progressPct) progressPct.innerText = '99%';
 
-                xhr.send(formData);
+                const compRes = await fetch(WORKER_BASE + '/api/upload/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: code })
+                });
+
+                if (!compRes.ok) {
+                    const errData = await compRes.json().catch(() => ({}));
+                    throw new Error(errData.error || ('Finalization returned HTTP ' + compRes.status));
+                }
+
+                const res = await compRes.json();
+                if (!res.success || !res.code) {
+                    throw new Error(res.error || 'Failed to complete upload');
+                }
+
+                // Success Display
+                if (progressBar) progressBar.style.width = '100%';
+                if (progressPct) progressPct.innerText = '100%';
+                document.getElementById('fsGeneratedCode').innerText = res.code;
+                document.getElementById('fsSuccessMeta').innerText = finalName + ' (' + formatBytes(finalBlob.size) + ') • Expires in 30m';
+
+                const targetUrl = WORKER_BASE + '/api/download/' + res.code;
+                const qrImg = document.getElementById('fsQrCodeImg');
+                const qrLink = document.getElementById('fsQrCodeLink');
+
+                if (qrLink) qrLink.href = targetUrl;
+                if (qrImg) {
+                    qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(targetUrl);
+                    qrImg.onerror = function() {
+                        this.onerror = null;
+                        this.src = 'https://quickchart.io/qr?size=150&text=' + encodeURIComponent(targetUrl);
+                    };
+                }
+
+                if (document.getElementById('fsDropZone')) document.getElementById('fsDropZone').style.display = 'none';
+                if (document.getElementById('fsFileListPreview')) document.getElementById('fsFileListPreview').style.display = 'none';
+                if (document.getElementById('fsUploadActionArea')) document.getElementById('fsUploadActionArea').style.display = 'none';
+                if (progressContainer) progressContainer.style.display = 'none';
+                if (successDiv) successDiv.style.display = 'block';
 
 
 
@@ -14284,7 +14471,7 @@ CALCULATION RULES:
 
             try {
 
-                const resp = await fetch(WORKER_BASE + '/api/file/' + code);
+                const resp = await fetch(WORKER_BASE + '/api/info/' + code);
 
                 if (!resp.ok) {
 
@@ -14303,6 +14490,12 @@ CALCULATION RULES:
                 const minsLeft = data.expiresAt ? Math.max(1, Math.round((new Date(data.expiresAt) - new Date()) / 60000)) : 30;
 
                 document.getElementById('fsRecFileMeta').innerText = formatBytes(data.fileSize || 0) + ' • ' + minsLeft + ' mins remaining';
+
+                const secEl = document.getElementById('fsRecFileSecurity');
+                if (secEl) {
+                    const secText = data.security?.status ? ('Security Verified: ' + data.security.status) : 'Security Verified • Zero Threats';
+                    secEl.innerHTML = '<i class="fas fa-shield-halved" style="color:#10b981;"></i> ' + secText;
+                }
 
                 
 

@@ -1,8 +1,8 @@
 window.UCB_AUTO_IMPORT_DATA = {
-  "exportedAt": "2026-09-26T19:13:25.315Z",
+  "exportedAt": "2026-10-26T18:27:59.416Z",
   "form": {
     "branchName": "naogaon",
-    "todayDate": "2026-09-27",
+    "todayDate": "2026-10-27",
     "todayDateMode": "auto",
     "accountNumber": "0953202000030622",
     "accountNumberNoSpace": "0953202000030622",
@@ -75,7 +75,8 @@ window.UCB_AUTO_IMPORT_DATA = {
     "monthlyEquivalent": "83333.33",
     "sourceOfFund": "Proprietor",
     "nationality": "Bangladeshi",
-    "residentStatus": "yes",
+    "residentStatus": "no",
+    "residentCountry": "India",
     "presentRoad": "Area/Village",
     "presentPO": "Post Office",
     "presentThana": "Thana/Upazila",
@@ -90,19 +91,20 @@ window.UCB_AUTO_IMPORT_DATA = {
     "app2_amlTrackingNumber": "",
     "app2_dob": "2026-09-26",
     "app2_gender": "female",
-    "app2_fatherName": "Father's Name",
-    "app2_motherName": "Mother's Name",
-    "app2_spouseName": "Spouse's Name",
+    "app2_fatherName": "Father's Name sabiha",
+    "app2_motherName": "Mother's Name sabiha",
+    "app2_spouseName": "Spouse's Name sabiha",
     "app2_identityDocumentType": "National ID",
-    "app2_nid": "987654321",
+    "app2_nid": "987654321 sabiha",
     "app2_etin": "123456789123",
-    "app2_mobile": "01719989029",
+    "app2_mobile": "01719989029 sabiha",
     "app2_email": "tapallab100@gmail.com",
     "app2_occupation": "business",
     "app2_monthlyIncome": "40000",
     "app2_sourceOfFund": "partner",
     "app2_nationality": "Bangladeshi",
     "app2_residentStatus": "yes",
+    "app2_residentCountry": "",
     "app2_presentRoad": "Area/Village",
     "app2_presentPO": "Post Office",
     "app2_presentThana": "Thana/Upazila",
@@ -130,6 +132,7 @@ window.UCB_AUTO_IMPORT_DATA = {
     "app3_sourceOfFund": "",
     "app3_nationality": "Bangladeshi",
     "app3_residentStatus": "yes",
+    "app3_residentCountry": "",
     "app3_presentRoad": "",
     "app3_presentPO": "",
     "app3_presentThana": "",
@@ -624,8 +627,12 @@ window.UCB_AUTO_IMPORT_DATA = {
       "left": "26.5%"
     },
     "p2_resident_no": {
-      "top": "90%",
-      "left": "56%"
+      "top": "21.5312%",
+      "left": "33.3%"
+    },
+    "p2_residentCountry": {
+      "top": "21.5833%",
+      "left": "51.9%"
     },
     "p2_fatca_yes": {
       "top": "89.208%",
@@ -1220,8 +1227,12 @@ window.UCB_AUTO_IMPORT_DATA = {
       "left": "26.8%"
     },
     "p25_resident_no": {
-      "top": "90%",
-      "left": "56%"
+      "top": "22.5391%",
+      "left": "33.8%"
+    },
+    "p25_residentCountry": {
+      "top": "22.5192%",
+      "left": "52.3%"
     },
     "p25_fatca_yes": {
       "top": "89.208%",
@@ -2263,25 +2274,17 @@ window.UCB_AUTO_IMPORT_DATA = {
       "top": "68%",
       "left": "68%"
     },
-    "p55_branchName": {
-      "top": "6%",
-      "left": "70%"
-    },
-    "p55_todayDate": {
-      "top": "6%",
-      "left": "85%"
-    },
     "p55_accountNumber": {
       "top": "13.1109%",
       "left": "53.4%"
     },
     "p55_cif": {
-      "top": "10%",
-      "left": "48%"
+      "top": "3.33482%",
+      "left": "16.4%"
     },
     "p55_amlTrackingNumber": {
-      "top": "35%",
-      "left": "35%"
+      "top": "3.26105%",
+      "left": "36.7%"
     },
     "p55_fullNameEn": {
       "top": "18.5717%",
@@ -2368,12 +2371,12 @@ window.UCB_AUTO_IMPORT_DATA = {
       "left": "72.4%"
     },
     "p55_female": {
-      "top": "26%",
-      "left": "51%"
+      "top": "42.5043%",
+      "left": "77.4%"
     },
     "p55_other": {
-      "top": "26%",
-      "left": "57%"
+      "top": "42.1869%",
+      "left": "84.3%"
     },
     "p55_nationality": {
       "top": "41.2588%",
@@ -2384,140 +2387,140 @@ window.UCB_AUTO_IMPORT_DATA = {
       "left": "26.5%"
     },
     "p55_resident_no": {
-      "top": "90%",
-      "left": "56%"
+      "top": "47.7872%",
+      "left": "33.1%"
+    },
+    "p55_residentCountry": {
+      "top": "47.5894%",
+      "left": "52.2%"
     },
     "p55_officer1Seal": {
       "top": "78.5717%",
       "left": "74.1%"
     },
-    "p57_branchName": {
-      "top": "6%",
-      "left": "70%"
-    },
-    "p57_todayDate": {
-      "top": "6%",
-      "left": "85%"
-    },
     "p57_accountNumber": {
-      "top": "12%",
-      "left": "28%"
+      "top": "13.2696%",
+      "left": "53.1%"
     },
     "p57_cif": {
-      "top": "10%",
-      "left": "48%"
+      "top": "4.12829%",
+      "left": "19.8%"
     },
     "p57_amlTrackingNumber": {
-      "top": "35%",
-      "left": "35%"
+      "top": "4.05453%",
+      "left": "39.5%"
     },
     "p57_fullNameEn": {
-      "top": "20%",
-      "left": "30%"
+      "top": "18.4131%",
+      "left": "27.6%"
     },
     "p57_fullNameBn": {
-      "top": "26%",
-      "left": "35%"
+      "top": "22.0326%",
+      "left": "27.5%"
     },
     "p57_dob": {
       "top": "23%",
       "left": "35%"
     },
     "p57_fatherName": {
-      "top": "14%",
-      "left": "35%"
+      "top": "29.5521%",
+      "left": "27.3%"
     },
     "p57_motherName": {
-      "top": "17%",
-      "left": "35%"
+      "top": "33.1869%",
+      "left": "27.4%"
     },
     "p57_spouseName": {
-      "top": "20%",
-      "left": "35%"
+      "top": "37.139%",
+      "left": "27.6%"
     },
     "p57_nid": {
-      "top": "20%",
-      "left": "60%"
+      "top": "76.9714%",
+      "left": "27.4%"
     },
     "p57_etin": {
-      "top": "88%",
-      "left": "35%"
+      "top": "58.6415%",
+      "left": "63.7%"
     },
     "p57_mobile": {
-      "top": "72%",
-      "left": "35%"
+      "top": "65.4935%",
+      "left": "39%"
     },
     "p57_email": {
-      "top": "75%",
-      "left": "35%"
+      "top": "65.4783%",
+      "left": "64.6%"
     },
     "p57_occupation": {
-      "top": "82%",
-      "left": "35%"
+      "top": "53.7523%",
+      "left": "27.3%"
     },
     "p57_sourceOfFund": {
-      "top": "56%",
-      "left": "35%"
+      "top": "57.5869%",
+      "left": "27.6%"
     },
     "p57_presentRoad": {
-      "top": "48%",
-      "left": "35%"
+      "top": "61.6477%",
+      "left": "34.8%"
     },
     "p57_presentPO": {
-      "top": "51%",
-      "left": "35%"
-    },
-    "p57_presentThana": {
-      "top": "57%",
-      "left": "35%"
-    },
-    "p57_presentDistrict": {
-      "top": "60%",
-      "left": "35%"
-    },
-    "p57_permanentRoad": {
-      "top": "68%",
-      "left": "35%"
-    },
-    "p57_permanentPO": {
-      "top": "71%",
-      "left": "35%"
-    },
-    "p57_permanentThana": {
-      "top": "77%",
-      "left": "35%"
-    },
-    "p57_permanentDistrict": {
-      "top": "80%",
-      "left": "35%"
-    },
-    "p57_male": {
-      "top": "26%",
-      "left": "45%"
-    },
-    "p57_female": {
-      "top": "26%",
-      "left": "51%"
-    },
-    "p57_other": {
-      "top": "26%",
+      "top": "61.4739%",
       "left": "57%"
     },
+    "p57_presentThana": {
+      "top": "62.0782%",
+      "left": "79.3%"
+    },
+    "p57_presentDistrict": {
+      "top": "65.0782%",
+      "left": "11.1%"
+    },
+    "p57_permanentRoad": {
+      "top": "69.4283%",
+      "left": "34.9%"
+    },
+    "p57_permanentPO": {
+      "top": "69.5717%",
+      "left": "57%"
+    },
+    "p57_permanentThana": {
+      "top": "69.3827%",
+      "left": "80%"
+    },
+    "p57_permanentDistrict": {
+      "top": "73.4935%",
+      "left": "11.2%"
+    },
+    "p57_male": {
+      "top": "42.3456%",
+      "left": "72%"
+    },
+    "p57_female": {
+      "top": "42.0282%",
+      "left": "77.7%"
+    },
+    "p57_other": {
+      "top": "41.8695%",
+      "left": "84.3%"
+    },
     "p57_nationality": {
-      "top": "63%",
-      "left": "35%"
+      "top": "41.1001%",
+      "left": "27.6%"
     },
     "p57_resident_yes": {
-      "top": "90%",
-      "left": "50%"
+      "top": "47.3111%",
+      "left": "26.2%"
     },
     "p57_resident_no": {
-      "top": "90%",
-      "left": "56%"
+      "top": "47.9459%",
+      "left": "33.3%"
+    },
+    "p57_residentCountry": {
+      "top": "47.4307%",
+      "left": "52.2%"
     },
     "p57_officer1Seal": {
-      "top": "80%",
-      "left": "68%"
+      "top": "79.2065%",
+      "left": "74.1%"
     },
     "p60_branchName": {
       "top": "20.1536%",

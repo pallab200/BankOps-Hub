@@ -684,10 +684,10 @@ body::after {
 
 /* Transaction Profile Styles */
 .transaction-table-wrapper {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 16px;
+  background: linear-gradient(135deg, #ffffff 0%, var(--bg-primary) 100%);
+  border-radius: var(--radius-lg);
   padding: 0;
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(148, 163, 184, 0.1);
+  box-shadow: var(--shadow-lg), 0 0 0 1px var(--border-color);
   overflow: visible;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -729,7 +729,7 @@ body::after {
 }
 
 .transaction-table-wrapper:hover {
-  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(148, 163, 184, 0.15);
+  box-shadow: var(--shadow-lg), var(--shadow-primary), 0 0 0 1px rgba(var(--primary-rgb), 0.2);
   transform: translateY(-2px);
 }
 
@@ -738,7 +738,7 @@ body::after {
   align-items: center;
   gap: 12px;
   padding: 20px 24px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: var(--primary-gradient);
   border-bottom: 3px solid;
   position: relative;
   overflow: hidden;
@@ -776,6 +776,7 @@ body::after {
   letter-spacing: 0.3px;
   z-index: 1;
   flex: 1;
+  font-family: var(--font-family);
 }
 
 .transaction-header .badge {
@@ -793,20 +794,20 @@ body::after {
 }
 
 .deposit-header {
-  border-bottom-color: #10b981;
+  border-bottom-color: var(--success);
 }
 
 .deposit-header i {
-  color: #10b981;
+  color: var(--success-light);
   animation: depositPulse 2s ease-in-out infinite;
 }
 
 .withdrawal-header {
-  border-bottom-color: #ef4444;
+  border-bottom-color: var(--gold);
 }
 
 .withdrawal-header i {
-  color: #ef4444;
+  color: var(--gold);
   animation: withdrawalPulse 2s ease-in-out infinite;
 }
 
@@ -864,12 +865,12 @@ body::after {
 }
 
 .transaction-table tbody tr.total-row {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border-top: 2px solid #3b82f6;
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.05) 0%, rgba(var(--primary-rgb), 0.12) 100%);
+  border-top: 2px solid var(--primary);
 }
 
 .transaction-table tbody tr.total-row:hover {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(var(--primary-rgb), 0.18) 100%);
 }
 
 .transaction-table td {
@@ -908,33 +909,33 @@ body::after {
 }
 
 .transaction-table tbody tr:hover .td-content i {
-  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-  color: #6366f1;
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.12) 0%, rgba(var(--primary-rgb), 0.2) 100%);
+  color: var(--primary);
   transform: scale(1.1);
 }
 
 .td-content.total-label {
   font-weight: 700;
-  color: #1e40af;
+  color: var(--primary-dark);
 }
 
 .td-content.total-label i {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: var(--primary-gradient);
   color: #ffffff;
 }
 
 .table-input {
   width: 100%;
   padding: 10px 14px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 500;
-  color: #1e293b;
+  color: var(--text-primary);
   background: #ffffff;
   transition: all 0.2s ease;
   text-align: center;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-family);
 }
 
 /* Ensure deposit & withdrawal boxes are equal height on wide screens */
@@ -968,26 +969,26 @@ body::after {
 
 .table-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  background: #f0f9ff;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--primary);
+  background: rgba(var(--primary-rgb), 0.04);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
 }
 
 .table-input::placeholder {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-weight: 400;
 }
 
 .table-input.total-input {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border-color: #3b82f6;
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.05) 0%, rgba(var(--primary-rgb), 0.12) 100%);
+  border-color: var(--primary);
   font-weight: 700;
-  color: #1e40af;
+  color: var(--primary-dark);
   cursor: not-allowed;
 }
 
 .table-input.total-input:focus {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(var(--primary-rgb), 0.18) 100%);
 }
 
 @media (max-width: 1200px) {
